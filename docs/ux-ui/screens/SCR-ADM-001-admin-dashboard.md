@@ -1,0 +1,229 @@
+# SCR-ADM-001 - Admin Dashboard
+
+## 1. Purpose
+
+The Admin Dashboard is the approved desktop visual and navigation baseline for the UX/UI package. It gives admin a shared operational overview of active Orders, active Jobs, shipment-round creation, shipment confirmation, production follow-up, and COD/Payment follow-up.
+
+This screen is a queue launcher and risk preview. It is not a full task table, report page, accounting dashboard, or order creation page.
+
+Approved mockup:
+
+- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
+
+Related visual system:
+
+- `docs/ux-ui/design-system/app-shell.md`
+
+## 2. Primary Users
+
+- Admin
+- Same-permission admin user
+- Higher-permission admin user
+- Manager / Owner as viewer or escalation user
+
+## 3. User Goals
+
+- See how many confirmed Orders still need operational handling.
+- See how many Jobs are currently in production and where they sit by department.
+- Enter the ready-to-ship queue to create shipment rounds.
+- Confirm shipments after delivery staff have marked them sent and attached evidence.
+- Notice production follow-up cases that require admin communication.
+- Keep COD/Payment follow-up visible without blocking Order Completion.
+- Quickly see a few high-risk work items with product image, customer, received date, Order ID, and Job ID.
+
+## 4. Entry Points
+
+- Login / first screen after opening the system.
+- Main navigation item: `แดชบอร์ด`.
+- Return from any admin working queue.
+
+## 5. Exit Points
+
+- `ออเดอร์กำลังดำเนินการ` overview.
+- `งานกำลังผลิต` overview.
+- `รอสร้างรอบจัดส่ง` queue.
+- `ยืนยันการจัดส่ง` queue.
+- `งานผลิตต้องติดตาม` queue.
+- `ติดตาม COD / Payment` queue.
+- `งานที่ต้องรีบดู` item detail.
+
+## 6. Layout Structure
+
+- App shell: fixed left sidebar, top bar, and main work area.
+- Sidebar: approved main navigation from the mockup.
+- Top bar: menu icon, page title, current date, user avatar, user name, role, and account menu.
+- Main content: six operational cards in a 3-column by 2-row desktop grid.
+- Bottom section: `งานที่ต้องรีบดู` critical work preview with 3 image-led item cards.
+- Card interaction: clicking a card opens the matching overview or queue.
+- No top quick action button on this dashboard.
+- No Draft Order card on this dashboard.
+
+## 7. Approved Sidebar Navigation
+
+- `แดชบอร์ด`
+- `ออเดอร์`
+- `งานสั่งทำ / ผลิต`
+- `รอบจัดส่ง`
+- `สินค้า / สต๊อก`
+- `ลูกค้า / CRM`
+- `รายจ่าย`
+- `ตั้งค่า`
+
+Rules:
+
+- Treat this as the current main navigation baseline.
+- `ร่างออเดอร์` belongs under the Order page as a subcategory, not as a dashboard card.
+- `งานสั่งทำ / ผลิต` is the main navigation home for Job Tracking across `JOB-O` and `JOB-P`.
+- `รอบจัดส่ง` remains a main navigation item because shipment rounds are operationally important and may be reached outside a single Order detail.
+
+## 8. Main Components
+
+- App sidebar
+- Top bar
+- User/role indicator
+- Operational dashboard card
+- Large count
+- Status chip
+- Footer action link
+- Critical Work Preview section
+- Image-led preview item
+- Order ID / Job ID metadata
+
+## 9. Dashboard Cards
+
+| Card | Thai Title | Count Unit | Example Count | Status Chip | Subtext | Action |
+|---|---|---:|---:|---|---|---|
+| Active Orders | `ออเดอร์กำลังดำเนินการ` | Order | 18 | `ยังไม่จบงาน` | `กำลังผลิต 11 • ส่งได้เลย 7` | `ดูออเดอร์` |
+| Active Jobs | `งานกำลังผลิต` | Job | 17 | `กำลังทำงาน` | `ช่างไม้ 8 • ฝ่ายสี 6 • รักสมุก 3` | `ดูภาพรวมงาน` |
+| Waiting Shipment Creation | `รอสร้างรอบจัดส่ง` | Order | 7 | `ส่งได้เลย` | `มี COD 3 ออเดอร์` | `เปิดคิวงาน` |
+| Shipment Confirmation | `ยืนยันการจัดส่ง` | Shipment round | 4 | `รอเพิ่มข้อมูล` | `เพิ่มเลขติดตามพัสดุ / หลักฐานขนส่ง` | `เปิดคิวงาน` |
+| Production Follow-up | `งานผลิตต้องติดตาม` | Follow-up case | 2 | `รอรับทราบ Revision` | `ไม่เข้าใจให้ติดต่อหา 1` | `เปิดคิวงาน` |
+| Financial Follow-up | `ติดตาม COD / Payment` | Follow-up item | 6 | `ต้องติดตามเงิน` | `ค้างตรวจสอบ 6 รายการ` | `เปิดคิวงาน` |
+
+Card rules:
+
+- `ออเดอร์กำลังดำเนินการ` counts confirmed Orders that are not operationally complete.
+- `งานกำลังผลิต` counts Jobs, not Orders.
+- `รอสร้างรอบจัดส่ง` counts Orders, not item lines.
+- `ยืนยันการจัดส่ง` counts shipment rounds, not Orders.
+- `งานผลิตต้องติดตาม` counts only cases needing admin communication or decision, not all aged production work.
+- `ติดตาม COD / Payment` is separate from operational completion.
+
+## 10. Bottom Preview Section
+
+Section label:
+
+- `งานที่ต้องรีบดู`
+
+Purpose:
+
+- Show a short preview of high-risk work admin should notice immediately.
+- Keep the section visual and compact.
+- Do not turn it into a full manager report or full table.
+
+Each item should show:
+
+| Field | Thai Label | Example |
+|---|---|---|
+| Image | Product/work image | ตู้โชว์ไม้สัก photo |
+| Work name | Work/product name | `ตู้โชว์ไม้สักแกะลาย` |
+| Customer | `ลูกค้า` | `คุณศิริพร` |
+| Received date | `วันที่รับงาน` | `08 พ.ค. 67` |
+| Reference | Order ID / Job ID | `ORD-240522-018 / JOB-O-0241` |
+| Risk chip | Status chip | `งานด่วน`, `ค้าง 18 วัน`, `ใกล้ส่ง` |
+| Current queue | Current state | `อยู่คิวช่างไม้`, `รอสร้างรอบจัดส่ง`, `ยืนยันการจัดส่ง` |
+| Related date | Delivery date | `กำหนดส่ง 26 พ.ค. 67` |
+
+Rules:
+
+- Use 3 visible preview items on desktop.
+- Use product imagery because THAIBORAN work is visually specific.
+- If a right-side control is needed, use `ดูทั้งหมด`.
+- Do not show an empty-state label when delayed or urgent work is visible.
+
+## 11. Status / Chips
+
+| Chip | Meaning | Visual Direction |
+|---|---|---|
+| `ยังไม่จบงาน` | Confirmed Orders still need operational handling. | Blue |
+| `กำลังทำงาน` | Jobs are active in production. | Orange |
+| `ส่งได้เลย` | Ready for shipment-round creation. | Green |
+| `รอเพิ่มข้อมูล` | Shipment needs tracking/evidence confirmation. | Orange |
+| `รอรับทราบ Revision` | Production change needs acknowledgement/follow-up. | Purple |
+| `ต้องติดตามเงิน` | COD/Payment follow-up remains. | Red |
+| `งานด่วน` | Authorized user marked urgent. | Red or yellow, used sparingly |
+| `ค้าง 18 วัน` | High-risk aging signal. | Red or warm warning |
+| `ใกล้ส่ง` | Delivery date is near. | Green or warm attention |
+
+## 12. Data Shown
+
+| Field | Thai Label | Source object | Notes |
+|---|---|---|---|
+| Page title | `แดชบอร์ดแอดมิน` | App shell | Approved title. |
+| Active Order count | `ออเดอร์กำลังดำเนินการ` | Order | Count confirmed Orders not operationally complete. |
+| Active Job count | `งานกำลังผลิต` | Job | Includes `JOB-O` and `JOB-P`. |
+| Ready-to-ship Order count | `รอสร้างรอบจัดส่ง` | Order / Shipment readiness | Count Orders ready for shipment-round creation. |
+| Shipment confirmation count | `ยืนยันการจัดส่ง` | Shipment | Count shipment rounds awaiting tracking/evidence confirmation. |
+| Production follow-up count | `งานผลิตต้องติดตาม` | Job Revision / Hold / Waiting for Materials | Only cases needing admin follow-up. |
+| Financial follow-up count | `ติดตาม COD / Payment` | Financial Follow-up | Separate from Order Completion. |
+| Critical item reference | Order ID / Job ID | Order / Job | Small metadata for communication. |
+| Customer | `ลูกค้า` | Customer | Shown in bottom preview. |
+| Received date | `วันที่รับงาน` | Order / Job | Shown in bottom preview. |
+
+## 13. Actions
+
+| Action | Thai Label | Who can do it | Result | Confirmation needed? |
+|---|---|---|---|---|
+| Open active Orders | `ดูออเดอร์` | Admin and same/higher permission | Opens active Orders overview. | No |
+| Open active Jobs | `ดูภาพรวมงาน` | Admin and same/higher permission | Opens Job overview across `JOB-O` and `JOB-P`. | No |
+| Open ready-to-ship queue | `เปิดคิวงาน` | Admin and same/higher permission | Opens `รอสร้างรอบจัดส่ง`. | No |
+| Open shipment confirmation queue | `เปิดคิวงาน` | Admin and same/higher permission | Opens `ยืนยันการจัดส่ง`. | No |
+| Open production follow-up | `เปิดคิวงาน` | Admin and same/higher permission | Opens production follow-up queue. | No |
+| Open COD/Payment follow-up | `เปิดคิวงาน` | Admin with visible permission; finance details by permission | Opens financial follow-up queue. | No |
+| Open critical item | Item row/card click | Admin and same/higher permission | Opens the related Order, Job, or Shipment context. | No |
+
+## 14. Empty State
+
+If all dashboard cards are empty, show a calm operational empty state such as `ยังไม่มีงานที่ต้องติดตามตอนนี้`.
+
+Rules:
+
+- Do not use `สร้างร่างออเดอร์` as a dashboard empty-state action.
+- Do not show `ไม่มีงานค้าง` inside the bottom section when visible critical items exist.
+- Keep empty-state text short.
+
+## 15. Permission Rules
+
+- Admin queues are shared by role/permission.
+- Same-permission or higher-permission users can continue shared queue work.
+- Owner remains visible for traceability but is not an exclusive lock.
+- Finance-sensitive amounts and Rak Samuk rates must not be shown without finance permission.
+- This dashboard may show counts for COD/Payment follow-up where allowed, but should avoid detailed money values.
+
+## 16. What Not To Show
+
+- No `ร่างออเดอร์` dashboard card.
+- No `รอสร้าง Job` dashboard card.
+- No top quick action button such as `+ สร้างออเดอร์`.
+- No full task table.
+- No accounting charts or analytics widgets.
+- No marketing hero or decorative landing-page layout.
+- No contradictory empty-state labels.
+
+## 17. UX Notes for Designer
+
+- Treat this as a daily operational dashboard.
+- Keep the six cards as the dominant structure.
+- Keep Thai UI labels as shown in the approved mockup.
+- Use English only for `Job`, `JOB-O`, `JOB-P`, `COD`, `Payment`, and `Revision`.
+- Preserve the approved quiet, dense, clean visual direction.
+- Preserve the image-led `งานที่ต้องรีบดู` bottom section.
+- The dashboard should feel like the control center for a small custom furniture production business.
+
+## 18. Image Generation Prompt
+
+Use `docs/ux-ui/image-prompts/IMG-ADM-001-admin-dashboard.md`.
+
+## 19. Conflicts Found
+
+None in the approved mockup relative to active business rules, ADRs, `CONTEXT.md`, and what-not-to-show rules.

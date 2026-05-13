@@ -1,0 +1,124 @@
+# SCR-SHIP-006 - Shipping Sheet Preview
+
+## 1. Purpose
+
+The Shipping Sheet Preview shows the printable A4 recipient/address sheet for a Shipment. It focuses on recipient, phone, address, carrier, references, and a short item summary.
+
+Approved mockup:
+
+- `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`
+
+## 2. Primary Users
+
+- Admin
+- Same-permission admin user
+- Higher-permission admin user
+
+## 3. User Goals
+
+- Preview recipient and address information before printing.
+- Confirm carrier, phone, address, and delivery notes.
+- Print Shipping Sheet alone or with Delivery Note.
+- Avoid confusing Shipping Sheet with Delivery Note.
+
+## 4. Entry Points
+
+- Shipment Builder -> `ดูใบจัดส่ง`.
+- Released Shipment Detail.
+- Draft Shipment Detail.
+- Delivery Note Preview.
+
+## 5. Exit Points
+
+- Shipment Builder.
+- Shipment Detail.
+- Delivery Note Preview.
+- Print dialog.
+
+## 6. Layout Structure
+
+- Header: `ใบจัดส่ง`, Shipment ID, print actions.
+- Preview area: A4 page mockup focused on recipient/address block.
+- Main document content: recipient, phone, address, carrier, delivery date, COD if relevant, short item summary, notes.
+- Side panel: print Shipping Sheet, print both, open Delivery Note.
+- Desktop focus: printable page centered, controls outside print area.
+
+## 7. Main Components
+
+- A4 print preview
+- Recipient/address block
+- Carrier block
+- Delivery date block
+- COD chip/field where allowed
+- Short item summary
+- Delivery note block
+- Print action button
+- Toggle/open Delivery Note
+
+## 8. Data Shown
+
+| Field | Thai Label | Example | Source object | Notes |
+|---|---|---|---|---|
+| Document title | ใบจัดส่ง | ใบจัดส่ง | Shipping Sheet | Address-focused document. |
+| Shipment ID | เลขรอบจัดส่ง | SHIP-2568-0061 | Shipment | Shipment reference. |
+| Recipient | ผู้รับสินค้า | คุณภพ | Shipment address snapshot | Snapshot from selected Address Entry. |
+| Phone | เบอร์โทร | 081-234-5678 | Shipment address snapshot | Delivery contact. |
+| Address | ที่อยู่จัดส่ง | 99/12 ถ.เจริญกรุง กรุงเทพฯ | Shipment address snapshot | Main document content. |
+| Carrier | ขนส่ง | รถร้าน | Shipment | Delivery team cannot change later. |
+| Delivery date | วันจัดส่ง | 20 พ.ค. 2569 | Shipment | If empty, delivery dashboard treats as today. |
+| COD | COD | 12,000 บาท | Shipment | Show where permission/document rules allow. |
+| Short item summary | สรุปรายการ | ตู้โชว์ไม้สัก 1 ชิ้น | Shipment / Order Line | Summary only; full item list is Delivery Note. |
+| Delivery note | หมายเหตุจัดส่ง | โทรก่อนส่ง | Shipment | Useful for delivery team. |
+
+## 9. Actions
+
+| Action | Thai Label | Who can do it | Result | Confirmation needed? |
+|---|---|---|---|---|
+| Print Shipping Sheet | พิมพ์ใบจัดส่ง | Admin | Opens print for Shipping Sheet only. | No |
+| Print both documents | พิมพ์ใบส่งของและใบจัดส่ง | Admin | Opens combined print flow. | No |
+| Open Delivery Note | ดูใบส่งของ | Admin | Opens Delivery Note Preview. | No |
+| Return to Shipment | กลับไปรอบจัดส่ง | Admin | Returns to Shipment Builder or Detail. | No |
+
+## 10. Status / Chips
+
+| Status | Thai Label | Meaning | Visual note |
+|---|---|---|---|
+| Draft Shipment | ร่างรอบจัดส่ง | Preview from draft Shipment. | Neutral chip. |
+| Released Shipment | ปล่อยให้ฝ่ายจัดส่งแล้ว | Preview from released Shipment. | Positive chip. |
+| COD | COD | Shipment carries COD amount. | Permission/document-aware chip. |
+| Address snapshot | ข้อมูลจัดส่งถูกบันทึกแล้ว | Shipment stores recipient/address snapshot. | Subtle info chip. |
+
+## 11. Empty State
+
+If recipient/address data is missing, show `ไม่มีข้อมูลผู้รับสินค้าในใบจัดส่ง` and action `กลับไปรอบจัดส่ง`.
+
+## 12. Error State
+
+- Preview load fails: `โหลดใบจัดส่งไม่สำเร็จ` with retry.
+- Print fails: `พิมพ์ใบจัดส่งไม่สำเร็จ`.
+- Permission fails: `ไม่มีสิทธิ์ดูใบจัดส่ง`.
+- Missing required recipient/address: block print until admin returns to Shipment Builder.
+
+## 13. Permission Rules
+
+- Admin can preview and print.
+- Delivery Team cannot edit address, carrier, or COD.
+- Shipping Sheet focuses on recipient/address; Delivery Note handles full item detail.
+- Barcode, QR, and label printer flows are outside Stage 1.
+
+## 14. UX Notes for Designer
+
+- Preserve the approved `SCR-SHIP-006` mockup layout.
+- Make recipient name, phone, and address the dominant content.
+- Keep item summary short.
+- Keep print controls outside the A4 preview area.
+- Make this visually distinct from Delivery Note.
+- Use large readable address typography for physical delivery use.
+
+## 15. Image Generation Prompt
+
+Use `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`.
+
+## 16. Open UX Questions
+
+- None blocking for this print preview.

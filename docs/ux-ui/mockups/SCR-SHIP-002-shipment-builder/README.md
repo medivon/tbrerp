@@ -1,0 +1,48 @@
+# SCR-SHIP-002 - Shipment Builder Mockup
+
+Status: Approved
+
+Approved image:
+
+- `./SCR-SHIP-002-approved.png`
+
+Related documents:
+
+- `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`
+- `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`
+- `docs/ux-ui/design-system/app-shell.md`
+- `docs/ux-ui/02-screen-inventory.md`
+- `docs/ux-ui/01-flow-map.md`
+
+## Approved Role
+
+This mockup is the current source of truth for the `สร้างรอบจัดส่ง` screen.
+
+It confirms:
+
+- This screen is for a single Order / special case Shipment creation flow.
+- Admin can review and edit delivery-facing details before releasing the Shipment.
+- This screen is not used for bulk shipment creation.
+- Bulk creation bypasses this screen and uses default customer/order delivery data.
+- Delivery Note and Shipping Sheet are created from the Shipment after creation.
+
+## Approved Content Pattern
+
+- Page title: `สร้างรอบจัดส่ง`
+- Source reference: `จากออเดอร์ ORD-...`
+- Left panel: `รายการพร้อมส่ง`
+- Right panel: `ข้อมูลจัดส่ง`
+- Editable/special-case actions: `แก้ไขข้อมูลจัดส่ง`, `แก้ยอด COD`, `แก้หมายเหตุ`
+- Document preview buttons: `ดูใบส่งของ`, `ดูใบจัดส่ง`
+- Footer actions: `พร้อมจัดส่ง`, `บันทึกเป็นร่าง`, `ยกเลิก`
+
+## Key Decisions Captured By This Mockup
+
+- `SHP-002` is a special/single review editor, not the bulk path.
+- Bulk-created Shipments should not require this detailed editor screen.
+- For bulk flow, the system should use the Customer/Order delivery data, using the first Order as the reference where needed for default address/recipient behavior.
+- This screen can change carrier, delivery date, COD, and delivery note before release, according to permission.
+
+## Regeneration Rule
+
+Future prompts for `SCR-SHIP-002` should preserve the approved single/special-case review layout and should not turn this screen into a bulk builder.
