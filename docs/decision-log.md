@@ -28,8 +28,8 @@ If documents conflict, use this order:
 - The first screen to design is `Admin Dashboard`.
 - The scope is not a generic ERP phase 1.
 - The core first-scope pain is knowing where custom work is, who should act next, which work is old or urgent, and what is ready to ship.
-- Supporting areas included only as needed: Product/SKU, Ready Stock, Shipment, Rak Samuk outsource, simple Expense, Payment Voucher, Customer/CRM, and basic reporting.
-- Out of first scope: full accounting, tax invoice, quotation, sales channel analytics, BOM costing, payroll automation, full QC, central media library, customer merge, carrier API, barcode/label printer, and wholesale pricing rules.
+- Supporting areas included only as needed: Product/SKU, Ready Stock, Light Material Stock, Material Purchase Order, Shipment, Rak Samuk outsource, simple Expense, Payment Voucher, Customer/CRM, and basic reporting.
+- Out of first scope: full accounting, tax invoice, quotation, sales channel analytics, BOM costing, full Material Master/warehouse/BOM consumption beyond Light Material Stock, payroll automation, full QC, central media library, customer merge, carrier API, barcode/label printer, and wholesale pricing rules.
 
 ## Core Domain Terms
 
@@ -353,6 +353,10 @@ Rules:
 - `รอวัตถุดิบ` stops department aging and tracks material-wait age separately.
 - Workers should not be forced to fill complex material master data in first scope.
 - Note can be simple, such as waiting for wood, gold color, or drawer rails.
+- When setting `รอวัตถุดิบ`, the worker may record material names/notes as a Material Need Note.
+- Material Need Notes do not reserve, deduct, issue, or transfer material stock.
+- Material Need Notes can appear in the Material Stock landing view as a list of jobs waiting for materials.
+- From that waiting-materials list, a permitted user can summarize items into a Material Purchase Order creation flow.
 
 ## Queues and Aging
 
@@ -628,7 +632,7 @@ Rules:
 
 Not in first scope:
 
-- Material list / material master
+- Full material list / Material Master outside the light material-stock workflow
 - Separate sales description and production description
 
 ## Product and Job Images
@@ -804,11 +808,51 @@ Not in first scope:
 - Stock Count should exist for weekly or biweekly checking.
 - Stock Count should be mobile-friendly and image-heavy.
 - Smart cycle count can prioritize active/moving stock and items with positive stock.
-- Stock Count should support products and materials.
-- First-scope materials counted carefully include colors, drawer rails, and staples.
-- Wood boards/sticks may be simpler status/note rather than detailed count.
+- Product stock and material stock are separate in the starting workflow.
+- Light Material Stock exists for easy-to-count internal materials such as color supplies, drawer rails, staples/lวดเย็บ, and similar consumables.
+- Light Material Stock is not a full Material Master, warehouse transfer, BOM, or automatic Job material-consumption system.
+- Material stock belongs under `สินค้า / สต๊อก` as `สต๊อกวัสดุ`, separate from `รายการสินค้า / SKU`.
+- Material items require `ชื่อวัสดุ`, `หมวดวัสดุ`, and `หน่วยนับ`.
+- Material item images are optional, but the UI should make missing images visible because images help stock counting.
+- Material category can be managed lightly inside the material stock area for now; it may be separated after production usage is tested.
+- Each material item should have a clear supplier link. The exact supplier/material cardinality needs one more confirmation before implementation.
+- Material stock does not use SKU stock labels `จองแล้ว` or `ขายได้`; show `จำนวนที่มีอยู่`, receiving movement, and latest adjustment/receipt.
+- Material stock has a simple movement history for receipts and adjustments.
+- `รอวัตถุดิบ` can optionally name missing materials, but it does not reserve or deduct material stock.
+- Stock Count should support products. Material counting uses the Material Adjustment flow below.
 - Low-stock alert is not full scope; summary view may exist later.
 - Stock and Expense remain separate.
+
+## Material Purchase Orders And Receipts
+
+- `ใบสั่งซื้อวัสดุ` is in the starting workflow for light material stock.
+- It is used to prepare material purchase lists, print/export while waiting to receive, and then accept the whole document into material stock.
+- `ใบสั่งซื้อวัสดุ` can include one material line or many material lines.
+- Statuses: `ร่าง`, `รอรับเข้า`, `รับเข้าสต๊อกแล้ว`, `ยกเลิก`.
+- `รอรับเข้า` is the state used for print/export, including A4 print and JPG/image export.
+- Required fields: date, supplier/store, material lines, quantity, and unit.
+- Price is not part of the first workflow. Do not require price or total on the Material Purchase Order.
+- The system issues a document number automatically, such as `MAT-PO-2568-0001`.
+- `รอรับเข้า` documents can be edited until accepted into stock.
+- Accepting a Material Purchase Order means receiving the whole document into material stock. Partial receipt is not in scope.
+- If goods arrive incomplete, wait until complete before accepting into stock.
+- After a Material Purchase Order is accepted, material lines and quantities cannot be edited; mistakes are corrected through material adjustment.
+- `ร่าง` or `รอรับเข้า` documents that are no longer needed are cancelled, not deleted, to keep the document trail.
+- Attachments/images can be added in any status, including after receipt, for receipts, product photos, labels, or related documents.
+- Accepting into stock creates a payment-audit follow-up item referencing the Material Purchase Order, but it is not an Expense Entry yet.
+- The payment-audit follow-up receives the document number, supplier/store, receipt date, material lines and quantities, and attachments. It does not receive a required amount from the Material Purchase Order.
+
+## Material Adjustment
+
+- Use one user-facing screen name: `ปรับยอดวัสดุ`.
+- Do not split user-facing flows into separate `กระทบยอดวัสดุ` and `ปรับยอดวัสดุ`; use reason/mode such as `กระทบยอด` inside the same screen where needed.
+- In `ปรับยอดวัสดุ`, staff enter actual counted quantity and the system calculates the difference.
+- Staff can adjust multiple material items in one adjustment session.
+- Image/evidence attachment is optional and attached when saving the adjustment session, not required per material line.
+- The screen has flexible date/range summaries such as today, last 7 days, or custom date range.
+- Summary shows count of adjusted items, count of lines with differences, largest differences, and recorder.
+- There is no material issue/withdrawal to Job/Production in the starting workflow.
+- Material usage is reflected by periodic/daily adjustment rather than automatic deduction.
 
 ## Expense
 
@@ -890,7 +934,7 @@ These were discussed but intentionally not detailed now:
 - Quote/Lead workflow
 - Channel/funnel analytics
 - Payroll
-- Material list / material master
+- Full material list / Material Master outside the light material-stock workflow
 - Supplier deep management
 - Product costing/BOM
 - Full QC

@@ -70,6 +70,10 @@ _Avoid_: Payment term, audit confirmation, Job approval
 The separate management view for COD, payment audit, outstanding payments, refunds, deposits retained, or customer credit.
 _Avoid_: Order completion
 
+**Payment Audit Follow-up (รายการรอตรวจจ่าย)**:
+A finance follow-up item created when an operational document, such as a received Material Purchase Order, needs a permitted finance user to record the actual payment or expense separately.
+_Avoid_: Automatic Expense Entry
+
 **Financial Reconciliation (ตรวจยอดการเงิน)**:
 The check during Order total edits that sales total and recorded financial evidence or adjustment notes line up before the edit can be saved.
 _Avoid_: Full accounting, tax workflow, Order status
@@ -179,6 +183,34 @@ _Avoid_: Purchase, expense entry
 **Stock Adjustment (ปรับยอดสต๊อก)**:
 A controlled stock quantity correction with reason and log.
 _Avoid_: Deletion, hidden correction
+
+**Light Material Stock (สต๊อกวัสดุแบบเบา)**:
+Simple material stock for easy-to-count internal materials such as color supplies, drawer rails, staples, and similar consumables. It tracks quantity on hand, receipts, adjustments, and daily/period summaries without full warehouse, BOM, or automatic Job consumption.
+_Avoid_: Full material master, BOM, automatic material issue/transfer workflow
+
+**Material Item (วัสดุ)**:
+One counted material record in Light Material Stock, with name, material category, unit, optional image, and a required supplier link for purchase flow.
+_Avoid_: SKU Variant, product sold to customers
+
+**Material Category (หมวดวัสดุ)**:
+A lightweight grouping managed inside the material stock area.
+_Avoid_: Product Category
+
+**Material Purchase Order (ใบสั่งซื้อวัสดุ)**:
+A material purchase document used to list materials to buy, print/export while waiting to receive, and accept the whole document into Light Material Stock.
+_Avoid_: Expense Entry, full accounting purchase order, partial receipt
+
+**Material Stock Receipt (รับเข้าสต๊อกวัสดุ)**:
+The act of accepting a Material Purchase Order and increasing material stock for every line in the document.
+_Avoid_: Creating an Expense automatically
+
+**Material Adjustment (ปรับยอดวัสดุ)**:
+A lightweight material count/correction screen where staff enter actual counted quantities for selected materials and the system records the difference. It can be used daily, weekly, or on any chosen date range.
+_Avoid_: Separate เบิกวัสดุ, automatic Job material consumption
+
+**Material Need Note (รายการรอวัตถุดิบ)**:
+An optional note from a Job's `รอวัตถุดิบ` state listing missing material names and notes. It helps create purchase orders but does not reserve, issue, move, or deduct material stock.
+_Avoid_: Material requisition, material reservation
 
 ### Production Workflow
 
@@ -329,6 +361,9 @@ _Avoid_: Accounting journal
 - A **Product Model** may optionally reference one **Job** as its origin, but this reference never copies or syncs Job data.
 - **Stock On Hand**, **Reserved Stock**, and **Sellable Stock** are separate stock views for the same **SKU Variant**; **Sellable Stock** may become negative after permitted over-reservation.
 - **Stock Counts** and **Stock Adjustments** affect stock visibility but remain separate from **Expense Entries**.
+- **Light Material Stock** is separate from **Ready Stock**. Material quantities do not have `จองแล้ว` or `ขายได้` in the starting workflow.
+- A **Material Purchase Order** can create a **Material Stock Receipt** for the whole document; after receipt, a referenced **Payment Audit Follow-up** may be created, but no Expense Entry is created automatically.
+- A **Material Need Note** may reference Material Items or free-text material names from Jobs waiting for materials, but it does not reserve or deduct stock.
 - **Expense Entries** and stock movements are separate first-scope records; neither updates the other automatically.
 
 ## UX/UI starting scope
@@ -343,7 +378,7 @@ Included in the starting scope:
 - Rak Samuk outsource flow: send work, worker view, missing-price label, proposed price approval, receive back, and payment preparation.
 - Shipment flow: admin ready-to-ship queue, Draft Shipment, release to delivery, delivery team send-out, admin close Shipment.
 - Management overview: unfinished Jobs, department location, urgency, age, and timeline.
-- Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Stock Count, Stock Adjustment, Product Settings, department instruction images, and review albums.
+- Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Stock Count, Stock Adjustment, Light Material Stock, Material Purchase Order, Product Settings, department instruction images, and review albums.
 - Simple Expense Entry and Payment Voucher concepts only where they support operating visibility and outsource payment.
 
 Explicitly outside the starting scope:
@@ -379,5 +414,6 @@ Explicitly outside the starting scope:
 - "สร้างจาก Job" sounded like copying Job data into SKU. Resolved: **Product Model** only stores an optional **Job Reference on Product Model** for traceability; SKU data is entered independently.
 - "SKU หลัก" and "SKU ใหญ่" were both used for the parent product. Resolved: both refer to **Product Model**, while **SKU Variant** is the color-specific stock unit.
 - "คงเหลือ" was used to mean both physical stock and saleable stock. Resolved: use **Stock On Hand** (`มีอยู่ในร้าน`), **Reserved Stock** (`จองแล้ว`), and **Sellable Stock** (`ขายได้`) explicitly.
+- "Material" was at risk of becoming a full warehouse/BOM system. Resolved: first scope uses **Light Material Stock** for easy-to-count materials, with purchase/receipt/adjustment, but no full material master, no automatic Job consumption, and no automatic Expense creation.
 - "รูปรีวิว" could be mistaken for product images or a media library. Resolved: **Review Album** is a separate review image grouping; there is no central media library in the starting scope.
 - "Hold" and "รอวัตถุดิบ" were both used for blocked work. Resolved: **Hold** is a deliberate admin pause; **Waiting for Materials** is a department material blocker.

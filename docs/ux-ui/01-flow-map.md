@@ -931,3 +931,91 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Blocking Open UX Questions**
 
 - None for the flow map.
+
+## F12 - Light Material Stock To Purchase And Adjustment
+
+**Actors**
+
+- Material stock-permission user
+- Material purchase-permission user
+- Finance/payment-audit permission user
+- Workshop users who mark Jobs as `รอวัตถุดิบ`
+
+**Trigger**
+
+- A Job is waiting for materials, or staff need to receive/count internal materials such as color supplies, drawer rails, staples, or similar easy-to-count consumables.
+
+**Entry Point**
+
+- `สินค้า / สต๊อก` -> `สต๊อกวัสดุ`
+- Job work card -> `รอวัตถุดิบ`
+- Material Stock -> `สร้างใบสั่งซื้อวัสดุ`
+- Material Stock -> `ปรับยอดวัสดุ`
+
+**Screens Involved**
+
+- Job work card
+- Material Stock
+- Material Purchase Order
+- Material Adjustment
+- Payment Audit Follow-up
+
+**Step-by-step User Actions**
+
+1. Workshop user marks a Job as `รอวัตถุดิบ` and records material names/notes only.
+2. Material stock user opens `สต๊อกวัสดุ`.
+3. User sees waiting-materials alerts and material stock quantities.
+4. User can summarize waiting-materials needs into `สร้างใบสั่งซื้อวัสดุ`.
+5. User creates a Material Purchase Order with date, supplier/store, material lines, quantities, and units.
+6. User moves the document to `รอรับเข้า` and can print A4 or export JPG/image for purchasing.
+7. If the document is still `ร่าง` or `รอรับเข้า`, user can edit or cancel it.
+8. When all goods arrive, user accepts the whole Material Purchase Order into stock.
+9. System increases material stock for every line and creates a Payment Audit Follow-up for finance/payment work.
+10. Separately, staff use `ปรับยอดวัสดุ` to enter actual counted quantities for selected materials.
+
+**System Actions**
+
+- Does not reserve, issue, move, or deduct material stock from Job waiting-material notes.
+- Shows material stock as `จำนวนที่มีอยู่`, receiving movement, latest adjustment/receipt, and movement history.
+- Requires material item name, material category, unit, and a clear supplier link for purchase flow.
+- Keeps material item image optional, while warning that missing images make counting harder.
+- Accepts Material Purchase Orders only as full-document receipt; partial receipt is not in the starting workflow.
+- Creates payment-audit follow-up after stock receipt, but does not create an Expense Entry automatically.
+- In Material Adjustment, calculates the difference from actual counted quantities and records the movement.
+
+**Status Changes**
+
+- Material Purchase Order: `ร่าง` -> `รอรับเข้า` -> `รับเข้าสต๊อกแล้ว`, or `ยกเลิก`.
+- Material quantity increases when a Material Purchase Order is accepted.
+- Material quantity changes when Material Adjustment is saved.
+- Payment Audit Follow-up is created after material stock receipt.
+
+**Exit Condition**
+
+- Material quantities are visible and updated through receipt or adjustment, while payment/audit work remains separate.
+
+**Key Data Shown**
+
+- Material name
+- Material category
+- Supplier/store
+- Unit
+- Optional material image
+- Quantity on hand
+- Latest receipt/adjustment
+- Waiting-material Job notes
+- Material Purchase Order number
+- Attachments/evidence
+- Payment-audit follow-up status where relevant
+
+**UX Risks**
+
+- Light material stock turns into full warehouse/BOM/material issue workflow too early.
+- Users assume `รอวัตถุดิบ` reserves material stock.
+- Material receipt creates real Expense entries automatically and mixes stock with finance.
+- Partial receipt sneaks into the workflow and makes the first scope heavier.
+- Supplier/material binding is implemented before the exact supplier cardinality is confirmed.
+
+**Blocking Open UX Questions**
+
+- Exact supplier/material cardinality for Material Items: one supplier per item, many suppliers per item, or item variants by supplier.

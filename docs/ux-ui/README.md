@@ -24,6 +24,7 @@ Do not create new requirement summaries in this folder. If a requirement, term, 
 - `open-questions.md`: captures narrow UX/UI questions that block design details only; do not use it to restart discovery.
 - `screens/`: future per-screen UX specs.
 - `image-prompts/`: future prompts or references for design images, mockup imagery, or visual asset generation.
+- `mockups/`: approved visual anchors or placeholder README files for screens that still need generated/reviewed mockups.
 
 ## Update Rules
 
@@ -32,6 +33,7 @@ Do not create new requirement summaries in this folder. If a requirement, term, 
 - When a hard-to-reverse product decision changes, add or update an ADR before changing UX/UI handoff files.
 - Add detailed screen specs only under `screens/`.
 - Add visual prompt material only under `image-prompts/`.
+- Add mockup approval notes or pending mockup placeholders only under `mockups/`.
 - Keep `open-questions.md` limited to specific UX blockers with enough context to answer them later.
 
 ## No Duplicate Summary Docs

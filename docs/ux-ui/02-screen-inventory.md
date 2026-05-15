@@ -982,7 +982,7 @@ Note:
 - Screen name: Stock Count
 - Thai UI label: `ตรวจนับสต๊อก`
 - Primary actor: Stock-permission user
-- Purpose: Support periodic stock checking outside the core Job flow.
+- Purpose: Support periodic SKU stock checking outside the core Job flow.
 - Entry point: Stock navigation.
 - Exit point: Stock Adjustment when correction is needed.
 - Related flow IDs: none
@@ -999,7 +999,7 @@ Note:
 - Screen name: Stock Adjustment
 - Thai UI label: `ปรับยอดสต๊อก`
 - Primary actor: Stock-permission user / manager
-- Purpose: Correct stock with reason and log.
+- Purpose: Correct SKU stock with reason and log.
 - Entry point: Stock view, Stock Count, operational correction need.
 - Exit point: Updated stock visibility.
 - Related flow IDs: `F06`
@@ -1009,6 +1009,57 @@ Note:
 - Main data objects: Stock Adjustment, Ready Stock, SKU Variant, Management Log
 - Main actions: Enter adjustment, reason, and evidence where required.
 - Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+
+### SUP-015 - Material Stock
+
+- Screen ID: `SUP-015`
+- Screen name: Material Stock
+- Thai UI label: `สต๊อกวัสดุ`
+- Primary actor: Stock/material-permission user
+- Purpose: Lightweight material stock view for easy-to-count internal materials, separate from Product/SKU stock and full Material Master.
+- Entry point: Sidebar `สินค้า / สต๊อก` -> `สต๊อกวัสดุ`, waiting-materials alerts from Jobs.
+- Exit point: Material Purchase Order, Material Adjustment, Job Detail where waiting materials originated.
+- Related flow IDs: `F04`, `F10`, `F12`
+- Priority: `P1`
+- Device target: desktop / tablet
+- Design status: needs decision
+- Main data objects: Material Item, Material Category, Supplier, Material Need Note, Material Movement
+- Main actions: View material quantity on hand, see waiting-materials alerts, create purchase order summary, receive through purchase order, open material adjustment, view simple movement history.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-015-material-stock.md`; `docs/ux-ui/image-prompts/IMG-SUP-015-material-stock.md`; `docs/ux-ui/mockups/SCR-SUP-015-material-stock/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### SUP-016 - Material Purchase Order
+
+- Screen ID: `SUP-016`
+- Screen name: Material Purchase Order
+- Thai UI label: `ใบสั่งซื้อวัสดุ`
+- Primary actor: Material purchase/stock-permission user
+- Purpose: Prepare a material purchase document, print/export it while waiting to receive, and accept the whole document into material stock.
+- Entry point: Material Stock, waiting-materials summary, manual material purchase creation.
+- Exit point: Material Stock, Payment Audit Follow-up.
+- Related flow IDs: `F12`
+- Priority: `P1`
+- Device target: desktop / tablet
+- Design status: needs decision
+- Main data objects: Material Purchase Order, Material Item, Supplier, Material Stock Receipt, attachment, Payment Audit Follow-up
+- Main actions: Create draft, move to `รอรับเข้า`, print/export A4/JPG, edit while waiting, accept whole document into stock, cancel draft/waiting document, attach evidence in any status.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-016-material-purchase-order.md`; `docs/ux-ui/image-prompts/IMG-SUP-016-material-purchase-order.md`; `docs/ux-ui/mockups/SCR-SUP-016-material-purchase-order/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### SUP-017 - Material Adjustment
+
+- Screen ID: `SUP-017`
+- Screen name: Material Adjustment
+- Thai UI label: `ปรับยอดวัสดุ`
+- Primary actor: Material stock-permission user
+- Purpose: Let staff enter actual counted quantities for selected materials and have the system record differences with optional evidence.
+- Entry point: Material Stock, material count work.
+- Exit point: Updated Material Stock and material movement history.
+- Related flow IDs: `F12`
+- Priority: `P1`
+- Device target: desktop / tablet / mobile
+- Design status: ready
+- Main data objects: Material Adjustment, Material Item, Material Movement, attachment, Management Log
+- Main actions: Search/select materials, enter actual count for multiple materials, calculate differences, save optional evidence for the adjustment session, view summaries by date/range.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-017-material-adjustment.md`; `docs/ux-ui/image-prompts/IMG-SUP-017-material-adjustment.md`; `docs/ux-ui/mockups/SCR-SUP-017-material-adjustment/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-009 - Review Album
 

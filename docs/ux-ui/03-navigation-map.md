@@ -151,8 +151,17 @@ Expected subcategories:
 
 - Product/SKU management
 - Ready Stock
+- Material Stock
+- Material Purchase Orders
+- Material Adjustment
 - Stock Count
 - Stock Adjustment
+
+Rules:
+
+- `สต๊อกวัสดุ` is separate from `รายการสินค้า / SKU`.
+- Material stock is lightweight in the starting workflow: no full warehouse, no BOM, no automatic Job material issue, and no automatic Expense creation.
+- Material Purchase Orders can create stock receipt and a payment-audit follow-up, but finance/payment remains under the finance permission flow.
 
 ### ลูกค้า / CRM
 

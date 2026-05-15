@@ -76,3 +76,23 @@ Decision:
 - Stock shortage is a warning/reporting issue after acknowledgement by an Order-capable user.
 - It does not block Order or Shipment operation.
 - Shipment Builder shows acknowledgement when selected ready-stock lines have negative/insufficient stock.
+
+## Material / Stock Boundary Follow-up Questions
+
+### OQ-MAT-001 - Supplier/material cardinality
+
+Open:
+
+- Each material item needs a clear supplier link for purchase flow.
+- If the same physical material can be bought from multiple suppliers, the next decision should clarify whether the system creates separate Material Items per supplier, or allows multiple suppliers on one Material Item.
+
+Why it matters:
+
+- This affects the Material Stock table, Material Purchase Order line picker, supplier filter, and how strictly purchasing is tied to a supplier.
+
+### OQ-MAT-002 - Material purchase/payment handoff detail
+
+Open but not blocking first UX:
+
+- Material Purchase Order receipt creates Payment Audit Follow-up, not Expense Entry.
+- The exact finance screen behavior for recording the later payment/expense can be grilled in the finance/payment round, not inside the material stock boundary.

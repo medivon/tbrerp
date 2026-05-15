@@ -981,6 +981,77 @@ A: It can suggest active/moving and positive-stock items.
 **Q: Are Stock and Expense linked automatically?**
 A: No. Separate systems.
 
+## 21.1 Light Material Stock / Material Boundary
+
+**Q: Should material stock be a full Material Master?**
+A: No. Use `สต๊อกวัสดุแบบเบา` for easy-to-count internal materials only, such as color supplies, drawer rails, staples, and similar consumables.
+
+**Q: Where does material stock live in the navigation?**
+A: Under `สินค้า / สต๊อก` as `สต๊อกวัสดุ`, separate from `รายการสินค้า / SKU` and ready-stock views.
+
+**Q: What fields are required for a material item?**
+A: Name, material category, unit, and a clear supplier link for purchase flow. Image is optional, but useful for stock counting.
+
+**Q: Is material category a separate full settings area now?**
+A: No. Manage it simply inside the material-stock area first; it may be separated later after production testing.
+
+**Q: Does `รอวัตถุดิบ` reserve or deduct material stock?**
+A: No. It records material names/notes only, with no quantity, reservation, issue, transfer, or deduction.
+
+**Q: Should material waiting notes show somewhere?**
+A: Yes. The Material Stock landing page can show alerts/list of Jobs waiting for materials, so staff can summarize what people need.
+
+**Q: Can waiting-material notes become a purchase document?**
+A: Yes. From the Material Stock landing page, a permitted user can summarize items into the Material Purchase Order creation flow.
+
+**Q: What quantity label should material stock use?**
+A: Use `จำนวนที่มีอยู่`. Do not use `จองแล้ว`, `ขายได้`, `คงเหลือ`, or `พร้อมขาย` for materials.
+
+**Q: How does receiving materials work?**
+A: Through `ใบสั่งซื้อวัสดุ` and whole-document receipt. Receiving increases material stock for every line at once.
+
+**Q: Can a Material Purchase Order receive partially?**
+A: No. If goods are incomplete, wait until complete; partial receipt is outside the starting workflow.
+
+**Q: What statuses does Material Purchase Order need?**
+A: `ร่าง`, `รอรับเข้า`, `รับเข้าสต๊อกแล้ว`, and `ยกเลิก`.
+
+**Q: What can be done while the Material Purchase Order is `รอรับเข้า`?**
+A: Print A4, export JPG/image, edit lines if needed, attach evidence, or cancel before receipt.
+
+**Q: Does Material Purchase Order need price first?**
+A: No. Required fields are date, supplier/store, lines, quantity, and unit. Price is not required in the starting workflow.
+
+**Q: Does receiving a Material Purchase Order create Expense automatically?**
+A: No. It creates a Payment Audit Follow-up for finance/payment review; Expense Entry remains separate and permission-controlled.
+
+**Q: Can attachments be added after receipt?**
+A: Yes. Attachments can be added in any status, including after receipt.
+
+**Q: How are wrong received quantities corrected?**
+A: After receipt, lines/quantities are not edited. Corrections happen through Material Adjustment.
+
+**Q: What is the visible screen name for material counting/correction?**
+A: Use one screen name: `ปรับยอดวัสดุ`. `กระทบยอด` can be a reason/mode inside that screen.
+
+**Q: How does Material Adjustment work?**
+A: Staff enter actual counted quantities for selected materials, and the system calculates/records differences.
+
+**Q: Can Material Adjustment handle multiple items at once?**
+A: Yes. Staff can search/select and adjust multiple material items in one session.
+
+**Q: Are adjustment images required?**
+A: No. Evidence images are optional at save time for the adjustment session.
+
+**Q: How should material adjustment summaries work?**
+A: Summaries should be filterable by date/range, such as today, last 7 days, weekly, or custom range.
+
+**Q: Are material purchase, receipt, and adjustment permissions separate?**
+A: Yes. Creating purchase documents, receiving into stock, and adjusting materials should be split by permission.
+
+**Q: What remains open before implementation?**
+A: Exact supplier/material cardinality: if the same physical material can be bought from multiple suppliers, should the system create separate Material Items per supplier, or allow multiple suppliers on one Material Item?
+
 ## 22. Expense
 
 **Q: What is Expense Entry for?**
@@ -1070,7 +1141,7 @@ A: No, future phase.
 ## 26. Deferred Items
 
 **Q: Which items were intentionally deferred?**
-A: PV line-item detail, full accounting, tax, quotation, channel analytics, payroll, material list / material master, supplier deep management, BOM/costing, QC, media library, customer merge, carrier API, wholesale pricing.
+A: PV line-item detail, full accounting, tax, quotation, channel analytics, payroll, full material master beyond light material stock, supplier deep management, BOM/costing, QC, media library, customer merge, carrier API, wholesale pricing.
 
 ## 27. Current UX Q&A Status
 
