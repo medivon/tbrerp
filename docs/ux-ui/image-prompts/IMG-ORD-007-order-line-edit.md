@@ -4,12 +4,24 @@ Related screen spec:
 
 - `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`
 
+Visual/content anchors:
+
+- `docs/ux-ui/mockups/SCR-ORD-005-order-detail/SCR-ORD-005-approved.png`
+- `docs/ux-ui/mockups/SCR-ORD-001-draft-order-editor/SCR-ORD-001-approved.png`
+- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
+- `docs/ux-ui/design-system/app-shell.md`
+
 ## High-Fidelity GPT Image 2 Prompt
 
 ```text
-Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “แก้ไขรายการออเดอร์”. This is an edit mode for an already confirmed Order, not a new Order and not an invoice.
+Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “แก้ไขรายการออเดอร์”. This is a guarded edit mode for an already confirmed Order. It is not a new Order, not a Draft Order, not an invoice, and not a full payment workflow.
 
-Use the THAIBORAN admin app shell with sidebar active “ออเดอร์”.
+Use the approved THAIBORAN Admin Dashboard app shell:
+- Fixed left sidebar with THAIBORAN logo/brand
+- Main navigation: แดชบอร์ด, ออเดอร์, งานสั่งทำ / ผลิต, รอบจัดส่ง, สินค้า / สต๊อก, ลูกค้า / CRM, รายจ่าย, ตั้งค่า
+- Highlight “ออเดอร์” as active
+- Top bar with page title, current date, user avatar, Admin user and role ผู้ดูแลระบบ
+- Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows
 
 Header:
 - Page title: แก้ไขรายการออเดอร์
@@ -17,9 +29,10 @@ Header:
 - Status chips: กำลังดำเนินการ, จัดส่งยังไม่ครบ
 - Back action: กลับไปหน้า รายละเอียดออเดอร์
 - Primary footer action: ตรวจสอบการแก้ไข
+- Show a clear edit-mode note: การแก้ไขนี้ต้องผ่าน Review Changes ก่อนบันทึก
 
 Main content:
-Use a Create/Edit-like layout but clearly mark it as editing existing Order lines.
+Use a Create/Edit-like layout but clearly mark it as editing existing confirmed Order lines. Keep blocked lines visible as read-only rows with reasons so the user can still edit other safe lines.
 
 Section: สินค้าพร้อมส่ง
 Rows:
@@ -30,9 +43,9 @@ Button: เพิ่มสินค้าพร้อมส่ง
 
 Section: งานสั่งทำ
 Rows:
-1. ตู้พระสั่งทำ, new custom-work line being added, editable detail fields visible.
+1. ตู้พระสั่งทำ, new custom-work line being added, editable detail fields visible, chip “จะสร้าง JOB-O หลังบันทึก”.
 2. ตู้โชว์ไม้สักแกะลาย, related JOB-O-0238, disabled production-detail edit with action “เปิด Job” and note “แก้รายละเอียดผลิตในหน้า Job”.
-3. โต๊ะหมู่บูชา, related JOB-O-0240, not started, show controlled remove action “ลบงานสั่งทำออกจากออเดอร์” requiring reason.
+3. โต๊ะหมู่บูชา, related JOB-O-0240, disabled/read-only because JOB-O already exists, show action “เปิด Job” with note “ยกเลิกงานสั่งทำจากหน้า Job ก่อน”.
 Button: เพิ่มงานสั่งทำ
 
 Right impact panel:
@@ -44,24 +57,43 @@ Title: ผลกระทบที่รอตรวจสอบ
 - กระทบสต๊อก 1 รายการ
 - กระทบ JOB-O 1 รายการ
 - กระทบรอบจัดส่ง 0 รายการ
-Reason field: เหตุผลการแก้ไข
-Make it clear that added ready-stock will reserve stock, removed safe ready-stock will release stock, and the new custom-work line will create JOB-O only after saving from Review Changes.
+Reason field: เหตุผลการแก้ไข, shown only for changes that require reason
+Make it clear that these effects happen only after saving from Review Changes:
+- Added ready-stock will reserve stock
+- Removed safe ready-stock will release stock
+- Ready-stock quantity changes adjust reserved stock by the difference
+- New complete custom-work line will create JOB-O
+- Price/discount changes update net total and financial summary where allowed
+- If Payment Records or COD records already exist and the edited total does not match financial evidence/notes, show a blocking Financial Reconciliation panel before save
+- Financial Reconciliation supports adding Payment Record evidence, COD to collect, or adjustment/refund/credit note in a modal/drawer
 
 Footer:
 - ยกเลิก / กลับ
 - ตรวจสอบการแก้ไข
 
-Optional Review Changes preview/modal/state:
+Review Changes preview/state:
 - Title: ตรวจสอบการแก้ไข
 - Buttons: กลับไปแก้ไข, บันทึกการแก้ไข, ยกเลิก
 - Show only changed lines and impact, not the whole Order again
+- Require reason only when a line is removed, JOB-O is cancelled/closed, or the change affects existing Job or Shipment state; stock-negative acknowledgement is logged but does not require a manager approval reason
+- Net total changes do not require a reason by themselves when the user already has price/amount edit permission
+- Disable บันทึกการแก้ไข if sales total and financial evidence/notes do not reconcile
+- After saving, return to Order Detail with a short toast “บันทึกการแก้ไขแล้ว”
+
+Unsaved-exit warning:
+- If user tries to leave with unsaved changes, show modal actions: อยู่ต่อ and ออกโดยไม่บันทึก
+- Do not offer บันทึกร่าง and do not show autosave for this confirmed Order edit
 
 Visual rules:
 - Thai labels primary
-- Keep English only for Order ID, Job, JOB-O, COD, Tracking
+- Keep these English terms unchanged: Job, JOB-O, JOB-P, COD, Payment, Revision, Tracking
 - Do not show draft or autosave state for this confirmed Order edit
 - Do not silently edit existing JOB-O production detail
+- Existing JOB-O production detail changes and cancellation route to Job Detail / Job Revision / Job cancellation
 - Do not allow sent/completed lines to look editable
+- Do not silently remove items from Shipment rounds
+- Do not remove any line that is already in a Draft or Released Shipment round until that round is cancelled or the line is removed from the round
 - Do not show full payment workflow
 - Make Review Changes feel required before save
+- Do not make this screen look like a new Order create screen; it is a controlled edit mode for a live confirmed Order
 ```

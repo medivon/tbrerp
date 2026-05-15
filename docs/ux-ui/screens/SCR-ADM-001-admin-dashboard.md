@@ -39,7 +39,7 @@ Related visual system:
 
 ## 5. Exit Points
 
-- `ออเดอร์กำลังดำเนินการ` overview.
+- `ออเดอร์ที่ต้องติดตาม` overview.
 - `งานกำลังผลิต` overview.
 - `รอสร้างรอบจัดส่ง` queue.
 - `ยืนยันการจัดส่ง` queue.
@@ -93,7 +93,7 @@ Rules:
 
 | Card | Thai Title | Count Unit | Example Count | Status Chip | Subtext | Action |
 |---|---|---:|---:|---|---|---|
-| Active Orders | `ออเดอร์กำลังดำเนินการ` | Order | 18 | `ยังไม่จบงาน` | `กำลังผลิต 11 • ส่งได้เลย 7` | `ดูออเดอร์` |
+| Orders Follow-up | `ออเดอร์ที่ต้องติดตาม` | Order | 18 | `ยังต้องตามงาน` | `กำลังผลิต 11 • ส่งได้เลย 7` | `ดูออเดอร์` |
 | Active Jobs | `งานกำลังผลิต` | Job | 17 | `กำลังทำงาน` | `ช่างไม้ 8 • ฝ่ายสี 6 • รักสมุก 3` | `ดูภาพรวมงาน` |
 | Waiting Shipment Creation | `รอสร้างรอบจัดส่ง` | Order | 7 | `ส่งได้เลย` | `มี COD 3 ออเดอร์` | `เปิดคิวงาน` |
 | Shipment Confirmation | `ยืนยันการจัดส่ง` | Shipment round | 4 | `รอเพิ่มข้อมูล` | `เพิ่มเลขติดตามพัสดุ / หลักฐานขนส่ง` | `เปิดคิวงาน` |
@@ -102,7 +102,7 @@ Rules:
 
 Card rules:
 
-- `ออเดอร์กำลังดำเนินการ` counts confirmed Orders that are not operationally complete.
+- `ออเดอร์ที่ต้องติดตาม` counts confirmed Orders that still need operational follow-up.
 - `งานกำลังผลิต` counts Jobs, not Orders.
 - `รอสร้างรอบจัดส่ง` counts Orders, not item lines.
 - `ยืนยันการจัดส่ง` counts shipment rounds, not Orders.
@@ -160,7 +160,7 @@ Rules:
 | Field | Thai Label | Source object | Notes |
 |---|---|---|---|
 | Page title | `แดชบอร์ดแอดมิน` | App shell | Approved title. |
-| Active Order count | `ออเดอร์กำลังดำเนินการ` | Order | Count confirmed Orders not operationally complete. |
+| Orders follow-up count | `ออเดอร์ที่ต้องติดตาม` | Order | Count confirmed Orders that still need operational follow-up. |
 | Active Job count | `งานกำลังผลิต` | Job | Includes `JOB-O` and `JOB-P`. |
 | Ready-to-ship Order count | `รอสร้างรอบจัดส่ง` | Order / Shipment readiness | Count Orders ready for shipment-round creation. |
 | Shipment confirmation count | `ยืนยันการจัดส่ง` | Shipment | Count shipment rounds awaiting tracking/evidence confirmation. |

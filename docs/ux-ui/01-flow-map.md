@@ -28,7 +28,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Screens Involved**
 
 - `Admin Dashboard`
-- `ออเดอร์กำลังดำเนินการ` queue
+- `ออเดอร์ที่ต้องติดตาม` queue
 - `งานกำลังผลิต` queue
 - `รอสร้างรอบจัดส่ง` queue
 - `ยืนยันการจัดส่ง` queue
@@ -117,10 +117,10 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 5. Admin enters quantity, price, and required Payment Term.
 6. Admin optionally records Payment Record.
 7. If custom work exists, admin enters `รายละเอียดงานสั่งทำ` inside each custom line until it is complete enough to create `JOB-O`.
-8. If the Order mixes ready-stock and custom work, admin keeps default `ส่งพร้อมกัน` or chooses `จัดส่งแยกได้`.
+8. If the Order mixes ready-stock and custom work, admin sees default `ส่งพร้อมกัน`; actual split shipment later happens by selecting only ready lines in shipment-round creation.
 9. Admin either saves the work as Draft Order or presses `สร้างออเดอร์` to open Order Review.
 10. Admin reviews all entered data in row/card detail, with ready-stock and custom-work sections separated.
-11. Admin resolves any inline warnings or permission overrides on the Review screen.
+11. Admin resolves any inline warnings or acknowledgements on the Review screen, such as stock-insufficient ready-stock lines.
 12. Admin presses `ยืนยันสร้างออเดอร์`.
 13. System opens confirmed Order Detail.
 
@@ -133,6 +133,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Creates Order ID only after required entry is complete.
 - Reserves ready-stock lines when the real Order is created.
 - Creates `JOB-O` immediately for each complete custom line when the real Order is created.
+- Does not require Payment Record or payment override to create `JOB-O`.
+- Stock-insufficient ready-stock lines require fix or acknowledgement by an Order-capable user, then operation continues even if stock becomes negative.
 - Does not create Shipment rounds from Order Review.
 
 **Status Changes**
@@ -142,6 +144,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - No Order ID -> Order ID created.
 - Ready-stock Order Line -> reserved stock when Order is created.
 - Custom Order Line -> `JOB-O` created when Order is created.
+- Order status and Shipment summary are tracked separately after creation; `รอยืนยันการจัดส่ง` belongs to Shipment summary, not Order status.
 
 **Exit Condition**
 
@@ -160,8 +163,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Price
 - Payment Term
 - Optional Payment Record
-- Order Shipment Plan: `ส่งพร้อมกัน` or `จัดส่งแยกได้`, when relevant
-- Inline warning/override state
+- Order Shipment Plan / shipment intent when mixed ready-stock and custom work exists
+- Inline warning/acknowledgement state
 - Order ID after creation
 
 **UX Risks**
@@ -182,7 +185,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Actors**
 
 - Admin
-- Manager or higher-permission user when override is required
+- Sales/admin users with Order creation permission
 
 **Trigger**
 
@@ -204,9 +207,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 1. Admin adds `งานสั่งทำ` during Order Create/Edit.
 2. Admin fills `รายละเอียดงานสั่งทำ`, quantity, price, required images/instructions, and delivery date if relevant.
 3. Admin reviews the custom line on Order Review.
-4. If custom work lacks a Payment Record and requires override, permissioned user enters reason inline on Review.
-5. Admin confirms the Order.
-6. Admin opens the created `JOB-O` from Order Detail when production detail needs follow-up.
+4. Admin confirms the Order when Custom Work Detail is complete.
+5. Admin opens the created `JOB-O` from Order Detail when production detail needs follow-up.
 
 **System Actions**
 
@@ -237,13 +239,13 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Department instruction images and text
 - Delivery date if relevant
 - Urgent Label if set
-- Payment/override signal only where permission allows
+- Payment Term / Payment Record only as commercial context where relevant
 
 **UX Risks**
 
 - `JOB-O` is not visually clear enough for workshop users.
 - Custom Work Detail is incomplete before confirmation.
-- Payment override is too easy to miss or too disruptive for authorized users.
+- Staff mistakenly believe missing Payment Record blocks `JOB-O` creation.
 - Admin expects a separate `รอสร้าง Job` step after Order confirmation.
 - Later Job edits create production confusion if revision acknowledgement is not visible.
 
@@ -471,7 +473,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 5. From Order Detail, Admin may select ready lines in `จัดการรอบจัดส่ง` and open `สร้างรอบจัดส่ง` with those selected lines.
 6. In the single/special path, Admin reviews item list, shipment plan, recipient/address, carrier, delivery date, notes, and COD if relevant.
 7. In the single/special path, Admin creates Shipment, releases it to delivery team, or keeps it as Draft Shipment if not ready.
-8. In the bulk path, system uses default Customer/Order delivery data, using the first Order as reference where needed, and creates Shipments/documents without opening `สร้างรอบจัดส่ง`.
+8. In the bulk path, system uses each Order's saved Order Recipient Detail snapshot as the delivery default, using the first eligible Order only as a document grouping reference where needed, and creates Shipments/documents without opening `สร้างรอบจัดส่ง`.
 9. Admin prints Delivery Note, Shipping Sheet, or both when needed.
 
 **System Actions**
@@ -479,10 +481,12 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Shows ready-to-ship work grouped as Orders, not loose item chaos.
 - Keeps this queue separate from Delivery Team `รายการต้องจัดส่งวันนี้`.
 - Includes ready-stock, completed custom work, and ready Service Case items.
-- Respects the Order Shipment Plan: mixed Orders set to `ส่งพร้อมกัน` wait until all required lines are ready; mixed Orders set to `จัดส่งแยกได้` may ship ready lines first.
+- Uses ready-line selection as the practical split/combined shipment control from Order Detail: selected multiple ready lines become one combined Shipment round; selected partial ready lines become a split Shipment round.
 - Creates Shipment from selected ready items.
+- Shows acknowledgement modal for stock-negative selected ready-stock lines; this warning does not block Shipment creation after acknowledgement.
 - Routes one Order / special cases / Order Detail selected lines into `สร้างรอบจัดส่ง`.
-- Routes bulk eligible Orders around `สร้างรอบจัดส่ง` and directly to Shipment/document creation using default delivery data.
+- Passes recipient name, address, phone, selected delivery items, each item's main image, quantity, and carrier name when already chosen into Shipment Builder.
+- Routes bulk eligible Orders around `สร้างรอบจัดส่ง` and directly to Shipment/document creation using saved Order Recipient Detail snapshots as the delivery default.
 - Stores recipient/address snapshot on Shipment.
 - Creates Delivery Note and Shipping Sheet together.
 - Defaults to release to delivery team after creation unless admin keeps Draft Shipment.
@@ -523,7 +527,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Delivery Note and Shipping Sheet are visually confused.
 - COD edit/warning is unclear.
 - Custom Job appears here before production is complete.
-- Ready-stock line from a mixed Order ships early even though the Order Shipment Plan is `ส่งพร้อมกัน`.
+- Shipment intent is treated as a rigid workflow switch instead of using selected ready lines as the practical split/combined control.
 
 **Blocking Open UX Questions**
 

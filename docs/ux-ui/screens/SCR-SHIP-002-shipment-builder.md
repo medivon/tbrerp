@@ -4,7 +4,7 @@
 
 Shipment Builder is the `สร้างรอบจัดส่ง` screen for selected ready-to-ship items from one Order / special-case Shipment creation flow. Admin uses it when selected Order lines need manual review or delivery detail adjustments before releasing the Shipment.
 
-This screen is not used for bulk shipment creation. Bulk creation bypasses this screen and uses default Customer/Order delivery data to create the Shipment documents directly.
+This screen is not used for bulk shipment creation. Bulk creation bypasses this screen and uses saved Order Recipient Detail snapshots as delivery defaults to create the Shipment documents directly.
 
 Approved mockup:
 
@@ -21,6 +21,7 @@ Approved mockup:
 - Review selected ready-to-ship lines from one Order before creating a Shipment.
 - Handle special delivery cases that need manual edits.
 - Confirm or edit recipient, phone, address, carrier, delivery date, COD, and delivery-facing notes.
+- Acknowledge stock-negative warnings when selected ready-stock lines were allowed to proceed despite stock shortage.
 - Preview Delivery Note and Shipping Sheet.
 - Release the Shipment to delivery team or save it as Draft Shipment.
 - Avoid using this detailed editor for high-volume bulk creation.
@@ -29,7 +30,7 @@ Approved mockup:
 
 - `รอสร้างรอบจัดส่ง` -> row action `สร้างรอบจัดส่ง` for one Order.
 - `รอสร้างรอบจัดส่ง` -> right drawer action `สร้างรอบจัดส่ง`.
-- Order Detail -> `จัดการรอบจัดส่ง` -> `สร้างรอบจัดส่งจากรายการที่เลือก`, with selected shippable Order lines.
+- Order Detail -> `จัดการรอบจัดส่ง` -> `สร้างรอบจัดส่งจากรายการที่เลือก`, with selected shippable Order lines and their default delivery context.
 - Draft Shipment Detail when continuing a draft.
 
 Not an entry point:
@@ -86,9 +87,9 @@ Bulk exit:
 | Item list | รายการพร้อมส่ง | โต๊ะกลางลงรักสมุก | Selected Order Line / Job / Service Case | No price shown. |
 | Source | สถานะงาน | งานสั่งทำเสร็จแล้ว | Order Line / Job / Service Case | Stock/custom/service badge. |
 | Quantity | จำนวน | 1 ชิ้น | Order Line / Job | Printed on Delivery Note. |
-| Product image | รูปสินค้า | Table thumbnail | Order Line / Job / SKU | Work recognition. |
+| Product image | รูปสินค้า | Table thumbnail | Main product/work image from Order Line / Job / SKU | Work recognition; no delivery-specific image selection. |
 | Related Job ID | ที่มา / Job ID | JOB-O-0238 | Job | Only where relevant. |
-| Shipment plan | แผนจัดส่ง | จัดส่งแยกได้ | Order Shipment Plan | Shown only for mixed ready-stock/custom Orders; explains why selected items can ship now. |
+| Shipment intent | วิธีจัดส่งรายการนี้ | จัดส่งบางรายการจากออเดอร์ | Order Detail selection | Selected ready lines determine whether this Shipment round is combined or split. |
 | Recipient | ผู้รับสินค้า | คุณณัฐพล | Address Entry / Shipment snapshot | Editable before release. |
 | Phone | เบอร์โทร | 081-234-5678 | Address Entry / Shipment snapshot | Editable before release. |
 | Address | ที่อยู่จัดส่ง | 88/14 ถ.ราชพฤกษ์... | Address Entry / Shipment snapshot | Snapshot on Shipment. |
@@ -96,6 +97,7 @@ Bulk exit:
 | Delivery date | วันจัดส่ง | 24 พ.ค. 67 | Shipment | No-date goes to today's delivery tab after release. |
 | COD | COD | 12,000 บาท | Shipment / Payment Term | Admin confirms/edits; permission-aware. |
 | COD note | หมายเหตุ COD | เก็บปลายทางตามยอดที่เก็บเงินแล้ว | Shipment COD note | Required if override needs explanation. |
+| Stock warning | แจ้งเตือนสต๊อก | สต๊อกติดลบ 1 รายการ | Ready Stock / Order Line | Acknowledgement only; does not block Shipment creation after user accepts. |
 | Notes | หมายเหตุจัดส่ง | โทรก่อนเข้าจัดส่ง / ชิ้นงานระวังกระแทก | Shipment | Delivery-facing note. |
 
 ## 9. Actions
@@ -110,6 +112,7 @@ Bulk exit:
 | Edit delivery info | แก้ไขข้อมูลจัดส่ง | Admin and same/higher permission | Edits recipient/address/carrier/date before release. | No |
 | Edit COD | แก้ยอด COD | Admin with permission | Updates Shipment COD before release. | Yes if override/over expected amount |
 | Edit delivery note | แก้หมายเหตุ | Admin and same/higher permission | Updates delivery-facing note. | No |
+| Acknowledge stock warning | รับทราบสต๊อกติดลบ | Admin and same/higher permission | Logs acknowledgement and continues Shipment creation. | Yes, acknowledgement only |
 
 ## 10. Status / Chips
 
@@ -134,7 +137,8 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Create fails: `สร้างรอบจัดส่งไม่สำเร็จ`.
 - Release fails: `ปล่อยให้ฝ่ายจัดส่งไม่สำเร็จ`.
 - Selected item already in another Draft Shipment: show `รายการนี้กำลังถูกเตรียมรอบจัดส่งแล้ว`.
-- Order Shipment Plan blocks shipment: show `ออเดอร์นี้ตั้งค่าให้ส่งพร้อมกัน` and return to Order Detail.
+- Selected items are no longer shippable: show `รายการที่เลือกยังไม่พร้อมสร้างรอบจัดส่ง` and return to Order Detail.
+- Stock-negative ready-stock line: show acknowledgement modal with `รับทราบและสร้างรอบจัดส่งต่อ` and `กลับไปตรวจสต๊อก`; do not require reason or Manager approval.
 - COD warning without note: show `กรุณาระบุหมายเหตุ COD`.
 
 ## 13. Permission Rules
@@ -146,7 +150,10 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them.
 - Draft Shipment items are not shipped and Order is not complete.
 - Bulk users do not enter this screen for default/simple creation.
-- Shipment Builder must only receive selected items that are shippable under the Order Shipment Plan / current Order Detail selection rules.
+- Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
+- When opened from Order Detail, Shipment Builder receives recipient name, address, phone, selected items, item main images, quantities, and carrier name when already chosen.
+- Recipient/address/carrier edits in Shipment Builder are Shipment snapshots only; they do not update Customer or Order automatically.
+- Stock shortage is a warning/reporting concern after Order acknowledgement; Shipment creation may continue after acknowledgement and log.
 
 ## 14. UX Notes for Designer
 
@@ -157,7 +164,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Delivery Note and Shipping Sheet are separate print previews, created from the same Shipment.
 - Do not show product prices on delivery documents.
 - Make COD warning visible but do not turn the screen into finance/audit work.
-- For bulk flows, use default Customer/Order delivery data and bypass this screen.
+- For bulk flows, use saved Order Recipient Detail snapshots as delivery defaults and bypass this screen.
 
 ## 15. Image Generation Prompt
 

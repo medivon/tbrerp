@@ -26,15 +26,17 @@ Use the approved THAIBORAN admin app shell and the approved content direction fr
 Important workflow rule:
 - This screen is for selected lines from a single Order / special case only.
 - Bulk creation does not enter this screen.
-- Bulk creation uses default Customer/Order delivery data and moves directly to creating Shipment documents.
+- Bulk creation uses saved Order Recipient Detail snapshots as delivery defaults and moves directly to creating Shipment documents.
 - It opens from Order Detail after the admin selects ready lines in `จัดการรอบจัดส่ง` and presses `สร้างรอบจัดส่งจากรายการที่เลือก`.
+- From Order Detail, it receives recipient name, address, phone, selected delivery items, each item's main image, quantity, and carrier name when already chosen.
+- If selected ready-stock lines have negative/insufficient stock that was acknowledged earlier, show a warning acknowledgement here; do not block Shipment creation after acknowledgement.
 
 Header:
 - Page title: สร้างรอบจัดส่ง
 - Subtitle: ตรวจรายการพร้อมส่งและข้อมูลผู้รับก่อนปล่อยให้ฝ่ายจัดส่ง
 - Source reference: จากออเดอร์ ORD-240520-014
 - Status chip: กำลังสร้างรอบจัดส่ง
-- Shipment plan chip: จัดส่งแยกได้, shown only because this example is a mixed ready-stock/custom Order
+- Selection chip: จัดส่งบางรายการจากออเดอร์
 
 Layout:
 Use a clean two-panel review layout with a fixed footer action bar.
@@ -48,11 +50,13 @@ Show selected ready lines from one Order with:
 - Quantity: 1 ชิ้น
 - Status chip: งานสั่งทำเสร็จแล้ว
 - Related Job ID: JOB-O-0238
-- Shipment plan note: ออเดอร์นี้จัดส่งแยกได้, shown only for mixed ready-stock/custom Orders
+- Selection note: รายการนี้ถูกเลือกจากหน้า Order Detail เพื่อสร้างรอบจัดส่งนี้
 - Buttons: ดูใบส่งของ, ดูใบจัดส่ง
 
 Add a calm info box:
 “ตรวจสอบรายการและข้อมูลจัดส่งแล้ว พร้อมสร้างรอบจัดส่ง 1 รายการ”
+If useful, show a warning line:
+“แจ้งเตือน: สต๊อกติดลบ 1 รายการ”
 
 Right panel title: ข้อมูลจัดส่ง
 Show delivery data as editable special-case fields:
@@ -70,6 +74,13 @@ Show edit buttons:
 - แก้ไขข้อมูลจัดส่ง
 - แก้ยอด COD
 - แก้หมายเหตุ
+Note: edits here are Shipment-round snapshots only and do not update Customer or Order automatically.
+
+Stock warning modal/inline state:
+- Title: แจ้งเตือนสต๊อกติดลบ
+- Message: รายการพร้อมส่งบางรายการมีสต๊อกติดลบ/ไม่พอ ระบบให้ดำเนินการต่อได้หลังรับทราบ
+- Buttons: รับทราบและสร้างรอบจัดส่งต่อ, กลับไปตรวจสต๊อก
+- Do not require Manager approval or reason field
 
 Footer action bar:
 - Primary button: พร้อมจัดส่ง
@@ -83,10 +94,11 @@ Visual rules:
 - Do not show product prices, sales price, profit, accounting totals, tax, ad spend, or private CRM notes
 - Do not show bulk selection or multi-order table here
 - Do not show the Order Detail selection control “สร้างรอบจัดส่งจากรายการที่เลือก” here; by this point the selected items are already inside Shipment Builder
-- Do not show items blocked by ส่งพร้อมกัน / unfinished custom work
+- Do not show unselected items or items blocked by unfinished custom work
 - Do not show Delivery Team controls
 - Do not imply the Shipment is already sent
 - Do not show “ส่งออกแล้ว”
 - Do not show final Order completion
+- Do not make stock shortage look like a hard block after acknowledgement
 - The screen should feel like a single/special-case shipment review editor before release
 ```

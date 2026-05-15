@@ -29,7 +29,7 @@ Order Completion happens only when all required shipment rounds for the Order ar
 
 - `แดชบอร์ด` -> `ยืนยันการจัดส่ง`.
 - Sidebar `รอบจัดส่ง` -> `ยืนยันการจัดส่ง`.
-- Active Orders overview row with state `รอยืนยันการจัดส่ง`.
+- Active Orders overview row with shipment state `รอยืนยันการจัดส่ง`.
 - Shipment Detail after Delivery Team marks `ส่งออกแล้ว`.
 
 ## 5. Exit Points
@@ -100,7 +100,7 @@ Order Completion happens only when all required shipment rounds for the Order ar
 | Status | Thai Label | Meaning | Visual note |
 |---|---|---|---|
 | Sent out | ส่งออกแล้ว | Delivery marked shipment sent out. | Positive but not closed. |
-| Waiting confirmation | รอยืนยันการจัดส่ง | Admin must review and close. | Main queue chip. |
+| Waiting confirmation | รอยืนยันการจัดส่ง | Admin must review and close the Shipment round. | Shipment queue chip. |
 | Tracking missing | รอเลขพัสดุ | Tracking is missing where expected. | Warning chip. |
 | Evidence complete | หลักฐานครบ | Evidence is ready for close review. | Positive chip. |
 | Evidence missing | หลักฐานไม่ครบ | Required evidence may be missing. | Warning chip. |

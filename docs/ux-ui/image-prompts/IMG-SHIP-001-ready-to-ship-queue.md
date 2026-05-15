@@ -30,7 +30,7 @@ Use the approved Admin Dashboard app shell as the visual baseline:
 - Preserve the approved calm ERP visual language: white cards, subtle shadows, modest rounded corners, compact colored chips, dark navy typography, Thai-first UI labels, dense but readable office workflow layout
 
 Screen purpose:
-Show Orders that have ready-to-ship items waiting for admin to create a shipment round under the Order Shipment Plan. Keep work grouped by Order, not as loose item chaos. Include ready-stock items, completed JOB-O work, and ready Service Case items. Mixed Orders set to ส่งพร้อมกัน should wait until all required items are ready; mixed Orders set to จัดส่งแยกได้ may ship currently ready items. This is before the Shipment exists. It is not the delivery team's “รายการต้องจัดส่งวันนี้” screen.
+Show Orders that have ready-to-ship items waiting for admin to create a shipment round. Keep work grouped by Order, not as loose item chaos. Include ready-stock items, completed JOB-O work, and ready Service Case items. Actual combined or split shipment is controlled by selected ready lines; unfinished custom work must not appear as shippable. This is before the Shipment exists. It is not the delivery team's “รายการต้องจัดส่งวันนี้” screen.
 
 Header:
 - Page title: รอสร้างรอบจัดส่ง
@@ -87,8 +87,9 @@ Create a dense Order-grouped ready-to-ship table/workbench designed for dozens o
 - Delivery target date where relevant, labeled “กำหนดส่ง”
 - Carrier preview where relevant, labeled “ขนส่งที่ระบุไว้”
 - COD chip where relevant
+- Stock warning chip/text where relevant: สต๊อกติดลบ, shown as warning only and not as a hard blocker after acknowledgement
 - Bulk eligibility chip: สร้างรวมได้ or ต้องเปิดแยก
-- Shipment plan chip where relevant: ส่งพร้อมกัน or จัดส่งแยกได้
+- Shipment selection chip where relevant: ส่งรวม or ส่งบางรายการ
 - Current state / next action
 - Primary action button: สร้างรอบจัดส่ง
 
@@ -116,13 +117,14 @@ Visual rules:
 - Use “รอบจัดส่ง” instead of “Shipment” in visible Thai UI
 - Do not show product prices, sales price, profit, accounting totals, tax, ad spend, or private CRM notes
 - Do not show unfinished custom Jobs in this queue
-- Do not show ready-stock lines from a mixed Order if its plan is ส่งพร้อมกัน and custom work is not ready
+- Do not show unfinished custom Jobs as shippable
 - Do not show Draft Orders here
 - Do not let Delivery Team controls appear on this admin screen
 - Do not show “รายการต้องจัดส่งวันนี้” as a delivery work tab on this screen; use “กำหนดส่งวันนี้” only as a planning filter
 - Do not make the list loose item-by-item chaos; group by Order
 - Do not make the page card-heavy or slow to scan; it must work when there are dozens of ready Orders
 - Do not imply bulk creation is allowed for every Order; show eligibility clearly
+- Do not make stock shortage look like a hard blocker after acknowledgement; show it as a warning that Shipment Builder will acknowledge/log
 - Preserve the approved THAIBORAN Admin Dashboard, Active Orders, and Active Jobs visual direction
 - The screen should feel practical for office admin users preparing daily shipment rounds
 ```

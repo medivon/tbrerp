@@ -29,7 +29,7 @@ Admin reviews current Order Create/Edit data before confirming. This is the fina
 Header:
 - Page title: ตรวจสอบก่อนสร้างออเดอร์
 - Subtitle: ตรวจข้อมูลครั้งสุดท้ายก่อนออกเลขออเดอร์จริง
-- Status chip: พร้อมสร้างออเดอร์
+- Status chip: ต้องรับทราบคำเตือน when showing the stock warning example; otherwise พร้อมสร้างออเดอร์
 - Small warning note: ยังไม่มี Order ID จนกว่าจะกดยืนยัน
 
 Main layout:
@@ -48,7 +48,7 @@ Left review cards:
    - ผู้รับสินค้า: คุณภพ
    - เบอร์ผู้รับ: 082-345-6789
    - ที่อยู่จัดส่ง: 99/12 ถ.เจริญกรุง แขวงบางรัก กรุงเทพฯ 10500
-   - Note: ข้อมูลนี้จะถูกใช้เป็นข้อมูลหลักของออเดอร์ และ Shipment จะ snapshot ภายหลัง
+   - Note: ข้อมูลนี้จะถูกบันทึกเป็นข้อมูลผู้รับของออเดอร์นี้ และไม่เปลี่ยนตาม Customer ภายหลัง
    - Button/link: กลับไปแก้ไข
 
 3. เงื่อนไขการชำระเงิน
@@ -59,7 +59,7 @@ Left review cards:
    Show only if Payment Record exists:
    - Payment Record: รับมัดจำแล้ว 19,000 บาท
    - ยอดคงเหลือ: 37,000 บาท
-   If no Payment Record exists, do not invent one; warning appears in the override area when custom work requires it.
+   If no Payment Record exists, do not invent one. Missing Payment Record is not a JOB-O blocker and does not require override.
 
 5. สรุปสินค้าพร้อมส่ง
    Show only if ready-stock lines exist. Use detailed row/cards with thumbnails:
@@ -76,8 +76,8 @@ Left review cards:
 
 7. แผนจัดส่ง
    Show only if the Order mixes ready-stock and custom-work lines:
-   - ส่งพร้อมกัน selected
-   - If shown, note that จัดส่งแยกได้ can be managed later only through the appropriate Order management or shipment-selection flow when allowed
+   - Show a compact default intent chip: ส่งพร้อมกัน
+   - Do not show a separate split-shipment toggle here; actual split shipment is handled later by selecting ready lines when creating Shipment rounds
 
 8. รายละเอียดงานสั่งทำที่จะสร้าง JOB-O
    Show only if custom-work lines exist:
@@ -88,13 +88,15 @@ Left review cards:
    - thumbnails for reference images
    - Department instruction preview if useful: ช่างไม้, สี/ตกแต่ง, รักสมุก
 
-Warning / override area:
+Warning / acknowledgement area:
 Place this inline before the final action, visible in the main content or right panel:
 - Warning: สต๊อกไม่พอ 1 รายการ
-- Warning: งานสั่งทำยังไม่มี Payment Record ต้องระบุเหตุผลอนุมัติ
-- Permission-aware override reason field: เหตุผลอนุมัติ
-- Show a small permission note such as ต้องใช้สิทธิ์ผู้จัดการ / ผู้มีสิทธิ์อนุมัติ
-- If warnings are unresolved, show the primary “ยืนยันสร้างออเดอร์” button disabled and the readiness status as ต้องอนุมัติพิเศษ
+- Show acknowledgement control: รับทราบว่าสต๊อกอาจติดลบ
+- If acknowledged by a user with Order create/confirm permission, note that stock may go negative and the acknowledgement will be logged
+- Do not show a payment override for custom work without Payment Record
+- Do not show a manager approval field or reason field for stock shortage
+- Show a small permission note such as ผู้มีสิทธิ์สร้าง/ยืนยันออเดอร์สามารถรับทราบคำเตือนนี้ได้
+- If warnings are unresolved, show the primary “ยืนยันสร้างออเดอร์” button disabled and the readiness status as ต้องรับทราบคำเตือน
 - Do not use a modal for these warnings; they are resolved inline on Review
 
 Right sticky confirmation panel:
@@ -111,12 +113,12 @@ Buttons:
 - Secondary: กลับ
 - Secondary: บันทึกร่าง
 - Primary blue: ยืนยันสร้างออเดอร์
-If unresolved warning/override exists, render the primary button disabled and visibly explain why.
+If unresolved warning acknowledgement exists, render the primary button disabled and visibly explain why.
 
 Inline warning example:
 - Stock insufficient warning: สต๊อกไม่พอ 1 รายการ
-- Payment override warning: งานสั่งทำยังไม่มี Payment Record ต้องระบุเหตุผลอนุมัติ
-- Permission-aware override reason field visible only for users who can resolve it
+- Stock acknowledgement result note: รับทราบแล้ว ระบบอาจจองสต๊อกจนติดลบ
+- Permission-aware acknowledgement control visible only for users who can resolve it
 - Do not use a modal for the final confirmation.
 
 Visual rules:
@@ -129,6 +131,7 @@ Visual rules:
 - Do not make this look like a quotation or invoice
 - Do not make this look like a payment page
 - Make “จะสร้าง JOB-O” and “จะจองสต๊อก” clear downstream result chips
+- Make it clear JOB-O creation depends on complete custom-work detail, not Payment Record
 - Do not add a second confirmation modal; this Review screen is the final confirmation step
 - The screen should feel like a final operational review, compact and serious
 ```

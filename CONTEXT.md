@@ -19,7 +19,7 @@ A saved recipient name, phone number, and delivery address under a Customer.
 _Avoid_: Free-floating address
 
 **Order Recipient Detail (ข้อมูลผู้รับในออเดอร์)**:
-The Order-specific recipient, phone, and address used for this Order unless a line or Shipment has its own delivery detail.
+The recipient, phone, and address snapshot stored on a confirmed Order, independent from later Customer address-book changes.
 _Avoid_: Customer master, Shipment snapshot
 
 **Order (ออเดอร์)**:
@@ -39,11 +39,23 @@ One sellable line inside an Order, either ready-stock goods or custom work.
 _Avoid_: Job when the item is ready-stock only
 
 **Order Line Edit (แก้ไขรายการออเดอร์)**:
-A guarded post-confirmation workflow for adding, removing, or changing Order Lines while respecting stock reservation, Order Jobs, Shipments, and history.
+A guarded post-confirmation edit mode entered from Order Detail for adding, removing, or changing Order Lines while respecting stock reservation, Order Jobs, Shipments, and history.
 _Avoid_: New Order, Draft Order, hidden autosave edit
 
+**Cancelled Order Line (รายการออเดอร์ที่ยกเลิกแล้ว)**:
+An Order Line that remains visible as Order history but no longer counts toward active item count, active Order total, shipment selection, or Order status calculation.
+_Avoid_: Deleted item, hidden line
+
+**Order Status (สถานะออเดอร์)**:
+The active-line operational state of an Order, calculated separately from Shipment round status and financial follow-up.
+_Avoid_: Shipment status, payment status
+
+**Shipment Summary (สถานะการจัดส่งในออเดอร์)**:
+The Order-facing summary of Shipment rounds, carrier, tracking, and delivery confirmation state.
+_Avoid_: Order status, payment status
+
 **Order Shipment Plan (แผนการจัดส่งของออเดอร์)**:
-The Order-level choice that says whether ready-stock and custom-work lines must ship together or may ship separately.
+The Order-level default intent for mixed ready-stock and custom-work Orders; actual combined or split shipment is created by selecting ready lines for a Shipment round.
 _Avoid_: Shipment, delivery round, Order status
 
 **Payment Term (เงื่อนไขการชำระเงิน)**:
@@ -51,12 +63,16 @@ The commercial agreement for how an Order should be paid.
 _Avoid_: Payment record
 
 **Payment Record (รายการรับเงิน)**:
-An actual payment entry such as transfer, credit card, or COD amount recorded against an Order or Shipment.
-_Avoid_: Payment term, audit confirmation
+An immutable actual payment entry such as transfer, credit card, or COD amount recorded against an Order or Shipment; later amount changes add follow-up records instead of rewriting old received-money history.
+_Avoid_: Payment term, audit confirmation, Job approval
 
 **Financial Follow-up (ติดตามการเงิน)**:
 The separate management view for COD, payment audit, outstanding payments, refunds, deposits retained, or customer credit.
 _Avoid_: Order completion
+
+**Financial Reconciliation (ตรวจยอดการเงิน)**:
+The check during Order total edits that sales total and recorded financial evidence or adjustment notes line up before the edit can be saved.
+_Avoid_: Full accounting, tax workflow, Order status
 
 ### Product and Custom Work
 
@@ -229,14 +245,17 @@ _Avoid_: Accounting journal
 ## Relationships
 
 - A **Customer** has many **Address Entries**, **Orders**, **CRM Notes**, **Private CRM Notes**, **Service Cases**, and optional **Review Albums**.
-- An **Address Entry** belongs to exactly one **Customer**, an **Order** has **Order Recipient Detail**, and a **Shipment** stores a snapshot of the recipient/address used at dispatch time.
+- An **Address Entry** belongs to exactly one **Customer**, an **Order** has frozen **Order Recipient Detail**, and a **Shipment** stores its own recipient/address snapshot used at dispatch time.
 - An **Order Entry Session** may become one **Draft Order** when saved, or one **Order** when confirmed.
 - A **Draft Order** may become one **Order**; after conversion it is archived/read-only and no longer shown in active draft work.
 - An **Order** has many **Order Lines**, has **Order Recipient Detail**, has one **Order Shipment Plan** only when mixed line types need a delivery decision, and may create many **Shipments**.
-- An **Order Line** can be ready-stock only or custom work.
+- An **Order** has an **Order Status** calculated from active Order Lines; **Shipment Summary** is shown separately from Order Status.
+- An **Order Line** can be ready-stock only or custom work, and may become a **Cancelled Order Line** while remaining visible for history.
 - **Order Line Edit** may add, remove, or change safe **Order Lines** after confirmation, but it is not a Draft Order and does not create hidden autosave records.
 - A custom **Order Line** carries **Custom Work Detail** during order entry or guarded Order Line Edit, and creates one **Order Job** when the Order is confirmed or when the completed new custom line is saved after confirmation.
 - A ready-stock **Order Line** reserves **Ready Stock** when the Order is confirmed or when the line is added after confirmation, but does not create a **Job**.
+- A **Payment Record** may be captured during Order entry or later Financial Follow-up, but missing Payment Records do not block **Order Job** creation.
+- **Financial Reconciliation** can block saving an Order total edit when the new sales total does not line up with financial records or adjustment notes; this is separate from normal Order operation.
 - A **Job** has exactly one **Job Source Type**: Order or Production.
 - An **Order Job** belongs to an Order Line and becomes ready for **Shipment** only after production is complete.
 - A **Production Batch** has many **Production Lots**; a Production Lot may create one or more **Production Jobs** depending on how production is split.
@@ -288,7 +307,12 @@ Explicitly outside the starting scope:
 - "Draft" was used for both temporary in-screen entry and a saved draft record. Resolved: **Order Entry Session** is temporary and unsaved; **Draft Order** is saved and has a Draft No.
 - "Draft Job" was suggested for custom work inside a draft Order. Resolved: use **Custom Work Detail** on the custom **Order Line**; it becomes a **JOB-O** only when the Order is confirmed.
 - "Order done" could mean shipped or financially settled. Resolved: **Order Completion** means all required shipments are closed; **Financial Follow-up** is separate.
+- "Order status" and "Shipment status" were mixed in Order List. Resolved: **Order Status** and **Shipment Summary** are separate; `รอยืนยันการจัดส่ง` belongs to Shipment Summary, not Order Status.
 - "Customer" was used for both buyer and delivery receiver. Resolved: **Customer** owns CRM and buying history; **Recipient** is the delivery receiver snapshot/address entry.
+- "Payment" was used as if it approved `JOB-O` creation. Resolved: **Payment Record** is financial evidence/follow-up, not a gate for creating **Order Jobs**.
+- "Payment never blocks Order" was too broad. Resolved: Payment does not block normal Order creation or operation, but **Financial Reconciliation** blocks saving an Order total edit when the edited total does not match financial evidence or adjustment notes.
+- "Order Line Edit" sounded like a standalone screen. Resolved: **Order Line Edit** is a guarded edit mode/sub-flow entered from **Order Detail**, not a separate module or Draft Order.
+- "ส่งพร้อมกัน" and "จัดส่งแยก" sounded like a heavy workflow switch. Resolved: the default mixed-Order intent is `ส่งพร้อมกัน`, while actual split shipment is handled by selecting ready lines when creating **Shipment** rounds.
 - "สร้างจาก Job" sounded like copying Job data into SKU. Resolved: SKU only stores an optional **Job Reference on SKU** for traceability; SKU data is entered independently.
 - "รูปรีวิว" could be mistaken for product images or a media library. Resolved: **Review Album** is a separate review image grouping; there is no central media library in the starting scope.
 - "Hold" and "รอวัตถุดิบ" were both used for blocked work. Resolved: **Hold** is a deliberate admin pause; **Waiting for Materials** is a department material blocker.

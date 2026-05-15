@@ -189,7 +189,7 @@ Not allowed:
 
 First-scope dashboard cards:
 
-- `ออเดอร์กำลังดำเนินการ`
+- `ออเดอร์ที่ต้องติดตาม`
 - `งานกำลังผลิต`
 - `รอสร้างรอบจัดส่ง`
 - `ยืนยันการจัดส่ง`
@@ -241,7 +241,7 @@ Recommended screen flow:
 4. Add Order Lines using separate actions: `เพิ่มสินค้าพร้อมส่ง` and `เพิ่มงานสั่งทำ`
 5. Enter price and required Payment Term
 6. If custom work exists, enter `รายละเอียดงานสั่งทำ` inside the custom line
-7. If the Order mixes ready-stock and custom work, choose shipment plan; default is `ส่งพร้อมกัน`, optional `จัดส่งแยกได้`. Orders with only one line type do not need this field.
+7. If the Order mixes ready-stock and custom work, default shipment intent is `ส่งพร้อมกัน`; actual split shipment later happens by selecting ready lines when creating Shipment rounds.
 8. Review all details
 9. Confirm and create Order ID
 
@@ -253,12 +253,12 @@ Confirmed rules:
 - Customer must be selected before adding Order Lines.
 - Payment Term is required.
 - Payment Record can be recorded in the flow but should not over-block operations.
-- Custom work without a Payment Record requires permission override with reason before confirmation.
+- Missing Payment Record does not block `JOB-O` creation and does not require payment override.
 - Pressing `สร้างออเดอร์` always opens Order Review first.
 - Order Review shows entered data in detailed row/cards, with ready-stock and custom-work sections separated; hide the custom section when no custom work exists.
 - Order Review has `กลับ`, `บันทึกร่าง`, and `ยืนยันสร้างออเดอร์`.
 - `ยืนยันสร้างออเดอร์` does not open a second confirmation modal; the Review screen is the final confirmation step.
-- Inline warnings/override fields on Review block confirmation until resolved.
+- Inline warning/acknowledgement controls on Review block confirmation until resolved.
 - Confirming creates the real Order ID, reserves ready-stock lines, creates `JOB-O` for complete custom lines, and opens Order Detail.
 - `บันทึกร่าง` creates or updates the saved Draft Order and returns to the `ร่างออเดอร์` tab.
 - `กลับ` from Review returns to Order Create/Edit for the same work.
@@ -267,17 +267,19 @@ Confirmed rules:
 
 Main Order tabs:
 
-- `กำลังดำเนินการ`
+- `ออเดอร์ที่ต้องติดตาม`
 - `ออเดอร์ทั้งหมด`
 - `ร่างออเดอร์`
 - `ปิดแล้ว / ยกเลิก`
 
 Rules:
 
-- `กำลังดำเนินการ` contains only real Orders that are not operationally complete.
+- `ออเดอร์ที่ต้องติดตาม` contains only real Orders that still need operational follow-up.
 - Draft Orders do not appear in the active operational Order list.
 - Orders with custom work show a simple `มีงานสั่งทำ` label in the list.
-- Main Order statuses are operational: `กำลังดำเนินการ`, `กำลังผลิต`, `พร้อมสร้างรอบจัดส่ง`, `ส่งบางส่วน`, `รอยืนยันการจัดส่ง`, `จัดส่งครบแล้ว`, `ยกเลิก`.
+- Main Order statuses are operational and calculated from active lines: `กำลังดำเนินการ`, `กำลังผลิต`, `พร้อมสร้างรอบจัดส่ง`, `ส่งบางส่วน`, `จัดส่งครบแล้ว`, `ยกเลิก`.
+- `รอยืนยันการจัดส่ง` belongs to `สถานะการจัดส่ง` / Shipment round state, not `สถานะออเดอร์`.
+- Order List separates `สถานะออเดอร์` from `สถานะการจัดส่ง`.
 
 ### Order Detail
 
@@ -289,8 +291,8 @@ Confirmed behavior:
 - It starts with Order status and shipment status as the main header states.
 - Financial follow-up is visible but lives in its own section.
 - The header uses `จัดการออเดอร์`; section-level edit buttons appear in the sections where editing is allowed.
-- Header menu shortcuts include `แก้ข้อมูลผู้รับในออเดอร์นี้`, `แก้ไขรายการสินค้า`, `แก้ไขงานสั่งทำ`, `จัดการรอบจัดส่ง`, `เปิดติดตามการเงิน`, and `ยกเลิกออเดอร์`.
-- Customer/recipient editing is split by intent: edit Order-specific recipient/address from Order Detail, but open Customer Detail/Profile for Customer master changes.
+- Header menu shortcuts include `เปิดลูกค้า`, `แก้ไขรายการสินค้า`, `แก้ไขงานสั่งทำ`, `จัดการรอบจัดส่ง`, `เปิดติดตามการเงิน`, and `ยกเลิกออเดอร์`.
+- Customer/recipient editing is split by intent: Customer master/default address changes happen in Customer Detail/Profile, the confirmed Order keeps its own Order Recipient Detail snapshot, and Shipment recipient/address changes happen in Shipment Builder/Detail as Shipment snapshots.
 - Post-confirmation Order Edit is not one full edit-everything page; each area routes to the appropriate scoped edit flow.
 - Sections are ordered like a report: summary, Order items, shipment-round management, related shipment rounds, payment summary, and short history.
 - `รายการในออเดอร์` is grouped by item type: `สินค้าพร้อมส่ง` and `งานสั่งทำ`.
@@ -301,14 +303,15 @@ Confirmed behavior:
 - Do not put `แผนจัดส่ง` as the primary top summary; use line state and shipment management detail instead.
 - `แผนจัดส่ง` exists only for mixed ready-stock/custom Orders and acts as a guard for shipment selection.
 - If the header shipment state is complete but payment remains outstanding, keep the operational state such as `จัดส่งครบแล้ว` in the header and show money issues only in payment follow-up.
+- `ส่งบางส่วน` means at least one active deliverable line has completed delivery recording with tracking/evidence while some active line remains unfinished.
+- `จัดส่งครบแล้ว` means all active deliverable lines have completed delivery recording with tracking/evidence. Payment follow-up does not change this status.
 
 Shipment management inside Order Detail:
 
 - `จัดการรอบจัดส่ง` appears below Order items.
 - It lets admin select ready lines and press `สร้างรอบจัดส่งจากรายการที่เลือก`.
 - Selecting multiple ready lines means combined shipment; selecting only some ready lines means split shipment.
-- For mixed Orders, `ส่งพร้อมกัน` blocks selecting only some ready lines until the required lines are ready together; `จัดส่งแยกได้` allows ready lines to be selected first.
-- If `ส่งพร้อมกัน` blocks the intended split shipment and the current state allows the plan to change, admin may switch to `จัดส่งแยกได้` from this shipment-management section with log.
+- For mixed Orders, `ส่งพร้อมกัน` is the default intent; selected ready lines are the practical split/combined shipment control.
 - Default selection is ready lines that are not already in a Shipment round.
 - Non-selectable lines still appear disabled with reasons such as `ยังผลิตไม่เสร็จ`, `อยู่ในรอบจัดส่งแล้ว`, or `ส่งแล้ว`.
 - Pressing `สร้างรอบจัดส่งจากรายการที่เลือก` opens Shipment Builder with the selected lines.
@@ -316,17 +319,11 @@ Shipment management inside Order Detail:
 
 Editing from Order Detail:
 
-- Light/safe fields such as customer/recipient/contact/note can be edited from their relevant section where allowed.
-- `แก้ข้อมูลผู้รับในออเดอร์นี้` changes the Order-specific recipient/address used for future Order work; it must not silently rewrite Customer master data or existing Shipment snapshots.
-- `แก้ข้อมูลผู้รับในออเดอร์นี้` appears both in the `จัดการออเดอร์` menu and in the recipient/summary section.
-- If a Shipment round already exists, edit that Shipment's recipient/address in the Shipment screen; Order recipient edits affect future Shipment rounds only.
-- If no Shipment round exists yet, changing the main Order recipient/address affects lines that still use the main recipient; line-specific delivery overrides remain unchanged.
-- Editing Order recipient detail uses a modal/drawer with save + log, not Review Changes.
-- Order recipient detail can be selected from an existing Address Entry or entered manually.
-- New/modified Order recipient detail is saved back to Customer address book only when the user explicitly selects a save-to-customer checkbox.
+- Light/safe fields such as Order notes can be edited from their relevant section where allowed.
+- Customer master/default address changes happen in Customer Detail/Profile. Confirmed Order recipient/address is an Order Recipient Detail snapshot. Shipment recipient/address changes happen in Shipment Builder/Detail as Shipment snapshots.
 - `เปิดลูกค้า` appears in the customer section and opens Customer Detail/Profile; Customer master editing happens there.
-- If the Order has line-specific delivery addresses, `แก้ข้อมูลผู้รับในออเดอร์นี้` edits only the main Order recipient.
-- Line-specific delivery detail is edited from the line itself until it enters a Shipment round; after that, edit it in the Shipment screen.
+- If a Shipment round already exists, edit that Shipment's recipient/address in the Shipment screen.
+- New/modified Shipment recipient detail is a Shipment snapshot and does not rewrite Customer master data unless a future Customer flow explicitly saves it.
 - `แก้ไขรายการสินค้า` and `แก้ไขงานสั่งทำ` open `แก้ไขรายการออเดอร์`, a full-page edit mode similar to Order Create/Edit but for confirmed Orders.
 - `แก้ไขรายการออเดอร์` has `Review Changes` before save.
 - `แก้ไขรายการออเดอร์` has no draft/autosave. If the user leaves with unsaved edits, warn with `อยู่ต่อ` / `ออกโดยไม่บันทึก`.
@@ -336,12 +333,15 @@ Editing from Order Detail:
 - Added complete custom-work lines create `JOB-O` when Review Changes is saved.
 - Price/discount changes are allowed where permission and Order state allow; Review Changes shows total and financial impact.
 - Existing `JOB-O` production-detail changes go to Job Detail / Job Revision.
-- A custom-work line with `JOB-O` can be removed only if the Job has not started production, and removal cancels/closes the Job with reason and log.
-- A ready-stock line already in a Shipment round must be removed from that round before the Order line can be edited or removed.
+- If a custom-work line already has `JOB-O`, cancellation/removal starts from Job Detail / Job cancellation first, even if production has not started. Order Detail reflects the cancelled Job state and reason.
+- A ready-stock line already in a Shipment round must be removed from that round or the Shipment round must be cancelled before the Order line can be edited or removed.
 - Sent-out or completed lines cannot be edited or removed from the Order; use service, return, or adjustment flows later.
-- Review Changes has `กลับไปแก้ไข`, `บันทึกการแก้ไข`, and `ยกเลิก`; meaningful changes require a reason when they affect total, Job, Shipment, or Stock.
+- If price/discount/total changes after Payment Records or COD records exist, Review Changes blocks save until the edited sales total is reconciled with Payment Records, COD to collect, or adjustment/refund/credit notes.
+- Review Changes has `กลับไปแก้ไข`, `บันทึกการแก้ไข`, and `ยกเลิก`; meaningful changes require a reason when they remove a line, cancel/close `JOB-O`, or affect existing Job or Shipment state. Net total changes are logged but do not require a reason by themselves when the user already has price/amount edit permission.
 - After saving Review Changes, return to Order Detail with a short `บันทึกการแก้ไขแล้ว` toast/banner and light highlight on the changed section.
-- `ยกเลิกออเดอร์` is the last warning action in `จัดการออเดอร์`. If cancellation is allowed, confirm with reason; if blocked by sent-out lines or started `JOB-O`, disable the action and show the reason.
+- `ยกเลิกออเดอร์` is the last warning action in `จัดการออเดอร์`. If cancellation is allowed, confirm with reason; if blocked by sent-out lines or active downstream Job/Shipment blockers, disable the action and show the reason.
+- If the last active line is cancelled and nothing has been shipped, confirm that the whole Order will also be cancelled and require reason/log.
+- If some lines have completed delivery and all remaining active lines are cancelled, the Order becomes `จัดส่งครบแล้ว`; cancelled lines remain history.
 - Cancelled Orders are read-only and show `ยกเลิกแล้ว` instead of normal management actions.
 - Completed Orders can still edit safe general information, but not Order items or shipment-impacting fields.
 
@@ -359,9 +359,10 @@ Confirmed table behavior:
 - Default date range: all time.
 - Date filter field: Order created date.
 - Date filter presets: `วันนี้`, `7 วันล่าสุด`, `เดือนนี้`, `เดือนที่แล้ว`, `กำหนดช่วงเอง`.
-- Status filters: `ทั้งหมด`, `กำลังดำเนินการ`, `กำลังผลิต`, `พร้อมสร้างรอบจัดส่ง`, `ส่งบางส่วน`, `รอยืนยันการจัดส่ง`, `จัดส่งครบแล้ว`, `ยกเลิก`.
+- Order status filters: `ทั้งหมด`, `กำลังดำเนินการ`, `กำลังผลิต`, `พร้อมสร้างรอบจัดส่ง`, `ส่งบางส่วน`, `จัดส่งครบแล้ว`, `ยกเลิก`.
+- Shipment-summary filters may include `รอยืนยันการจัดส่ง`, but it is not an Order status filter.
 - Search fields: Order ID, customer name, phone, recipient, address/province/postal code, Job ID, product/work name.
-- Main columns: `เลขออเดอร์`, `ชื่อลูกค้า`, `เบอร์โทร`, `รายการสินค้า`, `สถานะการจัดส่ง`, `ยอดรวม`, custom-work icon, `วันที่สร้าง`, action.
+- Main columns: `เลขออเดอร์`, `ชื่อลูกค้า`, `เบอร์โทร`, `รายการสินค้า`, `สถานะออเดอร์`, `สถานะการจัดส่ง`, `ยอดรวม`, custom-work icon, `วันที่สร้าง`, action.
 - Do not show creator or owner as main columns in this table.
 - Row action: `เปิดออเดอร์` only.
 - Do not make the whole row a primary click target.
@@ -385,6 +386,7 @@ Shipment summary:
 
 - If no Shipment round exists, show `ยังไม่ได้จัดส่ง` in red text.
 - If a Shipment round exists but carrier/tracking is not recorded, show `ยังไม่ได้จัดส่ง` in blue text and allow the popover to show the Shipment round number.
+- If a Shipment round has been sent out but admin confirmation/evidence is pending, show `รอยืนยันการจัดส่ง` in `สถานะการจัดส่ง`.
 - If tracking exists, show `ชื่อขนส่ง : tracking`, such as `Kerry : xxxxx`.
 - If multiple shipment rounds exist and the Order is not fully shipped, show `จัดส่งยังไม่ครบ` and list previous carrier/tracking entries in the popover.
 - If multiple shipment rounds exist and shipping is complete, show the latest tracking plus `+N รอบ`, with all rounds in the popover.
@@ -702,8 +704,9 @@ Address:
 - Customer has address list
 - One default address
 - Address has recipient name and recipient phone
-- New address added during initial Order creation is saved automatically to Customer address list
-- New or modified address entered while editing `ข้อมูลผู้รับในออเดอร์นี้` after confirmation is saved back only when the user explicitly chooses to do so
+- New address added during initial Order creation is not saved automatically to Customer address list
+- New or modified address is saved back to Customer only when the user explicitly chooses `บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า`
+- Confirmed Orders keep their own Order Recipient Detail snapshot; later Customer address-book changes do not rewrite existing Orders
 - Shipment always snapshots recipient/address data
 
 ## Stock UX
@@ -712,7 +715,9 @@ Confirmed first-scope rules:
 
 - Use one warehouse concept even though real locations differ.
 - Ready-stock item reserves stock on Order creation.
-- Over-reservation can be allowed by setting; warn but do not block.
+- Stock-insufficient Order confirmation is blocked until fixed or acknowledged by a user with Order create/confirm permission.
+- If acknowledged, the reservation may make stock go negative so the shortage remains visible, but Order and Shipment operation continue.
+- Stock shortage is a warning/reporting issue after acknowledgement, not an operational blocker.
 - Shipment cancellation after stock was reserved should not auto-return stock if operationally risky; use Stock Adjustment with reason.
 - Stock Count should be mobile-friendly and image-heavy.
 - Smart cycle count can suggest active/moving stock first.
@@ -822,7 +827,7 @@ These labels should remain Thai for shop staff:
 - `รายการรอจัดส่ง/รอสร้างใบส่งของ`
 - `ยืนยันการจัดส่ง`
 - `Draft Order`
-- `ออเดอร์กำลังดำเนินการ`
+- `ออเดอร์ที่ต้องติดตาม`
 - `งานกำลังผลิต`
 - `รอสร้างรอบจัดส่ง`
 - `งานผลิตต้องติดตาม`

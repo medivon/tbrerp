@@ -39,7 +39,7 @@ The approved Admin Dashboard cards route users into working queues or overviews.
 
 | Dashboard Card | Routes To | Navigation Area |
 |---|---|---|
-| `ออเดอร์กำลังดำเนินการ` | Active Orders overview | `ออเดอร์` |
+| `ออเดอร์ที่ต้องติดตาม` | Orders follow-up overview | `ออเดอร์` |
 | `งานกำลังผลิต` | Job overview across `JOB-O` and `JOB-P` | `งานสั่งทำ / ผลิต` |
 | `รอสร้างรอบจัดส่ง` | Ready-to-ship / shipment-round creation queue | `รอบจัดส่ง` |
 | `ยืนยันการจัดส่ง` | Shipment confirmation queue | `รอบจัดส่ง` |
@@ -78,7 +78,7 @@ Purpose:
 
 Expected subcategories:
 
-- `ออเดอร์กำลังดำเนินการ`
+- `ออเดอร์ที่ต้องติดตาม`
 - `ออเดอร์ทั้งหมด`
 - `ร่างออเดอร์`
 - `ปิดแล้ว / ยกเลิก`
@@ -93,7 +93,7 @@ Rules:
 - From `ออเดอร์ทั้งหมด`, row action `เปิดออเดอร์` routes to Order Detail.
 - Shipment creation, payment follow-up, and other operational actions happen after opening Order Detail, not as crowded row actions in `ออเดอร์ทั้งหมด`.
 - In Order Detail, `จัดการออเดอร์` is the header shortcut menu; line shipment creation happens in `จัดการรอบจัดส่ง`.
-- `แก้ไขรายการสินค้า` and `แก้ไขงานสั่งทำ` route to `แก้ไขรายการออเดอร์`, not to casual inline editing inside the report.
+- `แก้ไขรายการสินค้า` and `แก้ไขงานสั่งทำ` enter the guarded `แก้ไขรายการออเดอร์` edit mode from Order Detail, not casual inline editing inside the report and not a separate standalone module.
 
 ### งานสั่งทำ / ผลิต
 

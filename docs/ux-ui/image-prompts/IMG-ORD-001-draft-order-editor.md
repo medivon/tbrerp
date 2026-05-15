@@ -24,14 +24,15 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows
 
 Screen purpose:
-Admin enters customer, recipient/address, order lines, payment terms, shipment plan, and custom-work details before creating a real Order ID. Unsaved entry stays temporary; a Draft Order is created only when admin presses “บันทึกร่าง”. Draft data does not reserve stock, create Job, create Shipment, or enter reports. When required information is complete, admin can press “สร้างออเดอร์” to go to Review.
+Admin enters customer, recipient/address, order lines, payment terms, shipment plan, and custom-work details before creating a real Order ID. Customer must be selected before adding Order Lines. Unsaved entry stays temporary; a Draft Order is created only when admin presses “บันทึกร่าง” or exits with “ออกและบันทึก”. Draft data does not reserve stock, create Job, create Shipment, or enter reports. When required information is complete, admin can press “สร้างออเดอร์” to go to Review; this button does not issue a real Order ID yet.
+Saving a Draft Order also requires a selected/created customer first.
 
 Header:
 - Page title: สร้างออเดอร์
 - Subtext: กรอกข้อมูลให้ครบก่อนออกเลขออเดอร์จริง
 - Status chip: ยังไม่ได้บันทึกร่าง
 - Save state: มีการแก้ไขที่ยังไม่บันทึก
-- Primary button: สร้างออเดอร์
+- Primary button: สร้างออเดอร์ (ไปหน้า Review)
 - Secondary button: บันทึกร่าง
 
 Main layout:
@@ -56,12 +57,13 @@ Left editor sections:
 3. รายการในออเดอร์
    Show two order-line cards or table rows with thumbnails:
    - Line 1: สินค้าพร้อมส่ง, ชุดเก้าอี้ไม้สักพร้อมส่ง, จำนวน 4 ชิ้น, ราคา 18,000 บาท, stock chip: พร้อมส่ง
-   - Line 2: งานสั่งทำ, ตู้โชว์ไม้สักแกะลาย, จำนวน 1 ชิ้น, ราคา 38,000 บาท, chip: ต้องกรอกรายละเอียดงานสั่งทำ
+   - Line 2: งานสั่งทำ, ตู้โชว์ไม้สักแกะลาย, จำนวน 1 ชิ้น, ราคา 38,000 บาท, chip: รายละเอียดงานสั่งทำ
    Buttons: เพิ่มสินค้าพร้อมส่ง, เพิ่มงานสั่งทำ
 
 4. แผนจัดส่ง
    - Show when the Order mixes ready-stock and custom work
-   - Segmented control: ส่งพร้อมกัน selected, จัดส่งแยกได้
+   - Show a compact read-only/default intent chip: ส่งพร้อมกัน
+   - Do not show a separate split-shipment toggle here; split shipment is handled later by selecting ready lines when creating Shipment rounds
 
 5. เงื่อนไขการชำระเงิน
    - Payment Term: มัดจำ 50% ก่อนเริ่มงาน
@@ -85,23 +87,31 @@ Show:
 - Order lines: 2 รายการ
 - Ready-stock lines: 1
 - Custom lines: 1
-- Shipment plan: ส่งพร้อมกัน
+- Shipment intent: ส่งพร้อมกัน
 - Payment Term: ครบ
 - Payment Record: มีรายการรับเงิน
-- Warning chip: รายละเอียดงานสั่งทำยังต้องตรวจสอบ
+- Warning chip example: สต๊อกไม่พอ 1 รายการ ต้องตรวจสอบใน Review
 - Total display: ยอดรวม 56,000 บาท
 - Note: ยังไม่จองสต๊อก / ยังไม่สร้าง JOB-O / ยังไม่สร้างรอบจัดส่ง
-- Primary button: สร้างออเดอร์
+- Primary button: สร้างออเดอร์ (ไปหน้า Review)
 - Secondary button: บันทึกร่าง
+
+Unsaved-exit modal state:
+- Show only if useful as a small overlay or side note
+- Message: หากออกจากหน้านี้ ข้อมูลที่ยังไม่บันทึกอาจสูญหาย
+- Actions: ออกและบันทึก, ออกทันที
+- “ออกและบันทึก” creates/updates Draft Order; “ออกทันที” discards unsaved changes and does not create autosave draft
 
 Visual rules:
 - Thai UI labels are primary
-- Keep English only for internal terms: Draft, Order ID, Job, JOB-O, COD, Payment
+- Keep these English terms unchanged: Job, JOB-O, JOB-P, COD, Payment, Revision
 - Do not show Draft No. for unsaved new entry; if showing a saved draft state, make Draft No. visually different from Order ID
 - Do not show quotation, lead, marketing, tax filing, accounting ledger, product cost, profit, ad spend, or private CRM notes
 - Do not show confirmed Order ID yet
 - Do not show downstream Job or Shipment as already created
-- Make it obvious that stock reservation and JOB-O creation happen only after real Order creation from Review
+- Make it obvious that stock reservation and JOB-O creation happen only after confirmation on Review
+- Do not imply Payment Record is required to create JOB-O; Payment Record is optional financial context
+- Do not imply persistent autosave after the user leaves without saving
 - Do not label the custom detail area as “ร่าง Job”; use “รายละเอียดงานสั่งทำ”
 - Keep the screen practical for heavy admin data entry
 ```

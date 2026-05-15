@@ -43,12 +43,12 @@ Top bar:
 
 Replace the 6 main dashboard cards with these approved cards:
 
-1. Card title: ออเดอร์กำลังดำเนินการ
+1. Card title: ออเดอร์ที่ต้องติดตาม
    Large number: 18
-   Status badge: ยังไม่จบงาน
+   Status badge: ยังต้องตามงาน
    Subtext: กำลังผลิต 11 • ส่งได้เลย 7
    Button text: ดูออเดอร์
-   Meaning: real confirmed Orders that are not operationally complete yet.
+   Meaning: real confirmed Orders that still need operational follow-up.
 
 2. Card title: งานกำลังผลิต
    Large number: 17
@@ -130,7 +130,7 @@ Important consistency rules:
 - `ลูกค้า / CRM`
 - `รายจ่าย`
 - `ตั้งค่า`
-- `ออเดอร์กำลังดำเนินการ`
+- `ออเดอร์ที่ต้องติดตาม`
 - `งานกำลังผลิต`
 - `รอสร้างรอบจัดส่ง`
 - `ยืนยันการจัดส่ง`

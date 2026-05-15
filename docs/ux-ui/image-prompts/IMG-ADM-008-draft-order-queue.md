@@ -39,7 +39,7 @@ Header:
 - Do not show this as a dashboard card
 
 Order workspace tabs below the header:
-- กำลังดำเนินการ
+- ออเดอร์ที่ต้องติดตาม
 - ออเดอร์ทั้งหมด
 - ร่างออเดอร์
 - ปิดแล้ว / ยกเลิก
@@ -85,7 +85,7 @@ Show a selected draft preview for DRAFT-00034:
 - ขาดข้อมูล: ยังไม่มีเงื่อนไขการชำระเงิน
 - ผู้รับผิดชอบหลัก: แอดมินแพร
 - Action button: ทำต่อ
-- Note: เจ้าของใช้เพื่อ traceability เท่านั้น ผู้ใช้สิทธิ์เท่ากันหรือสูงกว่าสามารถทำต่อได้
+- Note: เจ้าของใช้เพื่อ traceability เท่านั้น ผู้ใช้ที่มีสิทธิ์สร้าง/แก้ออเดอร์สามารถทำต่อได้
 
 Draft status chips:
 - ร่างออเดอร์
@@ -107,7 +107,7 @@ Business rules to make visible:
 - Draft Orders do not enter reports
 - Unsaved Order Create/Edit sessions must not appear in this queue
 - Converted drafts should not normally appear in the active draft queue
-- Owner is for traceability, not a hard lock for same-permission or higher-permission users
+- Owner is for traceability, not a hard lock; any user with Order create/edit permission can continue
 
 Visual rules:
 - Thai UI labels are primary

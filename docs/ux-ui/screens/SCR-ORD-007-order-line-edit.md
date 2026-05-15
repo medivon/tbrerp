@@ -18,8 +18,9 @@ This screen is similar to Order Create/Edit in structure, but it edits an existi
 - Add a ready-stock item after the Order is confirmed.
 - Remove or change a ready-stock item when it is still safe.
 - Add a new custom-work line after the Order is confirmed.
-- Remove a custom-work line only when downstream Job state allows it.
+- See custom-work lines with existing `JOB-O` as read-only and route cancellation/production changes to Job.
 - Understand what totals, stock, Job, and Shipment state will change before saving.
+- Reconcile financial totals before saving when an edit changes sales totals after Payment/COD records exist.
 
 ## 4. Entry Points
 
@@ -70,16 +71,18 @@ Effects when saved from Review Changes:
 - Changing ready-stock quantity adjusts the reserved amount by the difference.
 - Adding a complete custom-work line creates `JOB-O` immediately.
 - Changing price/discount updates the Order net total and financial summary/outstanding amount where permission and Order state allow.
+- If Payment Records or COD records already exist and the edit changes the sales total, do not edit or delete old slips. Review Changes blocks save until the edited total is reconciled with Payment Records, COD to collect, or adjustment/refund/credit notes.
 
 Existing `JOB-O` lines:
 
 - Do not edit production detail from this screen.
 - Use Job Detail / Job Revision for changes to size, color, pattern, production instruction, or department-facing detail.
-- The custom-work line may be removed only if the Job has not started production; removal cancels/closes the Job with reason and log.
+- If `JOB-O` already exists, cancellation/removal starts from Job Detail / Job cancellation first, even if production has not started.
+- After Job cancellation, Order Detail keeps the cancelled custom-work line visible with reason and excludes it from active total/status/shipment selection.
 
 Shipment-linked ready-stock lines:
 
-- If a line is already in a Shipment round but not sent out, require the user to remove it from that Shipment round before editing/removing it here.
+- If a line is already in any Shipment round, including Draft or Released Shipment, require the user to remove it from that Shipment round or cancel the Shipment round before editing/removing it here.
 - If a line has been sent out or completed, do not allow normal edit/remove from this screen.
 
 Sent/completed lines:
@@ -106,7 +109,8 @@ Review Changes must show only what changed:
 - Stock impact.
 - Job impact.
 - Shipment impact.
-- Reason field.
+- Reason field only for changes that require reason.
+- Financial Reconciliation panel when edited sales total does not match Payment/COD/adjustment records.
 
 Do not show the entire Order as if creating a new Order; focus on the differences and their consequences.
 
@@ -118,8 +122,16 @@ Review Changes actions:
 
 Reason rules:
 
-- Require a reason when net total changes, a line is removed, or the change affects Job, Shipment, or Stock.
+- Require a reason when a line is removed, `JOB-O` is cancelled/closed, or the change affects existing Job or Shipment state. Stock-negative acknowledgement is logged but does not require a manager approval reason.
+- Net total changes do not require a reason by themselves when the user already has price/amount edit permission.
 - Do not require a reason for small text-only edits that do not affect totals or downstream work.
+
+Financial Reconciliation rules:
+
+- If edited sales total does not match recorded financial evidence/notes, disable `บันทึกการแก้ไข`.
+- Provide a modal/drawer action such as `เพิ่มรายการรับเงิน / ปรับยอดการเงิน`.
+- Supported first-scope reconcile types: Payment Record evidence, COD to collect, adjustment/refund/credit note.
+- Refund/credit is a note/follow-up record in this scope, not a full accounting workflow.
 
 After save:
 
@@ -135,8 +147,7 @@ After save:
 | Add custom-work line | เพิ่มงานสั่งทำ | Admin and allowed users | Adds a new custom-work line. | Review Changes before save |
 | Edit safe line | แก้ไขรายการ | Admin and allowed users | Updates a line that has no downstream work. | Review Changes before save |
 | Remove safe line | ลบรายการ | Admin and allowed users | Removes a line that has no downstream work. | Review Changes before save |
-| Remove custom line with not-started `JOB-O` | ลบงานสั่งทำออกจากออเดอร์ | Authorized users | Cancels/closes the Job with reason and log. | Yes |
-| Open Job | เปิด Job | Admin and allowed users | Opens Job Detail / Revision for production-detail changes. | No |
+| Open Job for existing `JOB-O` | เปิด Job | Admin and allowed users | Opens Job Detail / Revision / Job cancellation for production-detail changes or custom-work cancellation. | No |
 | Review changes | ตรวจสอบการแก้ไข | Admin | Opens Review Changes. | No |
 | Save changes | บันทึกการแก้ไข | Admin and allowed users | Applies approved changes and returns to Order Detail. | Yes, from Review Changes |
 | Cancel edit | ยกเลิก | Admin | Returns to Order Detail. | Warn if unsaved changes |
@@ -145,16 +156,19 @@ After save:
 
 - `รายการนี้อยู่ในรอบจัดส่งแล้ว`: line must be removed from Shipment round first.
 - `รายการนี้ส่งออกแล้ว`: use service/return/adjustment flow.
-- `JOB-O เริ่มผลิตแล้ว`: production detail must be changed in Job Detail / Revision; removal from Order is not allowed here.
+- `มี JOB-O แล้ว`: production detail or cancellation must be handled in Job Detail / Revision / Job cancellation; removal from Order Line Edit is not allowed here.
+- `ยอดขายกับยอดการเงินยังไม่ตรง`: reconcile Payment/COD/adjustment records before saving.
 - `ไม่มีสิทธิ์แก้ไขรายการนี้`: permission blocked.
 
 ## 11. Permission and Log Rules
 
 - Changes must log who changed what and why.
 - Normal line edits may be done by users with Order edit permission.
-- High-impact changes such as cancelling an Order, removing a custom-work line with `JOB-O`, or changing amounts after payment exists require higher permission / manager-level control.
-- Removing a custom-work line with `JOB-O` requires reason.
-- Changes that alter net total, remove a line, or affect Job, Shipment, or Stock require reason.
+- Stock shortage acknowledgement and price/discount edits may be done by users with the relevant Order permission and must be logged.
+- Cancelling an existing `JOB-O` is owned by the Job flow and requires its own reason/log there.
+- Removing a line, cancelling/closing `JOB-O`, or changes that affect existing Job or Shipment state require reason. Stock-negative acknowledgement is logged without requiring a manager approval reason.
+- Net total changes are logged but do not require a reason by themselves when the user has price/amount edit permission.
+- Existing Payment Records stay immutable when totals change; Financial Reconciliation must be completed before saving if sales total and financial evidence/notes do not match.
 - Production-affecting changes to existing `JOB-O` are not done here.
 - Shipment-affecting changes are blocked until Shipment state is made safe.
 
@@ -163,6 +177,7 @@ After save:
 - Do not make this look like a new Order.
 - Do not create draft/autosave edits after Order confirmation.
 - Do not silently edit existing `JOB-O` production detail.
+- Do not cancel or remove an existing `JOB-O` from Order Line Edit; open Job.
 - Do not silently remove items from Shipment rounds.
 - Do not allow sent/completed lines to be deleted from the Order.
 - Do not duplicate the full payment workflow.

@@ -41,21 +41,21 @@ Design status:
 - Main actions: Review approved dashboard cards, open working queues, inspect critical work preview.
 - Related source docs: `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`; `docs/ux-ui/image-prompts/IMG-ADM-001-admin-dashboard.md`; `docs/ux-ui/design-system/app-shell.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
-### ADM-002 - Active Orders Overview
+### ADM-002 - Orders Follow-up Overview
 
 - Screen ID: `ADM-002`
-- Screen name: Active Orders Overview
-- Thai UI label: `ออเดอร์กำลังดำเนินการ`
+- Screen name: Orders Follow-up Overview
+- Thai UI label: `ออเดอร์ที่ต้องติดตาม`
 - Primary actor: Admin
-- Purpose: Open confirmed Orders that are not operationally complete.
-- Entry point: `Admin Dashboard` -> `ออเดอร์กำลังดำเนินการ`.
-- Exit point: Order Detail, related Job, related Shipment.
+- Purpose: Open confirmed Orders that need operational follow-up, such as unfinished shipment, unfinished `JOB-O`, blocked work, or shipment confirmation.
+- Entry point: `Admin Dashboard` -> `ออเดอร์ที่ต้องติดตาม`.
+- Exit point: Order Detail.
 - Related flow IDs: `F01`, `F02`, `F06`, `F08`
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Job, Shipment
-- Main actions: Search/open Order, review whether it is producing or ready to ship.
+- Main actions: Search/open Order, review follow-up urgency, review whether it is producing, ready to ship, partially shipped, or waiting shipment confirmation.
 - Related source docs: `docs/ux-ui/screens/SCR-ADM-002-active-orders-overview.md`; `docs/ux-ui/image-prompts/IMG-ADM-002-active-orders-overview.md`; `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`; `CONTEXT.md`; `docs/decision-log.md`
 
 ### ADM-003 - Active Jobs Overview
@@ -199,7 +199,7 @@ Note:
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Customer, Customer phone, Address Entry
-- Main actions: Search Customer, select Customer, create Customer.
+- Main actions: Search Customer, show all matching results even if duplicate-looking records exist, select Customer, create quick Customer if not found.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-003 - Address Entry Select / Create
@@ -208,15 +208,15 @@ Note:
 - Screen name: Address Entry Select / Create
 - Thai UI label: `ที่อยู่จัดส่ง`
 - Primary actor: Admin
-- Purpose: Select or create recipient/address information for the Order.
+- Purpose: Select or create recipient/address information that becomes the Order Recipient Detail snapshot after confirmation.
 - Entry point: Customer selected in Order Create/Edit.
 - Exit point: Order Line entry.
 - Related flow IDs: `F02`, `F06`
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Address Entry, Recipient, Customer, Shipment address snapshot
-- Main actions: Select address, create address, set recipient name and phone.
+- Main data objects: Address Entry, Recipient, Customer, Order Recipient Detail
+- Main actions: Default to the Customer primary address, change delivery address when multiple addresses exist, create a new address, optionally save a new address back to Customer only when explicitly checked.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F02/F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-004 - Order Review / Create Order
@@ -249,8 +249,8 @@ Note:
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Order, Order Line, Customer, Address Entry, Payment Term, Payment Record, Shipment
-- Main actions: Review Order sections, manage Order, edit safe sections, select ready lines for Shipment, open Shipment, open related Job, review Order status.
+- Main data objects: Order, Order Line, Customer, Address Entry, Payment Term, Payment Record, Shipment, Order Status, Shipment Summary
+- Main actions: Review Order sections, manage Order, edit safe sections, select ready lines for Shipment, open Shipment, open related Job, review Order status and shipment summary separately.
 - Related source docs: `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`; `docs/ux-ui/image-prompts/IMG-ORD-005-order-detail.md`; `docs/ux-ui/mockups/SCR-ORD-005-order-detail/SCR-ORD-005-approved.png`; `docs/ux-ui/01-flow-map.md` F02/F03/F06/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-006 - All Orders List
@@ -259,14 +259,14 @@ Note:
 - Screen name: All Orders List
 - Thai UI label: `ออเดอร์ทั้งหมด`
 - Primary actor: Admin
-- Purpose: Search and browse all real Orders across every main Order status, excluding Draft Orders.
+- Purpose: Search and browse all real Orders across every main Order status, excluding Draft Orders, with Order status separated from Shipment summary.
 - Entry point: Order page `ออเดอร์ทั้งหมด` tab.
 - Exit point: Order Detail or Order Create/Edit.
 - Related flow IDs: `F02`, `F06`, `F08`
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Order, Order Line, Customer, Address Entry, Job, Shipment
+- Main data objects: Order, Order Line, Customer, Address Entry, Job, Shipment, Order Status, Shipment Summary
 - Main actions: Search/filter Orders, inspect item/shipment popovers, open Order, create new Order, clear filters.
 - Related source docs: `docs/ux-ui/screens/SCR-ORD-006-all-orders-list.md`; `docs/ux-ui/image-prompts/IMG-ORD-006-all-orders-list.md`; `docs/ux-ui/design-system/table-patterns.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/qa-summary.md`; `docs/ux-ui/initial-scope.md`
 
@@ -276,15 +276,15 @@ Note:
 - Screen name: Order Line Edit
 - Thai UI label: `แก้ไขรายการออเดอร์`
 - Primary actor: Admin
-- Purpose: Add, remove, or change safe Order Lines after Order confirmation with Review Changes before saving.
+- Purpose: Enter a guarded edit mode/sub-flow from Order Detail to add, remove, or change safe Order Lines after Order confirmation with Review Changes and Financial Reconciliation before saving where totals change.
 - Entry point: Order Detail -> `จัดการออเดอร์` -> `แก้ไขรายการสินค้า` or `แก้ไขงานสั่งทำ`.
 - Exit point: Review Changes, Order Detail, Job Detail / Revision, or Shipment Detail when downstream state must be resolved first.
 - Related flow IDs: `F02`, `F03`, `F06`
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Order, Order Line, Ready Stock, Custom Work Detail, Job, Shipment
-- Main actions: Add ready-stock line, add custom-work line, edit safe line, remove safe line, open Job, review changes, save changes.
+- Main data objects: Order, Order Line, Ready Stock, Custom Work Detail, Job, Shipment, Payment Record, COD follow-up, Financial Reconciliation
+- Main actions: Add ready-stock line, add custom-work line, edit safe line, remove safe line, open Job for existing `JOB-O` changes/cancellation, reconcile financial totals, review changes, save changes.
 - Related source docs: `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`; `docs/ux-ui/image-prompts/IMG-ORD-007-order-line-edit.md`; `docs/decision-log.md`; `docs/qa-summary.md`; `docs/ux-ui/initial-scope.md`
 
 ## 3. Job
@@ -725,7 +725,7 @@ Note:
 - Device target: desktop
 - Design status: ready
 - Main data objects: Order, Shipment, Service Case, COD
-- Main actions: Select eligible Orders, use default Customer/Order delivery data, create Shipments/documents without opening `SHP-002`.
+- Main actions: Select eligible Orders, use saved Order Recipient Detail snapshots as delivery defaults, create Shipments/documents without opening `SHP-002`.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F06; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ## 8. Delivery

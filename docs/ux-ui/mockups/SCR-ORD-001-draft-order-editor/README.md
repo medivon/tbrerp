@@ -27,7 +27,7 @@ It confirms:
 - Ready-stock and custom-work lines can exist in the same draft.
 - Ready-stock and custom-work lines are added through separate buttons: `เพิ่มสินค้าพร้อมส่ง` and `เพิ่มงานสั่งทำ`.
 - Custom-work details are captured as `รายละเอียดงานสั่งทำ` before real Order creation and create `JOB-O` immediately when confirmed.
-- If an Order mixes ready-stock and custom work, the shipment plan defaults to `ส่งพร้อมกัน` with optional `จัดส่งแยกได้`.
+- If an Order mixes ready-stock and custom work, the shipment plan defaults to `ส่งพร้อมกัน`; actual split shipment is handled later by selecting ready lines when creating Shipment rounds.
 - Payment Term is required before real Order creation; Payment Record is optional in the flow.
 - No quotation, lead, tax filing, accounting ledger, product cost, profit, ad spend, or private CRM note appears.
 

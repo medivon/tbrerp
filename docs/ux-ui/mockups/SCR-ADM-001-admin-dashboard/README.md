@@ -37,7 +37,7 @@ This mockup is the current source of truth for:
 
 ## Approved Dashboard Cards
 
-- `ออเดอร์กำลังดำเนินการ`
+- `ออเดอร์ที่ต้องติดตาม`
 - `งานกำลังผลิต`
 - `รอสร้างรอบจัดส่ง`
 - `ยืนยันการจัดส่ง`

@@ -24,7 +24,7 @@ It confirms:
 - Complete custom lines will create `JOB-O` immediately after confirmation.
 - Shipment rounds are not created from this screen.
 - The Review screen itself is the final confirmation step; `ยืนยันสร้างออเดอร์` does not open another confirmation modal.
-- Inline warnings and override fields block confirmation until resolved.
+- Inline warnings and acknowledgement controls block confirmation until resolved.
 
 ## Key Decisions Captured By This Mockup
 

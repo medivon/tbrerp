@@ -1,8 +1,8 @@
-# SCR-ADM-002 - Active Orders Overview
+# SCR-ADM-002 - Orders Follow-up Overview
 
 ## 1. Purpose
 
-Active Orders Overview shows confirmed Orders that are not operationally complete. It is the first drill-down screen from the approved Admin Dashboard card `ออเดอร์กำลังดำเนินการ`.
+Orders Follow-up Overview shows confirmed Orders that need operational follow-up. It is the first drill-down screen from the approved Admin Dashboard card `ออเดอร์ที่ต้องติดตาม`.
 
 This screen answers: which Orders still need handling, whether they are still producing or ready to ship, and which Order should admin open next.
 
@@ -23,34 +23,33 @@ Approved mockup:
 - Separate Orders still in production from Orders that can be shipped now.
 - Notice quickly when an Order contains custom work.
 - Find Orders by customer, phone, Order ID, Job ID, recipient, or delivery date.
-- Open the right Order, Job, or shipment-round queue without scanning multiple modules.
+- Open the right Order without scanning multiple modules.
 - Avoid mixing Draft Orders into real operational work.
 - Keep COD/Payment visible only as follow-up signal, not as the definition of Order completion.
 
 ## 4. Entry Points
 
-- `แดชบอร์ด` -> `ออเดอร์กำลังดำเนินการ`.
-- Sidebar `ออเดอร์` -> `ออเดอร์กำลังดำเนินการ`.
+- `แดชบอร์ด` -> `ออเดอร์ที่ต้องติดตาม`.
+- Sidebar `ออเดอร์` -> `ออเดอร์ที่ต้องติดตาม`.
 - Critical Work Preview item related to an Order.
 
 ## 5. Exit Points
 
 - Order Detail.
-- Related Job Detail.
-- `งานกำลังผลิต` / Job overview.
-- `รอสร้างรอบจัดส่ง`.
-- `ยืนยันการจัดส่ง`.
-- `ติดตาม COD / Payment`, where permission allows.
+- Order Create/Edit via `สร้างออเดอร์`.
+
+Operational actions such as Job follow-up, Shipment creation, Shipment confirmation, and Payment follow-up are reached after opening Order Detail or the relevant dedicated module.
 
 ## 6. Layout Structure
 
 - Use approved desktop admin app shell.
 - Sidebar active item: `ออเดอร์`.
-- Top bar: page title `ออเดอร์กำลังดำเนินการ`, date, user/role.
+- Top bar: page title `ออเดอร์ที่ต้องติดตาม`, date, user/role.
 - Header area: count summary and restrained `สร้างออเดอร์` action.
 - Summary strip: total active Orders, producing Orders, ready-to-ship Orders, shipment-confirmation Orders.
-- Order module tabs should be visible or implied in the page frame: `กำลังดำเนินการ`, `ออเดอร์ทั้งหมด`, `ร่างออเดอร์`, `ปิดแล้ว / ยกเลิก`.
-- Filter tabs: `ทั้งหมด`, `กำลังผลิต`, `ส่งได้เลย`, `รอยืนยันการจัดส่ง`, `ส่งบางส่วน`.
+- Order module tabs should be visible or implied in the page frame: `ออเดอร์ที่ต้องติดตาม`, `ออเดอร์ทั้งหมด`, `ร่างออเดอร์`, `ปิดแล้ว / ยกเลิก`.
+- Follow-up filter tabs: `ทั้งหมด`, `กำลังผลิต`, `ส่งได้เลย`, `รอยืนยันการจัดส่ง`, `ส่งบางส่วน`.
+- Treat `รอยืนยันการจัดส่ง` here as a Shipment follow-up filter, not an Order status.
 - Search bar: customer, phone, Order ID, Job ID, recipient, postal code, address.
 - Main content: desktop table with image-led Order rows; tablet can use stacked cards.
 - Right-side detail drawer: selected Order quick preview.
@@ -80,11 +79,11 @@ Approved mockup:
 | Main image | รูปงาน | ตู้โชว์ไม้สัก | Order Line / Job / SKU | Helps admin recognize work. |
 | Order summary | รายการ | ตู้โชว์ไม้สักแกะลาย + 1 รายการ | Order Line | Compact summary only. |
 | Custom-work label | มีงานสั่งทำ | มีงานสั่งทำ | Order / Order Line | Show when the Order contains custom work. |
-| Order state | สถานะออเดอร์ | กำลังผลิต | Order / Job / Shipment | Operational state. |
+| Order state | สถานะออเดอร์ | กำลังผลิต | Order / Order Line | Active-line operational state. |
 | Producing count | กำลังผลิต | 11 | Order / Job | Summary count. |
 | Ready-to-ship count | ส่งได้เลย | 7 | Order / Shipment readiness | Summary count. |
 | Job reference | Job ID | JOB-O-0241 | Job | Small metadata. |
-| Shipment state | รอบจัดส่ง | รอสร้างรอบจัดส่ง | Shipment | Current shipment stage. |
+| Shipment state | สถานะการจัดส่ง | รอยืนยันการจัดส่ง | Shipment | Current Shipment round/tracking state, separate from Order status. |
 | Delivery date | กำหนดส่ง | 26 พ.ค. 67 | Order / Job / Shipment | Optional. |
 | Received date | วันที่รับงาน | 08 พ.ค. 67 | Order / Job | Useful for aging. |
 | Payment signal | COD / Payment | COD | Financial Follow-up | Signal only; no sensitive amounts by default. |
@@ -95,9 +94,6 @@ Approved mockup:
 |---|---|---|---|---|
 | Create Order | สร้างออเดอร์ | Admin and allowed users | Opens Order Create/Edit. | No |
 | Open Order | เปิดออเดอร์ | Admin and same/higher permission | Opens Order Detail. | No |
-| Open Job | เปิด Job | Admin and same/higher permission | Opens related Job Detail or overview. | No |
-| Create shipment round | สร้างรอบจัดส่ง | Admin and same/higher permission | Opens Shipment Builder for the selected Order when shippable. | No |
-| Confirm shipment | ยืนยันการจัดส่ง | Admin and same/higher permission | Opens shipment confirmation queue/detail. | No |
 | Search | ค้นหา | Admin | Filters active Orders. | No |
 
 ## 10. Status / Chips
@@ -106,8 +102,8 @@ Approved mockup:
 |---|---|---|
 | `กำลังผลิต` | At least one Order Line is still in Job flow. | Orange |
 | `ส่งได้เลย` | Order has ready-to-ship items waiting for shipment-round creation. | Green |
-| `รอยืนยันการจัดส่ง` | Shipment round has been sent out and waits for admin confirmation/evidence. | Orange |
-| `ส่งบางส่วน` | Some Order items have shipped but the Order is not complete. | Blue |
+| `รอยืนยันการจัดส่ง` | Shipment round has been sent out and waits for admin confirmation/evidence; not an Order status. | Orange |
+| `ส่งบางส่วน` | At least one active Order line has completed delivery recording, while another active line is not complete. | Blue |
 | `มีงานสั่งทำ` | Order contains at least one custom-work line. | Neutral/source label |
 | `งานด่วน` | Authorized user marked related work urgent. | Yellow or red |
 | `ค้าง 18 วัน` | High-risk age signal. | Warm warning |
@@ -115,7 +111,7 @@ Approved mockup:
 
 ## 11. Empty State
 
-Show `ไม่มีออเดอร์ที่กำลังดำเนินการ` with a restrained action `สร้างออเดอร์`.
+Show `ไม่มีออเดอร์ที่ต้องติดตาม` with a restrained action `สร้างออเดอร์`.
 
 Do not show Draft Orders in this empty state.
 
@@ -131,12 +127,13 @@ Do not show Draft Orders in this empty state.
 - Owner is visible for traceability, not as an exclusive lock.
 - Finance-sensitive values are hidden unless permission allows.
 - COD/Payment appears as a follow-up signal, not as Order completion logic.
+- Queue sorting prioritizes urgent follow-up first: overdue/near due, waiting too long, blocked, then created date.
 
 ## 14. What Not To Show
 
 - Do not show `ร่างออเดอร์` inside this active list.
 - Do not make Draft Orders look like confirmed Orders.
-- Do not let the `สร้างรอบจัดส่ง` action include unfinished custom work; the action must obey the Order Shipment Plan.
+- Do not create Shipment rounds directly from this page. This page is a follow-up/filter view; Shipment actions happen after opening Order Detail.
 - Do not show full accounting totals, profit, ad spend, or tax reports.
 - Do not expose customer private CRM notes.
 - Do not turn the screen into a manager production report.
@@ -150,7 +147,7 @@ Do not show Draft Orders in this empty state.
 - Use images in rows/cards because THAIBORAN work is visually specific.
 - Make the row status easy to scan: producing, ready to ship, shipment confirmation, partial shipment.
 - Add a simple `มีงานสั่งทำ` label when the Order contains custom work; avoid turning the row into a full Job report.
-- `สร้างรอบจัดส่ง` should be visible only when relevant, and disabled or replaced with a clear state when shipment is blocked by `ส่งพร้อมกัน` or unfinished custom work.
+- Shipment readiness should appear as a signal only; users open Order Detail to select ready lines and create Shipment rounds.
 - Keep table density practical for office admin work.
 
 ## 16. Image Generation Prompt

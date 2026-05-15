@@ -1,4 +1,4 @@
-# SCR-ADM-002 - Active Orders Overview Mockup
+# SCR-ADM-002 - Orders Follow-up Overview Mockup
 
 Status: Approved visual anchor
 
@@ -16,7 +16,7 @@ Related documents:
 
 ## Approved Role
 
-This mockup is the current source of truth for the `ออเดอร์กำลังดำเนินการ` screen.
+This mockup is the current visual anchor for the `ออเดอร์ที่ต้องติดตาม` screen. The approved image may still contain the older label and should be regenerated when this screen is refreshed.
 
 It extends the approved Admin Dashboard app shell into the Order workspace and confirms:
 
@@ -24,7 +24,7 @@ It extends the approved Admin Dashboard app shell into the Order workspace and c
 - The screen uses the approved sidebar and top bar pattern.
 - `ร่างออเดอร์` is not shown in this active operational list.
 - `สร้างออเดอร์` can appear inside the Order page, not on the dashboard.
-- The Order workspace uses clear tabs: `กำลังดำเนินการ`, `ออเดอร์ทั้งหมด`, `ร่างออเดอร์`, `ปิดแล้ว / ยกเลิก`.
+- The Order workspace uses clear tabs: `ออเดอร์ที่ต้องติดตาม`, `ออเดอร์ทั้งหมด`, `ร่างออเดอร์`, `ปิดแล้ว / ยกเลิก`.
 - Active Orders are shown as image-led operational rows.
 - The right detail drawer pattern is approved for selected Order preview.
 
@@ -33,7 +33,7 @@ It extends the approved Admin Dashboard app shell into the Order workspace and c
 - `ทั้งหมด`
 - `กำลังผลิต`
 - `ส่งได้เลย`
-- `รอยืนยันการจัดส่ง`
+- `รอยืนยันการจัดส่ง` as a Shipment follow-up filter, not an Order status
 - `ส่งบางส่วน`
 
 ## Approved Row Pattern
@@ -56,10 +56,11 @@ Each active Order row should show:
 
 - Active Orders are confirmed Orders only.
 - Draft Orders stay under the Order page as a separate subcategory/tab/filter.
-- The active list shows only real Orders that are not operationally complete.
+- The follow-up list shows only real Orders that still need operational follow-up.
 - Order rows can show `Job ID` for communication, but the screen remains Order-centered.
-- `สร้างรอบจัดส่ง` must obey the Order Shipment Plan and not ship unfinished custom work.
-- `รอสร้างรอบจัดส่ง` and `ยืนยันการจัดส่ง` appear as operational states from this Order view.
+- This page is a follow-up/filter view only; row actions open Order Detail rather than creating Shipment rounds or editing Jobs directly.
+- `สร้างรอบจัดส่ง` must happen from Order Detail or the Shipment flow, obey the Order Shipment Plan, and not ship unfinished custom work.
+- `รอสร้างรอบจัดส่ง` and `รอยืนยันการจัดส่ง` appear as shipment follow-up states from this Order view, separate from main Order status.
 - COD is shown as a signal, not as an accounting detail.
 
 ## Regeneration Rule

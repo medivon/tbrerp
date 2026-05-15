@@ -30,7 +30,7 @@ Approved mockup:
 
 - `แดชบอร์ด` -> `งานกำลังผลิต`.
 - Sidebar `งานสั่งทำ / ผลิต` -> `งานกำลังผลิต`.
-- `ออเดอร์กำลังดำเนินการ` row or detail drawer -> related Job.
+- `ออเดอร์ที่ต้องติดตาม` row or detail drawer -> related Job.
 - Critical Work Preview item related to a Job.
 
 ## 5. Exit Points

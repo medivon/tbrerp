@@ -12,6 +12,10 @@ Visual/content anchors:
 - `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
+Important prompt note:
+
+- The approved image is only a visual anchor for shell, density, and card style. Later Q&A supersedes old tabbed/expanded-card behavior. Generate the new mockup as a single read-first report page with section-based editing.
+
 ## High-Fidelity GPT Image 2 Prompt
 
 ```text
@@ -31,15 +35,17 @@ Header:
 - Page title: รายละเอียดออเดอร์
 - Order ID: ORD-240520-014
 - Main header chips only: กำลังดำเนินการ and จัดส่งยังไม่ครบ
+- Treat กำลังดำเนินการ as สถานะออเดอร์ and จัดส่งยังไม่ครบ as สถานะการจัดส่ง; keep these separate
 - Optional small source chip: มีงานสั่งทำ
 - Customer: ร้านบ้านศิลป์
 - Main recipient: คุณณัฐพล
+- Recipient/address shown here is the Order snapshot saved at confirmation, not live Customer master data
 - Primary header action/menu: จัดการออเดอร์
 - Do not show a header primary button “สร้างรอบจัดส่ง”
 - Do not show financial follow-up as a main header chip
 
 Open the “จัดการออเดอร์” menu or show it as a visible dropdown panel with these actions:
-- แก้ข้อมูลผู้รับในออเดอร์นี้
+- เปิดลูกค้า / จัดการข้อมูลลูกค้า
 - แก้ไขรายการสินค้า
 - แก้ไขงานสั่งทำ
 - จัดการรอบจัดส่ง
@@ -59,8 +65,9 @@ Show compact summary cards/rows:
 - ยอดรวมสุทธิ: 45,800
 - สถานะออเดอร์: กำลังดำเนินการ
 - สถานะจัดส่ง: จัดส่งยังไม่ครบ
-- Buttons in this section: แก้ข้อมูลผู้รับในออเดอร์นี้, เปิดลูกค้า
-- Do not show แก้ข้อมูลลูกค้าหลัก in Order Detail; customer master editing happens after opening Customer Detail/Profile
+- Buttons in this section: เปิดลูกค้า
+- Customer master/address-book editing happens after opening Customer Detail/Profile
+- Shipment recipient/address can be adjusted later in Shipment Builder or Shipment Detail as a Shipment snapshot
 
 Section 2: รายการในออเดอร์
 Group items by type with clear labels:
@@ -104,12 +111,21 @@ Show row/card 4:
 - Shipment state: พร้อมสร้างรอบจัดส่ง
 - If this line ships to a different recipient/address, show line-specific delivery detail under this row
 
+รายการที่ยกเลิกแล้ว
+Show a compact cancelled-lines sub-section at the end of รายการในออเดอร์ if useful:
+- Item name: โต๊ะหมู่บูชา
+- Status: ยกเลิกงานสั่งทำ
+- Related Job: JOB-O-0242
+- Reason: ลูกค้ายกเลิกรายการ
+- Do not count cancelled lines in active total, active item count, or shipment selection
+
 Section 3: จัดการรอบจัดส่ง
 Show a selectable list of Order lines:
 - Ready selectable checkbox checked for โต๊ะกลางลงรักสมุก
 - Ready selectable checkbox checked for ตู้พระสั่งทำ / JOB-O-0240
 - Disabled row for ชุดเก้าอี้ไม้สัก with reason ส่งแล้ว
 - Disabled row for ตู้โชว์ไม้สักแกะลาย with reason ยังผลิตไม่เสร็จ
+- Do not show cancelled lines in the selectable shipment list
 Primary button: สร้างรอบจัดส่งจากรายการที่เลือก
 Small helper text: เลือกหลายรายการเพื่อส่งรวม หรือเลือกบางรายการเพื่อส่งแยก
 
@@ -127,6 +143,7 @@ Example rows:
 - SHIP-2568-0060, สร้าง 21 พ.ค. 67, ส่งออก 22 พ.ค. 67, Kerry, TH12345, ส่งแล้ว, action เปิดรอบจัดส่ง
 - SHIP-2568-0061, สร้าง 22 พ.ค. 67, วันที่ส่งออก blank, ไปรษณีย์ไทย EMS, tracking blank, รอยืนยันการจัดส่ง, action เปิดรอบจัดส่ง
 Do not show edit, print, cancel, or close buttons in this table.
+Make it visually clear that รอยืนยันการจัดส่ง is a Shipment round status, not the main Order status.
 
 Section 5: การชำระเงิน
 Show summary only:
@@ -136,6 +153,7 @@ Show summary only:
 - ยอดค้าง: 35,800
 - สถานะติดตาม: รอเงิน COD กลับ
 - Action: เปิดติดตามการเงิน
+If refund/credit follow-up exists, show only a small note such as มีบันทึกติดตามคืนเงิน/เครดิต, not a full refund workflow
 Do not show full Payment Record management here.
 Do not make unpaid money change the header shipment status.
 
@@ -150,7 +168,7 @@ Do not show a full audit log.
 
 Visual rules:
 - Thai UI labels are primary
-- Keep English only for internal terms: Order ID, Job, JOB-O, COD, Payment, Tracking
+- Keep these English terms unchanged: Job, JOB-O, JOB-P, COD, Payment, Revision, Tracking
 - Use “รอบจัดส่ง” instead of “Shipment” in visible Thai UI
 - Do not show product cost, profit, tax filing detail, accounting ledger, ad spend, or private CRM notes
 - Do not make this look like an invoice
@@ -159,10 +177,12 @@ Visual rules:
 - Do not show “งานที่เกี่ยวข้อง” as a section label
 - Do not imply existing JOB-O production details are edited from this Order screen; use เปิด Job
 - Do not imply sent/completed item rows can be casually edited or removed
+- Do not imply existing JOB-O can be cancelled from Order Line Edit; cancellation starts from Job
 - Do not imply Order recipient edits update existing Shipment rounds; Shipment snapshots are edited in Shipment screens
+- Do not imply later Customer address-book edits rewrite this Order's recipient/address snapshot
 - If showing an edit recipient modal/drawer, include an optional checkbox บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า
 - If showing line-specific delivery detail, place “แก้ข้อมูลจัดส่งรายการนี้” on the line itself only before it enters a Shipment round
-- If showing a blocked ส่งพร้อมกัน shipment plan in the shipment management section, show a small action “เปลี่ยนเป็นจัดส่งแยกได้” only if status allows
+- Do not show a heavy separate split-shipment workflow; selected ready lines are the practical split/combined shipment control
 - Make the reason the Order is still incomplete visible in the first viewport
 - Make section-based editing feel modern and controlled: read first, then edit only the intended section or enter a guarded edit mode
 ```
