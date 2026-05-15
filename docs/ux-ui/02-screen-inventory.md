@@ -174,15 +174,15 @@ Note:
 - Screen name: Order Create/Edit
 - Thai UI label: `สร้างออเดอร์`
 - Primary actor: Admin
-- Purpose: Enter customer, address, ready-stock lines, custom-work lines, payment term, and custom-work detail before creating a real Order or saving as Draft Order.
+- Purpose: Enter customer, address, ready-stock lines, custom-work lines, payment term, and custom-work detail before creating a real Order or saving as Draft Order; ready-stock selection chooses Product Model first, then color/SKU Variant.
 - Entry point: Order page `สร้างออเดอร์` action or Draft Order queue.
 - Exit point: Order Review or saved Draft Order.
 - Related flow IDs: `F02`
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Order Entry Session, Draft Order, Customer, Address Entry, Order Line, Custom Work Detail, Order Shipment Plan, Payment Term, Payment Record
-- Main actions: Select/create customer, add address, add ready-stock line, add custom-work line, save draft, continue to review.
+- Main data objects: Order Entry Session, Draft Order, Customer, Address Entry, Order Line, Product Model, SKU Variant, Ready Stock, Custom Work Detail, Order Shipment Plan, Payment Term, Payment Record
+- Main actions: Select/create customer, add address, add ready-stock line through Product Model/color selection, choose no-stock products with warning, add custom-work line, save draft, continue to review.
 - Related source docs: `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`; `docs/ux-ui/image-prompts/IMG-ORD-001-draft-order-editor.md`; `docs/ux-ui/mockups/SCR-ORD-001-draft-order-editor/SCR-ORD-001-approved.png`; `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### ORD-002 - Customer Search / Select
@@ -353,14 +353,14 @@ Note:
 - Thai UI label: `สร้างงานผลิต`
 - Primary actor: Admin / production-permission user
 - Purpose: Create production-source Job when internal Production needs work-card handling, from SKU-based production or custom/internal production.
-- Entry point: Production Batch / Production Lot workflow, Product/SKU page, or internal production creation flow.
+- Entry point: Production Batch / Production Lot workflow, Product Model Detail per-color production action, Product/SKU selection, or standalone internal production creation flow.
 - Exit point: Job Detail or production workflow.
 - Related flow IDs: `F09`
 - Priority: `P2`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Production Batch, Production Lot, Job, SKU Variant, Department Instruction Images
-- Main actions: Create `JOB-P`, link source type, route production work.
+- Main data objects: Job, SKU Variant, Product Model, optional Production Batch, optional Production Lot, Department Instruction Images
+- Main actions: Create `JOB-P`, select or prefill SKU Variant for `ผลิตจาก SKU`, switch to `งานผลิตพิเศษ` when needed, reset prefill context if another SKU or mode is selected, route production work.
 - Related source docs: `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-sku-selected.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-special-work.md`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-modal-approved.png`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-selected-approved.png`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-special-work-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ## 4. Woodwork
@@ -897,32 +897,32 @@ Note:
 - Screen name: Product / SKU Table
 - Thai UI label: `รายการสินค้า / SKU`
 - Primary actor: Admin / product-permission / stock-permission user
-- Purpose: Main `สินค้า / สต๊อก` entry screen for searching Product Model and SKU Variant records, with stock and production shown as report-only summary.
+- Purpose: Main `สินค้า / สต๊อก` entry screen for searching Product Models as top-level rows, with saleable stock summary and expandable color/SKU Variant rows only when stock is saleable.
 - Entry point: Sidebar `สินค้า / สต๊อก`, SKU selection flows, stock navigation.
-- Exit point: Product Model Detail, SKU Variant Detail, Ready Stock View, Stock Count, Stock Adjustment, Review Album, Production Job Entry.
+- Exit point: Product Model Detail, Ready Stock View, Stock Count, Stock Adjustment, Review Album.
 - Related flow IDs: `F02`, `F03`, `F06`, `F09`
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Product Model, SKU Variant, Ready Stock, Production Job, Review Album, Job Reference on SKU
-- Main actions: Search/filter SKU, open SKU, open Product Model, create product/SKU, navigate to stock actions, create production from SKU.
+- Main data objects: Product Model, SKU Variant, Ready Stock, Production Job, Review Album, Job Reference on Product Model
+- Main actions: Search/filter products, filter category/color/stock status, expand stocked rows to view color/SKU Variant stock, open Product Detail, create Product Model with initial color set, navigate to stock actions.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-014-product-sku-table.md`; `docs/ux-ui/image-prompts/IMG-SUP-014-product-sku-table.md`; `docs/ux-ui/mockups/SCR-SUP-014-product-sku-table/SCR-SUP-014-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-003 - Product Model Detail
 
 - Screen ID: `SUP-003`
 - Screen name: Product Model Detail
-- Thai UI label: `SKU ใหญ่`
+- Thai UI label: `SKU หลัก`
 - Primary actor: Admin / product-permission user
-- Purpose: Support Job and SKU work with product-level definition, shared images/instructions, related SKU Variant list, and permission-safe restricted product settings.
+- Purpose: Support Job and SKU work with product-level definition, shared images/instructions, color/SKU Variant management, stock-by-color visibility, and per-color production shortcuts.
 - Entry point: Product/SKU Table, SKU detail, Job creation support.
-- Exit point: SKU Variant detail, image groups, product masters.
+- Exit point: SKU Variant detail, image groups, product masters, Stock Adjustment, Production Job Entry.
 - Related flow IDs: `F03`, `F05`, `F09`
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Product Model, SKU Variant, Rak Samuk Standard Rate, Department Instruction Images
-- Main actions: View Product Model, open SKU variants, add SKU variant, manage product images, open review album, open source Job reference where present.
+- Main data objects: Product Model, Product Color Option, SKU Variant, Ready Stock, Department Instruction Images, Production Job
+- Main actions: View Product Model, open/close colors, open SKU variants, adjust stock by color via dedicated screen, create production from an enabled color, manage product images, open review album, open source Job reference where present.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-003-product-model-detail.md`; `docs/ux-ui/image-prompts/IMG-SUP-003-product-model-detail.md`; `docs/ux-ui/mockups/SCR-SUP-003-product-model-detail/SCR-SUP-003-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-004 - SKU Variant Detail
@@ -931,15 +931,15 @@ Note:
 - Screen name: SKU Variant Detail
 - Thai UI label: `SKU ย่อย`
 - Primary actor: Admin / product-permission user
-- Purpose: Support ready-stock and product identification for Order, Job, Shipment, and stock work.
+- Purpose: Support color-specific SKU identification for Order, Job, Shipment, and stock work.
 - Entry point: Product/SKU Table, Product Model Detail, Order Line entry, Stock view.
-- Exit point: SKU image groups, optional Job reference, Ready Stock view.
+- Exit point: Product Model Detail, SKU image groups, Ready Stock view, Stock Adjustment, Production Job Entry.
 - Related flow IDs: `F02`, `F03`, `F06`
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: SKU Variant, Product Model, Ready Stock, Job Reference on SKU
-- Main actions: View SKU, manage status where allowed, open Job reference.
+- Main data objects: SKU Variant, Product Model, Product Color Option, Ready Stock
+- Main actions: View SKU Variant, inspect color status, open Product Model, open stock actions, create production where the color is enabled.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-004-sku-variant-detail.md`; `docs/ux-ui/image-prompts/IMG-SUP-004-sku-variant-detail.md`; `docs/ux-ui/mockups/SCR-SUP-004-sku-variant-detail/SCR-SUP-004-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-005 - SKU Image Groups
@@ -955,7 +955,7 @@ Note:
 - Priority: `P1`
 - Device target: desktop / tablet / mobile
 - Design status: ready
-- Main data objects: SKU Variant, Department Instruction Images, Review Album
+- Main data objects: Product Model, SKU Variant, Department Instruction Images, Review Album
 - Main actions: Upload images, reorder images, add optional text where useful, move image groups, soft delete/hide images, open Review Album.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-005-sku-image-groups.md`; `docs/ux-ui/image-prompts/IMG-SUP-005-sku-image-groups.md`; `docs/ux-ui/mockups/SCR-SUP-005-sku-image-groups/SCR-SUP-005-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
@@ -965,7 +965,7 @@ Note:
 - Screen name: Ready Stock View
 - Thai UI label: `สินค้าพร้อมส่ง`
 - Primary actor: Admin / stock-permission user
-- Purpose: Support ready-stock reservation and ready-to-ship work.
+- Purpose: Support ready-stock reservation and ready-to-ship work using `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`.
 - Entry point: Order Line entry, SKU Variant Detail, stock navigation.
 - Exit point: Order Line detail, Ready-to-Ship Queue.
 - Related flow IDs: `F02`, `F06`
@@ -1061,21 +1061,21 @@ Note:
 - Main actions: Prepare PV, confirm payment, print PV.
 - Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
-### SUP-012 - Product Masters
+### SUP-012 - Product Settings
 
 - Screen ID: `SUP-012`
-- Screen name: Product Masters
-- Thai UI label: `ข้อมูลตั้งต้นสินค้า`
+- Screen name: Product Settings
+- Thai UI label: `ตั้งค่าสินค้า`
 - Primary actor: Admin / product-permission user
-- Purpose: Maintain confirmed masters needed by product/SKU and instruction classification.
-- Entry point: Settings / product navigation.
+- Purpose: Maintain product settings needed by product/SKU and instruction classification.
+- Entry point: `ตั้งค่า > ตั้งค่าสินค้า`, and mini manager modal from Product create/edit.
 - Exit point: Product Model Detail or SKU Variant Detail.
-- Related flow IDs: `F03`, `F05`
+- Related flow IDs: `F03`, `F05`, `F10`, `F11`
 - Priority: `P2`
 - Device target: desktop
 - Design status: later
-- Main data objects: Category, Subcategory, Product Tag, Color Master, Rak Samuk Pattern Master, Carving Pattern Master, Crystal Color Master
-- Main actions: Manage master records where allowed.
+- Main data objects: หมวดหมู่สินค้า, หมวดหมู่ย่อย, แท็กสินค้า, รายการสี, รายการลายรักสมุก, รายการลายแกะสลัก, รายการสีคริสตัล
+- Main actions: Add, edit, close, reopen, search, and filter setting records where allowed. Delete is allowed only when the record has never been used; used records must be `ปิดใช้งาน`. Management Log is required for setting changes.
 - Related source docs: `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-013 - Service Case

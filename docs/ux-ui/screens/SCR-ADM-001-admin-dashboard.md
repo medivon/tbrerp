@@ -93,9 +93,9 @@ Rules:
 
 | Card | Thai Title | Count Unit | Example Count | Status Chip | Subtext | Action |
 |---|---|---:|---:|---|---|---|
-| Orders Follow-up | `ออเดอร์ที่ต้องติดตาม` | Order | 18 | `ยังต้องตามงาน` | `กำลังผลิต 11 • ส่งได้เลย 7` | `ดูออเดอร์` |
+| Orders Follow-up | `ออเดอร์ที่ต้องติดตาม` | Order | 18 | `ยังต้องตามงาน` | `กำลังผลิต 11 • พร้อมสร้างรอบจัดส่ง 7` | `ดูออเดอร์` |
 | Active Jobs | `งานกำลังผลิต` | Job | 17 | `กำลังทำงาน` | `ช่างไม้ 8 • ฝ่ายสี 6 • รักสมุก 3` | `ดูภาพรวมงาน` |
-| Waiting Shipment Creation | `รอสร้างรอบจัดส่ง` | Order | 7 | `ส่งได้เลย` | `มี COD 3 ออเดอร์` | `เปิดคิวงาน` |
+| Waiting Shipment Creation | `รอสร้างรอบจัดส่ง` | Order | 7 | `พร้อมสร้างรอบจัดส่ง` | `มี COD 3 ออเดอร์` | `เปิดคิวงาน` |
 | Shipment Confirmation | `ยืนยันการจัดส่ง` | Shipment round | 4 | `รอเพิ่มข้อมูล` | `เพิ่มเลขติดตามพัสดุ / หลักฐานขนส่ง` | `เปิดคิวงาน` |
 | Production Follow-up | `งานผลิตต้องติดตาม` | Follow-up case | 2 | `รอรับทราบ Revision` | `ไม่เข้าใจให้ติดต่อหา 1` | `เปิดคิวงาน` |
 | Financial Follow-up | `ติดตาม COD / Payment` | Follow-up item | 6 | `ต้องติดตามเงิน` | `ค้างตรวจสอบ 6 รายการ` | `เปิดคิวงาน` |
@@ -147,7 +147,7 @@ Rules:
 |---|---|---|
 | `ยังไม่จบงาน` | Confirmed Orders still need operational handling. | Blue |
 | `กำลังทำงาน` | Jobs are active in production. | Orange |
-| `ส่งได้เลย` | Ready for shipment-round creation. | Green |
+| `พร้อมสร้างรอบจัดส่ง` | Ready for shipment-round creation. | Green |
 | `รอเพิ่มข้อมูล` | Shipment needs tracking/evidence confirmation. | Orange |
 | `รอรับทราบ Revision` | Production change needs acknowledgement/follow-up. | Purple |
 | `ต้องติดตามเงิน` | COD/Payment follow-up remains. | Red |

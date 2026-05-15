@@ -2,7 +2,9 @@
 
 ## 1. Purpose
 
-The SKU Variant Detail screen is the full-option desktop read-only detail page for one `SKU ย่อย`. It supports product identification, large image review, department instruction visibility, review links, Job reference, and stock/production summary. It is not an edit form and does not directly adjust stock quantity; stock changes happen in dedicated stock screens.
+The SKU Variant Detail screen is the desktop read-only detail page for one color-specific `SKU ย่อย`. It helps users inspect the exact sellable/stockable color under a Product Model, including SKU code, color, stock visibility, image fallback, and related production links.
+
+Product-level editing and color open/close decisions are owned by Product Model Detail.
 
 ## 2. Primary Users
 
@@ -13,138 +15,125 @@ The SKU Variant Detail screen is the full-option desktop read-only detail page f
 
 ## 3. User Goals
 
-- Understand one SKU Variant clearly before deciding whether to edit it.
-- See parent Product Model (`SKU ใหญ่`) and concrete SKU Variant (`SKU ย่อย`).
-- Inspect large product images and department images without entering an edit mode.
-- Review image groups used by production and sales context.
-- Review stock and production summary without editing stock inline.
-- Open Job reference, create production from SKU, open stock screens, open review albums, or open the separate SKU edit flow.
+- Confirm the exact SKU Variant selected for sale, stock, or production.
+- See the parent Product Model (`SKU หลัก`) and this variant's color.
+- See stock using clear terms: `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`.
+- Inspect variant-specific image overrides where they exist, with fallback to Product Model images.
+- Navigate to Product Model Detail, stock adjustment, production creation, or related stock/production views.
 
 ## 4. Entry Points
 
-- Product / SKU Table -> `เปิด SKU`.
-- Product Model Detail -> SKU Variant.
+- Product Model Detail -> `เปิด SKU ย่อย`.
+- Product / SKU Table expanded color reference when future design needs a direct link.
 - Production `ผลิตจาก SKU` selection.
 - Ready Stock View.
-- Order Line item selection.
+- Order Line item selection / historical Order Line detail.
 
 ## 5. Exit Points
 
-- Product / SKU Table.
 - Product Model Detail.
 - SKU Image Groups.
 - Ready Stock View.
 - Stock Count.
 - Stock Adjustment.
 - Production Job Entry.
-- Review Album.
-- Job Detail from optional Job reference.
+- Review Album through Product Model context.
 
 ## 6. Layout Structure
 
 - Desktop admin app shell with `สินค้า / สต๊อก` active.
-- Header with SKU code, Product Model, SKU Variant name, status chips, and action buttons.
-- Main content uses stacked read-only detail cards in a single scrollable story.
-- Cards should be image-first where recognition matters, with large product imagery and grouped thumbnails.
-- A compact sticky action/summary card may sit on the right, but the main screen should not feel like a form.
+- Header with SKU code, Product Model name, color, status chips, and action buttons.
+- Main content uses stacked read-only detail cards.
+- Image cards show SKU Variant image overrides first and Product Model fallbacks where missing.
 - Stock is report-only on this page.
-- Editing happens only after the user clicks `แก้ไข SKU`, which opens a dedicated edit mode/page.
+- Editing SKU/color availability happens through Product Model Detail or dedicated edit flows.
 
 ## 7. Main Components
 
-- SKU identity header
-- Hero product image card
-- Product/SKU identity card
-- Dimensions card with separated `กว้าง`, `ลึก`, `สูง`
-- Product image group cards
-- Department instruction image cards
-- Department instruction text cards
-- Review Album preview card
-- Job reference card
-- Stock and production summary card
+- SKU Variant identity header
+- Product Model reference card
+- Color card
+- Dimensions card inherited from Product Model
+- Image/fallback card
+- Department instruction image card
+- Stock summary card
+- Production summary card
 - Read-only action panel
 
 ## 8. Data Shown
 
 | Field | Thai Label | Example | Source object | Notes |
 |---|---|---|---|---|
-| SKU code | รหัส SKU | SKU-TEAK-TABLE-OAK-001 | SKU Variant | Unique/searchable code. |
-| Product Model | SKU ใหญ่ | โต๊ะข้างไม้สัก | Product Model | Parent product family. |
-| SKU Variant | SKU ย่อย | โต๊ะข้างไม้สัก สีโอ๊คเข้ม | SKU Variant | Concrete stockable/sellable item. |
-| Category | หมวดหมู่ | โต๊ะ | Product Category | Category/Subcategory. |
-| Color | สี | สีโอ๊คเข้ม | Color Master | Color usually splits variant. |
-| Width | กว้าง | 45 ซม. | SKU Variant / Product Model | Separate field. |
-| Depth | ลึก | 45 ซม. | SKU Variant / Product Model | Separate field. |
-| Height | สูง | 55 ซม. | SKU Variant / Product Model | Separate field. |
-| Status | สถานะ | เปิดใช้งาน | SKU Variant | Active/inactive. |
-| Main image | รูปหลัก | Product image | SKU Variant | Main recognition image. |
-| Additional images | รูปเพิ่มเติม | Product thumbnails | SKU Image Group | Drag/drop and ordered. |
-| Woodwork images | รูปสำหรับช่างไม้ | Structure images | Department Instruction Images | Inherited into Job when selected. |
-| Coloring images | รูปสำหรับฝ่ายสี/ตกแต่ง | Color images | Department Instruction Images | Inherited into Job when selected. |
-| Rak Samuk images | รูปสำหรับรักสมุก | Pattern images | Department Instruction Images | Inherited into Job when relevant. |
-| Review Album | คลังรีวิว | 12 รูป | Review Album | Separate from product images. |
-| Job reference | อ้างอิง Job | ไม่มี / JOB-O-0241 | Job Reference on SKU | Traceability only, no copying. |
-| Stock summary | สต๊อก | คงเหลือ 0 / จอง 0 | Ready Stock | Report-only. |
-| Production summary | งานผลิต | กำลังผลิต 6 | Production Job | Report-only. |
+| SKU code | รหัส SKU | TBR-TBL-123-OAK | SKU Variant | Generated from category code, Product Model ID, and color code. |
+| Product Model | SKU หลัก | โต๊ะข้างไม้สัก | Product Model | Parent product. |
+| Product Model ID/code | รหัส SKU หลัก | 123 / PM-123 | Product Model | Used in SKU code. |
+| Category | หมวดหมู่ | โต๊ะ | หมวดหมู่สินค้า | Category/Subcategory. |
+| Color | สี | สีโอ๊คเข้ม | รายการสี | Variant identity. |
+| Color status | สถานะสี | เปิดใช้งาน / ปิดใช้งาน | Product Color Option | Disabled variants are retained for history. |
+| Width | กว้าง | 45 ซม. | Product Model | Separate field inherited from Product Model. |
+| Depth | ลึก | 45 ซม. | Product Model | Separate field inherited from Product Model. |
+| Height | สูง | 55 ซม. | Product Model | Separate field inherited from Product Model. |
+| Main image | รูปหลัก | Color-specific or product image | SKU Variant / Product Model | Use SKU Variant image if present; otherwise fallback to Product Model. |
+| Woodwork images | รูปสำหรับช่างไม้ | Structure images | SKU Variant / Product Model | Use variant group if present, otherwise fallback. |
+| Coloring images | รูปสำหรับฝ่ายสี/ตกแต่ง | Color images | SKU Variant / Product Model | Use variant group if present, otherwise fallback. |
+| Rak Samuk images | รูปสำหรับรักสมุก | Pattern images | SKU Variant / Product Model | Use variant group if present, otherwise fallback. |
+| Stock on hand | มีอยู่ในร้าน | 4 | Ready Stock | Report-only. |
+| Reserved | จองแล้ว | 2 | Order Reservation | Report-only. |
+| Sellable | ขายได้ | 2 / -1 | Computed stock | May be negative after acknowledged over-reservation. |
+| Production summary | งานผลิต | กำลังผลิต 6 / รอรับเข้า 2 | Production Job | Report-only with navigation. |
 
 ## 9. Actions
 
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
-| Edit SKU | แก้ไข SKU | Product permission | Opens dedicated SKU edit flow. | No |
-| Open Product Model | เปิด SKU ใหญ่ | Product permission | Opens parent Product Model. | No |
-| Create production | สร้างงานผลิต | Product/production permission | Opens Production Job Entry with SKU selected. | No |
+| Open Product Model | เปิด SKU หลัก | Product permission | Opens parent Product Model Detail. | No |
+| Manage Images | จัดการรูปสินค้า | Product permission | Opens SKU Image Groups in SKU Variant context. | No |
+| Create production | ผลิตเข้าสต๊อก / ผลิตสินค้าชิ้นนี้ | Product/production permission | Opens Production Job Entry with this SKU Variant prefilled. | No |
 | View stock | ดูสต๊อก | Stock permission | Opens Ready Stock View. | No |
 | Stock count | ตรวจนับสต๊อก | Stock permission | Opens Stock Count. | No |
-| Stock adjustment | ปรับยอดสต๊อก | Stock permission / manager | Opens Stock Adjustment. | No |
-| Open Review Album | เปิดคลังรีวิว | Product/CRM permission | Opens linked Review Album. | No |
-| Open Job reference | เปิด Job | Product permission | Opens referenced Job. | No |
-| Deactivate SKU | ปิดใช้งาน | Product permission / manager | Deactivates SKU only if stock is cleared. | Yes |
+| Stock adjustment | ปรับยอดสต๊อก | Stock permission / manager | Opens Stock Adjustment with this SKU Variant preselected. | No |
+| Open related production | ดูงานผลิตที่เกี่ยวข้อง | Product/production permission | Opens related production list or job view. | No |
 
 ## 10. Status / Chips
 
 | Status | Thai Label | Meaning | Visual note |
 |---|---|---|---|
-| Active | เปิดใช้งาน | SKU can be used normally. | Positive chip. |
-| Inactive | ปิดใช้งาน | Hidden from normal lists but retained for history. | Gray chip. |
-| No stock | ไม่มีสต๊อก | Ready stock is zero. | Warning chip. |
-| In production | กำลังผลิต | Production exists. | Blue/purple chip. |
-| Has review | มีรีวิว | Review album exists. | Green chip. |
-| Job reference | อ้างอิง Job | SKU has source reference. | Neutral chip. |
+| Color active | สีเปิดใช้งาน | SKU Variant can be used for new sale/production selection. | Positive chip. |
+| Color inactive | สีปิดใช้งาน | SKU Variant is retained but hidden from new selection. | Gray chip. |
+| Sold out | หมด | `ขายได้` is zero. | Warning/neutral chip. |
+| Negative stock | ขายได้ติดลบ | `ขายได้` is below zero. | Warning chip. |
+| In production | กำลังผลิต | Related production exists. | Secondary chip. |
+| Waiting receipt | รอรับเข้า | Completed production awaits stock receipt. | Secondary chip. |
 
 ## 11. Empty State
 
-Empty image groups show `ยังไม่มีรูป` with `เพิ่มรูป`. Empty Job reference shows `ยังไม่มี Job อ้างอิง` with optional lookup action where allowed.
+Empty variant image groups show `ยังไม่มีรูปเฉพาะสีนี้` and explain that the Product Model image will be used instead.
 
 ## 12. Error State
 
 - Loading fails: `โหลดรายละเอียด SKU ไม่สำเร็จ`.
 - Permission fails: `ไม่มีสิทธิ์ดูรายละเอียด SKU`.
-- Deactivate with stock remaining: `ต้องเคลียร์สต๊อกก่อนปิดใช้งาน`.
-- Save fails: `บันทึก SKU ไม่สำเร็จ`.
+- Save fails in image context: `บันทึก SKU ไม่สำเร็จ`.
 
 ## 13. Permission Rules
 
-- Full option can be visible for admin/product users in design.
 - This screen is read-only by default.
-- Field-level editing must not appear inline on this screen.
-- `แก้ไข SKU` opens a separate edit state/page.
+- Product/color field editing does not appear inline here.
 - Direct stock quantity edits are not allowed here.
-- Stock actions navigate to dedicated screens.
+- Color open/close happens in Product Model Detail.
+- Production creation is available only when the color is enabled.
+- Stock actions navigate to dedicated stock screens.
 - Product cost, labor cost, profit, sales price, tax, and accounting data must not appear.
-- SKU can be deactivated only after stock is cleared.
-- Job reference is lookup-only traceability; it must not copy or sync Job data/images.
+- Job reference is shown on Product Model, not duplicated on SKU Variant.
 
 ## 14. UX Notes for Designer
 
-- Keep `SKU ใหญ่` and `SKU ย่อย` visually clear.
-- Keep `กว้าง`, `ลึก`, `สูง` as separate fields.
-- Use a card-based read-only layout, not a dense edit form.
-- Show the main product image large enough for staff to recognize the item quickly.
-- Image groups should be full-option, visual, and separated by purpose.
-- Review Album is separate from product image groups.
-- Stock/production should be summary/report-only.
-- Use a compact right-side action/summary card only if it supports scanning.
+- Keep `SKU หลัก` and `SKU ย่อย` visually distinct.
+- Show SKU Variant as the color-specific stock unit.
+- Use `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้` consistently.
+- Keep dimensions inherited from Product Model.
+- Make fallback image behavior obvious without making the page feel like a setup form.
+- Review Album is separate from product image groups and is normally reached from Product Model context.
 
 ## 15. Image Generation Prompt
 

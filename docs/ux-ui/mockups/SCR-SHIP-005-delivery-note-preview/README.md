@@ -21,6 +21,7 @@ It confirms:
 
 - `ใบส่งของ` is the item/product-focused print preview.
 - Product image, item name, quantity, and note are the dominant content.
+- Product image, item name, color / SKU ย่อย, and SKU code come from the Order Line snapshot so old documents do not change when Product images are edited later.
 - It does not show recipient/address as the dominant content.
 - Print controls stay outside the A4 printable area.
 - The screen includes actions to print Delivery Note, print both documents, view Shipping Sheet, and return to Shipment.

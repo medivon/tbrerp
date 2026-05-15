@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The SKU Image Groups screen is the full-option desktop image management screen for Product Model / `SKU ใหญ่` and SKU Variant / `SKU ย่อย`. It supports product images, department instruction images, Rak Samuk images, and Review Album links. This screen is for organizing image groups and optional explanation text; it is not a product edit form and not a stock screen.
+The SKU Image Groups screen is the full-option desktop image management screen for Product Model / `SKU หลัก` and SKU Variant / `SKU ย่อย`. It supports product images, department instruction images, Rak Samuk images, and Review Album links. This screen is for organizing image groups and optional explanation text; it is not a product edit form and not a stock screen.
 
 ## 2. Primary Users
 
@@ -16,7 +16,9 @@ The SKU Image Groups screen is the full-option desktop image management screen f
 - Keep product recognition images separate from production instruction images.
 - Add optional short text where a picture is not enough.
 - Reorder images so the most useful images appear first.
-- See which images are used by `SKU ใหญ่`, `SKU ย่อย`, or Review Album.
+- See which images are used by `SKU หลัก`, `SKU ย่อย`, or Review Album.
+- Manage Product Model images as the default/fallback image set for SKU Variants.
+- Add optional SKU Variant image overrides only where a color needs its own product or department images.
 - Return to Product Model Detail or SKU Variant Detail.
 
 ## 4. Entry Points
@@ -37,6 +39,7 @@ The SKU Image Groups screen is the full-option desktop image management screen f
 
 - Desktop admin app shell with `สินค้า / สต๊อก` active.
 - Header identifies the current image owner: Product Model or SKU Variant.
+- If the owner is a SKU Variant, show which image groups come from the SKU Variant and which groups fall back to Product Model.
 - Left area uses grouped image sections with drag-and-drop visual affordance.
 - Right panel shows selected group detail, usage notes, and save/publish actions.
 - Image groups should be clear enough for non-technical staff to understand.
@@ -64,12 +67,18 @@ The SKU Image Groups screen is the full-option desktop image management screen f
 | Rak Samuk Images | รูปสำหรับรักสมุก | Pattern/lacquer-thread instruction images. | Often visual-first. |
 | Review Album | คลังรีวิว | Customer/review image library. | Separate module/album; link here only. |
 
+Default rule:
+
+- Product Model image groups are the default images for all SKU Variants.
+- SKU Variant image groups are optional overrides. If a SKU Variant has its own group for a purpose, use it; if not, use the Product Model group for that purpose.
+
 ## 9. Data Shown
 
 | Field | Thai Label | Example | Source object | Notes |
 |---|---|---|---|---|
-| Owner type | ประเภทรูป | SKU ใหญ่ / SKU ย่อย | Product Model / SKU Variant | Shows what record is being managed. |
+| Owner type | ประเภทรูป | SKU หลัก / SKU ย่อย | Product Model / SKU Variant | Shows what record is being managed. |
 | Owner name | ชื่อสินค้า | โต๊ะข้างไม้สัก | Product Model / SKU Variant | Context. |
+| Fallback source | ใช้รูปจาก | SKU หลัก / SKU ย่อย | Product Model / SKU Variant | Shows whether this group is an override or fallback. |
 | Image group | กลุ่มรูป | รูปสำหรับช่างไม้ | SKU Image Group | Required grouping. |
 | Image count | จำนวนรูป | 6 รูป | SKU Image Group | Per group. |
 | Image note | คำอธิบายรูป | ใช้ดูทรงขาโต๊ะ | Image note | Optional. |
@@ -115,6 +124,7 @@ If a group has no images, show `ยังไม่มีรูปในกลุ
 - Review Album is separate from product image groups.
 - Product cost, labor cost, sales price, private CRM notes, and accounting data must not appear.
 - Images used by Jobs should not be silently removed from historical Job records.
+- Later edits to Product Model or SKU Variant image groups do not rewrite old Order/Job snapshots.
 
 ## 15. UX Notes for Designer
 
@@ -123,7 +133,8 @@ If a group has no images, show `ยังไม่มีรูปในกลุ
 - Drag-and-drop should feel available, but the UI must still work with normal upload buttons.
 - Keep optional text short and production-facing.
 - Do not mix Review Album images into normal product image groups.
-- The page should support both `SKU ใหญ่` and `SKU ย่อย` contexts.
+- The page should support both `SKU หลัก` and `SKU ย่อย` contexts.
+- In SKU Variant context, make missing groups feel acceptable because they fall back to Product Model images.
 
 ## 16. Image Generation Prompt
 

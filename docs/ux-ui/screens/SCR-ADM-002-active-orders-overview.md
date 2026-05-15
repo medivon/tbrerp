@@ -46,9 +46,9 @@ Operational actions such as Job follow-up, Shipment creation, Shipment confirmat
 - Sidebar active item: `ออเดอร์`.
 - Top bar: page title `ออเดอร์ที่ต้องติดตาม`, date, user/role.
 - Header area: count summary and restrained `สร้างออเดอร์` action.
-- Summary strip: total active Orders, producing Orders, ready-to-ship Orders, shipment-confirmation Orders.
+- Summary strip: total active Orders, producing Orders, Orders ready for shipment-round creation, shipment-confirmation Orders.
 - Order module tabs should be visible or implied in the page frame: `ออเดอร์ที่ต้องติดตาม`, `ออเดอร์ทั้งหมด`, `ร่างออเดอร์`, `ปิดแล้ว / ยกเลิก`.
-- Follow-up filter tabs: `ทั้งหมด`, `กำลังผลิต`, `ส่งได้เลย`, `รอยืนยันการจัดส่ง`, `ส่งบางส่วน`.
+- Follow-up filter tabs: `ทั้งหมด`, `กำลังผลิต`, `พร้อมสร้างรอบจัดส่ง`, `รอยืนยันการจัดส่ง`, `ส่งบางส่วน`.
 - Treat `รอยืนยันการจัดส่ง` here as a Shipment follow-up filter, not an Order status.
 - Search bar: customer, phone, Order ID, Job ID, recipient, postal code, address.
 - Main content: desktop table with image-led Order rows; tablet can use stacked cards.
@@ -81,7 +81,7 @@ Operational actions such as Job follow-up, Shipment creation, Shipment confirmat
 | Custom-work label | มีงานสั่งทำ | มีงานสั่งทำ | Order / Order Line | Show when the Order contains custom work. |
 | Order state | สถานะออเดอร์ | กำลังผลิต | Order / Order Line | Active-line operational state. |
 | Producing count | กำลังผลิต | 11 | Order / Job | Summary count. |
-| Ready-to-ship count | ส่งได้เลย | 7 | Order / Shipment readiness | Summary count. |
+| Ready-to-ship count | พร้อมสร้างรอบจัดส่ง | 7 | Order / Shipment readiness | Summary count. |
 | Job reference | Job ID | JOB-O-0241 | Job | Small metadata. |
 | Shipment state | สถานะการจัดส่ง | รอยืนยันการจัดส่ง | Shipment | Current Shipment round/tracking state, separate from Order status. |
 | Delivery date | กำหนดส่ง | 26 พ.ค. 67 | Order / Job / Shipment | Optional. |
@@ -101,7 +101,7 @@ Operational actions such as Job follow-up, Shipment creation, Shipment confirmat
 | Chip | Meaning | Visual Direction |
 |---|---|---|
 | `กำลังผลิต` | At least one Order Line is still in Job flow. | Orange |
-| `ส่งได้เลย` | Order has ready-to-ship items waiting for shipment-round creation. | Green |
+| `พร้อมสร้างรอบจัดส่ง` | Order has ready-to-ship items waiting for shipment-round creation. | Green |
 | `รอยืนยันการจัดส่ง` | Shipment round has been sent out and waits for admin confirmation/evidence; not an Order status. | Orange |
 | `ส่งบางส่วน` | At least one active Order line has completed delivery recording, while another active line is not complete. | Blue |
 | `มีงานสั่งทำ` | Order contains at least one custom-work line. | Neutral/source label |

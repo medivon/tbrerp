@@ -32,7 +32,7 @@ It extends the approved Admin Dashboard app shell into the Order workspace and c
 
 - `ทั้งหมด`
 - `กำลังผลิต`
-- `ส่งได้เลย`
+- `พร้อมสร้างรอบจัดส่ง`
 - `รอยืนยันการจัดส่ง` as a Shipment follow-up filter, not an Order status
 - `ส่งบางส่วน`
 

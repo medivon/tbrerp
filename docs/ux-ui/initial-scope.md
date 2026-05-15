@@ -14,7 +14,7 @@ Use this precedence when there is a conflict:
 
 Legacy material has been moved to `docs/archive/` and is not part of the active source of truth.
 
-The current starting decision is clear: the first UX/UI scope starts from งานสั่งทำ (Job) as the operating center, with Admin Dashboard as the first screen.
+The current starting decision is clear: the first UX/UI scope is `โหมดเริ่มใช้งานจริง`, starts from งานสั่งทำ (Job) as the operating center, and uses Admin Dashboard as the first screen. Avoid calling this mode MVP in product/docs language.
 
 ## Starting Screen
 
@@ -622,20 +622,30 @@ Confirmed rules:
 - SKU can be closed only after stock is cleared.
 - Closed SKU can be reopened by permission with log.
 
-### Product Masters
+### Product Settings
 
 Included:
 
 - Category + optional Subcategory
 - Product Tag as text-only tag
-- Color Master
-- Rak Samuk Pattern Master
-- Carving Pattern Master
-- Crystal Color Master
+- รายการสี
+- รายการลายรักสมุก
+- รายการลายแกะสลัก
+- รายการสีคริสตัล
+
+Rules:
+
+- Staff-facing UI uses `ตั้งค่า > ตั้งค่าสินค้า` / Product Settings.
+- Do not use `ข้อมูลตั้งต้นสินค้า`, `CRUD`, or `Master` in visible UI.
+- Users without product-settings permission do not see this menu.
+- Product setting changes are Management Log events.
+- Used records are closed with `ปิดใช้งาน` instead of deleted.
+- Color and category codes that have been used in SKU codes cannot be edited.
+- Product create/edit can open `modal จัดการรายการแบบย่อ` for permitted users to add/search/reopen setting values without leaving the product flow.
 
 Excluded in first scope:
 
-- Material Master
+- Material list / material master
 - Separate sales description vs production description
 
 ### Product Images

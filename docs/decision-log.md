@@ -23,6 +23,7 @@ If documents conflict, use this order:
 
 ## Starting Scope
 
+- Call the first usable operating mode `โหมดเริ่มใช้งานจริง`, not MVP.
 - The first UX/UI scope starts from งานสั่งทำ (Job) as the operating center.
 - The first screen to design is `Admin Dashboard`.
 - The scope is not a generic ERP phase 1.
@@ -468,59 +469,180 @@ Rules:
 
 ## Product and SKU
 
-- Product Model means SKU ใหญ่.
-- SKU Variant means SKU ย่อย.
-- SKU Variant is usually separated by color.
-- Size belongs to main product definition, not variant, unless it becomes a different Product Model.
-- If non-color details differ enough for selling/stocking, create new SKU.
-- SKU can optionally reference a Job through lookup modal.
+- Product Model means SKU หลัก / SKU ใหญ่.
+- SKU Variant means SKU ย่อย: the color-specific sellable/stockable record under one Product Model.
+- Product setup starts from Product Model, then the user selects real colors from `รายการสี`; the system creates SKU Variants automatically for those colors.
+- A Product Model can be created together with its initial color/SKU Variant set in one flow.
+- Required Product Model fields for the starting workflow are name, category, and dimensions (`กว้าง`, `ลึก`, `สูง`).
+- Product Model dimensions are the source of truth. If the same design has a materially different size, create a new Product Model.
+- SKU Variant creation requires `รายการสี` selection and the product's counted/non-counted stock setting; users do not manually type SKU Variant names for every color.
+- One Product Model + one `รายการสี` value can have only one SKU Variant. Duplicate color creation is blocked with a modal and a link to the existing SKU.
+- SKU code format for SKU Variant is `TBR-CATEGORYCODE-MAINSKUID-COLORCODE`, such as `TBR-TBL-123-OAK`.
+- Category code comes from `หมวดหมู่สินค้า`. Color code comes from `รายการสี`. Subcategory is not included in SKU code.
+- Changing Category code or Color code later does not rewrite existing SKU codes.
+- A new `รายการสี` value can be added to selected Product Models or selected categories; Product Models not selected can still enable that color later from Product Detail.
+- Enabling a color on a Product Model creates/reuses the SKU Variant and opens it for new sale/production selection.
+- Disabling a color means that color is not a real option for that Product Model; it hides the SKU Variant from new Order selection, `ผลิตจาก SKU`, normal product list expansion, and normal stock selection, while history remains readable.
+- A color cannot be disabled while it has stock, unfinished Orders, unfinished Jobs, or unfinished Production. The block modal must show the reason and links to the records to resolve.
+- Re-enabling a disabled color uses the same SKU Variant and code; it does not create a new duplicate SKU.
+- Non-color differences such as size, pattern, carving, crystal, or Rak Samuk detail become a new Product Model when they should be sold or stocked repeatedly.
+- If the non-color difference is one-off customer work, use custom Order work instead. If it later becomes repeatable, create a new Product Model with optional Job reference.
+- Job reference lives on Product Model, not SKU Variant.
 - Job reference is traceability only.
-- SKU creation does not copy data/images from Job.
+- Product/SKU creation does not copy or sync Job data/images.
 - Job reference should be optional.
 - Lookup should default to Done Jobs; high permission can include not-Done Jobs with warning.
-- SKU detail should show Job reference read-only and allow opening Job in new tab.
-- Job detail should show SKUs created from that Job.
-- One Job can be source for many SKUs.
-- SKU can be deactivated only after stock is cleared.
-- Deactivated SKU remains visible in history and can be reopened by permission with log.
+- Product Detail should show Job reference read-only and allow opening Job in a new tab.
+- Job detail should show Product Models created from that Job.
+- One Job can be source reference for many Product Models.
+- Product Model / SKU Variant deactivation remains visible in history and can be reopened by permission with log.
 
-## Product Masters
+### Product List and Product Detail
+
+- `รายการสินค้า / SKU` shows Product Models as the main table rows, not every SKU Variant as a separate top-level row.
+- The main stock number in the product list is `ขายได้ X ชิ้น`, summed across enabled colors. If the sum is zero, show `หมด`.
+- If any enabled color has negative `ขายได้`, the Product Model row shows `หมด` plus a badge such as `มีรายการติดลบ`.
+- Product list expansion is allowed only when there is saleable stock. Expansion shows only colors with `ขายได้ > 0`, as read-only rows with color, SKU code, and `ขายได้`.
+- If a color filter is active, expansion shows only the matching color when it has saleable stock; otherwise the row remains non-expandable and shows `หมด`.
+- Product list has search, category filter, color filter, and stock-status filter (`ขายได้` / `หมด`) in the starting workflow.
+- Search covers product name, product code, SKU Variant code, color name, and color code.
+- The row action `ดูสินค้า` opens Product Detail even when stock is zero.
+- Product Detail shows all enabled and disabled colors for the Product Model, with status.
+- Product Detail stock table uses three explicit labels: `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`.
+- Product Detail shows negative `ขายได้` values directly with warning.
+- Product Detail may link to `ปรับยอดสต๊อก` per color, but does not edit stock inline.
+- Product Detail shows a summary of `กำลังผลิต` / `รอรับเข้า` with links to related production work, but the product list does not show production badges.
+- Product Detail has a per-color production action such as `ผลิตเข้าสต๊อก` / `ผลิตสินค้าชิ้นนี้` for enabled colors. It opens `สร้างงานผลิต` in `ผลิตจาก SKU` mode with that SKU Variant preselected.
+- `สร้างงานผลิต` can still be opened normally and choose either `ผลิตจาก SKU` or `งานผลิตพิเศษ`; Product Detail prefill is only a starting helper.
+- If the user changes SKU Variant or switches to `งานผลิตพิเศษ`, the Product Detail prefill context is reset like opening the page fresh.
+- Product Detail prefill does not add a special back/cancel button. After creating production, the user goes to Job Detail.
+- Receiving stock from production does not start from Product Detail. It starts from completed Production/Job context.
+
+### Order Item Selection
+
+- Order `เพิ่มสินค้าพร้อมส่ง` shows Product Models first, then lets the user choose an enabled color/SKU Variant inside the selected product.
+- Default Order selection shows only Product Models with saleable stock, with a separate action `เลือกสินค้าที่ไม่มีสต๊อก`.
+- When `เลือกสินค้าที่ไม่มีสต๊อก` is active, enabled colors with zero stock are selectable and show `หมด`.
+- Order item selection uses `ขายได้ X ชิ้น` for Product Model and color-level stock display.
+- If the user searches by SKU Variant code, show the Product Model result and highlight the matching color.
+- If selected quantity exceeds `ขายได้`, show an immediate warning and repeat it on Order Review.
+- Over-reservation still follows the existing acknowledgement rule: permitted Order users may acknowledge the warning, no special reason or Manager approval is required, and `ขายได้` may become negative after confirmation.
+- Draft Orders do not reserve stock. Order Review rechecks stock at confirmation time, and stale warnings disappear when stock is sufficient again.
+
+## Product Settings
 
 Confirmed:
 
-- Category + optional Subcategory
-- Product Tag, text-only
-- Color Master
-- Rak Samuk Pattern Master
-- Carving Pattern Master
-- Crystal Color Master
+- Staff-facing area: `ตั้งค่า > ตั้งค่าสินค้า`
+- English docs name: Product Settings
+- Product Category / `หมวดหมู่สินค้า`
+- Product Subcategory / `หมวดหมู่ย่อย`
+- Product Tag / `แท็กสินค้า`, text-only
+- รายการสี
+- รายการลายรักสมุก
+- รายการลายแกะสลัก
+- รายการสีคริสตัล
 
 Rules:
 
-- Product Tag master controlled by product/admin permission.
-- Product Tag has no color in first scope.
-- Color uses Color Master only.
-- Special color should be added to Color Master, not free text.
-- Pattern Master is not mandatory for sending work; it helps search/classify.
-- Pattern Master can have optional sample images.
+- Do not use `ข้อมูลตั้งต้นสินค้า`, `CRUD`, or `Master` in staff-facing UI.
+- Use Thai actions: `เพิ่ม`, `แก้ไข`, `ปิดใช้งาน`, `เปิดใช้งาน`, `ค้นหา`, and `กรองสถานะ`.
+- `ตั้งค่าสินค้า` is visible only to users with product-settings permission; users without that permission do not see the menu.
+- Changes in `ตั้งค่าสินค้า` are recorded in Management Log.
+- Setting records that have never been used can be deleted.
+- Setting records that have been used by Product Model, SKU Variant, Order, Job, or historical production instruction cannot be deleted; use `ปิดใช้งาน` instead.
+- `ปิดใช้งาน` hides the value from new selection but keeps old Product/SKU/Order/Job/history readable where needed.
+- Used setting records may be edited only for non-confusing details such as display cleanup, notes, or sample images; edits must not silently change historical meaning.
+- Snapshot Order/Job/documents keep the old name at the time they were created; current Product/SKU views use the current name.
+
+### Product Settings Layout
+
+- `ตั้งค่า > ตั้งค่าสินค้า` uses tabs:
+  - `หมวดหมู่สินค้า`
+  - `แท็กสินค้า`
+  - `รายการสี`
+  - `รายการลายรักสมุก`
+  - `รายการลายแกะสลัก`
+  - `รายการสีคริสตัล`
+- `รายการสี` has `เพิ่มสี`, `แก้ไข`, `ปิดใช้งาน`, `เปิดใช้งาน`, `ค้นหา`, and `กรองสถานะ`.
+- `รายการลายรักสมุก`, `รายการลายแกะสลัก`, and `รายการสีคริสตัล` have `เพิ่ม`, `แก้ไข`, `ปิดใช้งาน`, `เปิดใช้งาน`, `ค้นหา`, and `กรองสถานะ`.
+- Do not build a permanent report such as "สีนี้ใช้กับสินค้าไหน" in the starting workflow.
+- If a value cannot be closed, show a blocking modal with the exact Product/SKU or Job records that block the action and buttons to open those records.
+
+### Color List
+
+- Color uses `รายการสี` only.
+- Special color should be added to `รายการสี`, not free text.
+- Required fields: `ชื่อสี` and `รหัสย่อ`.
+- Optional fields: sample color/image, status, and note.
+- `รหัสย่อ` uses uppercase English letters and numbers, around 2-8 characters, and must be unique.
+- If `รหัสย่อ` has been used in SKU Variant codes, it cannot be edited. Close the old color and create a new color instead.
+- If `ชื่อสี` or `รหัสย่อ` duplicates an existing color, block save and show a link/button to open the existing color.
+- If a used color name is fixed for spelling/cleanup, current Product/SKU views show the new name but old Order/Job/document snapshots keep the original name.
+- When creating a new color in `รายการสี`, users may add it to selected Product Models or selected categories; not selecting any product/category is allowed.
+- Adding a new color to selected categories affects only Product Models that exist in those categories at that time; future products choose colors during product creation.
+- When a new color is added to selected products/categories, it is enabled immediately and creates SKU Variants for those products.
+- `รายการสี` cannot be closed if any linked SKU Variant has `มีอยู่ในร้าน > 0` or `จองแล้ว > 0`.
+- If color close is blocked, the modal shows the affected SKU Variants/products and reasons such as `มีสินค้าในร้าน`, `มีรายการจองอยู่`, and `ขายได้ติดลบ` where applicable.
+- If every linked SKU Variant has `มีอยู่ในร้าน = 0` and `จองแล้ว = 0`, the color can be closed.
+- Closed colors remain visible in `รายการสี` for product-settings users with status `ปิดใช้งาน`, but they do not appear in normal new-selection controls.
+- Reopening a color makes it usable again for products that already had that color linked; the product-color link was never deleted.
+
+### Pattern And Decoration Lists
+
+- `รายการลายรักสมุก` requires only `ชื่อลาย`.
+- `รายการลายรักสมุก` may have optional sample image, note, and status.
+- `รายการลายรักสมุก` name may be edited for spelling/cleanup; old Order/Job/document snapshots keep the old name.
+- Closing `รายการลายรักสมุก` hides it from new selection but keeps it visible for product-settings users and old history.
+- `รายการลายรักสมุก` cannot be closed if an active/in-progress Job uses it; the blocking modal shows those Jobs and buttons to open them.
+- `รายการลายแกะสลัก` uses the same rules as `รายการลายรักสมุก`.
+- `รายการสีคริสตัล` uses the same rules as pattern lists, not the same rules as product colors.
+- Pattern/decor lists are not mandatory for sending work; they help search/classify.
+- Pattern/decor lists can have optional sample images.
 - Product/SKU can choose multiple Rak Samuk Patterns.
-- Carving Pattern Master is separate from Rak Samuk Pattern Master.
-- Crystal Color Master is separate.
+- `รายการลายแกะสลัก` is separate from `รายการลายรักสมุก`.
+- `รายการสีคริสตัล` is separate.
+
+### Category, Subcategory, And Tags
+
+- `หมวดหมู่สินค้า` requires `ชื่อหมวดหมู่` and `รหัสหมวดหมู่`.
+- `รหัสหมวดหมู่` uses uppercase English letters and numbers, around 2-8 characters, and must be unique.
+- If `รหัสหมวดหมู่` has been used in SKU Variant codes, it cannot be edited. Close the old category and create a new category instead.
+- `หมวดหมู่สินค้า` can be closed only when no active Product Models remain in that category.
+- If category close is blocked, show a modal with the active Product Models and buttons to open them.
+- `หมวดหมู่ย่อย` is in the starting workflow, but it is not included in SKU Variant codes.
+- `หมวดหมู่ย่อย` requires `ชื่อหมวดหมู่ย่อย` and a parent `หมวดหมู่สินค้า`.
+- `หมวดหมู่ย่อย` can be closed only when no active Product Models remain in that subcategory.
+- `แท็กสินค้า` is text-only and requires only `ชื่อแท็ก`.
+- Product tags are only for search/grouping; they do not drive workflow, permissions, price, or discount logic.
+- `แท็กสินค้า` can be closed at any time. Existing Product Models still show the tag with a `ปิดใช้งาน` badge, but the tag is hidden from new selection.
+
+### Mini List Manager
+
+- Product creation/edit flows can open a `modal จัดการรายการแบบย่อ` for users with product-settings permission.
+- The mini modal can add a new value, search existing values, and reopen inactive values with confirmation.
+- It is not the full settings page and does not include closing/editing all records.
+- Adding `รายการสี` through the mini modal behaves like adding it from `รายการสี`: it creates the central color record, links it to the current Product Model immediately, and creates the SKU Variant.
+- Adding `รายการลายรักสมุก`, `รายการลายแกะสลัก`, or `รายการสีคริสตัล` through the mini modal links the new value to the current product immediately.
+- Reopening an inactive `รายการสี` through the mini modal requires confirmation, then links/reopens the color for the current product and creates/reopens the SKU Variant.
 
 Not in first scope:
 
-- Material Master
+- Material list / material master
 - Separate sales description and production description
 
 ## Product and Job Images
 
-- SKU has:
+- Product Model has:
   - รูปหลัก
   - รูปเพิ่มเติม
   - รูปสำหรับช่างไม้
   - รูปสำหรับฝ่ายสี/ตกแต่ง
   - รูปสำหรับรักสมุก
   - รูปรีวิว through Review Album
+- SKU Variant can have optional color-specific main image and optional color-specific department images.
+- If a selected SKU Variant has its own image/group for a purpose, use the SKU Variant version. If it does not, fall back to the Product Model image/group for that purpose.
+- Order and Job records snapshot the SKU code, product name, color, dimensions, display image, and relevant department images at the time the SKU Variant is selected; later product image edits do not rewrite old Orders or Jobs.
 - Department instruction images can have order and optional text.
 - Job can inherit/use relevant product instruction images by default and allow additional Job images/text.
 - Image upload should support drag and drop.
@@ -670,6 +792,8 @@ Not in first scope:
 
 - First scope uses one warehouse concept even though real locations differ.
 - Some items are counted stock; some are not counted.
+- Use three stock labels where detail is needed: `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`.
+- `ขายได้` is the number used in product lists and Order selection; it equals stock after reservations and may become negative after acknowledged over-reservation.
 - Ready-stock reserves stock when Order is created.
 - If Order is cancelled before Shipment, stock can be returned according to cancellation rules.
 - If after Shipment creation/cancellation is operationally complex, use Stock Adjustment with reason rather than automatic correction.
@@ -766,7 +890,7 @@ These were discussed but intentionally not detailed now:
 - Quote/Lead workflow
 - Channel/funnel analytics
 - Payroll
-- Material Master
+- Material list / material master
 - Supplier deep management
 - Product costing/BOM
 - Full QC

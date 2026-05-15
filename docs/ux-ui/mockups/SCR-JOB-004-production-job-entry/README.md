@@ -17,9 +17,9 @@ Related documents:
 
 ## Approved Role
 
-`SCR-JOB-004-sku-modal-approved.png` is the current source of truth for the `ผลิตจาก SKU` workflow state where admin clicks the purple `เลือกสินค้า` button and sees the SKU search modal.
+`SCR-JOB-004-sku-modal-approved.png` is the current source of truth for the `ผลิตจาก SKU` workflow state where admin clicks the purple `เลือกสินค้า` button and sees the SKU search modal. SKU results must show the parent `SKU หลัก` together with the selected color / `SKU ย่อย`.
 
-`SCR-JOB-004-sku-selected-approved.png` is the current source of truth for the next `ผลิตจาก SKU` state after SKU selection, where selected SKU details populate the body and the `สร้างงานผลิต` action is ready.
+`SCR-JOB-004-sku-selected-approved.png` is the current source of truth for the next `ผลิตจาก SKU` state after SKU Variant selection, where selected SKU ย่อย details populate the body and the `สร้างงานผลิต` action is ready.
 
 `SCR-JOB-004-special-work-approved.png` is the current source of truth for the `งานผลิตพิเศษ` state, where the body follows the custom-work detail pattern from `รายละเอียดงานสั่งทำ` but uses internal production source `JOB-P / งานผลิต`.
 
@@ -29,8 +29,10 @@ It confirms:
 - The primary action label is `สร้างงานผลิต`.
 - `ผลิตจาก SKU` and `งานผลิตพิเศษ` are separate modes.
 - In `ผลิตจาก SKU`, the body starts from `เลือกสินค้า` and does not show the special-production form.
-- SKU selection happens through a modal with search, filters, SKU rows, and `เลือกสินค้านี้`.
-- After SKU selection, the modal closes and the body shows selected SKU identity, quantity, inherited SKU images, and department instruction cards.
+- SKU selection happens through a modal with search, filters, SKU rows, `ขายได้` / `หมด` stock signals, and `เลือกสินค้านี้`.
+- After SKU selection, the modal closes and the body shows selected SKU หลัก, color / SKU ย่อย, quantity, image fallback from SKU ย่อย to SKU หลัก, and department instruction cards.
+- Product Detail can open this screen with a color/SKU ย่อย preselected, but changing SKU or switching mode resets that initial context.
+- A Product Detail prefill does not add a special back/cancel path; successful creation goes to Job Detail.
 - The `เปลี่ยนสินค้า` action is available as a secondary purple action.
 - `งานผลิตพิเศษ` uses its own active tab and does not show SKU modal or selected SKU detail.
 - `งานผลิตพิเศษ` can show `ยังไม่ผูกสินค้า` and `ผูกกับ SKU ภายหลัง`.
@@ -51,4 +53,4 @@ That next state is specified in:
 
 ## Regeneration Rule
 
-Future prompts for `SCR-JOB-004` must keep `ผลิตจาก SKU` and `งานผลิตพิเศษ` visually separated. Do not mix SKU selection fields and custom-production fields in one body.
+Future prompts for `SCR-JOB-004` must keep `ผลิตจาก SKU` and `งานผลิตพิเศษ` visually separated. Do not mix SKU selection fields and custom-production fields in one body, and do not use `คงเหลือ` or `พร้อมขาย` for stock signals.

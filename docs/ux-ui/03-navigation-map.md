@@ -188,15 +188,19 @@ Rules:
 
 Purpose:
 
-- Configuration, roles/permissions, masters, and system settings.
+- Configuration, roles/permissions, product settings, and system settings.
 
 Expected subcategories:
 
 - Roles / Permissions
-- Product masters
-- Color Master
-- Pattern masters
+- ตั้งค่าสินค้า
 - Carrier/evidence settings later
+
+Rules:
+
+- `ตั้งค่าสินค้า` contains tabs for `หมวดหมู่สินค้า`, `แท็กสินค้า`, `รายการสี`, `รายการลายรักสมุก`, `รายการลายแกะสลัก`, and `รายการสีคริสตัล`.
+- Users without product-settings permission do not see `ตั้งค่าสินค้า`.
+- Do not expose `CRUD`, `Master`, or `ข้อมูลตั้งต้นสินค้า` as staff-facing labels.
 
 ## Top Bar Navigation Pattern
 

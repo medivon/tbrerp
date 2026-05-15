@@ -84,10 +84,11 @@ Bulk exit:
 |---|---|---|---|---|
 | Shipment status | สถานะรอบจัดส่ง | กำลังสร้างรอบจัดส่ง | Shipment draft state | Before release. |
 | Order ID | เลขออเดอร์ | ORD-240520-014 | Order | Single Order context. |
-| Item list | รายการพร้อมส่ง | โต๊ะกลางลงรักสมุก | Selected Order Line / Job / Service Case | No price shown. |
+| Item list | รายการพร้อมส่ง | โต๊ะกลางลงรักสมุก สีโอ๊ค | Selected Order Line / Job / Service Case | Use Order Line snapshot for ready-stock lines; no price shown. |
 | Source | สถานะงาน | งานสั่งทำเสร็จแล้ว | Order Line / Job / Service Case | Stock/custom/service badge. |
 | Quantity | จำนวน | 1 ชิ้น | Order Line / Job | Printed on Delivery Note. |
-| Product image | รูปสินค้า | Table thumbnail | Main product/work image from Order Line / Job / SKU | Work recognition; no delivery-specific image selection. |
+| Product image | รูปสินค้า | Table thumbnail | Main product/work image from Order Line snapshot / Job / Service Case | For ready-stock, use the display image snapshotted when the SKU Variant was selected; no delivery-specific image selection. |
+| SKU/color | SKU / สี | TBR-TBL-123-OAK / สีโอ๊ค | Order Line snapshot | Show where useful for admin verification; avoid cluttering delivery-facing printouts. |
 | Related Job ID | ที่มา / Job ID | JOB-O-0238 | Job | Only where relevant. |
 | Shipment intent | วิธีจัดส่งรายการนี้ | จัดส่งบางรายการจากออเดอร์ | Order Detail selection | Selected ready lines determine whether this Shipment round is combined or split. |
 | Recipient | ผู้รับสินค้า | คุณณัฐพล | Address Entry / Shipment snapshot | Editable before release. |

@@ -61,8 +61,9 @@ Approved mockup:
 | Document title | ใบส่งของ | ใบส่งของ | Delivery Note | Item-focused document. |
 | Shipment ID | เลขรอบจัดส่ง | SHIP-2568-0061 | Shipment | Shipment reference. |
 | Order ID | เลขออเดอร์ | ORD-2568-0021 | Order | Reference only. |
-| Item image | รูปสินค้า | Cabinet thumbnail | Order Line / Job / SKU | Small image if available. |
-| Item name | รายการสินค้า | ตู้โชว์ไม้สักแกะลาย | Order Line / Job | No price. |
+| Item image | รูปสินค้า | Cabinet thumbnail | Order Line snapshot / Job | Small image if available; ready-stock uses the snapshotted SKU Variant image or Product Model fallback. |
+| Item name | รายการสินค้า | ตู้โชว์ไม้สักแกะลาย สีโอ๊ค | Order Line snapshot / Job | Ready-stock should include the selected color where useful; no price. |
+| SKU code | รหัส SKU | TBR-TBL-123-OAK | Order Line snapshot | Optional admin-facing reference; keep printable layout compact. |
 | Quantity | จำนวน | 1 ชิ้น | Order Line / Job | Required. |
 | Item note | หมายเหตุ | ระวังกระจกหน้าบาน | Shipment / Order Line note | Delivery-facing item note. |
 | Source | แหล่งที่มา | งานสั่งทำ | Order Line / Job | Optional internal/admin signal, not required for recipient. |

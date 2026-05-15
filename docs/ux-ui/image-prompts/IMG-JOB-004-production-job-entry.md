@@ -26,14 +26,14 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows, dark navy emphasis
 
 Screen purpose:
-Admin prepares one internal production item as a clear `JOB-P` work unit with images and department-specific instructions. The visible UI should make `ผลิตจาก SKU` and `งานผลิตพิเศษ` feel like separate modes, not a mixed form.
+Admin prepares one internal production item as a clear `JOB-P` work unit with images and department-specific instructions. The visible UI should make `ผลิตจาก SKU` and `งานผลิตพิเศษ` feel like separate modes, not a mixed form. This screen can open normally from production work, or with one SKU ย่อย prefilled from Product Detail.
 
 Header area:
 - Page title: สร้างงานผลิต
-- Context line: จากชุดผลิต PROD-2568-0021 / LOT-001
-- Large chips: JOB-P, งานผลิต, ผลิตจาก SKU, ผูกสินค้าแล้ว, พร้อมบันทึก
+- Context line: งานผลิตเข้าสต๊อก / เปิดจากสินค้าได้
+- Large chips: JOB-P, งานผลิต, ผลิตจาก SKU, รอเลือกสินค้า
 - Primary button: สร้างงานผลิต
-- Secondary buttons: บันทึกไว้ก่อน, กลับไปชุดผลิต
+- Secondary button: บันทึกไว้ก่อน
 
 Main layout:
 Use a clear two-column admin form. Main form on the left, readiness/source panel on the right.
@@ -52,20 +52,21 @@ Active `ผลิตจาก SKU` body before selection:
 - Short compact chips are okay: ยังไม่ได้เลือกสินค้า, JOB-P, ผลิตจาก SKU
 
 Show SKU search modal open over the page:
-- Modal title: เลือกสินค้า / SKU
-- Search input placeholder: ค้นหาชื่อสินค้า / รหัส SKU / สี / หมวดหมู่
+- Modal title: เลือกสินค้า
+- Search input placeholder: ค้นหาชื่อสินค้า / รหัส / SKU / สี / หมวดหมู่
 - Filter chips: ทั้งหมด, ตู้พระ, โต๊ะ, ฐานพระ, สีโอ๊ค, สีทอง
-- SKU result list with 4 rows/cards, each with thumbnail, SKU code, product name, color, current stock, and action button เลือกสินค้านี้
+- Result list with 4 rows/cards. Each row must show SKU หลัก, selected color / SKU ย่อย, SKU code, saleable stock, thumbnail, and action button เลือกสินค้านี้
 - Highlight one example result:
-  - SKU-TEAK-TABLE-OAK-001
-  - โต๊ะข้างไม้สัก สีโอ๊คเข้ม
-  - คงเหลือ 0 / ผลิตเพิ่ม
+  - SKU หลัก: โต๊ะข้างไม้สัก
+  - สี / SKU ย่อย: สีโอ๊คเข้ม / TBR-TBL-123-OAK
+  - ขายได้ 0 / หมด / ผลิตเพิ่ม
   - action เลือกสินค้านี้
 - Modal footer buttons: ยกเลิก, เลือกสินค้านี้
 
 Behind the modal, keep the main page visible but slightly dimmed. Do not show the `งานผลิตพิเศษ` form on the active SKU tab.
 
 After-SKU-selected state should be implied by the modal result, not fully displayed in this image. The selected SKU would populate the detail body with SKU image, SKU name, quantity, and inherited department instructions.
+If this page was opened from Product Detail with a preselected SKU ย่อย, selecting another product or switching to `งานผลิตพิเศษ` resets that initial context and behaves like opening this screen fresh.
 
 Inactive `งานผลิตพิเศษ` tab:
 - Visible as an inactive tab only
@@ -80,9 +81,9 @@ Title: ตรวจความพร้อม
   - ตรวจรายละเอียดจาก SKU
   - เพิ่มหมายเหตุถ้าจำเป็น
 - Source summary:
-  - ชุดผลิต: PROD-2568-0021
-  - ล็อตผลิต: LOT-001
-  - รหัสงาน: JOB-P-0018
+  - แหล่งที่มา: งานผลิตเข้าสต๊อก
+  - SKU เริ่มต้น: ยังไม่ได้เลือก
+  - รหัสงาน: จะสร้างหลังบันทึก
   - สถานะ: รอเลือกสินค้า
 - Primary action button repeated at bottom: สร้างงานผลิต
   - Button should look disabled or secondary until SKU is selected
@@ -95,6 +96,9 @@ Visual rules:
 - Do not mix `ผลิตจาก SKU` and `งานผลิตพิเศษ` fields in one body
 - Do not show custom-production fields on the active `ผลิตจาก SKU` tab before choosing SKU
 - Do not use long explanatory helper text about automatic routing
+- Do not show a special back/cancel path to Product Detail when the screen was opened with SKU prefill
+- Use `ขายได้ X ชิ้น` and `หมด` for stock signals; do not use `คงเหลือ` or `พร้อมขาย`
+- Keep SKU หลัก and color / SKU ย่อย visible together in SKU search results
 - Make image upload and department image groups visually important
 - Use the approved light sidebar baseline; do not switch to a dark sidebar
 - Make `JOB-P / งานผลิต` clearly different from `JOB-O / งานลูกค้า`

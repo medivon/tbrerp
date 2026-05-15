@@ -34,8 +34,8 @@ Admin uses this screen as a read-first report for one Order. The page should sho
 Header:
 - Page title: รายละเอียดออเดอร์
 - Order ID: ORD-240520-014
-- Main header chips only: กำลังดำเนินการ and จัดส่งยังไม่ครบ
-- Treat กำลังดำเนินการ as สถานะออเดอร์ and จัดส่งยังไม่ครบ as สถานะการจัดส่ง; keep these separate
+- Main header chips only: ส่งบางส่วน and จัดส่งยังไม่ครบ
+- Treat ส่งบางส่วน as สถานะออเดอร์ and จัดส่งยังไม่ครบ as สถานะการจัดส่ง; keep these separate
 - Optional small source chip: มีงานสั่งทำ
 - Customer: ร้านบ้านศิลป์
 - Main recipient: คุณณัฐพล
@@ -50,7 +50,7 @@ Open the “จัดการออเดอร์” menu or show it as a visi
 - แก้ไขงานสั่งทำ
 - จัดการรอบจัดส่ง
 - เปิดติดตามการเงิน
-- ยกเลิกออเดอร์ as the last warning action; if the example state blocks whole-order cancellation, render it disabled with tooltip/reason “ยกเลิกไม่ได้ เพราะมีรายการที่ส่งออกแล้วหรือ JOB-O เริ่มผลิตแล้ว”
+- ยกเลิกออเดอร์ as the last warning action; if the example state blocks whole-order cancellation, render it disabled with tooltip/reason “ยกเลิกไม่ได้ เพราะมีรายการที่ส่งออกแล้ว หรือมี JOB-O/รอบจัดส่งที่ต้องจัดการก่อน”
 
 Main layout:
 Use one continuous scrollable report page, not tabs. Use full-width sections stacked vertically. Do not use tabs like รายการในออเดอร์ / งานที่เกี่ยวข้อง / รอบจัดส่ง / การชำระเงิน / ประวัติ.
@@ -63,7 +63,7 @@ Show compact summary cards/rows:
 - ที่อยู่จัดส่งหลัก: 88/14 ถ.ราชพฤกษ์ ต.บางรักพัฒนา อ.บางบัวทอง จ.นนทบุรี 11110
 - วันที่สร้าง: 20 พ.ค. 67
 - ยอดรวมสุทธิ: 45,800
-- สถานะออเดอร์: กำลังดำเนินการ
+- สถานะออเดอร์: ส่งบางส่วน
 - สถานะจัดส่ง: จัดส่งยังไม่ครบ
 - Buttons in this section: เปิดลูกค้า
 - Customer master/address-book editing happens after opening Customer Detail/Profile
@@ -74,8 +74,10 @@ Group items by type with clear labels:
 
 สินค้าพร้อมส่ง
 Show row/card 1:
-- Image thumbnail of Thai wooden table
-- Item name: โต๊ะกลางลงรักสมุก
+- Image thumbnail from Order Line snapshot
+- SKU หลัก / item name: โต๊ะกลางลงรักสมุก
+- สี / SKU ย่อย: สีโอ๊คเข้ม / TBR-TBL-123-OAK
+- ขนาด: กว้าง 90 ลึก 60 สูง 45 ซม.
 - Quantity: 1 ชิ้น
 - Status: พร้อมส่ง
 - Shipment state: ยังไม่อยู่ในรอบจัดส่ง
@@ -83,7 +85,8 @@ Show row/card 1:
 - Section action near row: แก้ไขรายการสินค้า or small edit icon if allowed
 
 Show row/card 2:
-- Item name: ชุดเก้าอี้ไม้สัก
+- SKU หลัก / item name: ชุดเก้าอี้ไม้สัก
+- สี / SKU ย่อย: สีทองโบราณ / TBR-CHA-118-GLD
 - Quantity: 2 ชิ้น
 - Status: ส่งแล้ว
 - Related shipment: SHIP-2568-0060
@@ -180,6 +183,8 @@ Visual rules:
 - Do not imply existing JOB-O can be cancelled from Order Line Edit; cancellation starts from Job
 - Do not imply Order recipient edits update existing Shipment rounds; Shipment snapshots are edited in Shipment screens
 - Do not imply later Customer address-book edits rewrite this Order's recipient/address snapshot
+- Do not imply later Product Model/SKU image edits rewrite this Order's item snapshot
+- Ready-stock lines must show SKU หลัก, color / SKU ย่อย, SKU code, dimensions, and display image from the saved selection snapshot
 - If showing an edit recipient modal/drawer, include an optional checkbox บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า
 - If showing line-specific delivery detail, place “แก้ข้อมูลจัดส่งรายการนี้” on the line itself only before it enters a Shipment round
 - Do not show a heavy separate split-shipment workflow; selected ready lines are the practical split/combined shipment control

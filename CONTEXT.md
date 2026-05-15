@@ -76,13 +76,53 @@ _Avoid_: Full accounting, tax workflow, Order status
 
 ### Product and Custom Work
 
-**Product Model (SKU ใหญ่)**:
-The parent product definition that represents the main sellable design family.
+**Product Model (SKU หลัก / SKU ใหญ่)**:
+The parent product definition that represents the main sellable design family and owns the shared size, category, images, and available color options.
 _Avoid_: SKU when discussing variants or stock units
 
 **SKU Variant (SKU ย่อย)**:
-A concrete sellable/stockable version under a Product Model, commonly separated by color.
+A concrete sellable/stockable color version under a Product Model.
 _Avoid_: Product Model
+
+**Product Color Option (สีของสินค้า)**:
+A value from **รายการสี** enabled or disabled for one Product Model, creating or reusing the corresponding SKU Variant for that product-color pair.
+_Avoid_: Free-text color, duplicate SKU Variant for the same product and color
+
+**Product Settings (ตั้งค่าสินค้า)**:
+The Settings area for product-related reference lists used when creating products and production instructions, such as หมวดหมู่สินค้า, แท็กสินค้า, รายการสี, รายการลายรักสมุก, รายการลายแกะสลัก, and รายการสีคริสตัล.
+_Avoid_: ข้อมูลตั้งต้นสินค้า, CRUD, Master in staff-facing labels
+
+**Product Setting Item Status (สถานะรายการตั้งค่าสินค้า)**:
+Product setting records can be active, inactive, or deleted only when unused. Once a setting record has been used by a Product Model, SKU Variant, Order, Job, or historical production instruction, it is closed with `ปิดใช้งาน` instead of being deleted.
+_Avoid_: Deleting used setting data, changing historical meaning silently
+
+**Product Category (หมวดหมู่สินค้า)**:
+The controlled product category list used for grouping Product Models and generating the category part of SKU Variant codes.
+_Avoid_: Free-text category, changing category code after SKU creation
+
+**Product Subcategory (หมวดหมู่ย่อย)**:
+An optional grouping under one Product Category. It helps search and organization but is not included in SKU Variant codes.
+_Avoid_: Subcategory as part of SKU code
+
+**Product Tag (แท็กสินค้า)**:
+A text-only tag used only for product search and grouping.
+_Avoid_: Workflow control, permission control, pricing, discount logic
+
+**Color List (รายการสี)**:
+The controlled list of colors used for product color options and SKU Variant color codes.
+_Avoid_: Free-text color, Color Master as a staff-facing label
+
+**Rak Samuk Pattern List (รายการลายรักสมุก)**:
+The controlled list of Rak Samuk patterns used to classify/search product and Job instructions.
+_Avoid_: Rak Samuk Pattern Master as a staff-facing label
+
+**Carving Pattern List (รายการลายแกะสลัก)**:
+The controlled list of carving patterns used to classify/search product and Job instructions.
+_Avoid_: Carving Pattern Master as a staff-facing label
+
+**Crystal Color List (รายการสีคริสตัล)**:
+The controlled list of crystal colors used where crystal decoration details are needed.
+_Avoid_: Crystal Color Master as a staff-facing label
 
 **Job (งานสั่งทำ / custom job)**:
 A custom production work unit with production instructions, images, source type, and workflow status.
@@ -112,13 +152,25 @@ _Avoid_: Order
 A smaller production unit inside a Production Batch, split by the actual quantity routed through a department or outsource worker.
 _Avoid_: Job when discussing the batch split itself
 
-**Job Reference on SKU (อ้างอิงจาก Job)**:
-An optional lookup reference from a SKU to the Job it came from, used only for traceability.
+**Job Reference on Product Model (อ้างอิงจาก Job)**:
+An optional lookup reference from a Product Model to the Job it came from, used only for traceability.
 _Avoid_: Copying Job data into SKU automatically
 
 **Ready Stock (สินค้าพร้อมส่ง)**:
 Sellable stock that can be reserved for an Order Line without creating a Job.
 _Avoid_: Work in progress, Production Job
+
+**Stock On Hand (มีอยู่ในร้าน)**:
+The physical quantity currently recorded for a SKU Variant before subtracting reservations.
+_Avoid_: Available stock
+
+**Reserved Stock (จองแล้ว)**:
+The quantity of a SKU Variant reserved by confirmed Orders.
+_Avoid_: Shipped stock
+
+**Sellable Stock (ขายได้)**:
+The computed quantity available for new sale after subtracting Reserved Stock from Stock On Hand.
+_Avoid_: Mixing with Stock On Hand or using คงเหลือ ambiguously
 
 **Stock Count (ตรวจนับสต๊อก)**:
 A periodic count activity used to compare actual quantity with system quantity.
@@ -267,7 +319,15 @@ _Avoid_: Accounting journal
 - A **Rak Samuk Worker** can see only their assigned work and limited own-payment information.
 - A **Payment Voucher** is issued only after payment is confirmed and receives a monthly running PV number.
 - A **Review Album** can link to zero or many SKU Variants and optionally to one Customer or Order.
-- A **SKU Variant** may optionally reference one **Job** as its origin, but this reference never copies or syncs Job data.
+- **Product Settings** contains controlled product lists for categories, tags, colors, patterns, and decoration values.
+- A **Product Category** can have many **Product Subcategories** and many **Product Models**.
+- A **Product Tag** can be linked to many **Product Models**, but it is only for search/grouping.
+- A **Product Model** has many **Product Color Options**, and each enabled Product Color Option has exactly one corresponding **SKU Variant**.
+- A **SKU Variant** is unique for one **Product Model** and one **Color List** value; duplicate variants for the same product-color pair are blocked.
+- A **Color List** value may be linked to many **Product Models** through Product Color Options; its code is locked after it is used in a SKU Variant code.
+- **Rak Samuk Pattern List**, **Carving Pattern List**, and **Crystal Color List** values can classify Product/Job instruction details, but they do not create SKU codes.
+- A **Product Model** may optionally reference one **Job** as its origin, but this reference never copies or syncs Job data.
+- **Stock On Hand**, **Reserved Stock**, and **Sellable Stock** are separate stock views for the same **SKU Variant**; **Sellable Stock** may become negative after permitted over-reservation.
 - **Stock Counts** and **Stock Adjustments** affect stock visibility but remain separate from **Expense Entries**.
 - **Expense Entries** and stock movements are separate first-scope records; neither updates the other automatically.
 
@@ -283,7 +343,7 @@ Included in the starting scope:
 - Rak Samuk outsource flow: send work, worker view, missing-price label, proposed price approval, receive back, and payment preparation.
 - Shipment flow: admin ready-to-ship queue, Draft Shipment, release to delivery, delivery team send-out, admin close Shipment.
 - Management overview: unfinished Jobs, department location, urgency, age, and timeline.
-- Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Stock Count, Stock Adjustment, Color Master, pattern masters, department instruction images, and review albums.
+- Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Stock Count, Stock Adjustment, Product Settings, department instruction images, and review albums.
 - Simple Expense Entry and Payment Voucher concepts only where they support operating visibility and outsource payment.
 
 Explicitly outside the starting scope:
@@ -313,6 +373,11 @@ Explicitly outside the starting scope:
 - "Payment never blocks Order" was too broad. Resolved: Payment does not block normal Order creation or operation, but **Financial Reconciliation** blocks saving an Order total edit when the edited total does not match financial evidence or adjustment notes.
 - "Order Line Edit" sounded like a standalone screen. Resolved: **Order Line Edit** is a guarded edit mode/sub-flow entered from **Order Detail**, not a separate module or Draft Order.
 - "ส่งพร้อมกัน" and "จัดส่งแยก" sounded like a heavy workflow switch. Resolved: the default mixed-Order intent is `ส่งพร้อมกัน`, while actual split shipment is handled by selecting ready lines when creating **Shipment** rounds.
-- "สร้างจาก Job" sounded like copying Job data into SKU. Resolved: SKU only stores an optional **Job Reference on SKU** for traceability; SKU data is entered independently.
+- "MVP" sounded too vague for this workflow mode. Resolved: use **โหมดเริ่มใช้งานจริง** when describing the first usable operating mode.
+- "ข้อมูลตั้งต้นสินค้า" sounded unnatural for staff-facing UI. Resolved: use **Product Settings** / `ตั้งค่าสินค้า` under the main `ตั้งค่า` area.
+- "CRUD" and "Master" are technical wording. Resolved: use `เพิ่ม`, `แก้ไข`, `ปิดใช้งาน`, `เปิดใช้งาน`, and Thai list names such as `รายการสี` and `รายการลายรักสมุก` in staff-facing docs/UI.
+- "สร้างจาก Job" sounded like copying Job data into SKU. Resolved: **Product Model** only stores an optional **Job Reference on Product Model** for traceability; SKU data is entered independently.
+- "SKU หลัก" and "SKU ใหญ่" were both used for the parent product. Resolved: both refer to **Product Model**, while **SKU Variant** is the color-specific stock unit.
+- "คงเหลือ" was used to mean both physical stock and saleable stock. Resolved: use **Stock On Hand** (`มีอยู่ในร้าน`), **Reserved Stock** (`จองแล้ว`), and **Sellable Stock** (`ขายได้`) explicitly.
 - "รูปรีวิว" could be mistaken for product images or a media library. Resolved: **Review Album** is a separate review image grouping; there is no central media library in the starting scope.
 - "Hold" and "รอวัตถุดิบ" were both used for blocked work. Resolved: **Hold** is a deliberate admin pause; **Waiting for Materials** is a department material blocker.

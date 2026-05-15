@@ -26,6 +26,7 @@ It confirms:
 - `รายละเอียดออเดอร์` is shown after a real Order ID exists.
 - The `รายการในออเดอร์` section uses clear item rows/cards, not a dense accounting table.
 - Each Order Line shows its own item image, type, status, related Job/shipment context, and next action where relevant.
+- Ready-stock Order Lines show the selection snapshot: SKU หลัก, color / SKU ย่อย, SKU code, dimensions, and display image.
 - Production, shipment, and financial follow-up are visible but remain separate concepts.
 - Header-level actions must not crowd the screen; the latest decision uses `จัดการออเดอร์` plus section-level actions.
 - Shipment creation now belongs in the `จัดการรอบจัดส่ง` section, where admin selects ready lines and opens Shipment Builder from selected items.
@@ -35,6 +36,7 @@ It confirms:
 - Order Completion is operational and based on required shipment rounds being closed.
 - COD/Payment follow-up remains separate from operational completion.
 - `งานสั่งทำ` and `สินค้าพร้อมส่ง` can sit in the same Order and should be grouped clearly in `รายการในออเดอร์`.
+- Ready-stock snapshots do not change when Product Model or SKU ย่อย images/details are edited later.
 - Orders containing custom work should show a simple `มีงานสั่งทำ` label in list/detail contexts.
 - Mixed ready-stock/custom Orders can support combined or split shipment through selected ready lines in the Order Detail shipment-management section.
 - No product cost, profit, tax filing detail, accounting ledger, ad spend, or private CRM note appears.

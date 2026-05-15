@@ -26,6 +26,8 @@ It confirms:
 
 - Ready-stock and custom-work lines can exist in the same draft.
 - Ready-stock and custom-work lines are added through separate buttons: `เพิ่มสินค้าพร้อมส่ง` and `เพิ่มงานสั่งทำ`.
+- `เพิ่มสินค้าพร้อมส่ง` selects SKU หลัก first, then an enabled color / SKU ย่อย inside that product.
+- Default ready-stock selection shows only items with `ขายได้ > 0`; `เลือกสินค้าที่ไม่มีสต๊อก` allows enabled colors that show `หมด`.
 - Custom-work details are captured as `รายละเอียดงานสั่งทำ` before real Order creation and create `JOB-O` immediately when confirmed.
 - If an Order mixes ready-stock and custom work, the shipment plan defaults to `ส่งพร้อมกัน`; actual split shipment is handled later by selecting ready lines when creating Shipment rounds.
 - Payment Term is required before real Order creation; Payment Record is optional in the flow.
@@ -33,4 +35,4 @@ It confirms:
 
 ## Regeneration Rule
 
-Future prompts for `SCR-ORD-001` should preserve the two-column admin editor, the clear unsaved/Draft/Order distinction, the right-side readiness summary, and the embedded `รายละเอียดงานสั่งทำ` section.
+Future prompts for `SCR-ORD-001` should preserve the two-column admin editor, the clear unsaved/Draft/Order distinction, the Product Model-first ready-stock selector, the right-side readiness summary, and the embedded `รายละเอียดงานสั่งทำ` section.

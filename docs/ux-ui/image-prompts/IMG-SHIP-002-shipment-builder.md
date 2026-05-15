@@ -29,6 +29,7 @@ Important workflow rule:
 - Bulk creation uses saved Order Recipient Detail snapshots as delivery defaults and moves directly to creating Shipment documents.
 - It opens from Order Detail after the admin selects ready lines in `จัดการรอบจัดส่ง` and presses `สร้างรอบจัดส่งจากรายการที่เลือก`.
 - From Order Detail, it receives recipient name, address, phone, selected delivery items, each item's main image, quantity, and carrier name when already chosen.
+- Item image, product name, color / SKU ย่อย, SKU code, and dimensions come from the Order Line snapshot, not live Product Model data.
 - If selected ready-stock lines have negative/insufficient stock that was acknowledged earlier, show a warning acknowledgement here; do not block Shipment creation after acknowledgement.
 
 Header:
@@ -45,8 +46,9 @@ Left panel title: รายการพร้อมส่ง
 Show selected ready lines from one Order with:
 - Order ID: ORD-240520-014
 - Customer: ร้านบ้านศิลป์
-- Item image
-- Item name: โต๊ะกลางลงรักสมุก
+- Item image from Order Line snapshot
+- SKU หลัก / item name: โต๊ะกลางลงรักสมุก
+- สี / SKU ย่อย: สีโอ๊คเข้ม / TBR-TBL-123-OAK
 - Quantity: 1 ชิ้น
 - Status chip: งานสั่งทำเสร็จแล้ว
 - Related Job ID: JOB-O-0238
@@ -100,5 +102,6 @@ Visual rules:
 - Do not show “ส่งออกแล้ว”
 - Do not show final Order completion
 - Do not make stock shortage look like a hard block after acknowledgement
+- Do not refresh Product/SKU images from live Product Model data; use the saved Order Line snapshot
 - The screen should feel like a single/special-case shipment review editor before release
 ```

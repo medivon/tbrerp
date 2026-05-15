@@ -144,8 +144,10 @@ Do not use the old label `งานที่เกี่ยวข้อง` in t
 
 Each ready-stock line should show:
 
-- Product/work image where available.
-- Product/SKU name.
+- Product/work image from the Order Line snapshot. Use SKU Variant image if it existed when selected; otherwise use Product Model fallback.
+- Product Model / `SKU หลัก` name from the snapshot.
+- Color / `SKU ย่อย` and SKU code from the snapshot.
+- Dimensions from the snapshot.
 - Quantity.
 - Net line value where permission allows.
 - Shipment state: ready, in Shipment round, sent, completed, or blocked.
@@ -295,6 +297,7 @@ Guard rules:
 - Sent-out or completed lines cannot be edited or removed from the Order; use service, return, or adjustment flows later.
 - Adding a complete custom-work line after confirmation creates `JOB-O` when Review Changes is saved.
 - Adding a ready-stock line after confirmation reserves stock when Review Changes is saved.
+- Added ready-stock lines use Product Model -> color/SKU Variant selection and store the same SKU snapshot as Order creation.
 - Removing a safe ready-stock line releases reserved stock when Review Changes is saved.
 - Quantity changes on safe ready-stock lines adjust reserved stock by the quantity difference when Review Changes is saved.
 - Price/discount changes are allowed where permission and Order state allow; Review Changes shows the new net total and financial impact.
@@ -323,7 +326,7 @@ Guard rules:
 |---|---|---|---|
 | In progress | กำลังดำเนินการ | Order still has incomplete operational work. | Main header chip. |
 | Producing | กำลังผลิต | One or more custom lines are in Job workflow. | Line or summary status. |
-| Ready to ship | พร้อมสร้างรอบจัดส่ง | One or more lines are ready for Shipment creation. | Shipment-management signal. |
+| Ready to ship | พร้อมสร้างรอบจัดส่ง | One or more active lines are ready for Shipment creation and not already in a Shipment round. | Order status / shipment-management signal. |
 | Partially shipped | ส่งบางส่วน | At least one active line completed delivery recording with tracking/evidence, while another active line is not complete. | Order status. |
 | Waiting confirmation | รอยืนยันการจัดส่ง | Shipment round sent out, admin confirmation/evidence pending. | Shipment status only. |
 | Completed | จัดส่งครบแล้ว | All active deliverable lines completed delivery recording with tracking/evidence. | Order status / shipment summary. |

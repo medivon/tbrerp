@@ -17,6 +17,7 @@ This screen is similar to Order Create/Edit in structure, but it edits an existi
 
 - Add a ready-stock item after the Order is confirmed.
 - Remove or change a ready-stock item when it is still safe.
+- Add ready-stock items through the same Product Model -> color/SKU Variant selector used in Order Create/Edit.
 - Add a new custom-work line after the Order is confirmed.
 - See custom-work lines with existing `JOB-O` as read-only and route cancellation/production changes to Job.
 - Understand what totals, stock, Job, and Shipment state will change before saving.
@@ -42,6 +43,7 @@ This screen is similar to Order Create/Edit in structure, but it edits an existi
 - Header: `แก้ไขรายการออเดอร์`, source Order ID, current Order status.
 - Main area similar to Order Create/Edit but clearly labelled as edit mode.
 - Separate areas for `สินค้าพร้อมส่ง` and `งานสั่งทำ`.
+- Ready-stock add/change controls select Product Model first, then enabled color/SKU Variant.
 - Right or bottom impact summary showing pending changes.
 - Footer actions: `กลับ` / `ยกเลิก`, and `ตรวจสอบการแก้ไข`.
 - If the user leaves with unsaved changes, show a warning modal with `อยู่ต่อ` and `ออกโดยไม่บันทึก`.
@@ -59,6 +61,7 @@ Fully editable lines:
 For these lines, admin may edit:
 
 - Product/work selection.
+- For ready-stock lines, Product Model and color/SKU Variant selection.
 - Quantity.
 - Price.
 - Discount/line total where allowed.
@@ -69,6 +72,7 @@ Effects when saved from Review Changes:
 - Adding a ready-stock line reserves stock immediately.
 - Removing a safe ready-stock line releases reserved stock immediately.
 - Changing ready-stock quantity adjusts the reserved amount by the difference.
+- If the selected SKU Variant is `หมด` or the quantity exceeds `ขายได้`, show the warning immediately and again in Review Changes. Permitted users may acknowledge without Manager approval or reason; the acknowledgement is logged.
 - Adding a complete custom-work line creates `JOB-O` immediately.
 - Changing price/discount updates the Order net total and financial summary/outstanding amount where permission and Order state allow.
 - If Payment Records or COD records already exist and the edit changes the sales total, do not edit or delete old slips. Review Changes blocks save until the edited total is reconciled with Payment Records, COD to collect, or adjustment/refund/credit notes.
@@ -94,7 +98,7 @@ Mixed editable state:
 
 - This screen may open even when some lines are blocked.
 - Editable lines remain editable.
-- Blocked lines remain visible as read-only rows with a clear reason such as `ส่งออกแล้ว` or `JOB-O เริ่มผลิตแล้ว`.
+- Blocked lines remain visible as read-only rows with a clear reason such as `ส่งออกแล้ว`, `มี JOB-O แล้ว`, or `อยู่ในรอบจัดส่งแล้ว`.
 
 ## 8. Review Changes
 
@@ -107,6 +111,7 @@ Review Changes must show only what changed:
 - Edited lines.
 - Total impact.
 - Stock impact.
+- Snapshot impact for added/changed ready-stock lines: SKU code, Product Model name, color, dimensions, display image, and relevant department images.
 - Job impact.
 - Shipment impact.
 - Reason field only for changes that require reason.
@@ -165,6 +170,8 @@ After save:
 - Changes must log who changed what and why.
 - Normal line edits may be done by users with Order edit permission.
 - Stock shortage acknowledgement and price/discount edits may be done by users with the relevant Order permission and must be logged.
+- Ready-stock search in this edit mode uses product name, product code, and SKU Variant code; SKU Variant code search shows the Product Model and highlights the matching color.
+- Added or changed ready-stock lines store the same SKU snapshot used by Order creation.
 - Cancelling an existing `JOB-O` is owned by the Job flow and requires its own reason/log there.
 - Removing a line, cancelling/closing `JOB-O`, or changes that affect existing Job or Shipment state require reason. Stock-negative acknowledgement is logged without requiring a manager approval reason.
 - Net total changes are logged but do not require a reason by themselves when the user has price/amount edit permission.

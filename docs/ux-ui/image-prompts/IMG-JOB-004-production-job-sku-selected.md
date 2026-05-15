@@ -26,14 +26,14 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows, dark navy emphasis
 
 Screen purpose:
-Admin reviews the selected SKU and production details before creating `JOB-P / งานผลิต`. This screen must show that the work came from SKU selection, not from Order and not from `งานผลิตพิเศษ`.
+Admin reviews the selected SKU ย่อย and production details before creating `JOB-P / งานผลิต`. This screen must show that the work came from SKU selection, not from Order and not from `งานผลิตพิเศษ`. If the SKU was prefilled from Product Detail, this is still the normal `สร้างงานผลิต` screen and should not show a special Product Detail back/cancel path.
 
 Header area:
 - Page title: สร้างงานผลิต
-- Context line: จากชุดผลิต PROD-2568-0021 / LOT-001
+- Context line: งานผลิตเข้าสต๊อก / เลือกจาก SKU ย่อย
 - Large chips: JOB-P, งานผลิต, ผลิตจาก SKU, ผูกสินค้าแล้ว, พร้อมบันทึก
 - Primary button: สร้างงานผลิต
-- Secondary buttons: บันทึกไว้ก่อน, กลับไปชุดผลิต
+- Secondary button: บันทึกไว้ก่อน
 
 Main layout:
 Use a clear two-column admin form. Main form on the left, readiness/source panel on the right. No modal is open in this state.
@@ -46,16 +46,17 @@ Row card 0: รูปแบบงานผลิต
 - Do not render `งานผลิตพิเศษ` body.
 
 Row card 1: รายละเอียดสินค้า
-- This card is populated from the selected SKU.
+- This card is populated from the selected color / SKU ย่อย and its parent SKU หลัก.
 - Large product image of a dark oak Thai wooden side table.
-- SKU code: SKU-TEAK-TABLE-OAK-001
-- Product name: โต๊ะข้างไม้สัก สีโอ๊คเข้ม
+- SKU หลัก: โต๊ะข้างไม้สัก
+- SKU ย่อย: สีโอ๊คเข้ม
+- SKU code: TBR-TBL-123-OAK
 - Product model/category: โต๊ะ / ไม้สัก
 - Color: สีโอ๊คเข้ม
-- Current stock: คงเหลือ 0
+- Stock signal: ขายได้ 0 / หมด
 - Planned result: รับเข้าสต๊อก
 - Quantity input: จำนวนผลิต 6 ชิ้น
-- Compact chips: ผลิตจาก SKU, ผูกสินค้าแล้ว, คงเหลือ 0
+- Compact chips: ผลิตจาก SKU, ผูกสินค้าแล้ว, หมด, รับเข้าสต๊อก
 - Purple secondary button: เปลี่ยนสินค้า
 
 Row card 2: ข้อมูลงานผลิต
@@ -68,20 +69,22 @@ Row card 2: ข้อมูลงานผลิต
 
 Row card 3: รูปหลักจาก SKU
 - Show a large image preview and thumbnail row inherited from SKU.
-- Labels: รูปหลัก, รูปอ้างอิงสินค้า, เพิ่มรูปเฉพาะงานผลิต
-- Make clear these images came from SKU but can be supplemented for this production run.
+- Labels: รูปหลักจาก SKU ย่อย, ใช้รูปจาก SKU หลักถ้า SKU ย่อยไม่มี, เพิ่มรูปเฉพาะงานผลิต
+- Make clear these images came from the SKU ย่อย when available, otherwise from SKU หลัก, and can be supplemented for this production run.
 
 Row card 4: รายละเอียดช่างไม้จาก SKU
 - Separate department card.
 - Text: โครงโต๊ะข้างไม้สัก, ขาทรงโค้ง, ทำ 6 ชิ้นตามแบบเดียวกัน
 - Thumbnail labels: รูปโครงสร้าง, รูปขนาด
 - Button: เพิ่มรูปช่างไม้
+- If SKU ย่อย has no woodwork-specific image group, show a small fallback label: ใช้รูปจาก SKU หลัก
 
 Row card 5: สีและการตกแต่งจาก SKU
 - Separate department card.
 - Text: สีโอ๊คเข้ม เคลือบด้าน
 - Thumbnail labels: รูปสี, รูปงานตกแต่ง
 - Button: เพิ่มรูปฝ่ายสี
+- If SKU ย่อย has a color-specific image group, show it before SKU หลัก fallback images
 
 Row card 6: รายละเอียดรักสมุก
 - Separate optional card.
@@ -99,9 +102,9 @@ Title: ตรวจความพร้อม
   - มีรายละเอียดช่างไม้
   - มีรายละเอียดสี/ตกแต่ง
 - Source summary:
-  - ชุดผลิต: PROD-2568-0021
-  - ล็อตผลิต: LOT-001
-  - รหัสงาน: JOB-P-0018
+  - แหล่งที่มา: งานผลิตเข้าสต๊อก
+  - SKU ย่อย: TBR-TBL-123-OAK
+  - รหัสงาน: จะสร้างหลังบันทึก
   - ผลลัพธ์: รับเข้าสต๊อก
   - สถานะ: พร้อมบันทึก
 - Primary action button at bottom should be enabled: สร้างงานผลิต
@@ -115,6 +118,8 @@ Visual rules:
 - Do not make this look like an Order screen
 - Make the selected SKU identity obvious
 - Make `เปลี่ยนสินค้า` available but secondary
+- If user selects another SKU or switches to `งานผลิตพิเศษ`, reset the initial SKU context like opening this screen fresh
+- Use `ขายได้ X ชิ้น` and `หมด` for stock signals; do not use `คงเหลือ` or `พร้อมขาย`
 - Use the approved light sidebar baseline; do not switch to a dark sidebar
 - Keep `ผลิตจาก SKU` and `งานผลิตพิเศษ` visually separate
 - Keep the design aligned with the approved desktop admin app shell

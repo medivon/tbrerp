@@ -56,9 +56,17 @@ Left editor sections:
 
 3. รายการในออเดอร์
    Show two order-line cards or table rows with thumbnails:
-   - Line 1: สินค้าพร้อมส่ง, ชุดเก้าอี้ไม้สักพร้อมส่ง, จำนวน 4 ชิ้น, ราคา 18,000 บาท, stock chip: พร้อมส่ง
+   - Line 1: สินค้าพร้อมส่ง, SKU หลัก: ชุดเก้าอี้ไม้สัก, สี / SKU ย่อย: สีโอ๊คเข้ม / TBR-CHA-118-OAK, จำนวน 4 ชิ้น, ราคา 18,000 บาท, stock chip: ขายได้ 5 ชิ้น
    - Line 2: งานสั่งทำ, ตู้โชว์ไม้สักแกะลาย, จำนวน 1 ชิ้น, ราคา 38,000 บาท, chip: รายละเอียดงานสั่งทำ
    Buttons: เพิ่มสินค้าพร้อมส่ง, เพิ่มงานสั่งทำ
+   Ready-stock add flow:
+   - Pressing เพิ่มสินค้าพร้อมส่ง opens a Product Model-first selector.
+   - Default selector shows only Product Models with `ขายได้ > 0`.
+   - The selected Product Model expands to choose an enabled color / SKU ย่อย.
+   - Include search placeholder: ค้นหาชื่อสินค้า / รหัส / SKU / สี.
+   - Include a secondary action: เลือกสินค้าที่ไม่มีสต๊อก.
+   - When no-stock mode is active, enabled colors with zero stock can be selected and show `หมด`.
+   - If searching by SKU ย่อย code, show the parent SKU หลัก result and highlight the matching color.
 
 4. แผนจัดส่ง
    - Show when the Order mixes ready-stock and custom work
@@ -110,6 +118,8 @@ Visual rules:
 - Do not show confirmed Order ID yet
 - Do not show downstream Job or Shipment as already created
 - Make it obvious that stock reservation and JOB-O creation happen only after confirmation on Review
+- Ready-stock selection must show SKU หลัก first, then color / SKU ย่อย; do not show every SKU ย่อย as separate top-level product rows
+- Use `ขายได้ X ชิ้น` and `หมด` for stock availability; do not use `คงเหลือ` or `พร้อมขาย` for ready-stock selection
 - Do not imply Payment Record is required to create JOB-O; Payment Record is optional financial context
 - Do not imply persistent autosave after the user leaves without saving
 - Do not label the custom detail area as “ร่าง Job”; use “รายละเอียดงานสั่งทำ”

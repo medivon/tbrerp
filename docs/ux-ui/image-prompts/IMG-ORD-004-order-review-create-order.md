@@ -58,12 +58,16 @@ Left review cards:
 4. รายการรับเงิน
    Show only if Payment Record exists:
    - Payment Record: รับมัดจำแล้ว 19,000 บาท
-   - ยอดคงเหลือ: 37,000 บาท
+   - ยอดค้าง: 37,000 บาท
    If no Payment Record exists, do not invent one. Missing Payment Record is not a JOB-O blocker and does not require override.
 
 5. สรุปสินค้าพร้อมส่ง
    Show only if ready-stock lines exist. Use detailed row/cards with thumbnails:
-   - สินค้าพร้อมส่ง: เก้าอี้ไม้สักพร้อมส่ง, จำนวน 4 ชิ้น, ราคา 18,000 บาท
+   - สินค้าพร้อมส่ง: SKU หลัก: ชุดเก้าอี้ไม้สัก
+   - สี / SKU ย่อย: สีโอ๊คเข้ม / TBR-CHA-118-OAK
+   - Display image: use the selected SKU ย่อย image if it has one; otherwise use SKU หลัก image
+   - จำนวน 4 ชิ้น, ราคา 18,000 บาท
+   - Latest stock check: ขายได้ 5 ชิ้น
    - Result chip on the line: จะจองสต๊อก
    - Warning chip example on the line or section: สต๊อกไม่พอ 1 รายการ
 
@@ -131,6 +135,9 @@ Visual rules:
 - Do not make this look like a quotation or invoice
 - Do not make this look like a payment page
 - Make “จะสร้าง JOB-O” and “จะจองสต๊อก” clear downstream result chips
+- Ready-stock review must show SKU หลัก, color / SKU ย่อย, SKU code, display image, and latest `ขายได้` check
+- Use `ขายได้ X ชิ้น` and `หมด` for stock availability; do not use `คงเหลือ` or `พร้อมขาย` for ready-stock lines
+- On confirmation, snapshot SKU code, product name, color, dimensions, display image, and relevant department images from the selected SKU ย่อย/Product Model fallback
 - Make it clear JOB-O creation depends on complete custom-work detail, not Payment Record
 - Do not add a second confirmation modal; this Review screen is the final confirmation step
 - The screen should feel like a final operational review, compact and serious

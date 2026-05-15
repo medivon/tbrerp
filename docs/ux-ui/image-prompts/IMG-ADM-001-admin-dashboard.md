@@ -46,7 +46,7 @@ Replace the 6 main dashboard cards with these approved cards:
 1. Card title: ออเดอร์ที่ต้องติดตาม
    Large number: 18
    Status badge: ยังต้องตามงาน
-   Subtext: กำลังผลิต 11 • ส่งได้เลย 7
+   Subtext: กำลังผลิต 11 • พร้อมสร้างรอบจัดส่ง 7
    Button text: ดูออเดอร์
    Meaning: real confirmed Orders that still need operational follow-up.
 
@@ -59,7 +59,7 @@ Replace the 6 main dashboard cards with these approved cards:
 
 3. Card title: รอสร้างรอบจัดส่ง
    Large number: 7
-   Status badge: ส่งได้เลย
+   Status badge: พร้อมสร้างรอบจัดส่ง
    Subtext: มี COD 3 ออเดอร์
    Button text: เปิดคิวงาน
    Meaning: Orders ready for admin to create shipment rounds. Count as number of Orders, not item lines.
@@ -139,7 +139,7 @@ Important consistency rules:
 - `งานที่ต้องรีบดู`
 - `ยังไม่จบงาน`
 - `กำลังทำงาน`
-- `ส่งได้เลย`
+- `พร้อมสร้างรอบจัดส่ง`
 - `รอเพิ่มข้อมูล`
 - `รอรับทราบ Revision`
 - `ต้องติดตามเงิน`

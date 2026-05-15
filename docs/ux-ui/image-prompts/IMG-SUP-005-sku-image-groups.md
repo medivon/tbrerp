@@ -16,7 +16,7 @@ Visual/content anchors:
 ## High-Fidelity GPT Image 2 Prompt
 
 ```text
-Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “จัดการรูปสินค้า”. This is the full-option image management screen for Product Model / SKU ใหญ่ and SKU Variant / SKU ย่อย. It organizes product images, department instruction images, Rak Samuk images, and Review Album links. It is not a product edit form and not a stock screen.
+Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “จัดการรูปสินค้า”. This is the full-option image management screen for Product Model / SKU หลัก and SKU Variant / SKU ย่อย. Product Model image groups are the default/fallback for SKU Variants; SKU Variant image groups are optional overrides for a specific color. It is not a product edit form and not a stock screen.
 
 Use the approved THAIBORAN Admin Dashboard app shell:
 - Fixed light left sidebar with THAIBORAN logo/brand, matching the approved light Admin Dashboard baseline
@@ -30,8 +30,8 @@ Admin organizes images for one product record so staff can recognize the product
 
 Header area:
 - Page title: จัดการรูปสินค้า
-- Context line: จาก SKU ใหญ่ PM-TEAK-TABLE-001 • โต๊ะข้างไม้สัก
-- Chips: SKU ใหญ่, เปิดใช้งาน, มีรูป 18, มีการแก้ไข
+- Context line: จาก SKU หลัก 123 • โต๊ะข้างไม้สัก
+- Chips: SKU หลัก, เปิดใช้งาน, มีรูป 18, มีการแก้ไข
 - Primary action: บันทึกการจัดรูป
 - Secondary actions: กลับไปรายละเอียดสินค้า, เปิดคลังรีวิว
 
@@ -44,9 +44,9 @@ Use a two-column image-management workbench.
 Top owner card:
 - Show a compact product thumbnail of a Thai teak side table.
 - Show:
-  - ประเภทรูป: SKU ใหญ่
-  - SKU ใหญ่: โต๊ะข้างไม้สัก
-  - รหัส: PM-TEAK-TABLE-001
+  - ประเภทรูป: SKU หลัก
+  - SKU หลัก: โต๊ะข้างไม้สัก
+  - รหัส: 123
   - SKU ย่อยที่เกี่ยวข้อง: 4 รายการ
   - คลังรีวิว: 18 รูป
 - Button: เปลี่ยนไปดู SKU ย่อย
@@ -94,7 +94,8 @@ Title: รายละเอียดกลุ่มรูป
 Show:
 - Selected group: รูปสำหรับฝ่ายสี/ตกแต่ง
 - จำนวนรูป: 4 รูป
-- ใช้งานกับ: SKU ใหญ่ PM-TEAK-TABLE-001
+- ใช้งานกับ: SKU หลัก 123
+- กฎ fallback: SKU ย่อยใช้รูปชุดนี้ถ้าไม่มีรูปเฉพาะสีของตัวเอง
 - ใช้ใน Job: เลือกแนบตอนกรอกรายละเอียดงานสั่งทำหรือสร้างงานผลิต
 - คำอธิบายกลุ่ม:
   “รูปสีและงานตกแต่งมาตรฐาน ใช้ให้ฝ่ายสีเห็นภาพอ้างอิง”
@@ -114,6 +115,7 @@ Important behavior rules:
 - It is not a Product Model edit page and not a SKU Variant edit page.
 - Do not show editable product fields like name, SKU code, dimensions, stock, price, cost, or accounting data.
 - Review Album is separate from normal product image groups.
+- If managing a SKU Variant, show whether each group is `รูปจาก SKU ย่อย` or fallback `ใช้รูปจาก SKU หลัก`.
 - Images can be soft deleted/hidden; do not imply permanent deletion.
 - Keep optional text short and production-facing.
 

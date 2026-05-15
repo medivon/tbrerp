@@ -13,20 +13,21 @@ Related documents:
 
 ## Approved Role
 
-This mockup is the current source of truth for the desktop admin `รายละเอียด SKU ใหญ่` screen.
+This mockup is the current source of truth for the desktop admin `รายละเอียด SKU หลัก` screen.
 
 It confirms:
 
-- This screen is a read-only Product Model / `SKU ใหญ่` detail page, not an edit form.
-- `แก้ไข SKU ใหญ่` is the entry point to a separate edit flow.
-- `SKU ใหญ่` and `SKU ย่อย` must remain visually distinct.
-- Related `SKU ย่อย` variants are shown as a compact table/list inside the parent product page.
+- This screen is a Product Model / `SKU หลัก` detail and management page, not an inline stock editor.
+- `แก้ไข SKU หลัก` is the entry point to a separate edit flow.
+- `SKU หลัก` and color-specific `SKU ย่อย` must remain visually distinct.
+- Related color/SKU ย่อย rows are shown as a compact table/list inside the parent product page, including enabled and disabled colors.
 - Dimensions are split into separate fields: `กว้าง`, `ลึก`, `สูง`.
 - Product images, department images, and Review Album remain separated by purpose.
-- Stock and production appear only as report-only summary through related SKU rows.
+- Stock columns use `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`; negative `ขายได้` is visible with a warning.
+- Per-color actions can open `ปรับยอดสต๊อก` or `ผลิตเข้าสต๊อก` / `ผลิตสินค้าชิ้นนี้` for enabled colors.
 - Restricted cost/labor configuration must not show amounts in the normal detail view.
-- Job reference is traceability only and does not copy or sync Job data.
+- Job reference lives on SKU หลัก for traceability only and does not copy or sync Job data.
 
 ## Regeneration Rule
 
-Future prompts for this screen must keep the read-only parent product detail structure and must not turn the page into a form editor, catalogue landing page, or inline stock adjustment screen.
+Future prompts for this screen must keep the Product Model-first detail structure and must not turn the page into a catalogue landing page, SKU Variant-only page, or inline stock adjustment screen.

@@ -31,6 +31,7 @@ It confirms:
 - Page title: `สร้างรอบจัดส่ง`
 - Source reference: `จากออเดอร์ ORD-...`
 - Left panel: `รายการพร้อมส่ง`
+- Item rows use the Order Line snapshot for image, SKU หลัก name, color / SKU ย่อย, SKU code, and quantity.
 - Right panel: `ข้อมูลจัดส่ง`
 - Editable/special-case actions: `แก้ไขข้อมูลจัดส่ง`, `แก้ยอด COD`, `แก้หมายเหตุ`
 - Document preview buttons: `ดูใบส่งของ`, `ดูใบจัดส่ง`

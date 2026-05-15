@@ -8,7 +8,7 @@ This UX flow map is derived only from:
 - `docs/qa-summary.md`
 - `docs/ux-ui/initial-scope.md`
 
-It maps the confirmed starting scope: งานสั่งทำ / Job operations, with `Admin Dashboard` as the first screen. This file should not introduce new requirements, expand scope, or replace the source files above.
+It maps the confirmed starting scope: งานสั่งทำ / Job operations and the supporting Product/SKU/stock flows that feed Order and Production work, with `Admin Dashboard` as the first screen. This file should not introduce new requirements, expand scope, or replace the source files above.
 
 ## F01 - Admin Dashboard to Working Queues
 
@@ -114,15 +114,16 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 2. Admin selects or creates Customer first.
 3. Admin selects or creates Address Entry / recipient.
 4. Admin adds Order Lines using `เพิ่มสินค้าพร้อมส่ง` or `เพิ่มงานสั่งทำ`.
-5. Admin enters quantity, price, and required Payment Term.
-6. Admin optionally records Payment Record.
-7. If custom work exists, admin enters `รายละเอียดงานสั่งทำ` inside each custom line until it is complete enough to create `JOB-O`.
-8. If the Order mixes ready-stock and custom work, admin sees default `ส่งพร้อมกัน`; actual split shipment later happens by selecting only ready lines in shipment-round creation.
-9. Admin either saves the work as Draft Order or presses `สร้างออเดอร์` to open Order Review.
-10. Admin reviews all entered data in row/card detail, with ready-stock and custom-work sections separated.
-11. Admin resolves any inline warnings or acknowledgements on the Review screen, such as stock-insufficient ready-stock lines.
-12. Admin presses `ยืนยันสร้างออเดอร์`.
-13. System opens confirmed Order Detail.
+5. For `เพิ่มสินค้าพร้อมส่ง`, admin selects SKU หลัก first, then chooses an enabled color / SKU ย่อย inside that product.
+6. Admin enters quantity, price, and required Payment Term.
+7. Admin optionally records Payment Record.
+8. If custom work exists, admin enters `รายละเอียดงานสั่งทำ` inside each custom line until it is complete enough to create `JOB-O`.
+9. If the Order mixes ready-stock and custom work, admin sees default `ส่งพร้อมกัน`; actual split shipment later happens by selecting only ready lines in shipment-round creation.
+10. Admin either saves the work as Draft Order or presses `สร้างออเดอร์` to open Order Review.
+11. Admin reviews all entered data in row/card detail, with ready-stock and custom-work sections separated.
+12. Admin resolves any inline warnings or acknowledgements on the Review screen, such as stock-insufficient ready-stock lines.
+13. Admin presses `ยืนยันสร้างออเดอร์`.
+14. System opens confirmed Order Detail.
 
 **System Actions**
 
@@ -130,8 +131,11 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Creates Draft No. only when user presses `บันทึกร่าง` or `ออกและบันทึก`.
 - Keeps saved Draft Order out of stock reservation, Job creation, Shipment creation, and reports.
 - Hides converted Draft Order from active draft UI by status after real Order creation.
+- Shows only Product Models with `ขายได้ > 0` by default in ready-stock selection, with `เลือกสินค้าที่ไม่มีสต๊อก` for enabled colors that show `หมด`.
+- When SKU Variant code search matches, shows the parent Product Model and highlights the matching color.
 - Creates Order ID only after required entry is complete.
 - Reserves ready-stock lines when the real Order is created.
+- Snapshots SKU code, product name, color, dimensions, display image, and relevant department images for ready-stock Order Lines at confirmation.
 - Creates `JOB-O` immediately for each complete custom line when the real Order is created.
 - Does not require Payment Record or payment override to create `JOB-O`.
 - Stock-insufficient ready-stock lines require fix or acknowledgement by an Order-capable user, then operation continues even if stock becomes negative.
@@ -159,6 +163,10 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Customer
 - Recipient / Address Entry
 - Order Lines
+- Product Model / `SKU หลัก`
+- Color / `SKU ย่อย`
+- SKU Variant code
+- `ขายได้` stock check
 - Ready-stock/custom indicator
 - Price
 - Payment Term
@@ -175,6 +183,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Payment Term and Payment Record are visually merged.
 - Review feels like another editor instead of the final confirmation step.
 - Unfinished customer discussion is entered as real operational work too early.
+- Staff confuse `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`, or see ambiguous `คงเหลือ` in Order selection.
+- Staff expect later Product/SKU image edits to change old Order snapshots.
 
 **Blocking Open UX Questions**
 
@@ -762,3 +772,162 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Blocking Open UX Questions**
 
 - Manager unfinished-work overview layout is a blocking question for future screen specs.
+
+## F10 - Product Model Color to Stock Production
+
+**Actors**
+
+- Admin
+- Product-permission user
+- Production-permission user
+
+**Trigger**
+
+- Staff need to create or inspect a product, manage its real color options, or produce stock for one color/SKU.
+
+**Entry Point**
+
+- `สินค้า / สต๊อก` -> `รายการสินค้า / SKU`
+- Product Model Detail -> per-color `ผลิตเข้าสต๊อก` / `ผลิตสินค้าชิ้นนี้`
+- `สร้างงานผลิต` opened directly
+
+**Screens Involved**
+
+- Product / SKU Table
+- Product Model Detail
+- SKU Variant Detail
+- SKU Image Groups
+- Ready Stock View
+- Production Job Entry
+- Job Detail
+
+**Step-by-step User Actions**
+
+1. Admin opens `รายการสินค้า / SKU`.
+2. Admin searches Product Models by product name, product code, SKU Variant code, color name, or color code.
+3. Admin opens Product Model Detail with `ดูสินค้า`.
+4. Admin reviews enabled and disabled color/SKU Variant rows.
+5. Admin opens a SKU Variant for exact color detail, or uses per-color stock/production actions.
+6. For stock production, admin presses `ผลิตเข้าสต๊อก` / `ผลิตสินค้าชิ้นนี้` on an enabled color.
+7. System opens `สร้างงานผลิต` in `ผลิตจาก SKU` mode with that SKU Variant prefilled.
+8. Admin may keep the prefilled SKU Variant, choose another SKU Variant, or switch to `งานผลิตพิเศษ`.
+9. Admin creates production and lands on Job Detail.
+
+**System Actions**
+
+- Lists Product Models as primary rows, not every SKU Variant as a top-level row.
+- Shows `ขายได้ X ชิ้น` as the main product-list stock number; shows `หมด` when no enabled color can be sold.
+- Expands Product Model rows only when saleable color stock exists, and shows only colors with `ขายได้ > 0`.
+- Creates or reuses one SKU Variant for each Product Model + `รายการสี` pair.
+- Hides disabled colors from new Order selection, `ผลิตจาก SKU`, normal product list expansion, and normal stock selection, while preserving history.
+- Uses SKU Variant image groups first and falls back to Product Model image groups by purpose.
+- Treats Product Detail SKU prefill as a convenience only; changing SKU or mode resets that context.
+
+**Status Changes**
+
+- Color option can become enabled or disabled for a Product Model, subject to stock/order/production blockers.
+- Production entry creates a `JOB-P / งานผลิต`.
+- Receiving stock happens later from completed Production/Job context, not from Product Detail.
+
+**Exit Condition**
+
+- User has inspected the Product Model/SKU Variant, adjusted product color availability where allowed, or created a production Job for stock.
+
+**Key Data Shown**
+
+- Product Model / `SKU หลัก`
+- Color / `SKU ย่อย`
+- SKU Variant code
+- Color status enabled/disabled
+- `มีอยู่ในร้าน`
+- `จองแล้ว`
+- `ขายได้`
+- Product and color-specific images
+- Production links
+
+**UX Risks**
+
+- Product list drifts back to one top-level row per SKU Variant.
+- Disabled colors look like sold-out colors instead of unavailable product options.
+- Product Detail becomes an inline stock editor.
+- Product Detail prefill looks like a locked special production path.
+- Users expect stock receipt to start from Product Detail instead of completed Production/Job context.
+
+**Blocking Open UX Questions**
+
+- None for the flow map.
+
+## F11 - Product Settings Maintenance
+
+**Actors**
+
+- Product-settings permission user
+- Admin with product-settings permission
+
+**Trigger**
+
+- Staff need to maintain product settings used by product creation, SKU color setup, and production instruction classification.
+
+**Entry Point**
+
+- `ตั้งค่า` -> `ตั้งค่าสินค้า`
+- Product creation/edit -> `modal จัดการรายการแบบย่อ`
+
+**Screens Involved**
+
+- Product Settings
+- Product Model create/edit
+- Product Model Detail
+- Job Detail, when a pattern/decor item is blocking close
+
+**Step-by-step User Actions**
+
+1. User opens `ตั้งค่า > ตั้งค่าสินค้า`.
+2. User selects one tab: `หมวดหมู่สินค้า`, `แท็กสินค้า`, `รายการสี`, `รายการลายรักสมุก`, `รายการลายแกะสลัก`, or `รายการสีคริสตัล`.
+3. User searches or filters by status.
+4. User adds, edits, closes, or reopens a setting item where allowed.
+5. If closing is blocked, user sees a modal showing the Product/SKU or Job records that block the action.
+6. User opens the blocking record when follow-up is needed.
+7. From product create/edit, a permitted user can use `modal จัดการรายการแบบย่อ` to add/search/reopen values without leaving the product flow.
+
+**System Actions**
+
+- Hides `ตั้งค่าสินค้า` from users without product-settings permission.
+- Blocks duplicate color name or color code.
+- Blocks editing used color/category codes that have already appeared in SKU Variant codes.
+- Blocks closing `รายการสี` when linked SKU Variants still have `มีอยู่ในร้าน > 0` or `จองแล้ว > 0`.
+- Blocks closing `รายการลายรักสมุก`, `รายการลายแกะสลัก`, or `รายการสีคริสตัล` when active/in-progress Jobs still use that value.
+- Blocks closing category/subcategory while active Product Models remain in it.
+- Allows closing tags at any time because tags are search/grouping only.
+- Records add/edit/close/reopen actions in Management Log.
+
+**Status Changes**
+
+- Setting item: active -> inactive when closed.
+- Setting item: inactive -> active when reopened.
+- Unused setting item may be deleted.
+
+**Exit Condition**
+
+- Product settings are maintained without changing historical snapshots or breaking active Product/SKU/Job work.
+
+**Key Data Shown**
+
+- Setting item name
+- Code where applicable
+- Optional sample image
+- Optional note
+- Status
+- Blocking Product/SKU/Job references only when an action is blocked
+- Management Log metadata
+
+**UX Risks**
+
+- Staff see technical words like CRUD or Master instead of normal Thai labels.
+- Used SKU/category/color codes are changed and make old Orders/Jobs/stock documents confusing.
+- A permanent "where used" report makes the starting workflow too heavy.
+- Users without permission can see or edit product settings.
+
+**Blocking Open UX Questions**
+
+- None for the flow map.

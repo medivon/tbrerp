@@ -15,7 +15,7 @@ Visual/content anchors:
 ## High-Fidelity GPT Image 2 Prompt
 
 ```text
-Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “รายละเอียด SKU ใหญ่”. This is the full-option read-only detail page for one Product Model / SKU ใหญ่. It shows the parent product family, shared product identity, default images/instructions, and related SKU Variant / SKU ย่อย records. It is not an edit form and not a stock adjustment page.
+Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “รายละเอียด SKU หลัก”. This is the Product Model detail page. Product Model / SKU หลัก is the parent product record; color-specific SKU Variants / SKU ย่อย are managed inside the `สีของสินค้า` section. This page is not an inline stock editor.
 
 Use the approved THAIBORAN Admin Dashboard app shell:
 - Fixed light left sidebar with THAIBORAN logo/brand, matching the approved light Admin Dashboard baseline
@@ -25,124 +25,113 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows, dark navy emphasis
 
 Screen purpose:
-Admin reviews one Product Model / SKU ใหญ่ before opening or creating SKU ย่อย. The page explains the product family and helps staff see related variants quickly.
+Admin reviews one Product Model, sees which colors are real options for this product, checks stock by color, and starts production or stock adjustment for a specific enabled color.
 
 Header area:
-- Page title: รายละเอียด SKU ใหญ่
-- Product Model code: PM-TEAK-TABLE-001
+- Page title: รายละเอียด SKU หลัก
+- Product Model ID: 123
 - Product Model name: โต๊ะข้างไม้สัก
-- Chips: SKU ใหญ่, เปิดใช้งาน, มี SKU ย่อย 4, มีรีวิว
-- Primary action: แก้ไข SKU ใหญ่
-- Secondary actions: เพิ่ม SKU ย่อย, กลับไปรายการสินค้า
-- The header must feel like a read-only detail page. Do not show inline editable fields.
+- Chips: SKU หลัก, เปิดใช้งาน, สีเปิดใช้งาน 4, ขายได้ 5 ชิ้น
+- Primary action: แก้ไข SKU หลัก
+- Secondary actions: จัดการรูปสินค้า, กลับไปรายการสินค้า
+- The header must feel like a detail/management page, not an edit form.
 
 Main layout:
-Use a card-based read-only detail layout. Main content should stack vertically in clear cards. A compact sticky right summary/action card is allowed, but the page must not look like a form editor.
+Use stacked sections with a compact right summary panel. The most important section after identity is `สีของสินค้า`.
 
 Left main column:
 Card 1: ภาพสินค้า
-- Large hero image of a Thai teak side table product family, with visible wood carving/detail.
-- Add 4 thumbnails for different colors/angles: สีโอ๊คเข้ม, สีทองโบราณ, สีขาวเปลือกไข่, รายละเอียดลาย.
-- Show chips: รูปหลัก, รูปมาตรฐาน SKU ใหญ่.
-- This card should help staff recognize the product family immediately.
+- Large hero image of a Thai teak side table product family.
+- Show one main product image and small thumbnails for additional product images.
+- Show chips: รูปหลัก, รูปจาก SKU หลัก.
+- No upload dropzone here; image management is a separate action.
 
-Card 2: ข้อมูล SKU ใหญ่
-- Use read-only label/value rows, not input fields.
-- Fields:
-  - SKU ใหญ่: โต๊ะข้างไม้สัก
-  - รหัส SKU ใหญ่: PM-TEAK-TABLE-001
+Card 2: ข้อมูล SKU หลัก
+- Read-only label/value rows:
+  - SKU หลัก: โต๊ะข้างไม้สัก
+  - รหัสสินค้า: 123
   - หมวดหมู่: โต๊ะ
   - สถานะ: เปิดใช้งาน
-  - จำนวน SKU ย่อย: 4 รายการ
   - อ้างอิง Job: JOB-O-0241
 - Small link/action: เปิด Job อ้างอิง
 - Make clear Job reference is traceability only, not copying data.
 
-Card 3: ขนาดมาตรฐาน
+Card 3: ขนาดสินค้า
 - Show three separate metric tiles:
-  - กว้างมาตรฐาน: 45 ซม.
-  - ลึกมาตรฐาน: 45 ซม.
-  - สูงมาตรฐาน: 55 ซม.
-- Include note: ใช้เป็นค่าเริ่มต้นตอนสร้าง SKU ย่อย / งานสั่งทำ
+  - กว้าง: 45 ซม.
+  - ลึก: 45 ซม.
+  - สูง: 55 ซม.
+- Include note: ถ้าขนาดต่างจริง ให้สร้าง SKU หลักใหม่.
 
-Card 4: SKU ย่อยในกลุ่มนี้
-- Dense table/list with 4 rows and thumbnails.
+Card 4: สีของสินค้า
+- This is the key table on the page.
+- Show both enabled and disabled colors.
 - Columns:
-  - รูป
-  - SKU ย่อย
-  - รหัส SKU
   - สี
-  - กว้าง
-  - ลึก
-  - สูง
-  - สต๊อก
+  - สถานะสี
+  - รหัส SKU
+  - มีอยู่ในร้าน
+  - จองแล้ว
+  - ขายได้
   - งานผลิต
-  - สถานะ
   - จัดการ
 - Example rows:
-  1. โต๊ะข้างไม้สัก สีโอ๊คเข้ม, SKU-TEAK-TABLE-OAK-001, สีโอ๊คเข้ม, 45 / 45 / 55 ซม., คงเหลือ 0, กำลังผลิต 6, chips ไม่มีสต๊อก and กำลังผลิต, action เปิด SKU
-  2. โต๊ะข้างไม้สัก สีทองโบราณ, SKU-TEAK-TABLE-GOLD-002, สีทองโบราณ, 45 / 45 / 55 ซม., คงเหลือ 2, งานผลิต -, chip เปิดใช้งาน, action เปิด SKU
-  3. โต๊ะข้างไม้สัก สีขาวเปลือกไข่, SKU-TEAK-TABLE-WHITE-003, สีขาวเปลือกไข่, 45 / 45 / 55 ซม., คงเหลือ 1, งานผลิต -, chip มีรีวิว, action เปิด SKU
-  4. โต๊ะข้างไม้สัก สีโอ๊คแดง, SKU-TEAK-TABLE-REDOAK-004, สีโอ๊คแดง, 45 / 45 / 55 ซม., คงเหลือ 0, งานผลิต -, chip ไม่มีสต๊อก, action เปิด SKU
-- Include an action above the table: เพิ่ม SKU ย่อย.
-- Important: dimensions must appear as separate fields/columns: กว้าง, ลึก, สูง.
+  1. สีโอ๊คเข้ม, เปิดใช้งาน, TBR-TBL-123-OAK, มีอยู่ในร้าน 4, จองแล้ว 1, ขายได้ 3, กำลังผลิต -, actions ปรับยอดสต๊อก and ผลิตเข้าสต๊อก
+  2. สีทองโบราณ, เปิดใช้งาน, TBR-TBL-123-GLD, มีอยู่ในร้าน 2, จองแล้ว 0, ขายได้ 2, รอรับเข้า 1, actions ปรับยอดสต๊อก and ผลิตสินค้าชิ้นนี้
+  3. สีขาวเปลือกไข่, เปิดใช้งาน, TBR-TBL-123-WHT, มีอยู่ในร้าน 0, จองแล้ว 0, ขายได้ 0, กำลังผลิต -, action ผลิตเข้าสต๊อก
+  4. สีโอ๊คแดง, ปิดใช้งาน, TBR-TBL-123-ROK, มีอยู่ในร้าน 0, จองแล้ว 0, ขายได้ 0, gray row, action เปิดใช้สีนี้
+  5. สีดำ, เปิดใช้งาน, TBR-TBL-123-BLK, มีอยู่ในร้าน 0, จองแล้ว 1, ขายได้ -1, warning chip มีรายการติดลบ, action ปรับยอดสต๊อก
+- Include action above the table: เพิ่มสีให้สินค้า.
+- Production buttons appear only for enabled colors.
+- Do not make stock numbers editable inline.
 
 Card 5: รูปสินค้าและคำอธิบายมาตรฐาน
-- Show image groups as separate subcards:
-  - รูปหลัก 1 รูป
-  - รูปเพิ่มเติม 8 รูป
-  - รูปสำหรับช่างไม้ 3 รูป
-  - รูปสำหรับฝ่ายสี/ตกแต่ง 4 รูป
-  - รูปสำหรับรักสมุก 2 รูป
-- Each group shows thumbnails large enough to inspect.
-- Include small read-only action link: ดูรูปทั้งหมด.
-- Do not show upload dropzones on this read-only screen.
+- Show Product Model image groups as default/fallback:
+  - รูปหลัก
+  - รูปรอง / รูปเพิ่มเติม
+  - รูปสำหรับช่างไม้
+  - รูปสำหรับฝ่ายสี/ตกแต่ง
+  - รูปสำหรับรักสมุก
+- Include small action: จัดการรูปสินค้า.
+- Explain visually that SKU ย่อย can override missing/specific images later.
 
-Card 6: คำอธิบายตามแผนก
-- Separate mini cards:
-  - ช่างไม้: โครงโต๊ะข้างไม้สัก ขาทรงโค้ง ใช้ขนาดมาตรฐาน
-  - ฝ่ายสี/ตกแต่ง: เลือกสีตาม SKU ย่อย
-  - รักสมุก: ใช้รูปแบบลายตาม SKU ย่อย หรือแนบเพิ่มใน Job
-- Show as read-only notes, not editable text areas.
-
-Card 7: รีวิวและข้อมูลจำกัดสิทธิ์
-- Review Album summary: คลังรีวิว 18 รูป
-- Show a horizontal preview strip with 4 review thumbnails.
-- Show a permission-safe restricted indicator: ข้อมูลค่าจ้างมาตรฐาน: จำกัดสิทธิ์
-- Do not show any amount, cost, labor rate, price, profit, or accounting data.
-- Buttons: เปิดคลังรีวิว, จัดการรูปสินค้า
+Card 6: งานผลิตและรีวิว
+- Production summary: กำลังผลิต 6, รอรับเข้า 1
+- Link: ดูงานผลิตที่เกี่ยวข้อง
+- Review Album summary: คลังรีวิว 18 รูป with thumbnails
+- Buttons: เปิดคลังรีวิว, ดูงานผลิตที่เกี่ยวข้อง
 
 Right panel:
-Title: ภาพรวม SKU ใหญ่
+Title: ภาพรวม SKU หลัก
 Show:
 - Main image thumbnail
-- Product Model code PM-TEAK-TABLE-001
-- จำนวน SKU ย่อย 4
-- เปิดใช้งาน 4
-- ไม่มีสต๊อก 2
-- กำลังผลิต 1
-- รีวิว 18 รูป
-- อ้างอิง Job: JOB-O-0241
+- รหัสสินค้า 123
+- สีเปิดใช้งาน 4
+- สีปิดใช้งาน 1
+- ขายได้รวม 5 ชิ้น
+- มีรายการติดลบ 1
+- กำลังผลิต 6
+- รอรับเข้า 1
 Actions as vertical buttons:
-- เพิ่ม SKU ย่อย
+- เพิ่มสีให้สินค้า
 - จัดการรูปสินค้า
 - เปิดคลังรีวิว
 - เปิด Job อ้างอิง
-- ปิดใช้งาน
-
-Important edit rule:
-This page is read-only. Do not render editable inputs, upload dropzones, inline text areas, save buttons, or form controls for changing Product Model data. Show `แก้ไข SKU ใหญ่` as the path into editing.
+- ปิดใช้งานสินค้า
 
 Important stock rule:
-Do not show editable quantity fields. Stock appears only as report-only summary on SKU ย่อย rows.
+Use `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`. Do not use `คงเหลือ` or `พร้อมขาย`. Negative `ขายได้` is shown directly with a warning.
+
+Important edit rule:
+This page is not a free-form edit form. Product fields are read-first. Color open/close and navigation actions may appear, but do not render inline product field inputs or direct stock quantity editing.
 
 Visual rules:
 - Thai UI labels are primary
 - Keep English only for internal terms: SKU, Job, JOB-O, JOB-P
 - Do not show product cost, labor cost, standard labor rate amount, profit, sales price, tax details, accounting ledger, ad spend, or private CRM notes
-- Keep `SKU ใหญ่` and `SKU ย่อย` clearly distinct
+- Use `SKU หลัก` for Product Model and `SKU ย่อย` for color-specific stock units
 - Keep dimensions as separate fields: กว้าง, ลึก, สูง
 - Keep Review Album separate from product image groups
 - Use the approved light sidebar baseline; do not switch to a dark sidebar
-- Make the page feel like product family detail management, not a catalogue landing page
+- Make the page feel like product detail management, not a catalogue landing page
 ```
