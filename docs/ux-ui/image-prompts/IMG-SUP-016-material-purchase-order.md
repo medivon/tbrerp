@@ -25,8 +25,7 @@ Header:
 - Subtitle: เตรียมรายการซื้อวัสดุ พิมพ์หรือส่งออก แล้วรับเข้าสต๊อกเมื่อของครบ
 
 Action bar:
-- บันทึกร่าง
-- ส่งไปรอรับเข้า
+- แก้ไขรายการ
 - พิมพ์ A4
 - ส่งออก JPG
 - รับเข้าสต๊อกวัสดุ
@@ -37,26 +36,28 @@ Main form:
 - ผู้ขาย: ร้านสีเจริญ
 - หมายเหตุ: ซื้อสำหรับงานรอวัตถุดิบสัปดาห์นี้
 - Attachment area: รูป/เอกสารแนบ
+Show note: ใบสั่งซื้อวัสดุ 1 ใบ มีผู้ขาย 1 เจ้า
 
 Material lines table:
 Columns:
 - รูป
+- รหัสวัสดุ
 - ชื่อวัสดุ
 - หมวดวัสดุ
 - จำนวน
 - หน่วย
+- งานที่เกี่ยวข้อง
 - หมายเหตุ
 - จัดการ
 
 Rows:
-1. สีทองโบราณ; สี/ตกแต่ง; 5; กระป๋อง; สำหรับ JOB-O-2567-0142
-2. สีขาวเปลือกไข่; สี/ตกแต่ง; 2; กระป๋อง
-3. แผ่นทองคำเปลว; รักสมุก; 3; แพ็ค
+1. MAT-0001; สีทองโบราณ; สี/ตกแต่ง; 5; กระป๋อง; JOB-O-2567-0142; สำหรับงานฝ่ายสี
+2. MAT-0004; สีขาวเปลือกไข่; สี/ตกแต่ง; 2; กระป๋อง; JOB-P-2567-0031
+3. MAT-0005; แผ่นทองคำเปลว; รักสมุก; 3; แพ็ค; JOB-O-2567-0148
 
 Right panel:
 Title: สรุปใบสั่งซื้อวัสดุ
 Show status timeline:
-- ร่าง
 - รอรับเข้า current
 - รับเข้าสต๊อกแล้ว
 Show rules:
@@ -66,10 +67,27 @@ Show rules:
 Show Payment Audit Follow-up placeholder:
 - หลังรับเข้าสต๊อก ระบบจะสร้างรายการรอตรวจจ่าย
 - ยังไม่สร้าง Expense อัตโนมัติ
+Show related Job release preview:
+- รับเข้าแล้วจะปลดรอวัตถุดิบ 3 งาน
+- JOB-O-2567-0142 ตู้พระไม้สัก กลับเข้าคิว ฝ่ายสี
+- JOB-P-2567-0031 โต๊ะหมู่บูชา กลับเข้าคิว ช่างไม้
+- JOB-O-2567-0148 ฐานพระไม้สัก กลับเข้าคิว รักสมุก
+
+Receipt confirmation modal state:
+Show modal title: ยืนยันรับเข้าสต๊อกวัสดุ
+Show message: ระบบจะรับเข้าวัสดุทั้งใบ และปลดรอวัตถุดิบของงานต่อไปนี้
+Show table with Job ID, ชื่องาน/สินค้า, กลับเข้าคิว, วัสดุที่เกี่ยวข้อง
+Actions: ยืนยันรับเข้า, กลับไปตรวจสอบ
 
 Visual rules:
 - Do not show price, total, VAT, tax, ledger, or payment amount fields
+- Do not show draft status, save draft buttons, or approval status
 - Do not show partial receipt controls
+- Do not allow multiple suppliers in one document
+- Material picker only uses active Material Items linked to the selected supplier
+- Manual purchase orders must not show controls for linking Jobs later
+- Job Detail should not be shown inside this prompt; related Jobs are shown only on the purchase document and receipt confirmation
+- Do not show a `รับวัตถุดิบแล้ว` badge after receipt
 - `รับเข้าสต๊อกวัสดุ` should look important and require confirmation
 - Attachments can be shown in any status
 - Keep Thai UI labels primary; English only for SKU/Job if referenced

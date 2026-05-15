@@ -161,7 +161,9 @@ Rules:
 
 - `สต๊อกวัสดุ` is separate from `รายการสินค้า / SKU`.
 - Material stock is lightweight in the starting workflow: no full warehouse, no BOM, no automatic Job material issue, and no automatic Expense creation.
-- Material Purchase Orders can create stock receipt and a payment-audit follow-up, but finance/payment remains under the finance permission flow.
+- Material Items use one primary supplier in the starting workflow.
+- Material Purchase Orders are one-supplier documents; they can create stock receipt and a payment-audit follow-up, but finance/payment remains under the finance permission flow.
+- Material Purchase Orders linked to waiting-material Jobs can release those Jobs from `รอวัตถุดิบ` on receipt.
 
 ### ลูกค้า / CRM
 

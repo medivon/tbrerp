@@ -569,8 +569,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 1. Delivery Team opens dashboard.
 2. Delivery Team chooses `รายการต้องจัดส่งวันนี้` or `รายการรอวันจัดส่ง`.
 3. Delivery Team opens a Shipment.
-4. Delivery Team reviews item list, image, quantity, recipient, address, phone, carrier, COD, and notes.
-5. Delivery Team attaches required evidence according to carrier setting.
+4. Delivery Team reviews item list, image, quantity, recipient, address, phone, carrier, and notes.
+5. Delivery Team adds tracking or `รูปหลักฐานจัดส่ง`.
 6. Delivery Team adds short delivery note if needed.
 7. Delivery Team marks `ส่งออกแล้ว`.
 
@@ -581,6 +581,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Places future-date Shipments in `รายการรอวันจัดส่ง`.
 - Moves future-date Shipments to today's tab on the delivery date.
 - Prevents Delivery Team from changing item list, address, carrier, COD, or closing Shipment.
+- Keeps `ส่งออกแล้ว` blocked until the Shipment has tracking or at least one delivery evidence photo.
 - Sends `ส่งออกแล้ว` Shipment to admin `ยืนยันการจัดส่ง`.
 
 **Status Changes**
@@ -602,21 +603,21 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Address
 - Phone
 - Carrier
-- COD
 - Notes
-- Evidence requirements
-- Tracking/evidence fields where applicable
+- Tracking
+- `รูปหลักฐานจัดส่ง`
 
 **UX Risks**
 
 - Delivery Team sees edit controls for master shipment data.
-- Evidence requirements are unclear at the moment of send-out.
+- Delivery Team sees COD amount in the system UI, even though COD follow-up belongs to admin/audit/finance and COD amount belongs on the Shipping Sheet.
+- The tracking-or-photo rule is unclear at the moment of send-out.
 - Future Shipments are mixed into today's work.
 - `ส่งออกแล้ว` is mistaken for final Shipment close.
 
 **Blocking Open UX Questions**
 
-- Carrier-specific evidence requirements are blocking for detailed evidence-capture screen specs.
+- None for the delivery evidence rule.
 
 ## F08 - Admin Close Shipment
 
@@ -646,17 +647,20 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 1. Admin opens `ยืนยันการจัดส่ง`.
 2. Admin selects a Shipment marked `ส่งออกแล้ว`.
 3. Admin reviews evidence, tracking, carrier information, recipient/address snapshot, item list, and notes.
-4. Admin closes Shipment when review is acceptable.
-5. Admin checks whether the related Order has any remaining required Shipments.
-6. Admin leaves COD/payment issues in financial follow-up when they are not operational delivery blockers.
+4. Admin adds or corrects tracking/evidence if needed before close.
+5. Admin closes Shipment when review is acceptable and at least tracking or one delivery evidence photo exists.
+6. Admin checks whether the related Order has any remaining required Shipments.
+7. Admin leaves COD/payment issues in financial follow-up when they are not operational delivery blockers.
 
 **System Actions**
 
 - Shows `ส่งออกแล้ว` Shipments in the shared admin close queue.
 - Preserves Shipment Owner but allows shared admin close by permission.
+- Allows admin to add or correct tracking/evidence before close.
 - Closes the Shipment after admin action.
 - Completes the Order only when all required Order Shipments are closed.
 - Keeps Financial Follow-up separate from Order Completion.
+- Records post-sent-out tracking/evidence correction in Management Log.
 
 **Status Changes**
 
@@ -687,6 +691,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Admin treats payment confirmation as required before operational Shipment close.
 - `ยืนยันการจัดส่ง` appears owner-locked instead of shared.
 - Missing evidence is hard to detect.
+- Admin closes a Shipment with neither tracking nor delivery evidence photo.
 - Order Completion hides unresolved financial follow-up.
 
 **Blocking Open UX Questions**
@@ -966,28 +971,47 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 2. Material stock user opens `สต๊อกวัสดุ`.
 3. User sees waiting-materials alerts and material stock quantities.
 4. User can summarize waiting-materials needs into `สร้างใบสั่งซื้อวัสดุ`.
-5. User creates a Material Purchase Order with date, supplier/store, material lines, quantities, and units.
-6. User moves the document to `รอรับเข้า` and can print A4 or export JPG/image for purchasing.
-7. If the document is still `ร่าง` or `รอรับเข้า`, user can edit or cancel it.
-8. When all goods arrive, user accepts the whole Material Purchase Order into stock.
-9. System increases material stock for every line and creates a Payment Audit Follow-up for finance/payment work.
-10. Separately, staff use `ปรับยอดวัสดุ` to enter actual counted quantities for selected materials.
+5. If a waiting-material note is free text, user matches it to an existing Material Item or creates a new Material Item first.
+6. If the waiting-material summary contains multiple suppliers, the system splits the work into separate Material Purchase Orders by supplier.
+7. User creates a Material Purchase Order with date, one supplier/store, material lines, quantities, and units; the document becomes `รอรับเข้า` immediately.
+8. User can print A4 or export JPG/image for purchasing.
+9. While the document is `รอรับเข้า`, user can edit or cancel it.
+10. When all goods arrive, user accepts the whole Material Purchase Order into stock.
+11. If the purchase document is linked to Jobs waiting for materials, user reviews a receipt confirmation modal listing the Jobs that will be released.
+12. System increases material stock for every line, releases linked Jobs from `รอวัตถุดิบ`, and creates a Payment Audit Follow-up for finance/payment work.
+13. Separately, staff use `ปรับยอดวัสดุ` to enter actual counted quantities for selected materials.
 
 **System Actions**
 
 - Does not reserve, issue, move, or deduct material stock from Job waiting-material notes.
 - Shows material stock as `จำนวนที่มีอยู่`, receiving movement, latest adjustment/receipt, and movement history.
-- Requires material item name, material category, unit, and a clear supplier link for purchase flow.
+- Requires Material Item code, name, primary supplier, material category, and unit.
 - Keeps material item image optional, while warning that missing images make counting harder.
+- Allows each Material Item to have one current primary supplier; existing purchase/receipt documents keep their supplier snapshots if the primary supplier is later changed.
+- Blocks primary supplier changes while that Material Item is in a `รอรับเข้า` Material Purchase Order.
+- Filters Material Purchase Order line selection to active Material Items linked to the document supplier.
+- Splits waiting-material summaries into separate Material Purchase Orders by supplier when needed.
+- Hides waiting-material notes from the active purchase-summary list while they are already linked to an active Material Purchase Order.
+- Creates Material Purchase Orders directly as `รอรับเข้า`; there is no draft Material Purchase Order.
+- Requires complete date, supplier/store, material lines, quantity, and unit before creating the purchase document.
+- If a linked material line is removed before receipt, removes that Job link and returns the Job to the purchase-summary list if it is still in `รอวัตถุดิบ`.
+- If a linked Material Purchase Order is cancelled, removes all Job links from the document and returns still-waiting Jobs to the purchase-summary list.
+- Does not allow manual Material Purchase Orders to link Jobs later.
+- Does not allow linked Material Purchase Orders to add new Job links later, though normal unlinked material lines may be added.
 - Accepts Material Purchase Orders only as full-document receipt; partial receipt is not in the starting workflow.
+- For linked waiting Jobs, receipt shows a confirmation modal with Job ID, work/product name, return department queue, and related material.
+- Releases only linked Jobs that are still in `รอวัตถุดิบ`, returns them to their previous department queue, restarts department aging, and records a Job Activity Log.
+- Does not show `มีใบสั่งซื้อแล้ว` in Job Detail while waiting to receive.
+- Does not show a `รับวัตถุดิบแล้ว` badge or send a separate department notification after receipt.
 - Creates payment-audit follow-up after stock receipt, but does not create an Expense Entry automatically.
 - In Material Adjustment, calculates the difference from actual counted quantities and records the movement.
 
 **Status Changes**
 
-- Material Purchase Order: `ร่าง` -> `รอรับเข้า` -> `รับเข้าสต๊อกแล้ว`, or `ยกเลิก`.
+- Material Purchase Order: `รอรับเข้า` -> `รับเข้าสต๊อกแล้ว`, or `ยกเลิก`.
 - Material quantity increases when a Material Purchase Order is accepted.
 - Material quantity changes when Material Adjustment is saved.
+- Linked Jobs in `รอวัตถุดิบ` leave waiting state when the linked Material Purchase Order is received.
 - Payment Audit Follow-up is created after material stock receipt.
 
 **Exit Condition**
@@ -997,6 +1021,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Key Data Shown**
 
 - Material name
+- Material code
 - Material category
 - Supplier/store
 - Unit
@@ -1004,6 +1029,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Quantity on hand
 - Latest receipt/adjustment
 - Waiting-material Job notes
+- Linked Jobs that will be released by receipt
 - Material Purchase Order number
 - Attachments/evidence
 - Payment-audit follow-up status where relevant
@@ -1014,8 +1040,9 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Users assume `รอวัตถุดิบ` reserves material stock.
 - Material receipt creates real Expense entries automatically and mixes stock with finance.
 - Partial receipt sneaks into the workflow and makes the first scope heavier.
-- Supplier/material binding is implemented before the exact supplier cardinality is confirmed.
+- The automatic release from `รอวัตถุดิบ` is hidden, so departments do not understand why a Job returned to their queue.
+- Manual Material Purchase Orders are accidentally allowed to release Jobs without explicit Job links.
 
 **Blocking Open UX Questions**
 
-- Exact supplier/material cardinality for Material Items: one supplier per item, many suppliers per item, or item variants by supplier.
+- None for the current material boundary.

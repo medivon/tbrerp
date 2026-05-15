@@ -19,6 +19,8 @@ It is not Product/SKU ready stock, not a full warehouse, not a BOM, and not an a
 - Search materials by name, category, supplier/store, or note.
 - See Jobs marked `รอวัตถุดิบ` and what material names/notes they need.
 - Summarize waiting-material notes into a Material Purchase Order flow.
+- Add Material Items directly from this screen when needed.
+- Match free-text waiting-material notes to existing Material Items, or create new Material Items before purchasing.
 - Open `ปรับยอดวัสดุ` when staff count actual stock.
 - Avoid confusing material stock with SKU stock or sellable stock.
 
@@ -44,7 +46,7 @@ It is not Product/SKU ready stock, not a full warehouse, not a BOM, and not an a
 - Search/filter toolbar.
 - Dense material stock table.
 - Right preview drawer for selected material.
-- Primary actions: `สร้างใบสั่งซื้อวัสดุ`, `ปรับยอดวัสดุ`.
+- Primary actions: `เพิ่มวัสดุ`, `สร้างใบสั่งซื้อวัสดุ`, `ปรับยอดวัสดุ`.
 
 ## 7. Main Components
 
@@ -54,6 +56,8 @@ It is not Product/SKU ready stock, not a full warehouse, not a BOM, and not an a
 - Supplier/store filter
 - Movement/stock status filters
 - Material stock table
+- Material quick add / mini manager for material category and unit
+- Free-text waiting-material matcher
 - Selected material preview drawer
 - Movement history preview
 - Navigation buttons to Material Purchase Order and Material Adjustment
@@ -63,9 +67,10 @@ It is not Product/SKU ready stock, not a full warehouse, not a BOM, and not an a
 | Field | Thai Label | Example | Source object | Notes |
 |---|---|---|---|---|
 | Image | รูป | Material thumbnail | Material Item | Optional; show missing image state. |
+| Material code | รหัสวัสดุ | MAT-0001 | Material Item | Auto-generated; searchable. |
 | Material name | ชื่อวัสดุ | รางลิ้นชัก 18 นิ้ว | Material Item | Required. |
 | Material category | หมวดวัสดุ | อุปกรณ์เฟอร์นิเจอร์ | Material Category | Managed lightly in material stock area. |
-| Supplier/store | ผู้ขาย | ร้านเอ | Supplier | Required link for purchase flow. |
+| Primary supplier/store | ผู้ขายหลัก | ร้านเอ | Supplier | One current supplier for new purchase flow. |
 | Unit | หน่วยนับ | ชิ้น | Material Item | Required. |
 | Quantity on hand | จำนวนที่มีอยู่ | 24 | Material Stock | Read-only on this page. |
 | Latest receipt | รับเข้าล่าสุด | 20 พ.ค. 67 | Material Movement | Optional. |
@@ -79,6 +84,8 @@ It is not Product/SKU ready stock, not a full warehouse, not a BOM, and not an a
 |---|---|---|---|---|
 | Search | ค้นหา | Allowed viewers | Filters material list. | No |
 | Open waiting Job | เปิดงาน | Allowed viewers | Opens Job Detail or work card. | No |
+| Add material | เพิ่มวัสดุ | Material stock permission | Creates Material Item with quantity 0. | No |
+| Match free-text note | จับคู่วัสดุ | Material purchase/stock permission | Links waiting note to Material Item before purchase. | No |
 | Create PO from summary | สรุปรายการสั่งซื้อ | Material purchase permission | Opens Material Purchase Order with selected/waiting items. | No |
 | Create manual PO | สร้างใบสั่งซื้อวัสดุ | Material purchase permission | Opens blank Material Purchase Order. | No |
 | Adjust material | ปรับยอดวัสดุ | Material stock adjustment permission | Opens Material Adjustment. | No |
@@ -98,31 +105,46 @@ It is not Product/SKU ready stock, not a full warehouse, not a BOM, and not an a
 
 If no material items exist, show `ยังไม่มีรายการวัสดุ` with action `เพิ่มวัสดุ`. If filters match nothing, show `ไม่พบวัสดุที่ตรงกับตัวกรอง` with action `ล้างตัวกรอง`.
 
-## 12. Error State
+## 12. Sorting And Selection Rules
+
+- Default sorting shows items with `รอวัตถุดิบ` first, then zero-quantity items, then recently moving items.
+- New Material Items start with `จำนวนที่มีอยู่ = 0` and appear immediately.
+- Material Items with quantity 0 can be opened, added to Material Purchase Orders, and adjusted.
+- Each Material Item has one current primary supplier.
+- Changing the primary supplier affects future purchase documents only; old purchase/receipt documents keep their captured supplier.
+- Primary supplier cannot be changed while that Material Item is in a `รอรับเข้า` Material Purchase Order.
+- Inactive Material Items are hidden from new purchase/adjustment selections but remain visible in old documents/history.
+- Material Items cannot be closed while `จำนวนที่มีอยู่ > 0` or while waiting-to-receive Material Purchase Orders still reference them.
+
+## 13. Error State
 
 - Loading fails: `โหลดสต๊อกวัสดุไม่สำเร็จ`.
 - Permission fails: `ไม่มีสิทธิ์ดูสต๊อกวัสดุ`.
 - Waiting-material list fails: keep stock table visible and show retry for the alert panel.
 
-## 13. Permission Rules
+## 14. Permission Rules
 
 - Quantity is read-only on Material Stock.
 - Creating Material Purchase Orders, receiving stock, and adjusting material quantities require separate permissions.
 - Material Stock must not show sales price, product cost, profit, tax, or accounting ledger details.
 - Payment Audit Follow-up status may be visible only to users with relevant permission.
 
-## 14. UX Notes For Designer
+## 15. UX Notes For Designer
 
 - Use `จำนวนที่มีอยู่` only. Do not use `คงเหลือ`, `พร้อมขาย`, `จองแล้ว`, or `ขายได้`.
 - Keep the screen operational and dense, similar to Product/SKU and Ready Stock workbenches.
 - The waiting-material panel must make it clear that these are notes/requests, not reservations.
+- When waiting-material notes are converted to purchase work, unresolved free text must be matched to an existing Material Item or turned into a new Material Item first.
+- If selected waiting-material notes belong to multiple suppliers, the purchase summary creates separate Material Purchase Orders by supplier.
+- Waiting-material notes already summarized into active Material Purchase Orders should not keep appearing as new purchase-summary candidates.
 - Missing images should be visible but not blocking.
 - Avoid building a permanent "where used" report for materials in this starting workflow.
+- Do not add low-stock thresholds per material in the starting workflow.
 
-## 15. Open Decisions
+## 16. Open Decisions
 
-- Exact supplier/material cardinality is still open: if the same physical material can be bought from multiple suppliers, should the system create separate Material Items per supplier, or allow multiple suppliers on one Material Item?
+- None blocking for this screen.
 
-## 16. Image Generation Prompt
+## 17. Image Generation Prompt
 
 Use `docs/ux-ui/image-prompts/IMG-SUP-015-material-stock.md` as the image generation prompt source.

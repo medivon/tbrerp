@@ -98,6 +98,7 @@ Visual rules:
 - Do not show the Order Detail selection control “สร้างรอบจัดส่งจากรายการที่เลือก” here; by this point the selected items are already inside Shipment Builder
 - Do not show unselected items or items blocked by unfinished custom work
 - Do not show Delivery Team controls
+- Treat COD as admin/finance delivery setup: it appears on the Shipping Sheet where relevant, not in Delivery Team UI and not on Delivery Note
 - Do not imply the Shipment is already sent
 - Do not show “ส่งออกแล้ว”
 - Do not show final Order completion

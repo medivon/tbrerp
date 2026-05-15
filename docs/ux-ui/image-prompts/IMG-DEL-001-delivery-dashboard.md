@@ -28,7 +28,7 @@ Create a high-fidelity tablet/mobile delivery dashboard for THAIBORAN called “
 This is a delivery team screen, not a desktop admin table. Use the approved THAIBORAN visual language from the shipment documents, but do not use the full desktop sidebar. Use a lightweight mobile/tablet header, large touch targets, clean white cards, compact chips, image-led item recognition, and calm ERP styling.
 
 Screen purpose:
-Show released shipment rounds that admin has already created and released. Delivery Team can view shipment details, attach required evidence, add a short delivery note, and mark the shipment “ส่งออกแล้ว”. This does not close the Shipment and does not complete the Order. It sends the Shipment to admin “ยืนยันการจัดส่ง”.
+Show released shipment rounds that admin has already created and released. Delivery Team can view shipment details, add tracking or รูปหลักฐานจัดส่ง, add a short delivery note, and mark the shipment “ส่งออกแล้ว”. This does not close the Shipment and does not complete the Order. It sends the Shipment to admin “ยืนยันการจัดส่ง”.
 
 Header:
 - Title: ฝ่ายจัดส่ง
@@ -52,15 +52,14 @@ Each shipment card should show:
 - Delivery date or “วันนี้”
 - Item thumbnail
 - Short item summary
-- COD chip if relevant
 - Evidence status chip
 - Delivery note preview
 - Button: เปิดรอบจัดส่ง
 
 Example cards:
-1. SHIP-2568-0061, ผู้รับ คุณณัฐพล, 081-234-5678, 88/14 ถ.ราชพฤกษ์ ต.บางรักพัฒนา อ.บางบัวทอง จ.นนทบุรี, ขนส่ง ไปรษณีย์ไทย EMS, item โต๊ะกลางลงรักสมุก 1 ชิ้น, COD, chip ต้องแนบหลักฐาน, button เปิดรอบจัดส่ง
+1. SHIP-2568-0061, ผู้รับ คุณณัฐพล, 081-234-5678, 88/14 ถ.ราชพฤกษ์ ต.บางรักพัฒนา อ.บางบัวทอง จ.นนทบุรี, ขนส่ง ไปรษณีย์ไทย EMS, item โต๊ะกลางลงรักสมุก 1 ชิ้น, chip ต้องมี Tracking หรือรูป, button เปิดรอบจัดส่ง
 2. SHIP-2568-0062, ผู้รับ คุณพิมพ์ชนก, 082-345-6789, ขนส่ง ไปรษณีย์ไทย EMS, item ชุดเก้าอี้พร้อมส่ง 4 ชิ้น, chip พร้อมส่งออก, button เปิดรอบจัดส่ง
-3. SHIP-2568-0063, ผู้รับ บริษัท เอ.ที.ดีไซน์, ขนส่ง Porlor Express, item กรอบบัวไม้ปิดทอง 2 ชิ้น, COD, chip ต้องแนบรูปใบขนส่ง, button เปิดรอบจัดส่ง
+3. SHIP-2568-0063, ผู้รับ บริษัท เอ.ที.ดีไซน์, ขนส่ง Porlor Express, item กรอบบัวไม้ปิดทอง 2 ชิ้น, chip มีรูปหลักฐาน, button เปิดรอบจัดส่ง
 
 Expanded/detail area or selected card detail:
 Show read-only shipment details:
@@ -69,11 +68,10 @@ Show read-only shipment details:
 - Full address
 - Carrier
 - Item list with images and quantity
-- COD if relevant
 - Delivery note
 - Evidence upload area with labels:
-  - รูปใบขนส่ง
-  - รูปพัสดุขึ้นรถ
+  - Tracking
+  - รูปหลักฐานจัดส่ง
   - หมายเหตุจัดส่ง
 - Primary button: ส่งออกแล้ว
 
@@ -83,8 +81,10 @@ Visual rules:
 - Do not show admin creation controls
 - Do not show “รอสร้างรอบจัดส่ง” Orders
 - Do not show product prices, sales price, profit, accounting totals, tax, ad spend, or private CRM notes
+- Do not show COD amount in Delivery Team UI; COD amount belongs on the printed ใบจัดส่ง when relevant
 - Do not let delivery team edit item list, address, carrier, COD, or close Shipment
 - Do not show “ปิดรอบจัดส่ง”
+- Keep “ส่งออกแล้ว” disabled until Tracking or at least one รูปหลักฐานจัดส่ง exists
 - Make clear that “ส่งออกแล้ว” sends the Shipment to admin “ยืนยันการจัดส่ง”, not final completion
 - The screen should feel field-ready, simple, and touch-friendly
 ```

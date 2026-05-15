@@ -77,18 +77,26 @@ Decision:
 - It does not block Order or Shipment operation.
 - Shipment Builder shows acknowledgement when selected ready-stock lines have negative/insufficient stock.
 
-## Material / Stock Boundary Follow-up Questions
+## Recently Resolved Material Boundary Questions
 
 ### OQ-MAT-001 - Supplier/material cardinality
 
-Open:
+Decision:
 
-- Each material item needs a clear supplier link for purchase flow.
-- If the same physical material can be bought from multiple suppliers, the next decision should clarify whether the system creates separate Material Items per supplier, or allows multiple suppliers on one Material Item.
+- Each Material Item has one current primary supplier in the starting workflow.
+- One Material Purchase Order has exactly one supplier/store.
+- If waiting-material notes involve multiple suppliers, the system creates separate Material Purchase Orders by supplier.
+- Changing a Material Item's primary supplier affects future purchase documents only; old documents keep their captured supplier.
+- The primary supplier cannot be changed while that Material Item is in a `รอรับเข้า` Material Purchase Order.
+- Material Purchase Orders have no draft state in the starting workflow.
+- Manual Material Purchase Orders cannot link Jobs later, and linked Material Purchase Orders cannot add new Job links later.
+- Receipt releases linked Jobs without a badge or separate notification.
 
 Why it matters:
 
-- This affects the Material Stock table, Material Purchase Order line picker, supplier filter, and how strictly purchasing is tied to a supplier.
+- This resolved the Material Stock table, Material Purchase Order line picker, supplier filter, and purchase document boundary.
+
+## Material / Stock Boundary Follow-up Questions
 
 ### OQ-MAT-002 - Material purchase/payment handoff detail
 
@@ -96,3 +104,10 @@ Open but not blocking first UX:
 
 - Material Purchase Order receipt creates Payment Audit Follow-up, not Expense Entry.
 - The exact finance screen behavior for recording the later payment/expense can be grilled in the finance/payment round, not inside the material stock boundary.
+
+### OQ-MAT-003 - Continue material boundary grilling
+
+Open by user choice:
+
+- The Product / SKU / Stock / Material Boundary is currently coherent enough for the starting workflow after Q189-Q243.
+- Continue only if the next session needs to stress-test deeper supplier payment, material reporting, or future multi-supplier behavior.

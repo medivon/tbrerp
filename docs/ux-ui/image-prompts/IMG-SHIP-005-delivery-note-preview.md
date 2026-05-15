@@ -22,7 +22,7 @@ Create a high-fidelity desktop ERP print preview screen for THAIBORAN called “
 Use the THAIBORAN admin app shell consistently with the previous shipment screens. Match the approved `ใบจัดส่ง` print-preview layout style, but make this document item-focused instead of address-focused. The main content should look like an A4 print preview inside the admin app.
 
 Screen purpose:
-Preview and print the Delivery Note (ใบส่งของ). This document focuses on item identification, item image, color/SKU identity, quantity, and item notes. It must not show product price, sales price, profit, payment amount, accounting data, tax, or private CRM notes.
+Preview and print the Delivery Note (ใบส่งของ). This document focuses on item identification, item image, color/SKU identity, quantity, and item notes. It must not show product price, sales price, profit, payment amount, COD amount, accounting data, tax, or private CRM notes.
 
 Header:
 - Page title: ใบส่งของ

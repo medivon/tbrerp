@@ -21,7 +21,7 @@ It confirms:
 
 - `ยืนยันการจัดส่ง` is a desktop/tablet admin evidence-review queue.
 - The queue starts after Delivery Team marks a shipment round `ส่งออกแล้ว`.
-- Admin reviews tracking, transport evidence, item summary, recipient/address snapshot, and notes before closing the shipment round.
+- Admin reviews tracking or `รูปหลักฐานจัดส่ง`, item summary, recipient/address snapshot, and notes before closing the shipment round.
 - `Financial Follow-up` is visible only as a separate signal and does not block operational close.
 
 ## Key Decisions Captured By This Mockup

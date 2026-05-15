@@ -22,7 +22,7 @@ Approved mockup:
 - Handle special delivery cases that need manual edits.
 - Confirm or edit recipient, phone, address, carrier, delivery date, COD, and delivery-facing notes.
 - Acknowledge stock-negative warnings when selected ready-stock lines were allowed to proceed despite stock shortage.
-- Preview Delivery Note and Shipping Sheet.
+- Preview Delivery Note and Shipping Sheet; COD amount appears on Shipping Sheet where relevant, not on Delivery Note.
 - Release the Shipment to delivery team or save it as Draft Shipment.
 - Avoid using this detailed editor for high-volume bulk creation.
 
@@ -148,7 +148,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Delivery Team cannot create, split, or edit Shipment.
 - Shipment Owner is the creator, but close queue is shared later.
 - Finance-sensitive COD/payment detail is permission-aware.
-- Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them.
+- Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them or see COD amount in the Delivery Team system UI.
 - Draft Shipment items are not shipped and Order is not complete.
 - Bulk users do not enter this screen for default/simple creation.
 - Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
@@ -163,6 +163,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Keep item list and address snapshot visible at the same time.
 - Emphasize editable special-case controls: delivery info, COD, notes.
 - Delivery Note and Shipping Sheet are separate print previews, created from the same Shipment.
+- Delivery Note shows item detail and no COD amount; Shipping Sheet shows recipient/address and COD amount where relevant.
 - Do not show product prices on delivery documents.
 - Make COD warning visible but do not turn the screen into finance/audit work.
 - For bulk flows, use saved Order Recipient Detail snapshots as delivery defaults and bypass this screen.

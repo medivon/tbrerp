@@ -30,8 +30,8 @@ Staff review internal material quantities, see Jobs waiting for materials, and o
 Header:
 - Page title: สต๊อกวัสดุ
 - Subtitle: ดูจำนวนที่มีอยู่ของวัสดุ และรายการรอวัตถุดิบ
-- Primary action: สร้างใบสั่งซื้อวัสดุ
-- Secondary action: ปรับยอดวัสดุ
+- Primary action: เพิ่มวัสดุ
+- Secondary actions: สร้างใบสั่งซื้อวัสดุ, ปรับยอดวัสดุ
 
 Top alert panel:
 Title: รายการรอวัตถุดิบ
@@ -41,6 +41,8 @@ Show 3 compact waiting Job rows:
 - JOB-O-2567-0148; ฐานพระไม้สัก; ต้องใช้ ลวดเย็บ
 Button: สรุปรายการสั่งซื้อ
 Make clear these are notes/requests, not reservations.
+Show helper text that free-text material notes must be matched to a material item before purchase.
+Do not show waiting notes that are already linked to an active Material Purchase Order as new purchase-summary candidates.
 
 Summary cards:
 - วัสดุทั้งหมด 86
@@ -57,9 +59,10 @@ Toolbar:
 
 Main table columns:
 - รูป
+- รหัสวัสดุ
 - ชื่อวัสดุ
 - หมวดวัสดุ
-- ผู้ขาย
+- ผู้ขายหลัก
 - หน่วย
 - จำนวนที่มีอยู่
 - รับเข้าล่าสุด
@@ -69,22 +72,25 @@ Main table columns:
 - จัดการ
 
 Show realistic rows:
-1. สีทองโบราณ; หมวด สี/ตกแต่ง; ผู้ขาย ร้านสีเจริญ; หน่วย กระป๋อง; จำนวนที่มีอยู่ 3; งานรอวัตถุดิบ 2; chips มีของ, มีงานรอวัตถุดิบ
-2. รางลิ้นชัก 18 นิ้ว; หมวด อุปกรณ์เฟอร์นิเจอร์; ผู้ขาย ร้านอุปกรณ์เอ; หน่วย ชิ้น; จำนวนที่มีอยู่ 24; chip มีของ
-3. ลวดเย็บ; หมวด วัสดุสิ้นเปลือง; ผู้ขาย ร้านเครื่องมือบี; หน่วย กล่อง; จำนวนที่มีอยู่ 0; chips หมด, มีงานรอวัตถุดิบ
-4. สีขาวเปลือกไข่; หมวด สี/ตกแต่ง; ผู้ขาย ร้านสีเจริญ; หน่วย กระป๋อง; จำนวนที่มีอยู่ 1; chip ควรตรวจนับ
-5. แผ่นทองคำเปลว; หมวด รักสมุก; ผู้ขาย ร้านงานศิลป์; หน่วย แพ็ค; จำนวนที่มีอยู่ 6; chip ไม่มีรูป
+1. MAT-0001; สีทองโบราณ; หมวด สี/ตกแต่ง; ผู้ขายหลัก ร้านสีเจริญ; หน่วย กระป๋อง; จำนวนที่มีอยู่ 3; งานรอวัตถุดิบ 2; chips มีของ, มีงานรอวัตถุดิบ
+2. MAT-0002; รางลิ้นชัก 18 นิ้ว; หมวด อุปกรณ์เฟอร์นิเจอร์; ผู้ขายหลัก ร้านอุปกรณ์เอ; หน่วย ชิ้น; จำนวนที่มีอยู่ 24; chip มีของ
+3. MAT-0003; ลวดเย็บ; หมวด วัสดุสิ้นเปลือง; ผู้ขายหลัก ร้านเครื่องมือบี; หน่วย กล่อง; จำนวนที่มีอยู่ 0; chips หมด, มีงานรอวัตถุดิบ
+4. MAT-0004; สีขาวเปลือกไข่; หมวด สี/ตกแต่ง; ผู้ขายหลัก ร้านสีเจริญ; หน่วย กระป๋อง; จำนวนที่มีอยู่ 1; chip ควรตรวจนับ
+5. MAT-0005; แผ่นทองคำเปลว; หมวด รักสมุก; ผู้ขายหลัก ร้านงานศิลป์; หน่วย แพ็ค; จำนวนที่มีอยู่ 6; chip ไม่มีรูป
 
 Right preview drawer:
 Title: รายละเอียดวัสดุ
 Selected item: สีทองโบราณ
-Show image placeholder or material image, category, supplier, unit, จำนวนที่มีอยู่, latest receipt, latest adjustment, waiting jobs.
+Show image placeholder or material image, material code, category, primary supplier, unit, จำนวนที่มีอยู่, latest receipt, latest adjustment, waiting jobs.
 Actions: สร้างใบสั่งซื้อวัสดุ, ปรับยอดวัสดุ, ดูประวัติ
 Info card: รายการรอวัตถุดิบเป็นบันทึกความต้องการ ไม่ได้จองหรือตัดสต๊อก
 
 Visual rules:
 - Use `จำนวนที่มีอยู่` only for material stock
 - Do not use `คงเหลือ`, `พร้อมขาย`, `จองแล้ว`, or `ขายได้`
+- One material item has one primary supplier in this starting workflow
+- Show newly added zero-quantity materials in the table
+- Do not show per-material low-stock threshold controls
 - Do not show product sales price, profit, tax, accounting ledger, or Expense fields
 - Do not show inline quantity editors in the stock table
 - Missing images are allowed but visible

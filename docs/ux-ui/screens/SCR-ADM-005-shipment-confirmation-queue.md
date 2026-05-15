@@ -19,7 +19,7 @@ Order Completion happens only when all required shipment rounds for the Order ar
 ## 3. User Goals
 
 - Find shipment rounds waiting for confirmation.
-- Review tracking, transport receipt images, package-on-vehicle photos, carrier, address snapshot, item summary, and delivery notes.
+- Review tracking, `รูปหลักฐานจัดส่ง`, carrier, address snapshot, item summary, and delivery notes.
 - Add missing tracking/evidence where admin is responsible.
 - Close the shipment round after operational delivery review.
 - See whether the related Order still has remaining shipment rounds.
@@ -79,7 +79,7 @@ Order Completion happens only when all required shipment rounds for the Order ar
 | Recipient | ผู้รับสินค้า | คุณณัฐพล | Shipment address snapshot | Review only. |
 | Carrier | ขนส่ง | ไปรษณีย์ไทย EMS | Shipment | Review only. |
 | Tracking | เลขพัสดุ / Tracking | TH123456789 | Shipment Evidence | If applicable. |
-| Evidence | หลักฐานขนส่ง | รูปใบขนส่ง, รูปพัสดุขึ้นรถ | Shipment Evidence | Review before close. |
+| Evidence | รูปหลักฐานจัดส่ง | รูปพัสดุขึ้นรถ | Shipment Evidence | One multi-photo field; enough when tracking is blank. |
 | Item summary | รายการสินค้า | โต๊ะกลางลงรักสมุก 1 ชิ้น | Shipment / Delivery Note | Operational review. |
 | Financial follow-up | ติดตามการเงิน | COD ต้องติดตาม | Financial Follow-up | Separate from shipment close. |
 
@@ -89,8 +89,8 @@ Order Completion happens only when all required shipment rounds for the Order ar
 |---|---|---|---|---|
 | Open Shipment | เปิดรอบจัดส่ง | Admin and same/higher permission | Opens detail/evidence review. | No |
 | Review evidence | ตรวจหลักฐาน | Admin and same/higher permission | Opens evidence/tracking drawer. | No |
-| Add tracking | เพิ่มเลขพัสดุ | Admin and same/higher permission | Adds tracking to shipment evidence. | No |
-| Add evidence | เพิ่มหลักฐานขนส่ง | Admin and same/higher permission | Adds shipment evidence images. | No |
+| Add/correct tracking | เพิ่ม/แก้เลขพัสดุ | Admin and same/higher permission | Adds or corrects tracking before close. | No |
+| Add/correct evidence | เพิ่ม/แก้รูปหลักฐานจัดส่ง | Admin and same/higher permission | Adds or corrects delivery evidence photos before close. | No |
 | Close shipment round | ยืนยันและปิดรอบจัดส่ง | Admin and same/higher permission | Shipment becomes closed. | Yes |
 | Open Order | เปิดออเดอร์ | Admin and same/higher permission | Opens related Order Detail. | No |
 | Open financial follow-up | เปิดติดตามการเงิน | Permissioned admin/finance user | Opens COD/payment follow-up. | No |
@@ -101,9 +101,9 @@ Order Completion happens only when all required shipment rounds for the Order ar
 |---|---|---|---|
 | Sent out | ส่งออกแล้ว | Delivery marked shipment sent out. | Positive but not closed. |
 | Waiting confirmation | รอยืนยันการจัดส่ง | Admin must review and close the Shipment round. | Shipment queue chip. |
-| Tracking missing | รอเลขพัสดุ | Tracking is missing where expected. | Warning chip. |
-| Evidence complete | หลักฐานครบ | Evidence is ready for close review. | Positive chip. |
-| Evidence missing | หลักฐานไม่ครบ | Required evidence may be missing. | Warning chip. |
+| Tracking missing | รอเลขพัสดุ | Tracking is blank; this is not blocking if delivery evidence photo exists. | Neutral/warning chip. |
+| Evidence complete | หลักฐานครบ | Tracking or at least one delivery evidence photo exists. | Positive chip. |
+| Evidence missing | หลักฐานไม่ครบ | Neither tracking nor delivery evidence photo exists. | Blocking warning chip. |
 | Closed | ปิดรอบจัดส่งแล้ว | Admin closed the shipment round. | Final operational shipment state. |
 | Order complete | ออเดอร์จัดส่งครบ | All required shipment rounds are closed. | Positive chip after close. |
 | Financial follow-up | ต้องติดตามการเงิน | COD/payment still needs follow-up. | Separate finance chip. |
@@ -117,7 +117,7 @@ Show `ไม่มีรอบจัดส่งรอยืนยัน` with a
 - Loading fails: `โหลดรายการยืนยันการจัดส่งไม่สำเร็จ` with retry.
 - Permission fails: `ไม่มีสิทธิ์ยืนยันการจัดส่ง`.
 - Close fails: `ปิดรอบจัดส่งไม่สำเร็จ`.
-- Evidence missing: show `หลักฐานยังไม่ครบ` and highlight missing fields.
+- Evidence missing: show `กรุณาเพิ่ม Tracking หรือรูปหลักฐานจัดส่งก่อนปิดรอบจัดส่ง` and highlight missing fields.
 - Shipment already closed by another admin: show `รอบจัดส่งนี้ถูกปิดแล้ว` and refresh list.
 
 ## 13. Permission Rules
@@ -125,6 +125,9 @@ Show `ไม่มีรอบจัดส่งรอยืนยัน` with a
 - Admin closes shipment round.
 - Delivery Team cannot close shipment round.
 - This is a shared admin queue; Shipment Owner does not block same-permission close.
+- Closing a Shipment requires tracking or at least one delivery evidence photo.
+- Admin can add or correct tracking/evidence before close. Corrections after `ส่งออกแล้ว` are recorded in Management Log.
+- After Shipment close, tracking/evidence correction requires manager/higher permission and is recorded in Management Log.
 - Order Completion means all required Order shipment rounds are closed.
 - Financial Follow-up stays separate and can remain open after operational close.
 - Finance-sensitive amounts are permission-aware.
@@ -134,6 +137,7 @@ Show `ไม่มีรอบจัดส่งรอยืนยัน` with a
 - Use `ยืนยันการจัดส่ง` as the visible queue title, not `รอปิด Shipment`.
 - Make `ส่งออกแล้ว` and `ปิดรอบจัดส่งแล้ว` visually distinct.
 - Evidence thumbnails/tracking should be visible before close.
+- A closed Shipment without tracking is valid when it has `รูปหลักฐานจัดส่ง`.
 - The close confirmation should remind admin that financial follow-up is separate.
 - Do not require payment audit to close operational delivery.
 - Show Order completion indicator only after close logic, not before.

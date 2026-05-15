@@ -334,6 +334,8 @@ Guard rules:
 | Cancelled line | ยกเลิกรายการแล้ว | Line remains as history but no longer counts as active work. | Cancelled-lines section. |
 | Has custom work | มีงานสั่งทำ | Order contains at least one custom-work line. | Summary/icon label. |
 
+For delivery completion, `tracking/evidence` means tracking or at least one `รูปหลักฐานจัดส่ง`.
+
 ## 17. Cancelled and Completed Orders
 
 Cancelled Order:

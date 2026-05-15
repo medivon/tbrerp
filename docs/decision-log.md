@@ -175,8 +175,9 @@ Rules:
 - If a Shipment round exists but carrier/tracking is not recorded yet, still show `ยังไม่ได้จัดส่ง` in blue text; the popover can show the Shipment round number.
 - If a Shipment round has been sent out but admin confirmation/evidence is pending, show `รอยืนยันการจัดส่ง` in `สถานะการจัดส่ง`.
 - If carrier/tracking exists, show the row summary as `ชื่อขนส่ง : tracking`, for example `Kerry : xxxxx`.
+- If a closed Shipment round has no tracking but has `รูปหลักฐานจัดส่ง`, show `ส่งแล้ว` as the compact Shipment Summary and show carrier/evidence in the popover/detail.
 - If multiple shipment rounds exist and the Order is not fully shipped, show `จัดส่งยังไม่ครบ` and use the popover for previous carrier/tracking entries.
-- If multiple shipment rounds exist and shipping is complete, show the latest tracking plus `+N รอบ`, with all rounds in the popover.
+- If multiple shipment rounds exist and shipping is complete, show the latest closed round as the compact summary: latest tracking plus `+N รอบ`, or `ส่งแล้ว +N รอบ` if the latest closed round has no tracking.
 - `ยอดรวม` is visible to users who have access to this Order list because admins need it when communicating with customers.
 - `ยอดรวม` means net total after discount, not outstanding balance.
 - The custom-work indicator appears near the end of the row before `วันที่สร้าง`; if there is no custom work, leave that area blank.
@@ -357,6 +358,7 @@ Rules:
 - Material Need Notes do not reserve, deduct, issue, or transfer material stock.
 - Material Need Notes can appear in the Material Stock landing view as a list of jobs waiting for materials.
 - From that waiting-materials list, a permitted user can summarize items into a Material Purchase Order creation flow.
+- If a Material Purchase Order created from those notes is received, linked Jobs still in `รอวัตถุดิบ` are released back to their previous department queue.
 
 ## Queues and Aging
 
@@ -720,8 +722,9 @@ Not in first scope:
 - If Draft Shipment is cancelled, items return to not-shipped state.
 - Shipment creates Delivery Note and Shipping Sheet together.
 - User can print both, Delivery Note only, or Shipping Sheet only.
-- Delivery Note has item list, quantity, small image if available, and notes; no price.
-- Shipping Sheet focuses on recipient, address, phone, carrier, and short item summary.
+- Delivery Note has item list, quantity, small image if available, and notes; no price and no COD amount.
+- Shipping Sheet focuses on recipient, address, phone, carrier, short item summary, and COD amount where relevant.
+- Admin prepares/prints the Shipping Sheet and Delivery Note when creating or releasing Shipment. The packing/delivery team uses those documents physically; there is no extra document-ready blocker in the delivery screen.
 - First scope uses A4 print.
 - Barcode/QR/label printer deferred.
 - Ready-stock and completed Jobs appear in admin ready-to-ship queue.
@@ -743,23 +746,30 @@ Not in first scope:
 - On the date, it moves to today's tab.
 - No overdue logic in first scope.
 - Delivery team can:
-  - View items, image, quantity, recipient, address, phone, carrier, notes
-  - Attach required evidence
-  - Mark `ส่งออกแล้ว`
+  - View items, image, quantity, recipient, address, phone, carrier, and notes
+  - Add tracking or `รูปหลักฐานจัดส่ง`
+  - Mark `ส่งออกแล้ว` once tracking or at least one delivery evidence photo exists
   - Add short note
 - Delivery team cannot:
   - Change items
   - Change address
   - Change carrier
-  - Change COD
+  - View or change COD amount in the system UI
   - Close Shipment
+- Delivery team marks `ส่งออกแล้ว` once for the whole Shipment round, not per item.
+- If a shipment cannot be sent, the packing/delivery team contacts admin outside the system in the starting workflow; there is no `ส่งไม่ได้` action or issue queue.
+- If a released Shipment is not marked `ส่งออกแล้ว`, it remains in the delivery list by delivery date until admin handles it.
 - Admin closes Shipment after evidence/tracking review.
+- Before admin close, admin can add or correct tracking and delivery evidence in `ยืนยันการจัดส่ง`.
+- Closing a Shipment requires at least tracking or one delivery evidence photo.
+- After Shipment close, tracking/evidence correction is allowed only for manager/higher permission and is recorded in Management Log.
 - Evidence types:
   - Tracking
-  - รูปใบเสร็จ / รูปใบขนส่ง
-  - รูปพัสดุขึ้นรถ
+  - `รูปหลักฐานจัดส่ง` as one multi-photo field
   - Note
-- Carrier can require specific evidence in settings.
+- The starting workflow does not use carrier-specific evidence settings or required checklists. Carrier/delivery method can stay free-text while Shipment evidence remains the simple tracking-or-photo rule.
+- When a Shipment has COD, its COD follow-up item exists from Shipment creation/release and remains in `ติดตาม COD / Payment` until a permitted admin/finance user closes the follow-up.
+- COD/payment follow-up is owned by admin/audit/finance, not the packing/delivery team.
 
 ## Delivery Date
 
@@ -812,13 +822,30 @@ Not in first scope:
 - Light Material Stock exists for easy-to-count internal materials such as color supplies, drawer rails, staples/lวดเย็บ, and similar consumables.
 - Light Material Stock is not a full Material Master, warehouse transfer, BOM, or automatic Job material-consumption system.
 - Material stock belongs under `สินค้า / สต๊อก` as `สต๊อกวัสดุ`, separate from `รายการสินค้า / SKU`.
-- Material items require `ชื่อวัสดุ`, `หมวดวัสดุ`, and `หน่วยนับ`.
+- Material items require `ชื่อวัสดุ`, supplier หลัก, `หมวดวัสดุ`, and `หน่วยนับ`.
+- Material items get an automatic material code, such as `MAT-0001`; it is shown in tables and searchable, but less prominent than material name/image.
 - Material item images are optional, but the UI should make missing images visible because images help stock counting.
 - Material category can be managed lightly inside the material stock area for now; it may be separated after production usage is tested.
-- Each material item should have a clear supplier link. The exact supplier/material cardinality needs one more confirmation before implementation.
+- Each material item has one current primary supplier in the starting workflow.
+- Changing the primary supplier is allowed by permission when there is no waiting-to-receive Material Purchase Order for that Material Item; old purchase/receipt documents keep the old supplier snapshot, and future purchase documents use the new supplier.
+- If a Material Item has a `รอรับเข้า` Material Purchase Order, the primary supplier cannot be changed until that purchase document is received or cancelled.
 - Material stock does not use SKU stock labels `จองแล้ว` or `ขายได้`; show `จำนวนที่มีอยู่`, receiving movement, and latest adjustment/receipt.
 - Material stock has a simple movement history for receipts and adjustments.
 - `รอวัตถุดิบ` can optionally name missing materials, but it does not reserve or deduct material stock.
+- When a waiting-material note is free-text, the user must match it to an existing Material Item or create a Material Item before it can enter a Material Purchase Order.
+- Creating Material Item from free-text requires name, primary supplier, material category, and unit; image is not required.
+- Similar material names should be suggested before creating a new Material Item, but creation remains allowed.
+- After a waiting-material note is summarized into a Material Purchase Order, hide it from the active purchase-summary list while that purchase document is active.
+- Inactive Material Items are hidden from new selections but remain visible in old documents/history.
+- A Material Item with `จำนวนที่มีอยู่ > 0` cannot be closed until adjusted to 0.
+- A Material Item with waiting-to-receive Material Purchase Orders cannot be closed until those documents are received or cancelled.
+- Material Category and unit names can be edited for future display, while old documents keep snapshots.
+- Material Categories and units can be closed only when no active Material Item uses them.
+- Material categories and units use mini-manager style maintenance inside the material-stock area first; do not add a separate `ตั้งค่าวัสดุ` area yet.
+- Material Item can be added from `สต๊อกวัสดุ` and from free-text matching.
+- New Material Items start with quantity 0; they appear immediately, can be purchased, can be adjusted, and can be opened even when quantity is 0.
+- Do not add low-stock thresholds per material in the starting workflow; use waiting-material notes, zero quantity, and adjustment/counting first.
+- Material Stock default sorting prioritizes waiting-material items, then zero-quantity items, then recently moving items.
 - Stock Count should support products. Material counting uses the Material Adjustment flow below.
 - Low-stock alert is not full scope; summary view may exist later.
 - Stock and Expense remain separate.
@@ -828,7 +855,13 @@ Not in first scope:
 - `ใบสั่งซื้อวัสดุ` is in the starting workflow for light material stock.
 - It is used to prepare material purchase lists, print/export while waiting to receive, and then accept the whole document into material stock.
 - `ใบสั่งซื้อวัสดุ` can include one material line or many material lines.
-- Statuses: `ร่าง`, `รอรับเข้า`, `รับเข้าสต๊อกแล้ว`, `ยกเลิก`.
+- One Material Purchase Order has exactly one supplier/store.
+- After choosing supplier/store, the material picker shows only active Material Items linked to that supplier.
+- If waiting-material summary includes multiple suppliers, the system creates separate Material Purchase Orders by supplier.
+- There is no `ร่าง` status for Material Purchase Orders in the starting workflow.
+- A Material Purchase Order is created directly as `รอรับเข้า` after required fields are complete.
+- If required fields are missing, the user cannot create the Material Purchase Order.
+- Statuses: `รอรับเข้า`, `รับเข้าสต๊อกแล้ว`, `ยกเลิก`.
 - `รอรับเข้า` is the state used for print/export, including A4 print and JPG/image export.
 - Required fields: date, supplier/store, material lines, quantity, and unit.
 - Price is not part of the first workflow. Do not require price or total on the Material Purchase Order.
@@ -837,10 +870,26 @@ Not in first scope:
 - Accepting a Material Purchase Order means receiving the whole document into material stock. Partial receipt is not in scope.
 - If goods arrive incomplete, wait until complete before accepting into stock.
 - After a Material Purchase Order is accepted, material lines and quantities cannot be edited; mistakes are corrected through material adjustment.
-- `ร่าง` or `รอรับเข้า` documents that are no longer needed are cancelled, not deleted, to keep the document trail.
+- `รอรับเข้า` documents that are no longer needed are cancelled, not deleted, to keep the document trail.
 - Attachments/images can be added in any status, including after receipt, for receipts, product photos, labels, or related documents.
 - Accepting into stock creates a payment-audit follow-up item referencing the Material Purchase Order, but it is not an Expense Entry yet.
 - The payment-audit follow-up receives the document number, supplier/store, receipt date, material lines and quantities, and attachments. It does not receive a required amount from the Material Purchase Order.
+- Material Purchase Orders created from waiting-material notes show related Jobs so staff can review which Jobs are affected.
+- Related Jobs are visible in the Material Purchase Order, but Job Detail continues to show only `รอวัตถุดิบ`; it does not show purchase-document detail or a `มีใบสั่งซื้อแล้ว` badge.
+- If a material line with a Job link is removed from a `รอรับเข้า` Material Purchase Order, that Job link is removed; if the Job is still in `รอวัตถุดิบ`, it returns to the purchase-summary list.
+- If a linked `รอรับเข้า` Material Purchase Order is cancelled, all Job links from that document are removed; Jobs still in `รอวัตถุดิบ` return to the purchase-summary list.
+- Manual Material Purchase Orders cannot link Jobs after creation.
+- A Material Purchase Order created from waiting-material notes cannot add new Job links later; if more waiting Jobs need purchase, they should be summarized into a new purchase flow.
+- A linked Material Purchase Order may add normal material lines that are not linked to Jobs.
+- When receiving a Material Purchase Order that is linked to waiting Jobs, show a confirmation modal listing the Jobs that will leave `รอวัตถุดิบ`.
+- The confirmation list shows Job ID, work/product name, department queue the Job returns to, and related material.
+- Receiving a linked Material Purchase Order releases only linked Jobs that are still in `รอวัตถุดิบ` and returns them to their previous department queue.
+- If a linked Job already left `รอวัตถุดิบ` before receipt, do not block receipt and do not release it again; show it as already released in the confirmation context when relevant.
+- Manual Material Purchase Orders without Job links do not release any Jobs on receipt.
+- Job Activity Log records the automatic release, such as `ปลดรอวัตถุดิบจากการรับเข้าสต๊อกวัสดุ MAT-PO-xxxx`.
+- Department aging restarts from the time the Job is released from `รอวัตถุดิบ`.
+- No separate department notification or `รับวัตถุดิบแล้ว` badge is shown after release.
+- If the workshop still cannot continue after release, the department sets a new appropriate status manually.
 
 ## Material Adjustment
 

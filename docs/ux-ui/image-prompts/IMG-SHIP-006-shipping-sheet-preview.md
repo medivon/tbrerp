@@ -21,7 +21,7 @@ Create a high-fidelity desktop ERP print preview screen for THAIBORAN called “
 Use the THAIBORAN admin app shell consistently with the previous shipment screens. The main content should look like an A4 print preview inside the admin app.
 
 Screen purpose:
-Preview and print the Shipping Sheet (ใบจัดส่ง). This document focuses on recipient name, phone, full address, carrier, delivery date, shipment references, COD signal if relevant, and short item summary. This is the document that helps packing/delivery staff identify where the shipment goes.
+Preview and print the Shipping Sheet (ใบจัดส่ง). This document focuses on recipient name, phone, full address, carrier, delivery date, shipment references, COD amount if relevant, and short item summary. This is the document that helps packing/delivery staff identify where the shipment goes.
 
 Header:
 - Page title: ใบจัดส่ง
@@ -46,7 +46,7 @@ Recipient/address content:
 - ที่อยู่จัดส่ง: 88/14 ถ.ราชพฤกษ์ ต.บางรักพัฒนา อ.บางบัวทอง จ.นนทบุรี 11110
 - ขนส่ง: ไปรษณีย์ไทย EMS
 - วันจัดส่ง: 24 พ.ค. 67
-- COD chip: COD
+- COD: 12,000 บาท
 - สรุปรายการ: โต๊ะกลางลงรักสมุก 1 ชิ้น
 - หมายเหตุจัดส่ง: โทรก่อนเข้าจัดส่ง / ชิ้นงานระวังกระแทก
 

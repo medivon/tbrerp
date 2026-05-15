@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The Shipping Sheet Preview shows the printable A4 recipient/address sheet for a Shipment. It focuses on recipient, phone, address, carrier, references, and a short item summary.
+The Shipping Sheet Preview shows the printable A4 recipient/address sheet for a Shipment. It focuses on recipient, phone, address, carrier, references, COD amount where relevant, and a short item summary.
 
 Approved mockup:
 
@@ -39,7 +39,7 @@ Approved mockup:
 
 - Header: `ใบจัดส่ง`, Shipment ID, print actions.
 - Preview area: A4 page mockup focused on recipient/address block.
-- Main document content: recipient, phone, address, carrier, delivery date, COD if relevant, short item summary, notes.
+- Main document content: recipient, phone, address, carrier, delivery date, COD amount if relevant, short item summary, notes.
 - Side panel: print Shipping Sheet, print both, open Delivery Note.
 - Desktop focus: printable page centered, controls outside print area.
 
@@ -49,7 +49,7 @@ Approved mockup:
 - Recipient/address block
 - Carrier block
 - Delivery date block
-- COD chip/field where allowed
+- COD amount field where relevant
 - Short item summary
 - Delivery note block
 - Print action button
@@ -66,7 +66,7 @@ Approved mockup:
 | Address | ที่อยู่จัดส่ง | 99/12 ถ.เจริญกรุง กรุงเทพฯ | Shipment address snapshot | Main document content. |
 | Carrier | ขนส่ง | รถร้าน | Shipment | Delivery team cannot change later. |
 | Delivery date | วันจัดส่ง | 20 พ.ค. 2569 | Shipment | If empty, delivery dashboard treats as today. |
-| COD | COD | 12,000 บาท | Shipment | Show where permission/document rules allow. |
+| COD | COD | 12,000 บาท | Shipment | Show on Shipping Sheet when the Shipment carries COD. |
 | Short item summary | สรุปรายการ | ตู้โชว์ไม้สัก 1 ชิ้น | Shipment / Order Line | Summary only; full item list is Delivery Note. |
 | Delivery note | หมายเหตุจัดส่ง | โทรก่อนส่ง | Shipment | Useful for delivery team. |
 
@@ -85,7 +85,7 @@ Approved mockup:
 |---|---|---|---|
 | Draft Shipment | ร่างรอบจัดส่ง | Preview from draft Shipment. | Neutral chip. |
 | Released Shipment | ปล่อยให้ฝ่ายจัดส่งแล้ว | Preview from released Shipment. | Positive chip. |
-| COD | COD | Shipment carries COD amount. | Permission/document-aware chip. |
+| COD | COD | Shipment carries COD amount on this document. | Document-aware chip/field. |
 | Address snapshot | ข้อมูลจัดส่งถูกบันทึกแล้ว | Shipment stores recipient/address snapshot. | Subtle info chip. |
 
 ## 11. Empty State
@@ -103,6 +103,7 @@ If recipient/address data is missing, show `ไม่มีข้อมูลผ
 
 - Admin can preview and print.
 - Delivery Team cannot edit address, carrier, or COD.
+- Delivery Team may receive the printed/physical Shipping Sheet; COD amount is not shown in the Delivery Team system UI.
 - Shipping Sheet focuses on recipient/address; Delivery Note handles full item detail.
 - Barcode, QR, and label printer flows are outside Stage 1.
 

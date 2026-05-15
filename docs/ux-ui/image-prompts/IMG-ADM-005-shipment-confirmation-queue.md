@@ -25,7 +25,7 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows
 
 Screen purpose:
-Admin reviews tracking/evidence after delivery team marks a shipment round “ส่งออกแล้ว”. Admin can add missing tracking or evidence, review transport receipt photos/package photos, then confirm and close the shipment round. This does not require payment audit; Financial Follow-up remains separate.
+Admin reviews tracking/evidence after delivery team marks a shipment round “ส่งออกแล้ว”. Admin can add or correct tracking or รูปหลักฐานจัดส่ง, then confirm and close the shipment round. Closing requires either Tracking or at least one รูปหลักฐานจัดส่ง. This does not require payment audit; Financial Follow-up remains separate.
 
 Header:
 - Page title: ยืนยันการจัดส่ง
@@ -60,7 +60,7 @@ Create a dense shipment-round table/list. Each row should show:
 Use realistic example rows:
 1. SHIP-2568-0061, ORD-240520-014, ผู้รับ คุณณัฐพล, ไปรษณีย์ไทย EMS, ส่งออกแล้ว 22 พ.ค. 67 15:40, Tracking TH123456789, chip หลักฐานครบ, COD, action ตรวจหลักฐาน
 2. SHIP-2568-0062, ORD-240518-009, ผู้รับ คุณพิมพ์ชนก, ไปรษณีย์ไทย EMS, ส่งออกแล้ว 22 พ.ค. 67 14:10, chip รอเลขพัสดุ, action เพิ่มเลขพัสดุ
-3. SHIP-2568-0063, ORD-240515-011, ผู้รับ บริษัท เอ.ที.ดีไซน์, Porlor Express, chip หลักฐานไม่ครบ, action ตรวจหลักฐาน
+3. SHIP-2568-0063, ORD-240515-011, ผู้รับ บริษัท เอ.ที.ดีไซน์, Porlor Express, chip หลักฐานครบ, evidence รูปหลักฐานจัดส่ง, action ตรวจหลักฐาน
 
 Right detail drawer:
 Show selected shipment review with:
@@ -70,10 +70,10 @@ Show selected shipment review with:
 - Carrier
 - Item summary with thumbnail
 - Tracking field
-- Evidence thumbnails: รูปใบขนส่ง, รูปพัสดุขึ้นรถ
+- Evidence thumbnails: รูปหลักฐานจัดส่ง
 - Delivery note
 - COD/Payment follow-up signal if relevant
-- Buttons: ยืนยันและปิดรอบจัดส่ง, เพิ่มเลขพัสดุ, เพิ่มหลักฐานขนส่ง, เปิดออเดอร์
+- Buttons: ยืนยันและปิดรอบจัดส่ง, เพิ่มเลขพัสดุ, เพิ่มรูปหลักฐานจัดส่ง, เปิดออเดอร์
 - Small note: “Financial Follow-up แยกจากการปิดรอบจัดส่ง”
 
 Visual rules:
@@ -84,6 +84,7 @@ Visual rules:
 - Do not show Delivery Team send-out controls
 - Do not show “ส่งออกแล้ว” as final completion
 - Do not require payment audit before closing shipment round
+- Allow close when there is Tracking or at least one รูปหลักฐานจัดส่ง
 - Make “ยืนยันและปิดรอบจัดส่ง” clearly separate from COD/Payment follow-up
 - The screen should feel like a practical admin evidence review queue
 ```

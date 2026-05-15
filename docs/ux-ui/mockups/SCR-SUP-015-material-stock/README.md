@@ -20,11 +20,12 @@ It must preserve:
 
 - Material stock is separate from Product/SKU ready stock.
 - The stock label is `จำนวนที่มีอยู่`.
+- Each material item has one current primary supplier in the starting workflow.
 - `รอวัตถุดิบ` notes are alerts/requests only, not reservations or stock deductions.
 - The main actions are `สร้างใบสั่งซื้อวัสดุ` and `ปรับยอดวัสดุ`.
+- `เพิ่มวัสดุ` is available from the material stock area, and new materials start with quantity 0.
 - No accounting, price, tax, Expense Entry, BOM, warehouse transfer, or automatic material issue is shown.
 
 ## Pending Before Approval
 
 - Generate and review a high-fidelity mockup from `IMG-SUP-015`.
-- Confirm supplier/material cardinality before turning supplier behavior into implementation detail.

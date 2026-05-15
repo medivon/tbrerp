@@ -144,8 +144,9 @@ The row shows a compact shipment state. The popover shows hidden shipment rounds
 | Shipment round exists but no carrier/tracking | `ยังไม่ได้จัดส่ง` in blue text | Popover may show Shipment round number. |
 | Shipment round sent out but admin confirmation pending | `รอยืนยันการจัดส่ง` | Popover shows Shipment round and pending confirmation/evidence state. |
 | Carrier/tracking exists | `Kerry : xxxxx` | Popover can show more round details where relevant. |
+| Closed Shipment round without tracking but with delivery evidence photo | `ส่งแล้ว` | Popover shows carrier, Shipment round, and delivery evidence. |
 | Multiple rounds and Order not fully shipped | `จัดส่งยังไม่ครบ` | Popover lists previous carrier/tracking entries. |
-| Multiple rounds and shipping complete | Latest tracking + `+N รอบ` | Popover lists all rounds. |
+| Multiple rounds and shipping complete | Latest tracking + `+N รอบ`, or `ส่งแล้ว +N รอบ` if the latest closed round has no tracking | Popover lists all rounds. |
 
 ## 11. Actions
 
@@ -186,6 +187,7 @@ Do not duplicate `สร้างออเดอร์ใหม่` in this empt
 - Shipment text color distinguishes missing shipment round from created round without tracking:
   - Red `ยังไม่ได้จัดส่ง`: no Shipment round exists.
   - Blue `ยังไม่ได้จัดส่ง`: Shipment round exists but tracking/carrier is not yet recorded.
+- For closed Shipment rounds, `รูปหลักฐานจัดส่ง` counts as evidence even when tracking is blank.
 
 ## 15. Permission Rules
 

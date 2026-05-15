@@ -18,14 +18,17 @@ This future mockup should become the visual anchor for `ใบสั่งซื
 
 It must preserve:
 
-- Statuses: `ร่าง`, `รอรับเข้า`, `รับเข้าสต๊อกแล้ว`, `ยกเลิก`.
+- Statuses: `รอรับเข้า`, `รับเข้าสต๊อกแล้ว`, `ยกเลิก`.
+- No draft state or save-draft action.
+- One Material Purchase Order has exactly one supplier/store.
 - Whole-document receipt only; no partial receipt controls.
 - Required fields: date, supplier/store, material lines, quantity, and unit.
 - No required price/total fields in the starting workflow.
 - Receipt creates Payment Audit Follow-up, not Expense Entry.
+- Receipt releases linked Jobs from `รอวัตถุดิบ` after confirmation.
+- Receipt does not show a separate department notification or `รับวัตถุดิบแล้ว` badge.
 - Attachments can be added in any status.
 
 ## Pending Before Approval
 
 - Generate and review a high-fidelity mockup from `IMG-SUP-016`.
-- Confirm supplier/material cardinality before finalizing material line selection behavior.

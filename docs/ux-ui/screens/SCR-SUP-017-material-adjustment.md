@@ -15,6 +15,7 @@ Material Adjustment lets staff enter actual counted quantities for selected mate
 - Search/select materials that were counted.
 - See current `จำนวนที่มีอยู่` before entering the actual count.
 - Enter actual counted quantity for one or many materials.
+- Adjust Material Items even when current quantity is 0.
 - Let the system calculate the difference.
 - Attach optional evidence for the adjustment session.
 - Save the adjustment with reason/mode and review summaries by date/range.

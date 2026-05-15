@@ -98,7 +98,7 @@ Design status:
 - Screen name: Shipment Confirmation Queue
 - Thai UI label: `ยืนยันการจัดส่ง`
 - Primary actor: Admin
-- Purpose: Review shipment rounds marked sent out and add/confirm tracking or transport evidence before closure.
+- Purpose: Review shipment rounds marked sent out and add/confirm tracking or `รูปหลักฐานจัดส่ง` before closure.
 - Entry point: `Admin Dashboard` -> `ยืนยันการจัดส่ง`.
 - Exit point: Shipment detail / closed Shipment.
 - Related flow IDs: `F01`, `F08`
@@ -673,7 +673,7 @@ Note:
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Shipment, Address Snapshot, Order, Delivery Note, Shipping Sheet, Evidence
+- Main data objects: Shipment, Address Snapshot, Order, Delivery Note, Shipping Sheet, Shipment Evidence
 - Main actions: Review Shipment, open print previews, review delivery state.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F06/F07/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
@@ -683,7 +683,7 @@ Note:
 - Screen name: Delivery Note Preview
 - Thai UI label: `ใบส่งของ`
 - Primary actor: Admin
-- Purpose: Preview/print item list for Shipment.
+- Purpose: Preview/print item list for Shipment, without price or COD amount.
 - Entry point: Shipment creation or Shipment detail.
 - Exit point: Shipment detail.
 - Related flow IDs: `F06`
@@ -700,14 +700,14 @@ Note:
 - Screen name: Shipping Sheet Preview
 - Thai UI label: `ใบจัดส่ง`
 - Primary actor: Admin
-- Purpose: Preview/print recipient and address sheet for Shipment.
+- Purpose: Preview/print recipient and address sheet for Shipment, including COD amount where relevant.
 - Entry point: Shipment creation or Shipment detail.
 - Exit point: Shipment detail.
 - Related flow IDs: `F06`
 - Priority: `P1`
 - Device target: desktop
 - Design status: ready
-- Main data objects: Shipping Sheet, Shipment, Recipient, Address Snapshot, carrier
+- Main data objects: Shipping Sheet, Shipment, Recipient, Address Snapshot, carrier, COD
 - Main actions: Preview, print.
 - Related source docs: `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
@@ -798,8 +798,8 @@ Note:
 - Priority: `P0`
 - Device target: tablet / mobile
 - Design status: needs decision
-- Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, Evidence, COD
-- Main actions: Review delivery data, attach evidence, add note, mark `ส่งออกแล้ว`.
+- Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, Shipment Evidence
+- Main actions: Review delivery data, add tracking or `รูปหลักฐานจัดส่ง`, add note, mark `ส่งออกแล้ว`.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ## 9. Manager
@@ -1022,9 +1022,9 @@ Note:
 - Related flow IDs: `F04`, `F10`, `F12`
 - Priority: `P1`
 - Device target: desktop / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Material Item, Material Category, Supplier, Material Need Note, Material Movement
-- Main actions: View material quantity on hand, see waiting-materials alerts, create purchase order summary, receive through purchase order, open material adjustment, view simple movement history.
+- Main actions: View material quantity on hand, see waiting-materials alerts, add material items, create purchase order summary, receive through purchase order, open material adjustment, view simple movement history.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-015-material-stock.md`; `docs/ux-ui/image-prompts/IMG-SUP-015-material-stock.md`; `docs/ux-ui/mockups/SCR-SUP-015-material-stock/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-016 - Material Purchase Order
@@ -1039,9 +1039,9 @@ Note:
 - Related flow IDs: `F12`
 - Priority: `P1`
 - Device target: desktop / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Material Purchase Order, Material Item, Supplier, Material Stock Receipt, attachment, Payment Audit Follow-up
-- Main actions: Create draft, move to `รอรับเข้า`, print/export A4/JPG, edit while waiting, accept whole document into stock, cancel draft/waiting document, attach evidence in any status.
+- Main actions: Create `รอรับเข้า` document for one supplier, print/export A4/JPG, edit while waiting, accept whole document into stock, release linked waiting-material Jobs on receipt, cancel waiting document, attach evidence in any status.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-016-material-purchase-order.md`; `docs/ux-ui/image-prompts/IMG-SUP-016-material-purchase-order.md`; `docs/ux-ui/mockups/SCR-SUP-016-material-purchase-order/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-017 - Material Adjustment

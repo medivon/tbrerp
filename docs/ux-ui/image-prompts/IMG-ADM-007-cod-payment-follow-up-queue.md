@@ -24,7 +24,7 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows
 
 Screen purpose:
-Admin or finance-permission user tracks COD and Payment follow-up separately from Order Completion and Shipment close. This screen does not block delivery close. It helps answer: รายการไหนต้องตามเงิน, เกี่ยวกับ Order/รอบจัดส่งไหน, ยอดที่ต้องตามเท่าไหร่, สถานะล่าสุดคืออะไร.
+Admin or finance-permission user tracks COD and Payment follow-up separately from Order Completion and Shipment close. COD follow-up can exist from Shipment creation/release when the Shipment carries COD, and it stays open until a permitted admin/finance user closes it. This screen does not block delivery close. It helps answer: รายการไหนต้องตามเงิน, เกี่ยวกับ Order/รอบจัดส่งไหน, ยอดที่ต้องตามเท่าไหร่, สถานะล่าสุดคืออะไร.
 
 Header:
 - Page title: ติดตาม COD / Payment

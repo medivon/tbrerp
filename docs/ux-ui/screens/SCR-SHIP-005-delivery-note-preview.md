@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The Delivery Note Preview shows the printable A4 item list for a Shipment. It focuses on product identification, quantity, image, and item notes. It must not show prices.
+The Delivery Note Preview shows the printable A4 item list for a Shipment. It focuses on product identification, quantity, image, and item notes. It must not show prices or COD amount.
 
 Approved mockup:
 
@@ -102,6 +102,7 @@ If no items are available, show `ไม่มีรายการสินค�
 - Admin can preview and print.
 - Delivery Team may receive printed/physical document but does not edit it.
 - Delivery Note must not show sales price.
+- Delivery Note must not show COD amount; COD belongs on Shipping Sheet where relevant.
 - Barcode, QR, and label printer flows are outside Stage 1.
 
 ## 14. UX Notes for Designer
@@ -111,6 +112,7 @@ If no items are available, show `ไม่มีรายการสินค�
 - Keep item images small but useful for identification.
 - Separate clearly from Shipping Sheet: this is product/item focused.
 - No price column.
+- No COD amount.
 - Use conservative print typography and enough whitespace for shop use.
 
 ## 15. Image Generation Prompt

@@ -51,7 +51,7 @@ The active-line operational state of an Order, calculated separately from Shipme
 _Avoid_: Shipment status, payment status
 
 **Shipment Summary (สถานะการจัดส่งในออเดอร์)**:
-The Order-facing summary of Shipment rounds, carrier, tracking, and delivery confirmation state.
+The Order-facing summary of Shipment rounds, carrier, tracking or shipment evidence, and delivery confirmation state.
 _Avoid_: Order status, payment status
 
 **Order Shipment Plan (แผนการจัดส่งของออเดอร์)**:
@@ -189,27 +189,35 @@ Simple material stock for easy-to-count internal materials such as color supplie
 _Avoid_: Full material master, BOM, automatic material issue/transfer workflow
 
 **Material Item (วัสดุ)**:
-One counted material record in Light Material Stock, with name, material category, unit, optional image, and a required supplier link for purchase flow.
+One counted material record in Light Material Stock, with system-generated material code, name, material category, unit, optional image, and one current primary supplier for purchase flow.
 _Avoid_: SKU Variant, product sold to customers
+
+**Material Code (รหัสวัสดุ)**:
+A system-generated code for a Material Item, such as `MAT-0001`, shown and searchable but secondary to the material name and image.
+_Avoid_: User-created supplier code as the main material identity
+
+**Primary Material Supplier (ผู้ขายหลักของวัสดุ)**:
+The one current supplier/store linked to a Material Item for new Material Purchase Orders. Changing it affects future purchase documents only; old documents keep their captured supplier. It cannot be changed while that Material Item is in a waiting-to-receive Material Purchase Order.
+_Avoid_: Multiple suppliers per Material Item in the starting workflow
 
 **Material Category (หมวดวัสดุ)**:
 A lightweight grouping managed inside the material stock area.
 _Avoid_: Product Category
 
 **Material Purchase Order (ใบสั่งซื้อวัสดุ)**:
-A material purchase document used to list materials to buy, print/export while waiting to receive, and accept the whole document into Light Material Stock.
-_Avoid_: Expense Entry, full accounting purchase order, partial receipt
+A one-supplier material purchase document used to list materials to buy, print/export while waiting to receive, and accept the whole document into Light Material Stock. It is created directly as `รอรับเข้า` when required fields are complete; there is no draft Material Purchase Order in the starting workflow.
+_Avoid_: Draft Material Purchase Order, Expense Entry, full accounting purchase order, partial receipt
 
 **Material Stock Receipt (รับเข้าสต๊อกวัสดุ)**:
-The act of accepting a Material Purchase Order and increasing material stock for every line in the document.
-_Avoid_: Creating an Expense automatically
+The act of accepting a Material Purchase Order and increasing material stock for every line in the document. If the purchase document is linked to Jobs waiting for materials, receipt also releases those Jobs from `รอวัตถุดิบ` back to their previous department queue and records a Job Activity Log.
+_Avoid_: Creating an Expense automatically, department notification, return-to-queue badge
 
 **Material Adjustment (ปรับยอดวัสดุ)**:
 A lightweight material count/correction screen where staff enter actual counted quantities for selected materials and the system records the difference. It can be used daily, weekly, or on any chosen date range.
 _Avoid_: Separate เบิกวัสดุ, automatic Job material consumption
 
 **Material Need Note (รายการรอวัตถุดิบ)**:
-An optional note from a Job's `รอวัตถุดิบ` state listing missing material names and notes. It helps create purchase orders but does not reserve, issue, move, or deduct material stock.
+An optional note from a Job's `รอวัตถุดิบ` state listing missing material names and notes. It helps create purchase orders and can keep an internal link to the waiting Job, but does not reserve, issue, move, or deduct material stock.
 _Avoid_: Material requisition, material reservation
 
 ### Production Workflow
@@ -268,11 +276,15 @@ _Avoid_: Waiting for delivery
 
 **Delivery Note (ใบส่งของ)**:
 The printable item list for a Shipment, focused on product identification, quantity, image, and notes.
-_Avoid_: Shipping Sheet
+_Avoid_: Shipping Sheet, COD amount
 
 **Shipping Sheet (ใบจัดส่ง)**:
-The printable recipient/address sheet for a Shipment, focused on recipient, phone, address, carrier, and references.
+The printable recipient/address sheet for a Shipment, focused on recipient, phone, address, carrier, references, and COD amount where relevant.
 _Avoid_: Delivery Note
+
+**Shipment Evidence (หลักฐานจัดส่ง)**:
+The delivery proof captured for a Shipment, either tracking or one or more delivery evidence photos. In the starting workflow, a Shipment can be marked sent out or closed when at least one of tracking or delivery evidence photos exists.
+_Avoid_: Carrier-specific evidence checklist, payment evidence, COD audit
 
 **Service Case (งานบริการหลังการขาย)**:
 An after-sales case such as repair, claim, color correction, return, or reshipment after an Order is closed.
@@ -345,6 +357,7 @@ _Avoid_: Accounting journal
 - A **Production Batch** has many **Production Lots**; a Production Lot may create one or more **Production Jobs** depending on how production is split.
 - A **Production Job** tied to an SKU ends at stock receipt readiness; a custom/prototype Production Job may end as Done without entering stock.
 - A **Shipment** creates one **Delivery Note** and one **Shipping Sheet**; users may print either or both.
+- A **Shipment** can be marked sent out or closed only when it has **Shipment Evidence**: tracking or at least one delivery evidence photo.
 - **Order Completion** happens when all required Order Shipments are closed; **Financial Follow-up** is separate.
 - A **Service Case** may create a **Service Shipment** but does not reopen or change the original Order.
 - **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** in the first scope.
@@ -362,8 +375,16 @@ _Avoid_: Accounting journal
 - **Stock On Hand**, **Reserved Stock**, and **Sellable Stock** are separate stock views for the same **SKU Variant**; **Sellable Stock** may become negative after permitted over-reservation.
 - **Stock Counts** and **Stock Adjustments** affect stock visibility but remain separate from **Expense Entries**.
 - **Light Material Stock** is separate from **Ready Stock**. Material quantities do not have `จองแล้ว` or `ขายได้` in the starting workflow.
+- Each **Material Item** has one current **Primary Material Supplier** for the starting workflow. Existing Material Purchase Orders and receipts keep the supplier captured at the time of the document.
+- A **Material Purchase Order** has exactly one supplier/store. Its material picker shows only active Material Items linked to that supplier.
 - A **Material Purchase Order** can create a **Material Stock Receipt** for the whole document; after receipt, a referenced **Payment Audit Follow-up** may be created, but no Expense Entry is created automatically.
 - A **Material Need Note** may reference Material Items or free-text material names from Jobs waiting for materials, but it does not reserve or deduct stock.
+- When waiting-material notes are summarized into purchase work, unresolved free-text lines must be matched to an existing Material Item or converted into a new Material Item before entering a Material Purchase Order.
+- Summarizing waiting-material notes that involve multiple suppliers creates separate Material Purchase Orders by supplier.
+- Waiting-material notes already linked to an active Material Purchase Order are not shown again as new purchase-summary candidates.
+- If linked material lines are removed from a waiting-to-receive Material Purchase Order, or the purchase document is cancelled, the affected waiting-material notes can return to the purchase-summary list if their Jobs are still waiting for materials.
+- Manual Material Purchase Orders cannot link Jobs after creation. Material Purchase Orders created from waiting-material notes cannot add new Job links later, though they may add normal unlinked material lines.
+- Receiving a Material Purchase Order that is linked to waiting Jobs releases only those linked Jobs from **Waiting for Materials**, returns them to their previous department queue, and writes the release in the Job Activity Log. It does not add a badge or separate notification.
 - **Expense Entries** and stock movements are separate first-scope records; neither updates the other automatically.
 
 ## UX/UI starting scope
