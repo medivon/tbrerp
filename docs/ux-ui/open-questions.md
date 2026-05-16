@@ -77,6 +77,40 @@ Decision:
 - It does not block Order or Shipment operation.
 - Shipment Builder shows acknowledgement when selected ready-stock lines have negative/insufficient stock.
 
+## Recently Resolved P0 UX / Needs-decision Questions
+
+### OQ-UX-001 - Delivery Team send-out and admin proof boundary
+
+Decision:
+
+- Delivery Team screens use a simple mobile/tablet worker shell.
+- Delivery Team can mark one Shipment `ส่งออกแล้ว` from the row/card action.
+- Delivery Team can bulk-select today's/no-date Shipments and confirm `บันทึกว่าส่งออกแล้ว`.
+- Delivery Team does not enter Tracking.
+- Delivery Team may attach optional `รูปหลักฐานจัดส่ง` on an individual Shipment, but send-out does not require evidence.
+- After send-out, the Shipment leaves the active today list and enters admin `ยืนยันการจัดส่ง`.
+- Admin records Tracking or at least one delivery evidence photo before closing Shipment.
+- Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in P0.
+
+### OQ-UX-002 - Rak Samuk worker and receive-back boundary
+
+Decision:
+
+- Rak Samuk Worker uses a simple mobile worker shell with assigned-work cards and a limited detail view.
+- Rak Samuk Worker sees own price on both card and detail.
+- Rak Samuk Worker cannot mark work complete or move workflow status.
+- `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`.
+- P0 has no receive-back destination picker.
+
+### OQ-UX-003 - Manager unfinished-work default
+
+Decision:
+
+- `ภาพรวมงานค้าง` defaults to `JOB-O / งานลูกค้า`.
+- The default layout is one priority-sorted table.
+- `งานด่วน` is set or changed from the selected-row side drawer.
+- `รอวัตถุดิบ` is a high blocker and sorts above normal aged work.
+
 ## Recently Resolved Material Boundary Questions
 
 ### OQ-MAT-001 - Supplier/material cardinality

@@ -86,6 +86,7 @@ The summary should show:
 
 - Order ID.
 - Customer.
+- Customer tier and Social contact when useful for customer context.
 - Main recipient.
 - Main phone.
 - Main address.
@@ -101,6 +102,7 @@ Customer/recipient actions in the summary:
 - Customer master/address-book editing happens inside Customer Detail/Profile, not directly inside Order Detail.
 - Show the Order Recipient Detail snapshot saved on this Order. Later Customer address changes do not rewrite this snapshot.
 - New Shipment rounds start from this Order Recipient Detail snapshot by default, but Shipment Builder can override recipient/address for that Shipment round snapshot.
+- Shipment recipient/address changes stay as Shipment snapshots unless the user explicitly saves a different address as a secondary Address Entry for the Customer.
 
 Do not make `แผนจัดส่ง` the main top summary. It exists only for mixed ready-stock/custom Orders and belongs in the line and shipment-management context as a guard.
 

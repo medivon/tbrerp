@@ -6,7 +6,7 @@ Approved mockup:
 
 ## 1. Purpose
 
-Shipment Confirmation Queue is the desktop/tablet admin screen `ยืนยันการจัดส่ง`. It shows shipment rounds that Delivery Team has marked `ส่งออกแล้ว` and are waiting for admin to review tracking/evidence before closing the shipment round.
+Shipment Confirmation Queue is the desktop/tablet admin screen `ยืนยันการจัดส่ง`. It shows shipment rounds that Delivery Team has marked `ส่งออกแล้ว` and are waiting for admin to record or review tracking/evidence before closing the shipment round.
 
 Order Completion happens only when all required shipment rounds for the Order are closed. Financial Follow-up remains separate and does not block operational close.
 
@@ -19,8 +19,8 @@ Order Completion happens only when all required shipment rounds for the Order ar
 ## 3. User Goals
 
 - Find shipment rounds waiting for confirmation.
-- Review tracking, `รูปหลักฐานจัดส่ง`, carrier, address snapshot, item summary, and delivery notes.
-- Add missing tracking/evidence where admin is responsible.
+- Review or add tracking, `รูปหลักฐานจัดส่ง`, carrier, address snapshot, item summary, and delivery notes.
+- Add missing tracking/evidence; Delivery Team does not enter Tracking and send-out may arrive without proof.
 - Close the shipment round after operational delivery review.
 - See whether the related Order still has remaining shipment rounds.
 - Keep COD/Payment follow-up visible as a signal only, not as the close condition.
@@ -126,7 +126,7 @@ Show `ไม่มีรอบจัดส่งรอยืนยัน` with a
 - Delivery Team cannot close shipment round.
 - This is a shared admin queue; Shipment Owner does not block same-permission close.
 - Closing a Shipment requires tracking or at least one delivery evidence photo.
-- Admin can add or correct tracking/evidence before close. Corrections after `ส่งออกแล้ว` are recorded in Management Log.
+- Admin can add or correct tracking/evidence before close. Changes after `ส่งออกแล้ว` are recorded in Management Log.
 - After Shipment close, tracking/evidence correction requires manager/higher permission and is recorded in Management Log.
 - Order Completion means all required Order shipment rounds are closed.
 - Financial Follow-up stays separate and can remain open after operational close.

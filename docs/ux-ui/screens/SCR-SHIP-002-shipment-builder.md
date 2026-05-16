@@ -21,6 +21,7 @@ Approved mockup:
 - Review selected ready-to-ship lines from one Order before creating a Shipment.
 - Handle special delivery cases that need manual edits.
 - Confirm or edit recipient, phone, address, carrier, delivery date, COD, and delivery-facing notes.
+- When the Shipment address is not the same or not close to existing Customer addresses, decide whether to save it as a secondary Customer Address Entry.
 - Acknowledge stock-negative warnings when selected ready-stock lines were allowed to proceed despite stock shortage.
 - Preview Delivery Note and Shipping Sheet; COD amount appears on Shipping Sheet where relevant, not on Delivery Note.
 - Release the Shipment to delivery team or save it as Draft Shipment.
@@ -93,7 +94,8 @@ Bulk exit:
 | Shipment intent | วิธีจัดส่งรายการนี้ | จัดส่งบางรายการจากออเดอร์ | Order Detail selection | Selected ready lines determine whether this Shipment round is combined or split. |
 | Recipient | ผู้รับสินค้า | คุณณัฐพล | Address Entry / Shipment snapshot | Editable before release. |
 | Phone | เบอร์โทร | 081-234-5678 | Address Entry / Shipment snapshot | Editable before release. |
-| Address | ที่อยู่จัดส่ง | 88/14 ถ.ราชพฤกษ์... | Address Entry / Shipment snapshot | Snapshot on Shipment. |
+| Address | ที่อยู่จัดส่ง | 88/14 หมู่ 2 ต.บางกร่าง อ.เมือง จ.นนทบุรี 11000 | Address Entry / Shipment snapshot | Structured address; snapshot on Shipment. |
+| Save address to Customer | บันทึกเป็นที่อยู่จัดส่งรอง | เลือกไว้ | Customer Address Entry | Ask only when this Shipment address is not close to existing Customer addresses and the Customer has fewer than 3 saved addresses. |
 | Carrier | ขนส่ง | ไปรษณีย์ไทย EMS | Shipment | Delivery team cannot change later. |
 | Delivery date | วันจัดส่ง | 24 พ.ค. 67 | Shipment | No-date goes to today's delivery tab after release. |
 | COD | COD | 12,000 บาท | Shipment / Payment Term | Admin confirms/edits; permission-aware. |
@@ -111,6 +113,7 @@ Bulk exit:
 | Preview Delivery Note | ดูใบส่งของ | Admin | Opens Delivery Note Preview. | No |
 | Preview Shipping Sheet | ดูใบจัดส่ง | Admin | Opens Shipping Sheet Preview. | No |
 | Edit delivery info | แก้ไขข้อมูลจัดส่ง | Admin and same/higher permission | Edits recipient/address/carrier/date before release. | No |
+| Save as secondary customer address | บันทึกเป็นที่อยู่จัดส่งรอง | Admin and same/higher permission | Adds the Shipment recipient/address as a secondary Address Entry for the Customer without changing the default address. | No |
 | Edit COD | แก้ยอด COD | Admin with permission | Updates Shipment COD before release. | Yes if override/over expected amount |
 | Edit delivery note | แก้หมายเหตุ | Admin and same/higher permission | Updates delivery-facing note. | No |
 | Acknowledge stock warning | รับทราบสต๊อกติดลบ | Admin and same/higher permission | Logs acknowledgement and continues Shipment creation. | Yes, acknowledgement only |
@@ -148,12 +151,15 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Delivery Team cannot create, split, or edit Shipment.
 - Shipment Owner is the creator, but close queue is shared later.
 - Finance-sensitive COD/payment detail is permission-aware.
+- Service Case sources create Service Shipments only and do not update any referenced Order status, total, or completion state.
 - Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them or see COD amount in the Delivery Team system UI.
 - Draft Shipment items are not shipped and Order is not complete.
 - Bulk users do not enter this screen for default/simple creation.
 - Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
 - When opened from Order Detail, Shipment Builder receives recipient name, address, phone, selected items, item main images, quantities, and carrier name when already chosen.
-- Recipient/address/carrier edits in Shipment Builder are Shipment snapshots only; they do not update Customer or Order automatically.
+- Recipient/address/carrier edits in Shipment Builder are Shipment snapshots first; they do not update Customer or Order automatically.
+- If the Shipment address differs from existing Customer addresses and the Customer has fewer than 3 saved addresses, the user may explicitly save it as a secondary Address Entry. This must not change the Customer default address unless a later Customer flow says so.
+- If the Customer already has 3 saved addresses, the new Shipment address remains a Shipment snapshot and admin can edit/remove old Customer addresses separately.
 - Stock shortage is a warning/reporting concern after Order acknowledgement; Shipment creation may continue after acknowledgement and log.
 
 ## 14. UX Notes for Designer
@@ -162,6 +168,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Do not make it a bulk builder.
 - Keep item list and address snapshot visible at the same time.
 - Emphasize editable special-case controls: delivery info, COD, notes.
+- Keep the save-to-Customer address prompt lightweight; it should not block releasing the Shipment.
 - Delivery Note and Shipping Sheet are separate print previews, created from the same Shipment.
 - Delivery Note shows item detail and no COD amount; Shipping Sheet shows recipient/address and COD amount where relevant.
 - Do not show product prices on delivery documents.

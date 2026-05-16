@@ -87,9 +87,9 @@ Main responsibilities:
 
 Main responsibilities:
 
-- View unfinished Jobs across departments
+- View unfinished customer Jobs first, with filters for all/production work
 - See urgent work, old work, and department bottlenecks
-- Set or change Urgent Label
+- Set or change Urgent Label from the selected-row side drawer
 - Review sensitive logs and financial information according to permission
 - Override or approve special cases when needed
 
@@ -177,8 +177,8 @@ Main tabs:
 Allowed:
 
 - See product image, quantity, item list, recipient, address, phone, carrier, and notes
-- Add tracking or `รูปหลักฐานจัดส่ง`
-- Mark `ส่งออกแล้ว` once tracking or at least one delivery evidence photo exists
+- Mark `ส่งออกแล้ว` from a row action or bulk `บันทึกว่าส่งออกแล้ว`
+- Add optional `รูปหลักฐานจัดส่ง` on an individual Shipment when useful
 - Add short delivery note
 
 Not allowed:
@@ -186,6 +186,7 @@ Not allowed:
 - Change product list
 - Change address
 - Change carrier
+- Add or edit Tracking
 - View or change COD amount in the system UI
 - Close Shipment
 
@@ -263,6 +264,7 @@ Confirmed rules:
 - Order Review has `กลับ`, `บันทึกร่าง`, and `ยืนยันสร้างออเดอร์`.
 - `ยืนยันสร้างออเดอร์` does not open a second confirmation modal; the Review screen is the final confirmation step.
 - Inline warning/acknowledgement controls on Review block confirmation until resolved.
+- Customer Tier discount rounding belongs to Order Create/Review: calculate the discount in baht and round to whole baht at the Order total summary.
 - Confirming creates the real Order ID, reserves ready-stock lines, creates `JOB-O` for complete custom lines, and opens Order Detail.
 - `บันทึกร่าง` creates or updates the saved Draft Order and returns to the `ร่างออเดอร์` tab.
 - `กลับ` from Review returns to Order Create/Edit for the same work.
@@ -539,6 +541,11 @@ Rules:
 - Production large quantity should be split by Production Lot before sending.
 - Rak Samuk has no return deadline in the first scope.
 - Urgent Label can appear if set by authorized user.
+- Rak Samuk Worker uses a simple mobile worker shell with assigned-work cards and a limited detail view.
+- Rak Samuk Worker sees own price on both the work card and detail.
+- Rak Samuk Worker cannot mark work complete or move workflow status.
+- Internal staff receives work back with `รับงานรักสมุกกลับ`.
+- `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`; P0 has no alternate destination picker.
 
 ### Price Visibility and Pricing
 
@@ -634,9 +641,15 @@ Evidence types:
 Rules:
 
 - Delivery team marks `ส่งออกแล้ว`.
-- `ส่งออกแล้ว` requires tracking or at least one delivery evidence photo.
+- Delivery team can mark one row `ส่งออกแล้ว`, or bulk-select today's/no-date Shipments and confirm `บันทึกว่าส่งออกแล้ว`.
+- `ส่งออกแล้ว` does not require Tracking or delivery evidence.
+- Delivery Team cannot add or edit Tracking in the system.
+- Delivery Team may attach optional `รูปหลักฐานจัดส่ง` on an individual Shipment.
+- After `ส่งออกแล้ว`, the Shipment leaves the Delivery Team's active today list and enters admin `ยืนยันการจัดส่ง`.
+- Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in P0.
 - The starting workflow does not use carrier-specific evidence settings.
-- Admin closes Shipment after tracking/evidence review, and close also requires tracking or at least one delivery evidence photo.
+- Admin records or corrects Tracking/evidence in `ยืนยันการจัดส่ง`.
+- Admin closes Shipment after tracking/evidence review, and close requires tracking or at least one delivery evidence photo.
 - Order Completion happens when all required Order Shipments are closed.
 - Financial Follow-up is separate.
 
@@ -720,12 +733,84 @@ Confirmed behavior:
 
 ## CRM UX
 
-Customer page has 4 core history sections:
+Customer/CRM in the starting workflow is primarily there to make Order creation, lookup, address selection, and customer history usable without blocking operations, while keeping a clean foundation for a deeper CRM phase later.
 
+Customer Detail is a single read-first page, not a tabbed workspace.
+
+Customer page section order:
+
+- Summary
+- Address
 - `CRM Note Timeline`
 - `Order History`
 - `Service Case History`
-- `Address / Recipient History`
+
+If a Customer has no Orders, Order History shows `ยังไม่มีประวัติออเดอร์` and an action to go to Order Create/Edit.
+
+Customer profile starts with:
+
+- Customer name
+- Primary phone number
+- Social section, starting with `Facebook`
+- Customer Tier
+- Customer Sales Summary as `ยอดซื้อรวม`
+- Successful Order count as `ออเดอร์สำเร็จ X รายการ`
+- Structured default Address Entry, or `ข้อมูลที่อยู่ยังไม่ครบ`
+- Top actions: primary `แก้ไขข้อมูลลูกค้า`, secondary `สร้างออเดอร์`
+
+Customer Detail behavior:
+
+- `สร้างออเดอร์` opens Order Create/Edit with this Customer and the default Address Entry preselected; it does not create an Order inline.
+- If opened from Order Detail, show a clear link back to the source Order.
+- If the Customer is deactivated, show a clear `ปิดใช้งาน` state and hide `สร้างออเดอร์`.
+- A deactivated Customer cannot be edited until reactivated.
+- `เพิ่มบันทึก CRM` belongs in the CRM Notes section header, not as a top-level Customer Detail action.
+- Customer edit-history timeline is not shown in the starting UI; Activity Log and Management Log stay behind the operational UI.
+- Service Case History is compact and can open existing cases or open Service Case creation with this Customer already linked.
+- Service Case is an independent after-sales record. It may reference an old Order for context only, but Service Case actions and status do not affect that Order, and Order changes do not affect the Service Case.
+- Service Case first-scope actions include recording `คืนเงิน`, `ส่งของคืน`, `ส่งของกลับ`, service notes, and creating Service Shipment where needed; it does not create repair Jobs.
+
+Customer list/search:
+
+- Exists under `ลูกค้า / CRM`, while Order creation also has a Customer selector.
+- Columns show customer name, tier, primary phone, Social, main-address province/postal code, `ยอดซื้อรวม`, and open action.
+- Customer list does not show Order count as a separate column.
+- Row action is only `เปิดลูกค้า`.
+- Customer Tags are searchable/filterable but not shown in the list.
+- Search is one instant search box that searches all Customer-list fields by default and can be narrowed to `ทั้งหมด`, `ชื่อ`, `เบอร์`, `Customer Code`, `Social`, or `ที่อยู่`.
+- Search covers customer name, primary phone, Customer Code, Social/Facebook, default Address Entry province/district/subdistrict/postal code/house detail, and Customer Tag.
+- Phone search normalizes formatting and supports partial numeric searches such as middle digits or last three digits.
+- `เบอร์` search uses Customer primary phone only.
+- `ที่อยู่` search uses the default Address Entry only; a secondary-address match does not show a Customer List result in the starting workflow.
+- Search results show match chips such as `ตรงกับเบอร์`, `ตรงกับ Social`, or `ตรงกับที่อยู่`.
+- Filters: Customer Tier, province, total sales, Customer Status, and Customer Tag.
+- Total-sales filter supports presets such as `0`, `1-50k`, `50,001-200k`, `200k+`, plus custom range.
+- Customer Status filters include `ใช้งานอยู่`, `ปิดใช้งาน`, and `ข้อมูลที่อยู่ยังไม่ครบ`.
+- No bulk action in the starting workflow.
+- No export in the starting workflow.
+- Customer Code is system-generated in the format `tbr-cus-000001`.
+- Default sort is by Customer Code.
+- Deactivated Customers appear only when `รวมลูกค้าที่ปิดใช้งาน` is enabled.
+- Deactivated Customers are not shown in Order Create customer selection.
+- Customer Sales Summary is a maintained value updated after Orders become `จัดส่งครบแล้ว`; it counts completed, non-cancelled Orders.
+- Customer Sales Summary is updated automatically; there is no manual recalculation action in the starting UI.
+- Customer/CRM-permission users can see Customer Sales Summary in Customer list/detail.
+
+Customer Tier:
+
+- Configurable in settings rather than hard-coded forever
+- Initial examples are `ลูกค้าปกติ`, `ลูกค้า VIP`, `ลูกค้า VVIP`, and `ระวังเป็นพิเศษ`
+- `ระวังเป็นพิเศษ` warns during Order creation; user must acknowledge the warning and the acknowledgement is logged, but manager approval is not required
+- Can optionally carry percentage default discounts
+- Discount settings are separated between ready-stock goods and custom work
+- When a Customer with tier discount starts a new Order, ready-stock lines use the ready-stock percentage and custom-work lines use the custom-work percentage, then the result appears as the one final discount before the Order total summary
+- Admin can edit/remove the suggested discount during Order creation; no reason is required, but old/default value, new value, and final discount choice are logged and snapshotted on the Order
+- Changing Customer Tier or discount later does not affect old Orders
+- Customer Tier and discount settings require Admin/Manager CRM settings permission
+- Customer Tier is edited from the Customer edit page by users with CRM settings/Admin permission
+- Changing a Customer into or out of `ระวังเป็นพิเศษ` requires a reason and writes Management Log
+- Customer Tier settings can be renamed and deactivated; tiers that have been used cannot be deleted
+- Wholesale / `ลูกค้าส่ง` is out of scope for now
 
 CRM Note:
 
@@ -734,28 +819,56 @@ CRM Note:
 - Can attach images
 - Created manually only
 - Has user, date, content, optional type, optional pin/star
-
-Private CRM Note:
-
-- Same timeline style
-- Restricted visibility
+- Can optionally link to one of this Customer's Orders
+- Linked CRM Notes stay in the Customer timeline if the linked Order is cancelled, closed, or edited; the note shows the latest Order status
+- CRM Note add/edit/hide actions write Activity Log entries
+- Removing a CRM Note hides/deactivates it instead of hard deleting it
+- Private CRM Note is not in the starting Customer/CRM scope
 
 Customer Tag:
 
 - Public CRM Tag and Private CRM Tag
+- Customer Tag settings have no default values; admins create the tags the shop needs
 - Tag master controlled by CRM/Admin permission
 - Tags can have colors
-- No Customer Tier in first scope
+- Customer Tag does not replace Customer Tier
+- Customer Tag has no Order, workflow, or discount logic
+- Customer Tags are edited from the Customer edit page
+- Customer Tags show in Customer Detail summary/CRM context, but not in Customer list columns
+- If many tags exist, show what fits and collapse the rest as `+N`
+
+Customer edit/status logging:
+
+- Customer master edits such as name, primary phone, Social, and address write Activity Log entries
+- Customer Tier, Tier discount, and deactivate/reactivate changes write Management Log entries
+- Deactivate/reactivate Customer requires Admin/Manager CRM permission
+- Deactivating a Customer requires a reason
+- If the Customer on a Draft Order is later deactivated, the Draft Order can still be opened but cannot be confirmed until Customer is reactivated or changed
 
 Address:
 
-- Customer has address list
+- Customer has at most 3 saved addresses
 - One default address
-- Address has recipient name and recipient phone
-- New address added during initial Order creation is not saved automatically to Customer address list
-- New or modified address is saved back to Customer only when the user explicitly chooses `บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า`
+- Address has optional label, recipient name, recipient phone, house/address detail, optional moo, subdistrict, district, province, and postal code
+- Customer Detail Address section shows the default Address Entry first with full structured fields and a `ที่อยู่หลัก` badge
+- Customer creation from Order Create requires complete Order-required Customer data before saving the Customer: customer name, primary phone, house/address detail, subdistrict, district, province, and postal code
+- Customer creation in the Customer/CRM module can start with incomplete address data, but real Order creation is blocked until required Order name/address/phone data is complete
+- Customer List shows incomplete-address Customers normally with chip `ข้อมูลที่อยู่ยังไม่ครบ`
+- Customer Detail shows `ข้อมูลที่อยู่ยังไม่ครบ` in both the summary and the affected Address card while address data is incomplete
+- Adding a secondary Address Entry from Customer Detail requires complete Order-usable address data
+- If the Customer already has 3 saved addresses, disable add-address action and explain the three-address limit
+- New or modified address from Order-facing screens is saved back to Customer only when the user explicitly chooses `บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า`
+- If saved from Order and it is a new address, it becomes a secondary Address Entry
+- Order Create auto-selects the Customer default Address Entry, but admin can switch to a secondary address or enter a new Order Recipient Detail snapshot
+- Opening Order Create from Customer Detail sends the Customer and default Address Entry as starting values
+- If the default Address Entry is incomplete, Order Create can open but confirmation is blocked until address data is completed
+- If the Customer already has 3 saved addresses, Order Create can still use a new address as the Order Recipient Detail snapshot, but it cannot save that address back to Customer until admin edits or removes an old address
 - Confirmed Orders keep their own Order Recipient Detail snapshot; later Customer address-book changes do not rewrite existing Orders
+- Editing an Address Entry from Customer Detail does not need an extra old-Order warning because old Orders and Shipments already keep snapshots
+- Changing Customer name or primary phone later does not rewrite old confirmed Order snapshots
 - Shipment always snapshots recipient/address data
+- If a Shipment address is not the same or not close to existing Customer addresses and the Customer has fewer than 3 saved addresses, ask whether to save it as a secondary Address Entry for that Customer
+- If the Customer already has 3 saved addresses, do not save another address from Shipment; admin can edit/remove old addresses manually
 
 ## Stock UX
 
@@ -885,6 +998,15 @@ Confirmed starting rules:
 - Summaries should be filterable by date/range, such as today, last 7 days, or custom range.
 - Usage or missing material is handled through periodic adjustment, not automatic deduction to Job/Production.
 
+## Financial Follow-up UX
+
+Financial Follow-up is operational money follow-up, not full accounting approval.
+
+Confirmed behavior:
+
+- A finance-permission user can close a follow-up item when payment evidence or explanatory note is enough for the operational audit trail.
+- Closing Financial Follow-up is separate from Order Completion, Shipment close, and full accounting approval.
+
 ## Expense UX
 
 Expense Entry is simple business expense tracking, not full accounting.
@@ -941,19 +1063,23 @@ Manager view should answer:
 
 Included:
 
-- `JOB-O` and `JOB-P` together
-- Toggle: all / customer work / production work
+- Default view: `JOB-O / งานลูกค้า`
+- Toggle: customer work / all / production work
+- One priority-sorted table, not default grouping by department or risk bucket
 - Job age from Job creation date
 - Department age
 - Configurable aging thresholds, such as 15/30/60 days
+- `รอวัตถุดิบ` treated as a high blocker
+- `งานด่วน` action from the selected-row side drawer
 - Timeline in Job Detail
 
 Sort priority:
 
 1. Urgent work
-2. Nearest delivery date
-3. Oldest total Job age
-4. Longest department age
+2. Waiting for Materials blocker
+3. Nearest delivery date
+4. Oldest total Job age
+5. Longest department age
 
 ## Logging UX
 

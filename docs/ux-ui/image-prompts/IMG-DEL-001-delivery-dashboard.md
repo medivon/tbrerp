@@ -2,9 +2,7 @@
 
 ## Design Status
 
-Deferred. This is a tablet/mobile worker screen, and the mobile app shell has not been approved yet.
-
-Do not use this prompt for GPT Image 2 until the mobile/tablet visual structure is designed. Desktop/admin screens may continue using the approved Admin Dashboard app shell, but `IMG-DEL-001` must wait.
+Ready. This is a tablet/mobile worker screen using a simple worker shell, not the desktop admin shell.
 
 Related screen spec:
 
@@ -18,17 +16,13 @@ Visual/content anchors:
 
 ## High-Fidelity GPT Image 2 Prompt
 
-Paused until mobile/tablet app-shell approval.
-
-Reference concept only, not ready for generation:
-
 ```text
 Create a high-fidelity tablet/mobile delivery dashboard for THAIBORAN called “ฝ่ายจัดส่ง”.
 
 This is a delivery team screen, not a desktop admin table. Use the approved THAIBORAN visual language from the shipment documents, but do not use the full desktop sidebar. Use a lightweight mobile/tablet header, large touch targets, clean white cards, compact chips, image-led item recognition, and calm ERP styling.
 
 Screen purpose:
-Show released shipment rounds that admin has already created and released. Delivery Team can view shipment details, add tracking or รูปหลักฐานจัดส่ง, add a short delivery note, and mark the shipment “ส่งออกแล้ว”. This does not close the Shipment and does not complete the Order. It sends the Shipment to admin “ยืนยันการจัดส่ง”.
+Show released shipment rounds that admin has already created and released. Delivery Team can view shipment details, optionally add รูปหลักฐานจัดส่ง on an individual shipment, add a short delivery note, and mark the shipment “ส่งออกแล้ว”. Delivery Team cannot enter Tracking. This does not close the Shipment and does not complete the Order. It sends the Shipment to admin “ยืนยันการจัดส่ง”.
 
 Header:
 - Title: ฝ่ายจัดส่ง
@@ -39,9 +33,10 @@ Header:
 Tabs:
 - รายการต้องจัดส่งวันนี้ active
 - รายการรอวันจัดส่ง
+- ส่งออกแล้ววันนี้
 
 Today tab content:
-Show shipment cards, not a dense admin table. Each card should be practical for packing/delivery work.
+Show shipment cards, not a dense admin table. Each card should be practical for packing/delivery work. Include checkbox selection for bulk send-out and a bottom action bar when items are selected.
 
 Each shipment card should show:
 - เลขรอบจัดส่ง, such as SHIP-2568-0061
@@ -52,14 +47,20 @@ Each shipment card should show:
 - Delivery date or “วันนี้”
 - Item thumbnail
 - Short item summary
-- Evidence status chip
+- Optional photo status chip if present
 - Delivery note preview
+- Row action button: ส่งออกแล้ว
 - Button: เปิดรอบจัดส่ง
 
 Example cards:
-1. SHIP-2568-0061, ผู้รับ คุณณัฐพล, 081-234-5678, 88/14 ถ.ราชพฤกษ์ ต.บางรักพัฒนา อ.บางบัวทอง จ.นนทบุรี, ขนส่ง ไปรษณีย์ไทย EMS, item โต๊ะกลางลงรักสมุก 1 ชิ้น, chip ต้องมี Tracking หรือรูป, button เปิดรอบจัดส่ง
-2. SHIP-2568-0062, ผู้รับ คุณพิมพ์ชนก, 082-345-6789, ขนส่ง ไปรษณีย์ไทย EMS, item ชุดเก้าอี้พร้อมส่ง 4 ชิ้น, chip พร้อมส่งออก, button เปิดรอบจัดส่ง
-3. SHIP-2568-0063, ผู้รับ บริษัท เอ.ที.ดีไซน์, ขนส่ง Porlor Express, item กรอบบัวไม้ปิดทอง 2 ชิ้น, chip มีรูปหลักฐาน, button เปิดรอบจัดส่ง
+1. SHIP-2568-0061, ผู้รับ คุณณัฐพล, 081-234-5678, address summary บางบัวทอง นนทบุรี, ขนส่ง ไปรษณีย์ไทย EMS, item โต๊ะกลางลงรักสมุก 1 ชิ้น, button ส่งออกแล้ว, secondary button เปิดรอบจัดส่ง
+2. SHIP-2568-0062, ผู้รับ คุณพิมพ์ชนก, 082-345-6789, address summary เมืองเชียงใหม่, ขนส่ง ไปรษณีย์ไทย EMS, item ชุดเก้าอี้พร้อมส่ง 4 ชิ้น, selected checkbox, button ส่งออกแล้ว
+3. SHIP-2568-0063, ผู้รับ บริษัท เอ.ที.ดีไซน์, address summary บางรัก กรุงเทพฯ, ขนส่ง Porlor Express, item กรอบบัวไม้ปิดทอง 2 ชิ้น, chip มีรูปหลักฐาน, button ส่งออกแล้ว
+
+Bulk state:
+- When cards are selected in รายการต้องจัดส่งวันนี้, show bottom action bar: เลือกแล้ว 2 รายการ and primary button บันทึกว่าส่งออกแล้ว
+- Bulk confirmation modal: ยืนยันบันทึกการส่งออกสินค้าแล้ว
+- Bulk is only for today/no-date shipments, not รายการรอวันจัดส่ง
 
 Expanded/detail area or selected card detail:
 Show read-only shipment details:
@@ -69,8 +70,7 @@ Show read-only shipment details:
 - Carrier
 - Item list with images and quantity
 - Delivery note
-- Evidence upload area with labels:
-  - Tracking
+- Optional photo upload area with labels:
   - รูปหลักฐานจัดส่ง
   - หมายเหตุจัดส่ง
 - Primary button: ส่งออกแล้ว
@@ -82,9 +82,10 @@ Visual rules:
 - Do not show “รอสร้างรอบจัดส่ง” Orders
 - Do not show product prices, sales price, profit, accounting totals, tax, ad spend, or private CRM notes
 - Do not show COD amount in Delivery Team UI; COD amount belongs on the printed ใบจัดส่ง when relevant
-- Do not let delivery team edit item list, address, carrier, COD, or close Shipment
+- Do not show Tracking input
+- Do not let delivery team edit item list, address, carrier, Tracking, COD, or close Shipment
 - Do not show “ปิดรอบจัดส่ง”
-- Keep “ส่งออกแล้ว” disabled until Tracking or at least one รูปหลักฐานจัดส่ง exists
+- Do not disable “ส่งออกแล้ว” for missing Tracking or missing รูปหลักฐานจัดส่ง
 - Make clear that “ส่งออกแล้ว” sends the Shipment to admin “ยืนยันการจัดส่ง”, not final completion
 - The screen should feel field-ready, simple, and touch-friendly
 ```

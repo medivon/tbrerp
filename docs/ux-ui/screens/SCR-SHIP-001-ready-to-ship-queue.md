@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The Ready-to-Ship Queue is the admin `รอสร้างรอบจัดส่ง` screen. It shows Orders with items that are ready for admin to create a Shipment: ready-stock Order Lines, completed `JOB-O` work, and ready Service Case items.
+The Ready-to-Ship Queue is the admin `รอสร้างรอบจัดส่ง` screen. It shows Orders with items that are ready for admin to create a Shipment: ready-stock Order Lines, completed `JOB-O` work, and ready Service Case items. Service Case items create Service Shipments only and do not affect the referenced Order's status or completion.
 
 This screen is before the Shipment exists. It is not the delivery team's `รายการต้องจัดส่งวันนี้` screen.
 

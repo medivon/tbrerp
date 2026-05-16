@@ -382,7 +382,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - `ไม่มีราคา / ให้แจ้งราคา`
 - Proposed price approval
 - Receive Rak Samuk Work back
-- Next internal workflow queue
+- `รอรับเข้าโรงงานสี`
 - Rak Samuk `ประวัติการทำงาน`
 
 **Step-by-step User Actions**
@@ -397,7 +397,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 8. Rak Samuk Worker submits proposed price only for missing-price work.
 9. Finance-permission user approves proposed price when required.
 10. Internal staff receives the work back.
-11. Work returns to the next internal workflow queue.
+11. Work enters `รอรับเข้าโรงงานสี`.
 
 **System Actions**
 
@@ -409,6 +409,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Shows own price only for own work.
 - Allows price proposal only when standard rate is missing.
 - Keeps workflow status control with internal staff, not Rak Samuk Worker.
+- Routes received-back Rak Samuk Work to `รอรับเข้าโรงงานสี` with no P0 destination picker.
 
 **Status Changes**
 
@@ -417,11 +418,11 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Waiting outsource assignment -> assigned to Rak Samuk Worker.
 - Missing price -> proposed price -> approved price, when applicable.
 - Rak Samuk Work -> received back.
-- Received work -> next internal workflow queue.
+- Received work -> `รอรับเข้าโรงงานสี`.
 
 **Exit Condition**
 
-- Rak Samuk Work is received back and visible in the next internal workflow queue.
+- Rak Samuk Work is received back and visible in `รอรับเข้าโรงงานสี`.
 
 **Key Data Shown**
 
@@ -441,7 +442,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Rak Samuk Worker can infer customer, Order ID, or sales price.
 - Worker appears able to move internal workflow status.
 - Missing-price work is not obvious enough.
-- Returned Rak Samuk work has unclear next destination.
+- Returned Rak Samuk work does not need a destination decision; it always goes to `รอรับเข้าโรงงานสี` in P0.
 - One customer Job is accidentally split across multiple Rak Samuk Workers.
 
 **Blocking Open UX Questions**
@@ -456,7 +457,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 **Trigger**
 
-- Ready-stock Order Line, completed `JOB-O`, or ready Service Case item is ready for Shipment creation under its Order Shipment Plan.
+- Ready-stock Order Line or completed `JOB-O` is ready for Order Shipment creation, or a ready Service Case item is ready for Service Shipment creation.
 
 **Entry Point**
 
@@ -491,6 +492,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Shows ready-to-ship work grouped as Orders, not loose item chaos.
 - Keeps this queue separate from Delivery Team `รายการต้องจัดส่งวันนี้`.
 - Includes ready-stock, completed custom work, and ready Service Case items.
+- Service Case items create Service Shipments only; they do not affect any referenced Order status, total, or completion state.
 - Uses ready-line selection as the practical split/combined shipment control from Order Detail: selected multiple ready lines become one combined Shipment round; selected partial ready lines become a split Shipment round.
 - Creates Shipment from selected ready items.
 - Shows acknowledgement modal for stock-negative selected ready-stock lines; this warning does not block Shipment creation after acknowledgement.
@@ -562,17 +564,17 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - `รายการต้องจัดส่งวันนี้`
 - `รายการรอวันจัดส่ง`
 - Shipment detail for delivery
-- Evidence capture
+- Optional delivery photo capture
+- `ส่งออกแล้ววันนี้` history
 
 **Step-by-step User Actions**
 
 1. Delivery Team opens dashboard.
 2. Delivery Team chooses `รายการต้องจัดส่งวันนี้` or `รายการรอวันจัดส่ง`.
-3. Delivery Team opens a Shipment.
-4. Delivery Team reviews item list, image, quantity, recipient, address, phone, carrier, and notes.
-5. Delivery Team adds tracking or `รูปหลักฐานจัดส่ง`.
-6. Delivery Team adds short delivery note if needed.
-7. Delivery Team marks `ส่งออกแล้ว`.
+3. Delivery Team reviews row/card summary: recipient, short address, phone, carrier, item thumbnail/summary, and notes.
+4. Delivery Team may open Shipment detail to review full address and optionally attach `รูปหลักฐานจัดส่ง`.
+5. Delivery Team marks one Shipment `ส่งออกแล้ว` from the row action, or bulk-selects today's/no-date Shipments and confirms `บันทึกว่าส่งออกแล้ว`.
+6. Delivery Team may review `ส่งออกแล้ววันนี้` if they need to check what was already sent today.
 
 **System Actions**
 
@@ -580,8 +582,11 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Places Shipments without delivery date in `รายการต้องจัดส่งวันนี้`.
 - Places future-date Shipments in `รายการรอวันจัดส่ง`.
 - Moves future-date Shipments to today's tab on the delivery date.
-- Prevents Delivery Team from changing item list, address, carrier, COD, or closing Shipment.
-- Keeps `ส่งออกแล้ว` blocked until the Shipment has tracking or at least one delivery evidence photo.
+- Prevents Delivery Team from changing item list, address, carrier, COD, tracking, or closing Shipment.
+- Allows `ส่งออกแล้ว` without tracking or delivery evidence.
+- Allows optional delivery evidence photos only on individual Shipment detail, not as a bulk requirement.
+- Allows bulk `บันทึกว่าส่งออกแล้ว` only from `รายการต้องจัดส่งวันนี้`, including no-date Shipments.
+- Removes sent-out Shipments from the active today list and keeps a same-day sent-out history view.
 - Sends `ส่งออกแล้ว` Shipment to admin `ยืนยันการจัดส่ง`.
 
 **Status Changes**
@@ -604,20 +609,21 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Phone
 - Carrier
 - Notes
-- Tracking
-- `รูปหลักฐานจัดส่ง`
+- Optional `รูปหลักฐานจัดส่ง`
+- Same-day sent-out status
 
 **UX Risks**
 
 - Delivery Team sees edit controls for master shipment data.
 - Delivery Team sees COD amount in the system UI, even though COD follow-up belongs to admin/audit/finance and COD amount belongs on the Shipping Sheet.
-- The tracking-or-photo rule is unclear at the moment of send-out.
+- Delivery Team sees a tracking field even though tracking belongs to admin confirmation.
+- Bulk send-out accidentally includes future-date Shipments.
 - Future Shipments are mixed into today's work.
 - `ส่งออกแล้ว` is mistaken for final Shipment close.
 
 **Blocking Open UX Questions**
 
-- None for the delivery evidence rule.
+- None for the Delivery Team send-out rule.
 
 ## F08 - Admin Close Shipment
 
@@ -646,8 +652,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 1. Admin opens `ยืนยันการจัดส่ง`.
 2. Admin selects a Shipment marked `ส่งออกแล้ว`.
-3. Admin reviews evidence, tracking, carrier information, recipient/address snapshot, item list, and notes.
-4. Admin adds or corrects tracking/evidence if needed before close.
+3. Admin reviews tracking/evidence state, carrier information, recipient/address snapshot, item list, and delivery notes.
+4. Admin adds tracking or at least one delivery evidence photo before close when missing.
 5. Admin closes Shipment when review is acceptable and at least tracking or one delivery evidence photo exists.
 6. Admin checks whether the related Order has any remaining required Shipments.
 7. Admin leaves COD/payment issues in financial follow-up when they are not operational delivery blockers.
@@ -656,7 +662,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 - Shows `ส่งออกแล้ว` Shipments in the shared admin close queue.
 - Preserves Shipment Owner but allows shared admin close by permission.
-- Allows admin to add or correct tracking/evidence before close.
+- Requires admin to add or correct tracking/evidence before close when missing.
 - Closes the Shipment after admin action.
 - Completes the Order only when all required Order Shipments are closed.
 - Keeps Financial Follow-up separate from Order Completion.
@@ -722,24 +728,25 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 **Step-by-step User Actions**
 
-1. Manager opens Management Overview.
-2. Manager reviews unfinished Jobs across departments.
-3. Manager switches between all work, customer work, and production work.
-4. Manager sorts or scans by urgency, delivery date, total Job age, and department age.
-5. Manager opens a Job Detail.
+1. Manager opens Management Overview, defaulted to `JOB-O / งานลูกค้า`.
+2. Manager reviews one priority-sorted table of unfinished customer Jobs.
+3. Manager switches to all work or production work when needed.
+4. Manager scans by urgency, `รอวัตถุดิบ`, delivery date, total Job age, and department age.
+5. Manager selects a row to open a side drawer or opens Job Detail for full context.
 6. Manager reviews department location, status, age, urgency, and timeline.
-7. Manager sets or changes `งานด่วน` where authorized.
+7. Manager sets or changes `งานด่วน` from the side drawer where authorized.
 8. Manager decides the operational follow-up outside the overview or sends the responsible team to act.
 
 **System Actions**
 
-- Includes both `JOB-O` and `JOB-P`.
+- Includes both `JOB-O` and `JOB-P`, with `JOB-O / งานลูกค้า` as the default view.
 - Shows department location.
 - Shows urgent work, old work, and near-delivery work.
 - Calculates Job total age from Job creation date.
 - Calculates department age from department receive time.
 - Uses configurable aging thresholds.
-- Sorts by urgent work, nearest delivery date, oldest total Job age, then longest department age.
+- Treats `รอวัตถุดิบ` as a high blocker in the default sort.
+- Sorts by urgent work, waiting-material blocker, nearest delivery date, oldest total Job age, then longest department age.
 - Shows full timeline to manager/admin permission.
 
 **Status Changes**
@@ -760,6 +767,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Department location
 - Current status
 - Urgent Label
+- Waiting for Materials blocker
 - Delivery date if relevant
 - Total Job age
 - Department age
@@ -769,14 +777,16 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **UX Risks**
 
 - Overview becomes too broad and turns into a generic report module.
-- `JOB-O` and `JOB-P` are mixed without clear source labels.
+- `JOB-O` customer work is hidden behind production work in the default view.
+- `JOB-O` and `JOB-P` are mixed without clear source labels when filters change.
 - Urgent and old work are not visually prominent.
+- `รอวัตถุดิบ` is treated like normal age instead of a flow blocker.
 - Department bottlenecks are hidden behind individual Job detail.
 - Manager view exposes sensitive information beyond permission.
 
 **Blocking Open UX Questions**
 
-- Manager unfinished-work overview layout is a blocking question for future screen specs.
+- None for the first manager overview layout.
 
 ## F10 - Product Model Color to Stock Production
 

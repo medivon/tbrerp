@@ -7,16 +7,52 @@ This context defines the shared business language for the THAIBORAN ERP. It focu
 ### Commercial Work
 
 **Customer (ลูกค้า)**:
-The person or organization that buys from THAIBORAN and owns the CRM history.
+The person or organization that buys from THAIBORAN and owns the CRM history, limited address book, tier, social contacts, and sales summary.
 _Avoid_: Client, account, buyer
+
+**Customer Code (รหัสลูกค้า)**:
+A system-generated customer identifier such as `tbr-cus-000001`, using prefix `tbr-cus-` plus a six-digit running number, used for stable sorting and reference in Customer search/list.
+_Avoid_: Phone number, social handle
+
+**Customer Primary Phone (เบอร์หลักลูกค้า)**:
+The digits-only main phone number stored on a Customer for search, contact, and order creation.
+_Avoid_: Recipient phone when discussing delivery-only contact
+
+**Customer Social Contact (ช่องทาง Social ลูกค้า)**:
+An optional social platform row stored on a Customer, starting with `Facebook`, for search and future message integration.
+_Avoid_: CRM Note, social login, imported chat identity
+
+**Customer Tier (ระดับลูกค้า)**:
+A configurable customer level such as ลูกค้าปกติ, ลูกค้า VIP, ลูกค้า VVIP, or ระวังเป็นพิเศษ that describes broad relationship status and may provide simple default order discounts.
+_Avoid_: Customer Tag, full wholesale pricing rule
+
+**Customer Tier Discount (ส่วนลดตามระดับลูกค้า)**:
+An optional percentage discount from a Customer Tier, separated between ready-stock goods and custom work, suggested as the final discount during new Order creation.
+_Avoid_: Product price list, promotion campaign, wholesale pricing engine
+
+**Customer Status (สถานะลูกค้า)**:
+Whether a Customer is active for new Orders or deactivated while remaining visible for history.
+_Avoid_: Deleting customer history
+
+**Customer Sales Summary (สรุปยอดซื้อของลูกค้า)**:
+The maintained total successful sales amount (`ยอดซื้อรวม`) and successful Order count for a Customer, counted from Orders whose required shipments are completed and not cancelled.
+_Avoid_: Accounting ledger, outstanding balance, forecast
 
 **Recipient (ผู้รับสินค้า)**:
 The person or place that receives a shipment for a Customer.
 _Avoid_: Customer when the buyer and receiver are different
 
 **Address Entry (ที่อยู่จัดส่ง)**:
-A saved recipient name, phone number, and delivery address under a Customer.
+A saved recipient name, phone number, optional label, and structured delivery address under a Customer, with one default Address Entry and at most three saved Address Entries per Customer.
 _Avoid_: Free-floating address
+
+**Incomplete Customer Address (ข้อมูลที่อยู่ยังไม่ครบ)**:
+A Customer address state that allows early Customer capture but blocks real Order creation until the customer name, primary phone, house/address detail, subdistrict, district, province, and postal code required by Order creation are complete.
+_Avoid_: Draft Order, Shipment snapshot
+
+**Order Customer Requirement (ข้อมูลลูกค้าขั้นต่ำสำหรับออเดอร์)**:
+The minimum Customer data required before creating a real Order: customer name, primary phone, address detail, subdistrict, district, province, and postal code.
+_Avoid_: Full CRM profile
 
 **Order Recipient Detail (ข้อมูลผู้รับในออเดอร์)**:
 The recipient, phone, and address snapshot stored on a confirmed Order, independent from later Customer address-book changes.
@@ -67,8 +103,8 @@ An immutable actual payment entry such as transfer, credit card, or COD amount r
 _Avoid_: Payment term, audit confirmation, Job approval
 
 **Financial Follow-up (ติดตามการเงิน)**:
-The separate management view for COD, payment audit, outstanding payments, refunds, deposits retained, or customer credit.
-_Avoid_: Order completion
+The separate management view for COD, payment audit, outstanding payments, refunds, deposits retained, or customer credit. A permitted finance user can resolve a follow-up item by closing it with enough payment evidence or explanatory note for audit trail; this is not full accounting approval in the starting workflow.
+_Avoid_: Order completion, accounting close
 
 **Payment Audit Follow-up (รายการรอตรวจจ่าย)**:
 A finance follow-up item created when an operational document, such as a received Material Purchase Order, needs a permitted finance user to record the actual payment or expense separately.
@@ -272,6 +308,10 @@ _Avoid_: Hold
 Outsource decorative line work routed from a Job or Production Lot to one Rak Samuk worker.
 _Avoid_: Generic outsource when discussing first-scope payment flow
 
+**Rak Samuk Return (รับงานรักสมุกกลับ)**:
+The internal receipt of Rak Samuk Work back into the shop; in the starting workflow it always routes to Waiting for Coloring Intake.
+_Avoid_: Worker completion, destination picker, returning to sender
+
 **Rak Samuk Worker (ช่างรักสมุก)**:
 An outsource worker account that can view assigned Rak Samuk Work and limited payment information for their own work.
 _Avoid_: Employee, internal workshop user
@@ -302,13 +342,17 @@ _Avoid_: Shipping Sheet, COD amount
 The printable recipient/address sheet for a Shipment, focused on recipient, phone, address, carrier, references, and COD amount where relevant.
 _Avoid_: Delivery Note
 
+**Delivery Send-out (ส่งออกแล้ว)**:
+The Delivery Team's operational handoff that records a released Shipment has left for delivery and should enter admin shipment confirmation.
+_Avoid_: Shipment close, proof capture, tracking confirmation
+
 **Shipment Evidence (หลักฐานจัดส่ง)**:
-The delivery proof captured for a Shipment, either tracking or one or more delivery evidence photos. In the starting workflow, a Shipment can be marked sent out or closed when at least one of tracking or delivery evidence photos exists.
+The admin-confirmed delivery proof captured before closing a Shipment, either tracking or one or more delivery evidence photos.
 _Avoid_: Carrier-specific evidence checklist, payment evidence, COD audit
 
 **Service Case (งานบริการหลังการขาย)**:
-An after-sales case such as repair, claim, color correction, return, or reshipment after an Order is closed.
-_Avoid_: Reopening the original Order
+An after-sales record used for follow-up events such as refund notes, returned goods, sending goods back to the customer, claim notes, or similar service handling. It may reference a Customer or an old Order for context only, but its actions and status do not affect that Order, and changes to the Order do not affect the Service Case.
+_Avoid_: Reopening the original Order, repair Job, Order status
 
 **Service Shipment (รอบจัดส่งงานบริการ)**:
 A Shipment created from a Service Case that does not affect the original Order completion or sales total.
@@ -320,9 +364,9 @@ _Avoid_: Order Shipment
 A timeline note about customer behavior, preferences, relationship context, or sales context.
 _Avoid_: Shipment note, Job note
 
-**Private CRM Note (บันทึก CRM ส่วนตัว)**:
-A restricted CRM timeline note for sensitive customer information.
-_Avoid_: Public note
+**Customer Tag (แท็กลูกค้า)**:
+A public or private colorable CRM label used to group or flag Customers without changing their Customer Tier.
+_Avoid_: Product Tag, Customer Tier, permission role
 
 **Review Album (คลังรีวิว)**:
 A group of review images that may link to zero or more SKUs, and optionally to a Customer or Order.
@@ -342,6 +386,10 @@ _Avoid_: Personal assignment when the task belongs to a department
 The user recorded as the creator or primary responsible person for an Order, Shipment, or other document.
 _Avoid_: Exclusive assignee
 
+**Current Handler (ผู้ที่ต้องทำต่อ)**:
+The current user, department, or shared queue responsible for the next operational action. It answers where the work should move next, while Owner answers traceability.
+_Avoid_: Owner, creator, performance score
+
 **Activity Log (ประวัติการทำงาน)**:
 Operational history visible to relevant team members, such as received, completed, or sent.
 _Avoid_: Audit log
@@ -354,14 +402,19 @@ _Avoid_: Activity log
 Restricted history visible to the highest permission level for rights changes, critical overrides, and sensitive financial changes.
 _Avoid_: Activity log
 
+**Sensitive Operational Data (ข้อมูลอ่อนไหวในการทำงาน)**:
+Business-sensitive information that must be hidden from users without the matching permission, such as product cost, profit, COD/payment detail, Rak Samuk rates outside the worker's own price, other workers' payout, and Audit Log detail.
+_Avoid_: Disabled-only action, public queue summary
+
 **Expense Entry (รายการค่าใช้จ่าย)**:
 A simple internal expense record with amount, category, payee, evidence, and optional line items.
 _Avoid_: Accounting journal
 
 ## Relationships
 
-- A **Customer** has many **Address Entries**, **Orders**, **CRM Notes**, **Private CRM Notes**, **Service Cases**, and optional **Review Albums**.
-- An **Address Entry** belongs to exactly one **Customer**, an **Order** has frozen **Order Recipient Detail**, and a **Shipment** stores its own recipient/address snapshot used at dispatch time.
+- A **Customer** has one **Customer Code**, one **Customer Primary Phone**, zero or more **Customer Social Contacts**, up to three **Address Entries**, many **Orders**, many **CRM Notes**, many **Customer Tags**, many **Service Cases**, and optional **Review Albums**; each Customer has one **Customer Tier**, one **Customer Status**, and one **Customer Sales Summary**.
+- A **Customer Tier** may define **Customer Tier Discounts** for ready-stock goods and custom work; those defaults are suggested during Order creation and copied into the Order as editable/logged discount context.
+- An **Address Entry** belongs to exactly one **Customer**, one Address Entry may be the default, an **Order** has frozen **Order Recipient Detail**, and a **Shipment** stores its own recipient/address snapshot used at dispatch time.
 - An **Order Entry Session** may become one **Draft Order** when saved, or one **Order** when confirmed.
 - A **Draft Order** may become one **Order**; after conversion it is archived/read-only and no longer shown in active draft work.
 - An **Order** has many **Order Lines**, has **Order Recipient Detail**, has one **Order Shipment Plan** only when mixed line types need a delivery decision, and may create many **Shipments**.
@@ -371,6 +424,7 @@ _Avoid_: Accounting journal
 - A custom **Order Line** carries **Custom Work Detail** during order entry or guarded Order Line Edit, and creates one **Order Job** when the Order is confirmed or when the completed new custom line is saved after confirmation.
 - A ready-stock **Order Line** reserves **Ready Stock** when the Order is confirmed or when the line is added after confirmation, but does not create a **Job**.
 - A **Payment Record** may be captured during Order entry or later Financial Follow-up, but missing Payment Records do not block **Order Job** creation.
+- A **Financial Follow-up** item is resolved when a permitted finance user closes it with payment evidence or explanatory note; operational Order and Shipment completion remain separate.
 - **Financial Reconciliation** can block saving an Order total edit when the new sales total does not line up with financial records or adjustment notes; this is separate from normal Order operation.
 - A **Job** has exactly one **Job Source Type**: Order or Production.
 - An **Order Job** belongs to an Order Line and becomes ready for **Shipment** only after production is complete.
@@ -378,11 +432,12 @@ _Avoid_: Accounting journal
 - A **Production Batch** has many **Production Lots**; a Production Lot may create one or more **Production Jobs** depending on how production is split.
 - A **Production Job** tied to an SKU Variant increases **Ready Stock** by its production quantity when completed; a custom/prototype Production Job may end as Done without entering stock.
 - A **Shipment** creates one **Delivery Note** and one **Shipping Sheet**; users may print either or both.
-- A **Shipment** can be marked sent out or closed only when it has **Shipment Evidence**: tracking or at least one delivery evidence photo.
+- A **Shipment** may be marked **Delivery Send-out** by the **Delivery Team** without **Shipment Evidence**; it can be closed only by admin after at least tracking or one delivery evidence photo is recorded.
 - **Order Completion** happens when all required Order Shipments are closed; **Financial Follow-up** is separate.
-- A **Service Case** may create a **Service Shipment** but does not reopen or change the original Order.
+- A **Service Case** may reference a **Customer** or **Order** for context, and may create a **Service Shipment**, but it does not reopen, close, edit, or recalculate the referenced Order. The referenced Order also does not control the Service Case's status.
 - **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** in the first scope.
 - A **Rak Samuk Worker** can see only their assigned work and limited own-payment information.
+- **Rak Samuk Return** always sends the Job to **Waiting for Coloring Intake** in the starting workflow.
 - A **Payment Voucher** is issued only after payment is confirmed and receives a monthly running PV number.
 - A **Review Album** can link to zero or many SKU Variants and optionally to one Customer or Order.
 - **Product Settings** contains controlled product lists for categories, tags, colors, patterns, and decoration values.
@@ -446,6 +501,18 @@ Explicitly outside the starting scope:
 > **Dev:** "Can a Production prototype use the same Job screen?"
 > **Domain expert:** "Yes. It is a JOB-P. The workshop sees the same work card shape. If it is tied to a SKU, finishing it increases stock; if it is a prototype, it can simply become Done."
 
+> **Dev:** "If the delivery address in a Shipment is different from the Customer's default address, do we rewrite the Customer?"
+> **Domain expert:** "No. The Shipment keeps its own snapshot. If it looks like a real alternate address and the Customer has fewer than three saved addresses, ask whether to save it as a secondary Address Entry."
+
+> **Dev:** "Should a VIP tier discount rewrite old Orders when the setting changes?"
+> **Domain expert:** "No. New Orders can start with the current tier discount, but old Orders keep the discount snapshot used at creation."
+
+> **Dev:** "If admin changes a Customer name or primary phone later, should old Orders change?"
+> **Domain expert:** "No. Customer Detail shows the latest Customer data, but confirmed Orders keep their own snapshots."
+
+> **Dev:** "Does the Delivery Team need Tracking or a photo before pressing `ส่งออกแล้ว`?"
+> **Domain expert:** "No. `ส่งออกแล้ว` is only the delivery handoff. Admin records Tracking or a delivery photo later before closing the Shipment."
+
 ## Flagged ambiguities
 
 - "Job" was used to mean both customer custom work and production custom work. Resolved: use **Job** as the shared custom work unit with **Job Source Type** and prefixes **JOB-O** / **JOB-P**.
@@ -467,3 +534,11 @@ Explicitly outside the starting scope:
 - "Material" was at risk of becoming a full warehouse/BOM system. Resolved: first scope uses **Light Material Stock** for easy-to-count materials, with purchase/receipt/adjustment, but no full material master, no automatic Job consumption, and no automatic Expense creation.
 - "รูปรีวิว" could be mistaken for product images or a media library. Resolved: **Review Album** is a separate review image grouping; there is no central media library in the starting scope.
 - "Hold" and "รอวัตถุดิบ" were both used for blocked work. Resolved: **Hold** is a deliberate admin pause; **Waiting for Materials** is a department material blocker.
+- "Level ลูกค้า" could mean a free tag or a controlled level. Resolved: **Customer Tier** is the controlled broad customer level; **Customer Tag** is a CRM label with no Order logic.
+- "Shipment address" sounded like it might update the Customer address book. Resolved: a **Shipment** stores a recipient/address snapshot; saving it as a secondary **Address Entry** requires an explicit user choice.
+- "`ส่งออกแล้ว`" sounded like final Shipment proof/close. Resolved: **Delivery Send-out** is the Delivery Team handoff without required proof; **Shipment Evidence** is captured by admin before Shipment close.
+- "`รับงานรักสมุกกลับ`" sounded like it might return to any prior or selected department. Resolved: **Rak Samuk Return** always routes to **Waiting for Coloring Intake** in the starting workflow.
+- "Facebook name" sounded like a one-off field. Resolved: use **Customer Social Contact** so Facebook is the first row and other platforms can be added later.
+- "ลูกค้าส่ง" and wholesale pricing were considered for Customer Tier. Resolved: wholesale is outside the starting scope; Customer Tier keeps only simple retail/VIP warning levels and optional percentage discounts.
+- "Private CRM Note" was deferred to avoid permission-rule complexity in the starting Customer/CRM scope. Resolved: use normal **CRM Notes** only for now.
+- "Activity sort" for Customer list would require deeper backend activity tracking. Resolved: default Customer list sorting uses **Customer Code**.

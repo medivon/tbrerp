@@ -139,7 +139,7 @@ Rules:
 - `รายการต้องจัดส่งวันนี้` is a delivery work screen for released Shipments due today or without delivery date; Admin may view it, but creation controls do not belong there.
 - `รายการรอวันจัดส่ง` is a delivery work screen for released future-date Shipments.
 - `ยืนยันการจัดส่ง` dashboard count uses number of shipment rounds.
-- Admin creates and confirms shipment rounds; delivery team marks sent and adds required evidence.
+- Admin creates and confirms shipment rounds; delivery team marks sent, while admin records required tracking/evidence before closing.
 
 ### สินค้า / สต๊อก
 
@@ -169,15 +169,23 @@ Rules:
 
 Purpose:
 
-- Customer profile, CRM notes, address/recipient history, order history, and service history.
+- Customer search/list, Customer profile, CRM notes, address list, order history, service history, and Customer Sales Summary without entering the Order flow.
 
 Expected subcategories:
 
 - Customer search
 - Customer profile
 - CRM Note Timeline
-- Address / Recipient History
+- Address list
 - Service Case History
+
+Rules:
+
+- Customer List row action is `เปิดลูกค้า`; creating Orders happens from Customer Detail or the Order module.
+- Customer Detail is a single read-first page ordered as Summary, Address, CRM Notes, Order History, and Service Case History.
+- `สร้างออเดอร์` from Customer Detail opens Order Create/Edit with the Customer and default Address Entry preselected.
+- Deactivated Customers remain historical but are hidden from Order Create selection and cannot be edited until reactivated.
+- Service Case History opens independent after-sales records. A Service Case may reference an Order for context only; it does not change Order status, totals, shipment completion, or cancellation state, and Order changes do not change the Service Case.
 
 ### รายจ่าย
 

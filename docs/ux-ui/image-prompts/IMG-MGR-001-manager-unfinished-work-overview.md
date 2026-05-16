@@ -6,7 +6,7 @@ Create a low-fidelity desktop/tablet wireframe for the Manager Unfinished Work O
 
 ## 2. High-fidelity UI mockup prompt
 
-Create a high-fidelity desktop/tablet manager overview UI for a Thai furniture ERP. Inherit the approved Admin Dashboard app shell: THAIBORAN sidebar with `แดชบอร์ด`, `ออเดอร์`, `งานสั่งทำ / ผลิต`, `รอบจัดส่ง`, `สินค้า / สต๊อก`, `ลูกค้า / CRM`, `รายจ่าย`, `ตั้งค่า`; top bar with page title, date, user avatar, user name/role, and account menu. Highlight `งานสั่งทำ / ผลิต` as active. Preserve the approved visual system: quiet operational style, dense but readable layout, white cards, compact chips, restrained colors, dark navy count typography, and clear Thai labels. Title `ภาพรวมงานค้าง`. Show KPI cards for unfinished jobs, urgent jobs, old jobs, and near-delivery jobs. Include toggles `ทั้งหมด`, `งานลูกค้า`, `ผลิตเข้าสต๊อก`. Main table shows Job ID, source label, work name, department location, status, urgent chip, delivery date, total Job age, and department age. Use examples like `JOB-O-2568-0042 / ตู้โชว์ไม้สักแกะลาย / ฝ่ายสี / งานด่วน / อีก 3 วัน`.
+Create a high-fidelity desktop/tablet manager overview UI for a Thai furniture ERP. Inherit the approved Admin Dashboard app shell: THAIBORAN sidebar with `แดชบอร์ด`, `ออเดอร์`, `งานสั่งทำ / ผลิต`, `รอบจัดส่ง`, `สินค้า / สต๊อก`, `ลูกค้า / CRM`, `รายจ่าย`, `ตั้งค่า`; top bar with page title, date, user avatar, user name/role, and account menu. Highlight `งานสั่งทำ / ผลิต` as active. Preserve the approved visual system: quiet operational style, dense but readable layout, white cards, compact chips, restrained colors, dark navy count typography, and clear Thai labels. Title `ภาพรวมงานค้าง`. Show KPI cards for unfinished jobs, urgent jobs, material blockers, old jobs, and near-delivery jobs. Include toggles `งานลูกค้า` selected by default, `ทั้งหมด`, and `ผลิตเข้าสต๊อก`. Main table is one priority-sorted list showing Job ID, source label, work name, department location, status, urgent chip, delivery date, total Job age, and department age. Include a right side drawer for the selected row with timeline preview and action `ตั้งงานด่วน`. Use examples like `JOB-O-2568-0042 / ตู้โชว์ไม้สักแกะลาย / ฝ่ายสี / รอวัตถุดิบ / งานด่วน / อีก 3 วัน`.
 
 ## 3. Thai UI labels to preserve
 
@@ -36,10 +36,10 @@ Create a high-fidelity desktop/tablet manager overview UI for a Thai furniture E
 - Active sidebar item: `งานสั่งทำ / ผลิต`.
 - Header with date/time and summary counts.
 - KPI strip for unfinished, urgent, old, near delivery, bottleneck.
-- Work type toggles: all/customer/production.
+- Work type toggles: customer selected by default, all, production.
 - Sortable table as main content.
-- Side panel or drawer for selected Job summary and timeline preview.
-- Default visual priority: urgent, nearest delivery date, oldest total Job age, longest department age.
+- Side panel or drawer for selected Job summary, timeline preview, and `ตั้งงานด่วน`.
+- Default visual priority: urgent, `รอวัตถุดิบ`, nearest delivery date, oldest total Job age, longest department age.
 
 ## 5. Components to include
 

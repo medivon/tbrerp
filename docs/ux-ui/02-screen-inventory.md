@@ -140,7 +140,7 @@ Design status:
 - Device target: desktop
 - Design status: ready
 - Main data objects: Payment Term, Payment Record, Shipment COD, Financial Follow-up, Order
-- Main actions: Review follow-up item, open related Order or Shipment.
+- Main actions: Review follow-up item, open related Order or Shipment, record payment evidence or note, close follow-up when resolved.
 - Related source docs: `docs/ux-ui/screens/SCR-ADM-007-cod-payment-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-007-cod-payment-follow-up-queue.md`; `docs/ux-ui/mockups/SCR-ADM-007-cod-payment-follow-up-queue/SCR-ADM-007-approved.png`; `docs/ux-ui/01-flow-map.md` F01/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-008 - Draft Order Queue
@@ -198,8 +198,8 @@ Note:
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Customer, Customer phone, Address Entry
-- Main actions: Search Customer, show all matching results even if duplicate-looking records exist, select Customer, create quick Customer if not found.
+- Main data objects: Customer, Customer Primary Phone, Customer Social Contact, Customer Tier, Customer Tier Discount, Address Entry, Customer Sales Summary
+- Main actions: Search active Customers only, show all matching active Customers even if duplicate-looking records exist, indicate what matched, select Customer, create Customer with complete Order-required data if not found.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-003 - Address Entry Select / Create
@@ -216,7 +216,7 @@ Note:
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Address Entry, Recipient, Customer, Order Recipient Detail
-- Main actions: Default to the Customer primary address, change delivery address when multiple addresses exist, create a new address, optionally save a new address back to Customer only when explicitly checked.
+- Main actions: Default to the Customer primary address, change delivery address when multiple addresses exist, create a new structured Order recipient/address snapshot, optionally save a new or edited address back to Customer only when explicitly checked and Customer has fewer than 3 saved addresses.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F02/F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-004 - Order Review / Create Order
@@ -498,7 +498,7 @@ Note:
 - Related flow IDs: `F04`, `F05`, `F06`
 - Priority: `P0`
 - Device target: tablet / mobile
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Delivery Date, Activity Log
 - Main actions: `รับงาน`, `รอวัตถุดิบ`, `ส่งไปรักสมุก`, `รับเข้าโรงงานสี`, `งานเสร็จ/พร้อมส่ง`.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F04/F05/F06; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
@@ -551,7 +551,7 @@ Note:
 - Related flow IDs: `F05`
 - Priority: `P0`
 - Device target: desktop / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Rak Samuk Work, Rak Samuk Worker, Job
 - Main actions: Select worker, send work.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
@@ -568,9 +568,9 @@ Note:
 - Related flow IDs: `F05`
 - Priority: `P0`
 - Device target: mobile / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Rak Samuk Work, Job, Department Instruction Images, Rak Samuk Standard Rate
-- Main actions: Open assigned work, view own price where allowed, propose price only when missing.
+- Main actions: Open assigned work, view own price on card/detail where allowed, propose price only when missing.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### RSK-004 - Missing-price Proposal
@@ -613,15 +613,15 @@ Note:
 - Screen name: Receive Rak Samuk Work Back
 - Thai UI label: `รับงานรักสมุกกลับ`
 - Primary actor: Internal staff
-- Purpose: Receive outsource work back and return it to internal workflow.
+- Purpose: Receive outsource work back and send it to `รอรับเข้าโรงงานสี`.
 - Entry point: Rak Samuk Work detail / internal outsource queue.
-- Exit point: Next internal workflow queue.
+- Exit point: `รอรับเข้าโรงงานสี`.
 - Related flow IDs: `F05`
 - Priority: `P0`
 - Device target: desktop / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Rak Samuk Work, Job, Activity Log
-- Main actions: Confirm received back, route to next internal queue.
+- Main actions: Confirm received back; system routes to `รอรับเข้าโรงงานสี` with no P0 destination picker.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-007 - Rak Samuk Worker History
@@ -772,18 +772,18 @@ Note:
 - Primary actor: Delivery Team
 - Purpose: Entry point for released Shipments assigned to delivery work.
 - Entry point: Delivery Team login/navigation.
-- Exit point: `รายการต้องจัดส่งวันนี้` or `รายการรอวันจัดส่ง`.
+- Exit point: `รายการต้องจัดส่งวันนี้`, `รายการรอวันจัดส่ง`, or `ส่งออกแล้ววันนี้`.
 - Related flow IDs: `F07`
 - Priority: `P0`
 - Device target: tablet / mobile
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date
-- Main actions: Open today list, open waiting-date list, open released Shipment for send-out work.
+- Main actions: Open today list, open waiting-date list, open same-day sent-out history, mark one Shipment sent out, bulk-mark today's/no-date Shipments sent out.
 - Related source docs: `docs/ux-ui/screens/SCR-DEL-001-delivery-dashboard.md`; `docs/ux-ui/image-prompts/IMG-DEL-001-delivery-dashboard.md`; `docs/ux-ui/01-flow-map.md` F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 Note:
 
-- Mobile/tablet delivery structure is intentionally deferred until the mobile app shell is designed.
+- Delivery uses a simple worker shell on tablet/mobile, not the desktop admin shell.
 
 ### DLV-002 - Today Delivery List
 
@@ -797,9 +797,9 @@ Note:
 - Related flow IDs: `F07`
 - Priority: `P0`
 - Device target: tablet / mobile
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Shipment, Recipient, Address Snapshot, Carrier
-- Main actions: Open Shipment.
+- Main actions: Review short row/card summary, open Shipment detail, mark one row sent out, select rows for bulk `บันทึกว่าส่งออกแล้ว`.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### DLV-003 - Waiting-date Delivery List
@@ -814,27 +814,44 @@ Note:
 - Related flow IDs: `F07`
 - Priority: `P0`
 - Device target: tablet / mobile
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date
-- Main actions: Open Shipment.
+- Main actions: Review future-date Shipments and open Shipment detail; bulk send-out is not available here.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
-### DLV-004 - Delivery Shipment Detail / Evidence
+### DLV-004 - Delivery Shipment Detail / Optional Photo
 
 - Screen ID: `DLV-004`
-- Screen name: Delivery Shipment Detail / Evidence
+- Screen name: Delivery Shipment Detail / Optional Photo
 - Thai UI label: `รายละเอียดรอบจัดส่ง`
 - Primary actor: Delivery Team
-- Purpose: Show delivery-only Shipment details and capture evidence before marking sent.
+- Purpose: Show delivery-only Shipment details and optionally capture delivery photos before or while marking sent.
 - Entry point: Today Delivery List or Waiting-date Delivery List.
 - Exit point: `ส่งออกแล้ว`.
 - Related flow IDs: `F07`, `F08`
 - Priority: `P0`
 - Device target: tablet / mobile
-- Design status: needs decision
-- Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, Shipment Evidence
-- Main actions: Review delivery data, add tracking or `รูปหลักฐานจัดส่ง`, add note, mark `ส่งออกแล้ว`.
+- Design status: ready
+- Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, optional Shipment Evidence
+- Main actions: Review delivery data, add optional `รูปหลักฐานจัดส่ง`, add note, mark `ส่งออกแล้ว`; Tracking is not shown in Delivery Team UI.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### DLV-005 - Same-day Sent-out History
+
+- Screen ID: `DLV-005`
+- Screen name: Same-day Sent-out History
+- Thai UI label: `ส่งออกแล้ววันนี้`
+- Primary actor: Delivery Team
+- Purpose: Let Delivery Team verify which Shipments were already marked `ส่งออกแล้ว` today.
+- Entry point: Delivery Dashboard.
+- Exit point: Delivery Dashboard or Delivery Shipment Detail in read-only sent-out state.
+- Related flow IDs: `F07`
+- Priority: `P0`
+- Device target: tablet / mobile
+- Design status: ready
+- Main data objects: Shipment, Activity Log, Recipient, Carrier
+- Main actions: Review same-day sent-out Shipments; no full search/history in P0.
+- Related source docs: `docs/ux-ui/01-flow-map.md` F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ## 9. Manager
 
@@ -844,15 +861,15 @@ Note:
 - Screen name: Management Overview
 - Thai UI label: `ภาพรวมงานค้าง`
 - Primary actor: Manager / Owner
-- Purpose: Show unfinished Jobs by department, urgency, age, and source type.
+- Purpose: Show unfinished customer Jobs by default, with filters for all/production work, prioritizing urgency, material blockers, delivery proximity, and age.
 - Entry point: Manager navigation.
 - Exit point: Job Detail.
 - Related flow IDs: `F09`
 - Priority: `P0`
 - Device target: desktop / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Job, Job Source Type, Department, Urgent Label, Delivery Date, Activity Log
-- Main actions: Review unfinished work, filter all/customer/production work, sort by priority signals, open Job.
+- Main actions: Review default `JOB-O / งานลูกค้า` table, filter all/customer/production work, sort by priority signals, open side drawer, set/change `งานด่วน` from the drawer, open Job.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F09; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### MGR-002 - Manager Job Detail / Timeline
@@ -891,6 +908,23 @@ Note:
 
 ## 10. Supporting Modules
 
+### SUP-000 - Customer Search / List
+
+- Screen ID: `SUP-000`
+- Screen name: Customer Search / List
+- Thai UI label: `ลูกค้า / CRM`
+- Primary actor: Admin / CRM-permission user
+- Purpose: Search, filter, and open Customers without entering the Order flow.
+- Entry point: Sidebar `ลูกค้า / CRM`.
+- Exit point: Customer Detail, Order Create/Edit with Customer preselected.
+- Related flow IDs: `F02`
+- Priority: `P1`
+- Device target: desktop / tablet
+- Design status: ready
+- Main data objects: Customer, Customer Primary Phone, Customer Social Contact, Customer Tier, Customer Sales Summary, Address Entry, Customer Tag, Customer Status
+- Main actions: Instant-search Customer, sort by Customer Code, filter by Customer Tier/province/total sales/status/tag, open Customer with row action `เปิดลูกค้า`.
+- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
 ### SUP-001 - Customer Detail
 
 - Screen ID: `SUP-001`
@@ -904,9 +938,9 @@ Note:
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Customer, Address Entry, CRM Note, Order, Service Case, Review Album
-- Main actions: View Customer, open address list, view history, add CRM note where allowed.
-- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Main data objects: Customer, Customer Primary Phone, Customer Social Contact, Customer Tier, Customer Tier Discount, Customer Sales Summary, Customer Tag, Address Entry, CRM Note, Order, Service Case, Review Album
+- Main actions: View Customer, edit profile where allowed, manage limited address list, view `ยอดซื้อรวม` and history, add CRM note from CRM section where allowed, open Order Create/Edit with Customer/default address preselected, open Service Case creation with Customer linked.
+- Related source docs: `CONTEXT.md`; `docs/adr/0014-service-case-is-independent-after-sales-record.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-002 - CRM Note Timeline
 
@@ -921,7 +955,7 @@ Note:
 - Priority: `P2`
 - Device target: desktop / tablet
 - Design status: later
-- Main data objects: CRM Note, Private CRM Note, Customer, image attachment
+- Main data objects: CRM Note, Customer, Order reference, image attachment
 - Main actions: View timeline, add note where allowed.
 - Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
@@ -1203,7 +1237,7 @@ Note:
 - Screen name: Service Case
 - Thai UI label: `งานบริการหลังการขาย`
 - Primary actor: Admin
-- Purpose: Support Service Shipments where ready Service Case items enter ready-to-ship flow.
+- Purpose: Record independent after-sales events such as refund notes, returned goods, or goods sent back, and support Service Shipments where ready Service Case items enter ready-to-ship flow without affecting any referenced Order.
 - Entry point: Customer Detail or service navigation.
 - Exit point: Ready-to-Ship Queue / Service Shipment.
 - Related flow IDs: `F06`
@@ -1211,5 +1245,5 @@ Note:
 - Device target: desktop / tablet
 - Design status: later
 - Main data objects: Service Case, Service Shipment, Customer, Shipment
-- Main actions: View service case, mark ready to send back.
-- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Main actions: View service case, record after-sales event, mark ready to send back, create Service Shipment where needed, close case.
+- Related source docs: `CONTEXT.md`; `docs/adr/0014-service-case-is-independent-after-sales-record.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting

@@ -34,9 +34,10 @@ The Rak Samuk Worker Work List shows an outsource worker only their assigned Rak
 - Header: `งานที่ต้องทำ`, worker name/account, count of assigned active work.
 - Main content: mobile-first list of assigned work cards.
 - Work card: main image, work name, quantity, Rak Samuk instruction summary, urgent chip if any, own price/missing-price state.
+- Limited work detail: larger images, full Rak Samuk instructions, quantity, and own price/missing-price state.
 - Card action: open work detail or `แจ้งราคา` when missing price.
 - Secondary tab/link: `ประวัติการทำงาน`.
-- No sidebar on mobile; use simple bottom or top navigation.
+- Use the simple mobile worker shell; no desktop admin sidebar on mobile.
 
 ## 7. Main Components
 
@@ -110,6 +111,7 @@ Show `ยังไม่มีงานที่ต้องทำ` with a secon
 
 - Mobile-first: most Rak Samuk workers will likely use a phone.
 - Keep the screen very simple: image, instruction, quantity, own price/missing price.
+- Show own price on both the list card and limited detail view.
 - Use `ไม่มีราคา / ให้แจ้งราคา` as an obvious action state.
 - Avoid internal words like Order ID, Customer, payment audit, sales price, or workflow routing.
 - Do not show assignment controls; the worker only views assigned work and proposes price when allowed.
@@ -121,4 +123,3 @@ Create a mobile work list UI for an outsourced Thai Rak Samuk craft worker. Titl
 ## 16. Open UX Questions
 
 - None blocking for this worker list.
-
