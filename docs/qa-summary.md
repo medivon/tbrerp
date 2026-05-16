@@ -689,16 +689,70 @@ A: Split Production Lots, not one huge Job.
 A: Yes.
 
 **Q: Why Production Batch + Lot?**
-A: Large production quantity can be split by actual routing, outsource, receiving, payout, and stock receipt.
+A: Large production quantity can be split by actual routing, outsource, receiving, payout, and the final stock increase when each SKU-tied Job is completed.
 
 **Q: Can Production use same Job card shape?**
 A: Yes, if it needs custom instructions, but with clear `JOB-P` and `ผลิตเข้าสต๊อก` label.
 
 **Q: What happens to JOB-P tied to SKU when done?**
-A: Goes to `รอรับเข้าสต๊อก`.
+A: It increases Ready Stock immediately by the JOB-P `จำนวนผลิต` when production is marked complete. Thai UI may use the same `รับเข้าสต๊อก` / `เข้าสต๊อก` wording, but domain/code should distinguish the Product Ready Stock update from Material Stock Receipt.
 
 **Q: What happens to JOB-P custom/prototype not tied to SKU?**
 A: It can simply become Done.
+
+**Q: Does `สร้างงานผลิต` have drafts?**
+A: Yes. `ร่างงานผลิต` is saved only when the user chooses `บันทึกร่าง` or `ออกและบันทึก`. It has a `PROD-DRAFT-xxxx` number and does not create `JOB-P`, enter department queues, affect stock, or enter active production reports.
+
+**Q: Where do production drafts appear?**
+A: Under `งานสั่งทำ / ผลิต` as `ร่างงานผลิต`, editable by creator, same-permission users, and higher-permission users.
+
+**Q: What happens to a production draft after JOB-P is created?**
+A: It becomes converted/archived/read-only and disappears from active `ร่างงานผลิต`.
+
+**Q: Does creating production need a Review screen?**
+A: Yes. Pressing `สร้างงานผลิต` opens `ตรวจสอบก่อนสร้างงานผลิต`; `ยืนยันสร้างงานผลิต` creates `JOB-P` and opens the new Job Detail.
+
+**Q: What does Production Review show?**
+A: The entered production data and downstream result: `จะสร้าง JOB-P`, starting queue, and if SKU-tied, stock will increase when the Job is completed.
+
+**Q: What is required for `ผลิตจาก SKU` before Review?**
+A: SKU Variant, production quantity, and work name/main detail. Images and department instructions can fall back from SKU Variant/Product Model.
+
+**Q: What is required for `งานผลิตพิเศษ` before Review?**
+A: Work name, production quantity, main detail, and either a main image or enough description for the workshop.
+
+**Q: What is required to save a production draft?**
+A: In `ผลิตจาก SKU`, SKU must be selected. In `งานผลิตพิเศษ`, at least work name is required.
+
+**Q: What is the default production quantity?**
+A: `1`, editable by the user.
+
+**Q: Does Production Batch/Lot lock production quantity?**
+A: No. Batch/Lot may be shown as reference context, but `สร้างงานผลิต` still lets the user enter quantity.
+
+**Q: What starting queue options exist for JOB-P?**
+A: Starting queue is required and defaults to `ช่างไม้`. Options are `ช่างไม้`, `รอรับเข้าโรงงานสี`, and `ส่งไปรักสมุก`.
+
+**Q: What happens if JOB-P starts at coloring?**
+A: It enters `รอรับเข้าโรงงานสี` first, then authorized coloring users receive it into active Coloring work.
+
+**Q: What happens if JOB-P starts at Rak Samuk?**
+A: It enters `รอระบุ/ส่งรักสมุก` so a permitted user can choose the Rak Samuk Worker.
+
+**Q: Does `ขายได้ 0` block production from SKU?**
+A: No. `หมด` is context for producing more stock, not a blocker.
+
+**Q: What if the selected SKU/color is disabled after draft save?**
+A: Review blocks confirmation until the user chooses another SKU or reopens the color where allowed.
+
+**Q: How do we handle damaged or incomplete production quantities?**
+A: The first workflow does not model defect or partial receipt. The team repeats production until the JOB-P can be completed, then stock increases by the full production quantity.
+
+**Q: How should multi-color or multi-design production be entered?**
+A: Create separate `JOB-P` records per SKU/color/design and quantity.
+
+**Q: Where do edits happen after JOB-P exists?**
+A: Job Detail / Revision, not the production create/draft screen.
 
 **Q: Is there a separate Custom Product entity?**
 A: No. Job itself carries custom details. SKU may reference Job for traceability only.
@@ -996,7 +1050,126 @@ A: It can suggest active/moving and positive-stock items.
 **Q: Are Stock and Expense linked automatically?**
 A: No. Separate systems.
 
-## 21.1 Light Material Stock / Material Boundary
+## 21.1 Product Stock In / Count / Adjustment
+
+**Q: Is product stock separate from material stock?**
+A: Yes. `สต๊อกสินค้า / Ready Stock` and `สต๊อกวัสดุ / Light Material Stock` are separate. Thai UI may reuse words like `รับเข้า` or `เข้าสต๊อก`, but domain/code must distinguish product stock receipt from material stock receipt.
+
+**Q: Should product stock have a stock-in document?**
+A: Yes. Use `ใบสั่งซื้อสินค้า` for stock-in with a purchase document. Direct manual correction without a purchase document uses `ปรับยอดสต๊อกสินค้า`.
+
+**Q: Does a completed SKU-tied JOB-P enter product stock receipt?**
+A: No. A SKU-tied `JOB-P` still increases Ready Stock immediately when marked complete.
+
+**Q: What statuses does Product Purchase Order need?**
+A: Document statuses are `รอรับเข้า`, `รับเข้าบางส่วน`, `รับเข้าสต๊อกแล้ว`, `รับเข้าสต๊อกยังไม่ครบ`, and `ยกเลิก`. SKU lines also have their own receipt status, so one document can contain fully received and incomplete lines.
+
+**Q: Does Product Purchase Order need a draft state?**
+A: No. Once required fields are complete, it is created as `รอรับเข้า`.
+
+**Q: What fields are required to create a Product Purchase Order?**
+A: Date, Supplier/Store, at least one active SKU Variant, and ordered quantity. Purchase price/cost per line is optional.
+
+**Q: Can one Product Purchase Order include many SKUs/colors?**
+A: Yes, many SKU Variants can be in one document.
+
+**Q: Is Supplier linked to products/SKUs?**
+A: No required relation in the starting workflow. Supplier/Store master can be shared with material purchase, but Product Purchase Order SKU picker can choose any active SKU.
+
+**Q: Should Supplier data be snapshotted on Product Purchase Order?**
+A: Yes. Snapshot name/contact/address/notes so old documents stay stable if the supplier master changes.
+
+**Q: Can product receipt be partial?**
+A: Yes. Product Purchase Order can receive partially per line and then continue as `รับเข้าบางส่วน` until all quantities are received or remaining quantities are closed.
+
+**Q: How does receipt entry work?**
+A: User can mark a line as fully received or enter actual received quantity per SKU line.
+
+**Q: Can receipt quantity exceed the remaining ordered quantity?**
+A: No. If goods arrive over the ordered quantity, receive the original document up to its remaining quantity. Any extra is handled by the user creating a new Product Purchase Order; the system does not store a pending over-delivery record.
+
+**Q: Can Product Purchase Order quantities be edited after partial receipt?**
+A: Only unreceived remaining quantities can be edited, and ordered quantity cannot be reduced below already received quantity.
+
+**Q: What if goods arrive incomplete and the team will not wait for the rest?**
+A: Use action `ปิดยอดที่เหลือ` on the affected SKU line with a required reason. The terminal line/document status is `รับเข้าสต๊อกยังไม่ครบ`.
+
+**Q: What standard reasons exist for `ปิดยอดที่เหลือ`?**
+A: `สินค้าเสียหาย`, `ผู้ขายส่งไม่ครบ`, `ยกเลิกจำนวนที่เหลือ`, `ปรับยอดแล้ว`, and `อื่น ๆ`; note is optional unless the reason needs explanation.
+
+**Q: What if reason `ปรับยอดแล้ว` is used?**
+A: Require a linked Stock Count / Stock Adjustment movement for the same SKU. The linked positive quantity must be at least the remaining quantity being closed.
+
+**Q: Can an incomplete Product Purchase Order line be reopened or received more later?**
+A: No after the line is terminal `รับเข้าสต๊อกยังไม่ครบ`; further receipt requires a new Product Purchase Order, unless the original document is still open and the user has not closed the remaining quantity yet.
+
+**Q: What if a receiver saved the wrong receipt quantity?**
+A: Do not edit the original Product Stock Receipt. Correct stock with `ปรับยอดสต๊อกสินค้า` / Stock Movement. If missing goods later arrive because the receiver over-recorded earlier, do not receive them again on the old document.
+
+**Q: What if receipt was under-recorded and the document is still open?**
+A: User can receive the additional quantity in the same Product Purchase Order. If the team already handled the difference through adjustment/internal communication, close the remaining line with reason `ปรับยอดแล้ว`.
+
+**Q: If an incorrect over-receipt made the document `รับเข้าสต๊อกแล้ว`, should the document roll back?**
+A: No. Keep the document status and correct stock through adjustment/movement.
+
+**Q: Can a Product Purchase Order be cancelled before receiving anything?**
+A: Yes, without requiring a reason. Cancelled documents are terminal.
+
+**Q: Can Product Purchase Order be printed/exported after partial receipt?**
+A: Yes, in every status, with the current status clearly marked.
+
+**Q: When is Payment Audit Follow-up created for Product Purchase Order?**
+A: Only when the full Product Purchase Order is received as `รับเข้าสต๊อกแล้ว`. Before creating it, validate every line has `รับเข้าแล้ว = จำนวนสั่งซื้อ` and no line is `รับเข้าสต๊อกยังไม่ครบ`; partial receipt and incomplete terminal receipt do not create Payment Audit Follow-up.
+
+**Q: What if Payment Audit Follow-up was already created and receipt is later found wrong?**
+A: Do not auto-edit or cancel the audit record. Finance/audit handles it from the full purchase document plus later Stock Movements.
+
+**Q: What does Payment Audit reference?**
+A: The full purchase document, not individual receipt rounds.
+
+**Q: Where does product receipt history show?**
+A: In the Product Purchase Order as receipt rounds and in SKU Stock Movement history.
+
+**Q: What product Stock Movement types exist first?**
+A: `รับเข้าจากใบสั่งซื้อ`, `ผลิตเข้าสต๊อก`, `ปรับยอด`, `จองจากออเดอร์`, `ยกเลิก/คืนจอง`, and `ยืนยันสต๊อกถูกต้อง`.
+
+**Q: How should Product Stock Adjustment work?**
+A: User enters the actual physical `มีอยู่ในร้าน`, and the system calculates the difference.
+
+**Q: What UI name should product adjustment use?**
+A: `ปรับยอดสต๊อกสินค้า`, with reason/mode `กระทบยอด` when needed.
+
+**Q: What should Stock Count show to counters?**
+A: Show only `มีอยู่ในร้าน` and `นับจริง`. Hide `จองแล้ว` and `ขายได้` so counters count physical stock only.
+
+**Q: What if counted Stock On Hand is less than Reserved Stock?**
+A: Save the physical truth. `ขายได้` may become negative as a sales/admin warning after save; stock counters do not need to solve reservations while counting.
+
+**Q: Should Stock Count be a separate session?**
+A: Yes. A count round can include many SKU Variants and has statuses `กำลังนับ`, `นับเสร็จแล้ว`, and `ยกเลิก`.
+
+**Q: How are SKUs added to a Stock Count round?**
+A: User can select many SKU/color items manually or start from filters and add them into the count.
+
+**Q: What happens when a Stock Count closes?**
+A: Create Stock Movement entries for every counted SKU.
+
+**Q: What if counted quantity equals system quantity?**
+A: Create a zero-difference movement/status `ยืนยันสต๊อกถูกต้อง`.
+
+**Q: What if counted quantity differs?**
+A: Create an adjustment movement. Reason is required, note optional.
+
+**Q: What standard adjustment reasons exist?**
+A: `ยืนยันสต๊อกถูกต้อง`, `นับสต๊อกจริง`, `สินค้าเสียหาย`, `สูญหาย`, `พบสินค้าเพิ่ม`, and `อื่น ๆ`.
+
+**Q: Are evidence attachments required for Product Stock Adjustment?**
+A: No. They are optional.
+
+**Q: Can Stock Movement be edited after creation?**
+A: No. If wrong, create a new adjustment movement.
+
+## 21.2 Light Material Stock / Material Boundary
 
 **Q: Should material stock be a full Material Master?**
 A: No. Use `สต๊อกวัสดุแบบเบา` for easy-to-count internal materials only, such as color supplies, drawer rails, staples, and similar consumables.

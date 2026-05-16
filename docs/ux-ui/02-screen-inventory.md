@@ -352,16 +352,50 @@ Note:
 - Screen name: Production Job Entry
 - Thai UI label: `สร้างงานผลิต`
 - Primary actor: Admin / production-permission user
-- Purpose: Create production-source Job when internal Production needs work-card handling, from SKU-based production or custom/internal production.
-- Entry point: Production Batch / Production Lot workflow, Product Model Detail per-color production action, Product/SKU selection, or standalone internal production creation flow.
-- Exit point: Job Detail or production workflow.
-- Related flow IDs: `F09`
+- Purpose: Prepare a production-source Job when internal Production needs work-card handling, from SKU-based production or custom/internal production, before Production Review creates the real `JOB-P`.
+- Entry point: Production Batch / Production Lot workflow, Product Model Detail per-color production action, Product/SKU selection, standalone internal production creation flow, or active `ร่างงานผลิต`.
+- Exit point: Production Review, `ร่างงานผลิต` queue after save, or cancel.
+- Related flow IDs: `F10`
 - Priority: `P2`
 - Device target: desktop / tablet
 - Design status: ready
-- Main data objects: Job, SKU Variant, Product Model, optional Production Batch, optional Production Lot, Department Instruction Images
-- Main actions: Create `JOB-P`, select or prefill SKU Variant for `ผลิตจาก SKU`, switch to `งานผลิตพิเศษ` when needed, reset prefill context if another SKU or mode is selected, route production work.
+- Main data objects: Draft Production Job, SKU Variant, Product Model, optional Production Batch, optional Production Lot, Department Instruction Images
+- Main actions: Select or prefill SKU Variant for `ผลิตจาก SKU`, switch to `งานผลิตพิเศษ` when needed, set production quantity, choose starting queue, save draft, continue to Production Review.
 - Related source docs: `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-sku-selected.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-special-work.md`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-modal-approved.png`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-selected-approved.png`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-special-work-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### JOB-005 - Production Review / Create Production Job
+
+- Screen ID: `JOB-005`
+- Screen name: Production Review / Create Production Job
+- Thai UI label: `ตรวจสอบก่อนสร้างงานผลิต`
+- Primary actor: Admin / production-permission user
+- Purpose: Final review before issuing `JOB-P`, showing entered production detail and downstream result.
+- Entry point: Production Job Entry -> `สร้างงานผลิต`.
+- Exit point: Job Detail after `ยืนยันสร้างงานผลิต`, Production Job Entry after `กลับ`, or `ร่างงานผลิต` after `บันทึกร่าง`.
+- Related flow IDs: `F10`
+- Priority: `P2`
+- Device target: desktop / tablet
+- Design status: ready
+- Main data objects: Draft Production Job, Production Job, SKU Variant, Product Model, Department Instruction Images, Starting Queue
+- Main actions: Review production data, save draft, confirm `JOB-P` creation, route to starting queue.
+- Related source docs: `docs/ux-ui/screens/SCR-JOB-005-production-review-create-production-job.md`; `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### JOB-006 - Draft Production Queue
+
+- Screen ID: `JOB-006`
+- Screen name: Draft Production Queue
+- Thai UI label: `ร่างงานผลิต`
+- Primary actor: Admin / production-permission user
+- Purpose: List saved production drafts that have not become real `JOB-P` records.
+- Entry point: `งานสั่งทำ / ผลิต` -> `ร่างงานผลิต`.
+- Exit point: Production Job Entry continuation.
+- Related flow IDs: `F10`
+- Priority: `P2`
+- Device target: desktop / tablet
+- Design status: ready
+- Main data objects: Draft Production Job, SKU Variant, Product Model, Owner
+- Main actions: Search/open draft, continue draft, create new production work.
+- Related source docs: `docs/ux-ui/screens/SCR-JOB-006-draft-production-queue.md`; `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ## 4. Woodwork
 
@@ -967,48 +1001,82 @@ Note:
 - Primary actor: Admin / stock-permission user
 - Purpose: Support ready-stock reservation and ready-to-ship work using `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`.
 - Entry point: Order Line entry, SKU Variant Detail, stock navigation.
-- Exit point: Order Line detail, Ready-to-Ship Queue.
-- Related flow IDs: `F02`, `F06`
+- Exit point: Order Line detail, Ready-to-Ship Queue, Product Purchase Order, Stock Count, Stock Adjustment.
+- Related flow IDs: `F02`, `F06`, `F13`
 - Priority: `P1`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Ready Stock, SKU Variant, Order Line
-- Main actions: View stock availability and reservation state.
+- Main actions: View stock availability and reservation state, open product purchase order, open stock count, open stock adjustment, view movement history.
 - Related source docs: `docs/ux-ui/screens/SCR-SUP-006-ready-stock-view.md`; `docs/ux-ui/image-prompts/IMG-SUP-006-ready-stock-view.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-007 - Stock Count
 
 - Screen ID: `SUP-007`
 - Screen name: Stock Count
-- Thai UI label: `ตรวจนับสต๊อก`
+- Thai UI label: `ตรวจนับสต๊อกสินค้า`
 - Primary actor: Stock-permission user
-- Purpose: Support periodic SKU stock checking outside the core Job flow.
-- Entry point: Stock navigation.
-- Exit point: Stock Adjustment when correction is needed.
-- Related flow IDs: none
+- Purpose: Count actual physical `มีอยู่ในร้าน` for selected SKU Variants and create stock movements for every counted line.
+- Entry point: Ready Stock View, Stock navigation, SKU Variant Detail.
+- Exit point: Stock Adjustment movement history, Ready Stock View.
+- Related flow IDs: `F13`
 - Priority: `P2`
 - Device target: mobile / tablet
-- Design status: later
-- Main data objects: Stock Count, SKU Variant, Ready Stock
-- Main actions: Count stock, attach/check images where useful.
-- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Design status: ready
+- Main data objects: Stock Count, SKU Variant, Ready Stock, Stock Movement, attachment
+- Main actions: Create count round, add selected SKU Variants, enter actual counts, close count, create zero-difference and adjustment movements.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-007-stock-count.md`; `CONTEXT.md`; `docs/adr/0011-product-stock-receipts-and-counts.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-008 - Stock Adjustment
 
 - Screen ID: `SUP-008`
 - Screen name: Stock Adjustment
-- Thai UI label: `ปรับยอดสต๊อก`
+- Thai UI label: `ปรับยอดสต๊อกสินค้า`
 - Primary actor: Stock-permission user / manager
-- Purpose: Correct SKU stock with reason and log.
-- Entry point: Stock view, Stock Count, operational correction need.
-- Exit point: Updated stock visibility.
-- Related flow IDs: `F06`
+- Purpose: Correct product Stock On Hand by entering actual counted quantity and recording an immutable stock movement.
+- Entry point: Ready Stock View, SKU Variant Detail, Stock Count, operational correction need.
+- Exit point: Updated Ready Stock visibility and SKU Stock Movement history.
+- Related flow IDs: `F06`, `F13`
 - Priority: `P2`
 - Device target: desktop / tablet
-- Design status: later
-- Main data objects: Stock Adjustment, Ready Stock, SKU Variant, Management Log
-- Main actions: Enter adjustment, reason, and evidence where required.
-- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Design status: ready
+- Main data objects: Stock Adjustment, Ready Stock, SKU Variant, Stock Movement, Management Log, attachment
+- Main actions: Enter actual count, calculate difference, choose reason when different, attach optional evidence, save immutable movement.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-008-stock-adjustment.md`; `CONTEXT.md`; `docs/adr/0011-product-stock-receipts-and-counts.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### SUP-018 - Product Purchase Order
+
+- Screen ID: `SUP-018`
+- Screen name: Product Purchase Order
+- Thai UI label: `ใบสั่งซื้อสินค้า`
+- Primary actor: Product purchase/stock-permission user
+- Purpose: Prepare a finished-product purchase document, receive product stock partially by SKU line, and create Payment Audit Follow-up only after full receipt.
+- Entry point: Ready Stock View, Product/SKU Table, SKU Variant Detail, manual product purchase creation.
+- Exit point: Product Stock Receipt, Ready Stock View, Payment Audit Follow-up after full receipt.
+- Related flow IDs: `F13`
+- Priority: `P1`
+- Device target: desktop / tablet
+- Design status: ready
+- Main data objects: Product Purchase Order, Product Purchase Order Line, Supplier, SKU Variant, Product Stock Receipt, Stock Movement, attachment, Payment Audit Follow-up
+- Main actions: Create waiting document, print/export, edit unreceived quantities, receive full/partial quantities, close remaining line quantities with reason, cancel before receipt, view receipt rounds.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-018-product-purchase-order.md`; `CONTEXT.md`; `docs/adr/0011-product-stock-receipts-and-counts.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+
+### SUP-019 - Product Stock Receipt
+
+- Screen ID: `SUP-019`
+- Screen name: Product Stock Receipt
+- Thai UI label: `รับเข้าสินค้า`
+- Primary actor: Stock-permission user
+- Purpose: Record one receipt round for a Product Purchase Order and increase Ready Stock for the received SKU quantities.
+- Entry point: Product Purchase Order -> `รับเข้าสินค้า`.
+- Exit point: Product Purchase Order, Ready Stock View, SKU Stock Movement.
+- Related flow IDs: `F13`
+- Priority: `P1`
+- Device target: desktop / tablet / mobile
+- Design status: ready
+- Main data objects: Product Stock Receipt, Product Purchase Order, Product Purchase Order Line, SKU Variant, Ready Stock, Stock Movement, attachment
+- Main actions: Enter received quantities, mark lines fully received, save immutable receipt round, attach optional evidence, block quantities over remaining ordered quantity.
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-019-product-stock-receipt.md`; `CONTEXT.md`; `docs/adr/0011-product-stock-receipts-and-counts.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-015 - Material Stock
 

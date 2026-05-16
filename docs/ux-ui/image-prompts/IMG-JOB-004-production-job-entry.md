@@ -26,14 +26,14 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows, dark navy emphasis
 
 Screen purpose:
-Admin prepares one internal production item as a clear `JOB-P` work unit with images and department-specific instructions. The visible UI should make `ผลิตจาก SKU` and `งานผลิตพิเศษ` feel like separate modes, not a mixed form. This screen can open normally from production work, or with one SKU ย่อย prefilled from Product Detail.
+Admin prepares one internal production item before creating a real `JOB-P` work unit. Pressing `สร้างงานผลิต` opens `ตรวจสอบก่อนสร้างงานผลิต`; the real `JOB-P` is issued only after `ยืนยันสร้างงานผลิต`. The visible UI should make `ผลิตจาก SKU` and `งานผลิตพิเศษ` feel like separate modes, not a mixed form. This screen can open normally from production work, or with one SKU ย่อย prefilled from Product Detail.
 
 Header area:
 - Page title: สร้างงานผลิต
 - Context line: งานผลิตเข้าสต๊อก / เปิดจากสินค้าได้
-- Large chips: JOB-P, งานผลิต, ผลิตจาก SKU, รอเลือกสินค้า
+- Large chips: ร่างงานผลิต, งานผลิต, ผลิตจาก SKU, รอเลือกสินค้า
 - Primary button: สร้างงานผลิต
-- Secondary button: บันทึกไว้ก่อน
+- Secondary button: บันทึกร่าง
 
 Main layout:
 Use a clear two-column admin form. Main form on the left, readiness/source panel on the right.
@@ -50,6 +50,11 @@ Active `ผลิตจาก SKU` body before selection:
 - Center a prominent purple button: เลือกสินค้า
 - The empty card should not show custom production fields yet
 - Short compact chips are okay: ยังไม่ได้เลือกสินค้า, JOB-P, ผลิตจาก SKU
+
+Row card 1 after selection would include:
+- จำนวนผลิต default 1 ชิ้น
+- คิวเริ่มต้น selector default ช่างไม้
+- Starting queue options: ช่างไม้, รอรับเข้าโรงงานสี, ส่งไปรักสมุก
 
 Show SKU search modal open over the page:
 - Modal title: เลือกสินค้า
@@ -78,15 +83,17 @@ Title: ตรวจความพร้อม
 - Checklist:
   - เลือกสินค้า
   - ระบุจำนวนผลิต
+  - เลือกคิวเริ่มต้น
   - ตรวจรายละเอียดจาก SKU
   - เพิ่มหมายเหตุถ้าจำเป็น
 - Source summary:
   - แหล่งที่มา: งานผลิตเข้าสต๊อก
   - SKU เริ่มต้น: ยังไม่ได้เลือก
-  - รหัสงาน: จะสร้างหลังบันทึก
+  - รหัสร่าง: ยังไม่ได้บันทึก
+  - รหัสงาน: จะสร้างหลังยืนยัน
   - สถานะ: รอเลือกสินค้า
 - Primary action button repeated at bottom: สร้างงานผลิต
-  - Button should look disabled or secondary until SKU is selected
+  - Button should look disabled or secondary until SKU and starting queue are selected
 
 Visual rules:
 - Thai UI labels are primary
@@ -96,6 +103,8 @@ Visual rules:
 - Do not mix `ผลิตจาก SKU` and `งานผลิตพิเศษ` fields in one body
 - Do not show custom-production fields on the active `ผลิตจาก SKU` tab before choosing SKU
 - Do not use long explanatory helper text about automatic routing
+- Do not show a real `JOB-P` number before the Review confirmation
+- Do not imply that `สร้างงานผลิต` creates `JOB-P` directly; it opens Review first
 - Do not show a special back/cancel path to Product Detail when the screen was opened with SKU prefill
 - Use `ขายได้ X ชิ้น` and `หมด` for stock signals; do not use `คงเหลือ` or `พร้อมขาย`
 - Keep SKU หลัก and color / SKU ย่อย visible together in SKU search results

@@ -90,8 +90,8 @@ Product-level editing and color open/close decisions are owned by Product Model 
 | Manage Images | จัดการรูปสินค้า | Product permission | Opens SKU Image Groups in SKU Variant context. | No |
 | Create production | ผลิตเข้าสต๊อก / ผลิตสินค้าชิ้นนี้ | Product/production permission | Opens Production Job Entry with this SKU Variant prefilled. | No |
 | View stock | ดูสต๊อก | Stock permission | Opens Ready Stock View. | No |
-| Stock count | ตรวจนับสต๊อก | Stock permission | Opens Stock Count. | No |
-| Stock adjustment | ปรับยอดสต๊อก | Stock permission / manager | Opens Stock Adjustment with this SKU Variant preselected. | No |
+| Stock count | ตรวจนับสต๊อกสินค้า | Stock permission | Opens Stock Count. | No |
+| Stock adjustment | ปรับยอดสต๊อกสินค้า | Stock permission / manager | Opens Stock Adjustment with this SKU Variant preselected. | No |
 | Open related production | ดูงานผลิตที่เกี่ยวข้อง | Product/production permission | Opens related production list or job view. | No |
 
 ## 10. Status / Chips
@@ -103,7 +103,7 @@ Product-level editing and color open/close decisions are owned by Product Model 
 | Sold out | หมด | `ขายได้` is zero. | Warning/neutral chip. |
 | Negative stock | ขายได้ติดลบ | `ขายได้` is below zero. | Warning chip. |
 | In production | กำลังผลิต | Related production exists. | Secondary chip. |
-| Waiting receipt | รอรับเข้า | Completed production awaits stock receipt. | Secondary chip. |
+| Waiting receipt | รอรับเข้า | Thai UI stock wording; in domain/code, SKU-tied `JOB-P` completion updates Ready Stock directly. | Secondary chip. |
 
 ## 11. Empty State
 

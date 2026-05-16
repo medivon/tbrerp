@@ -145,8 +145,12 @@ A Job created from an Order Line and ending in shipment readiness.
 _Avoid_: Production Job
 
 **Production Job (JOB-P / ผลิตเข้าสต๊อกหรือผลิตทดลอง)**:
-A Job created from Production work and ending in stock receipt readiness or Done, depending on whether it is tied to a SKU.
+A Job created from Production work; when tied to a SKU Variant, completion increases Ready Stock by its production quantity, while custom/prototype work can end as Done without entering stock.
 _Avoid_: Order Job
+
+**Draft Production Job (ร่างงานผลิต)**:
+A saved unfinished production-entry record with `PROD-DRAFT` number that does not create a JOB-P, enter department queues, or affect stock.
+_Avoid_: Production Job, Production Batch, Draft Order
 
 **Production Batch (ชุดผลิต)**:
 A management container for producing goods for stock or prototype work.
@@ -176,13 +180,29 @@ _Avoid_: Shipped stock
 The computed quantity available for new sale after subtracting Reserved Stock from Stock On Hand.
 _Avoid_: Mixing with Stock On Hand or using คงเหลือ ambiguously
 
-**Stock Count (ตรวจนับสต๊อก)**:
-A periodic count activity used to compare actual quantity with system quantity.
-_Avoid_: Purchase, expense entry
+**Supplier / Store (ผู้ขาย/ร้านค้า)**:
+An external source used on purchase documents; the same master can be used for product and material purchases without requiring product-SKU relationships.
+_Avoid_: Customer, mandatory supplier-SKU relation
 
-**Stock Adjustment (ปรับยอดสต๊อก)**:
-A controlled stock quantity correction with reason and log.
-_Avoid_: Deletion, hidden correction
+**Product Purchase Order (ใบสั่งซื้อสินค้า)**:
+A purchase document for bringing finished Product/SKU items into Ready Stock from a Supplier/Store, supporting partial receipts per SKU line.
+_Avoid_: Material Purchase Order, Stock Adjustment, Production Job
+
+**Product Stock Receipt (รอบรับเข้าสินค้า)**:
+One receiving event against a Product Purchase Order that records actual received quantities and increases Ready Stock for those SKU Variants.
+_Avoid_: Material Stock Receipt, Stock Count
+
+**Stock Count (ตรวจนับสต๊อกสินค้า)**:
+A periodic product-stock count session that records actual Stock On Hand for selected SKU Variants.
+_Avoid_: Purchase, expense entry, counting Sellable Stock
+
+**Stock Adjustment (ปรับยอดสต๊อกสินค้า)**:
+A product-stock correction that records the actual counted Stock On Hand, reason, movement, and log.
+_Avoid_: Deletion, hidden correction, editing old stock movement
+
+**Stock Movement (ประวัติสต๊อก)**:
+An immutable product-stock history entry for stock receipt, production stock-in, adjustment, reservation, reservation release, or count confirmation.
+_Avoid_: Editable stock total
 
 **Light Material Stock (สต๊อกวัสดุแบบเบา)**:
 Simple material stock for easy-to-count internal materials such as color supplies, drawer rails, staples, and similar consumables. It tracks quantity on hand, receipts, adjustments, and daily/period summaries without full warehouse, BOM, or automatic Job consumption.
@@ -210,7 +230,7 @@ _Avoid_: Draft Material Purchase Order, Expense Entry, full accounting purchase 
 
 **Material Stock Receipt (รับเข้าสต๊อกวัสดุ)**:
 The act of accepting a Material Purchase Order and increasing material stock for every line in the document. If the purchase document is linked to Jobs waiting for materials, receipt also releases those Jobs from `รอวัตถุดิบ` back to their previous department queue and records a Job Activity Log.
-_Avoid_: Creating an Expense automatically, department notification, return-to-queue badge
+_Avoid_: Product Ready Stock increase, creating an Expense automatically, department notification, return-to-queue badge
 
 **Material Adjustment (ปรับยอดวัสดุ)**:
 A lightweight material count/correction screen where staff enter actual counted quantities for selected materials and the system records the difference. It can be used daily, weekly, or on any chosen date range.
@@ -354,8 +374,9 @@ _Avoid_: Accounting journal
 - **Financial Reconciliation** can block saving an Order total edit when the new sales total does not line up with financial records or adjustment notes; this is separate from normal Order operation.
 - A **Job** has exactly one **Job Source Type**: Order or Production.
 - An **Order Job** belongs to an Order Line and becomes ready for **Shipment** only after production is complete.
+- A **Draft Production Job** may become one **Production Job** after production review; after conversion it is archived/read-only and hidden from active draft production work.
 - A **Production Batch** has many **Production Lots**; a Production Lot may create one or more **Production Jobs** depending on how production is split.
-- A **Production Job** tied to an SKU ends at stock receipt readiness; a custom/prototype Production Job may end as Done without entering stock.
+- A **Production Job** tied to an SKU Variant increases **Ready Stock** by its production quantity when completed; a custom/prototype Production Job may end as Done without entering stock.
 - A **Shipment** creates one **Delivery Note** and one **Shipping Sheet**; users may print either or both.
 - A **Shipment** can be marked sent out or closed only when it has **Shipment Evidence**: tracking or at least one delivery evidence photo.
 - **Order Completion** happens when all required Order Shipments are closed; **Financial Follow-up** is separate.
@@ -373,7 +394,15 @@ _Avoid_: Accounting journal
 - **Rak Samuk Pattern List**, **Carving Pattern List**, and **Crystal Color List** values can classify Product/Job instruction details, but they do not create SKU codes.
 - A **Product Model** may optionally reference one **Job** as its origin, but this reference never copies or syncs Job data.
 - **Stock On Hand**, **Reserved Stock**, and **Sellable Stock** are separate stock views for the same **SKU Variant**; **Sellable Stock** may become negative after permitted over-reservation.
-- **Stock Counts** and **Stock Adjustments** affect stock visibility but remain separate from **Expense Entries**.
+- A **Product Purchase Order** has one **Supplier / Store**, many SKU lines, and many **Product Stock Receipts** when receiving happens in parts.
+- A **Product Stock Receipt** increases **Ready Stock**; if every Product Purchase Order line is fully received, a **Payment Audit Follow-up** is created for the full purchase document.
+- A **Product Stock Receipt** is immutable after save; wrong receipt quantities are corrected through **Stock Adjustment** / **Stock Movement**, not by editing the original receipt round.
+- A **Product Purchase Order** can close remaining unreceived quantity per line with `ปิดยอดที่เหลือ`; any line closed this way becomes `รับเข้าสต๊อกยังไม่ครบ`, makes the document `รับเข้าสต๊อกยังไม่ครบ`, and does not create Payment Audit Follow-up.
+- A Product Purchase Order line closed with reason `ปรับยอดแล้ว` must reference a same-SKU Stock Count or Stock Adjustment movement that increases stock enough to cover the closed remaining quantity.
+- Product Purchase Order SKU selection is not filtered by Supplier/Store because product supplier-to-SKU relationships are not required in the starting workflow.
+- **Stock Counts** and **Stock Adjustments** affect product stock visibility but remain separate from **Expense Entries**.
+- **Stock Count** records actual physical **Stock On Hand** only; stock counters do not need to reason about **Reserved Stock** or **Sellable Stock** while counting.
+- Completing a **Stock Count** creates **Stock Movement** entries for every counted SKU Variant, including zero-difference entries such as `ยืนยันสต๊อกถูกต้อง`.
 - **Light Material Stock** is separate from **Ready Stock**. Material quantities do not have `จองแล้ว` or `ขายได้` in the starting workflow.
 - Each **Material Item** has one current **Primary Material Supplier** for the starting workflow. Existing Material Purchase Orders and receipts keep the supplier captured at the time of the document.
 - A **Material Purchase Order** has exactly one supplier/store. Its material picker shows only active Material Items linked to that supplier.
@@ -399,7 +428,7 @@ Included in the starting scope:
 - Rak Samuk outsource flow: send work, worker view, missing-price label, proposed price approval, receive back, and payment preparation.
 - Shipment flow: admin ready-to-ship queue, Draft Shipment, release to delivery, delivery team send-out, admin close Shipment.
 - Management overview: unfinished Jobs, department location, urgency, age, and timeline.
-- Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Stock Count, Stock Adjustment, Light Material Stock, Material Purchase Order, Product Settings, department instruction images, and review albums.
+- Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Product Purchase Order, Product Stock Receipt, Stock Count, Stock Adjustment, Light Material Stock, Material Purchase Order, Product Settings, department instruction images, and review albums.
 - Simple Expense Entry and Payment Voucher concepts only where they support operating visibility and outsource payment.
 
 Explicitly outside the starting scope:
@@ -415,7 +444,7 @@ Explicitly outside the starting scope:
 > **Domain expert:** "No. The entry can stay temporary while the user is on the screen. A Draft No. exists only when the user explicitly saves the work as a Draft Order."
 
 > **Dev:** "Can a Production prototype use the same Job screen?"
-> **Domain expert:** "Yes. It is a JOB-P. The workshop sees the same work card shape, but the end state is production Done or stock receipt readiness, not customer shipment."
+> **Domain expert:** "Yes. It is a JOB-P. The workshop sees the same work card shape. If it is tied to a SKU, finishing it increases stock; if it is a prototype, it can simply become Done."
 
 ## Flagged ambiguities
 

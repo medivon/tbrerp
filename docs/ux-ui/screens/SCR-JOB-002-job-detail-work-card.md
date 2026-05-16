@@ -40,6 +40,7 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 - Coloring queue or history.
 - Rak Samuk send queue.
 - `รอสร้างรอบจัดส่ง` when `JOB-O` is ready.
+- Ready Stock update when a SKU-tied `JOB-P` is completed.
 - Manager overview.
 - Job Revision view.
 - Related Order Line or Order Detail for admin.
@@ -82,7 +83,7 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 | Field | Thai Label | Example | Source object | Notes |
 |---|---|---|---|---|
 | Job ID | รหัส Job | JOB-O-2568-0042 | Job | Prefix must show source. |
-| Source label | ประเภทงาน | งานลูกค้า | Job Source Type | Pair with `JOB-O`; `JOB-P` pairs with `ผลิตเข้าสต๊อก`. |
+| Source label | ประเภทงาน | งานลูกค้า | Job Source Type | Pair with `JOB-O`; `JOB-P` pairs with `ผลิตเข้าสต๊อก` or `งานผลิตพิเศษ`. |
 | Work name | ชื่องาน | ตู้โชว์ไม้สักแกะลาย | Job | Main identity. |
 | Main image | รูปหลัก | Cabinet thumbnail | Job / Department Instruction Images | Key visual identifier. |
 | Quantity | จำนวน | 1 ชิ้น | Job | Customer Job completes together. |
@@ -96,6 +97,7 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 | Revision notice | Revision | เปลี่ยนสีจากโอ๊คอ่อนเป็นโอ๊คเข้ม | Job Revision | Collapsed history by default. |
 | Timeline | ประวัติการทำงาน | รับงานโดยช่างไม้ 9 พ.ค. | Activity Log | Full for admin/manager; limited for workers. |
 | Related Order | ออเดอร์ที่เกี่ยวข้อง | ORD-2568-0021 | Order / Order Line | Hidden from Rak Samuk Worker. |
+| Related SKU | SKU ที่ผูก | TBR-TBL-123-OAK | SKU Variant | For SKU-tied `JOB-P`; completion increases this SKU's Ready Stock. |
 
 ## 9. Actions
 
@@ -108,6 +110,8 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 | Send to carving | กำลังส่งไปแกะสลัก | Woodwork | Marks carving handoff note/status for first flow. | Yes |
 | Receive coloring intake | รับเข้าโรงงานสี | Coloring / authorized higher permission | Moves work into active Coloring queue. | Yes |
 | Mark ready | งานเสร็จ/พร้อมส่ง | Coloring | Sends `JOB-O` to admin `รอสร้างรอบจัดส่ง`. | Yes |
+| Mark SKU production done | งานเสร็จ/เข้าสต๊อก | Allowed production department / admin | Completes SKU-tied `JOB-P` and increases Ready Stock by `จำนวนผลิต`. | Yes |
+| Mark special production done | งานเสร็จ | Allowed production department / admin | Completes unlinked/special `JOB-P` without stock change. | Yes |
 | Set urgent | ตั้งงานด่วน | Authorized admin/manager | Adds Urgent Label. | No |
 | Acknowledge revision | รับทราบ | Affected department user | Marks revision acknowledged. | No |
 | Ask for clarification | ไม่เข้าใจให้ติดต่อหา | Affected department user | Sends clarification follow-up to admin. | No |
@@ -117,13 +121,16 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 | Status | Thai Label | Meaning | Visual note |
 |---|---|---|---|
 | Order Job | งานลูกค้า | Job came from customer Order Line and ends at shipment readiness. | Show with `JOB-O`. |
-| Production Job | ผลิตเข้าสต๊อก | Job came from internal Production. | Show with `JOB-P`; included for source clarity. |
+| Production Job | ผลิตเข้าสต๊อก | Job came from internal Production and is tied to SKU. | Show with `JOB-P`; completion increases Ready Stock. |
+| Special Production Job | งานผลิตพิเศษ | Job came from internal Production but is not tied to SKU. | Show with `JOB-P`; completion does not affect stock. |
 | Waiting receive | รอรับงาน | Department has not accepted work yet. | Neutral action-needed chip. |
 | In progress | กำลังทำ | Department accepted work. | Active chip. |
 | Waiting materials | รอวัตถุดิบ | Department-level material blocker. | Distinct from Hold; warning chip. |
 | Hold | Hold | Admin-level Job pause. | Strong pause chip; remains visible. |
 | Waiting coloring intake | รอรับเข้าโรงงานสี | Work physically waiting for coloring intake. | Must not look like active Coloring Queue. |
 | Ready for Shipment | งานเสร็จ/พร้อมส่ง | Completed `JOB-O` is ready for admin Shipment creation. | Positive chip. |
+| Stock added | เข้าสต๊อกแล้ว | SKU-tied `JOB-P` was completed and Ready Stock increased. | Positive production chip. |
+| Production done | จบงานผลิต | Special/unlinked `JOB-P` completed without stock change. | Positive production chip. |
 | Urgent | งานด่วน | Authorized priority label. | Yellow/high-attention chip. |
 | Revision pending | รอรับทราบ Revision | Affected department must acknowledge change. | Prominent warning chip. |
 
@@ -152,6 +159,7 @@ The screen should not be opened without a Job. For empty instruction groups, sho
 
 - The top of the screen must answer: what is this, where is it, who acts next, and is it urgent?
 - Always pair source code and readable label: `JOB-O / งานลูกค้า` or `JOB-P / ผลิตเข้าสต๊อก`.
+- For `JOB-P`, distinguish `ผลิตเข้าสต๊อก` from `งานผลิตพิเศษ`; only SKU-tied production affects Ready Stock on completion.
 - Use the main image large enough for furniture identification.
 - Separate each instruction category into its own full-width row card so users do not confuse woodwork, coloring, and Rak Samuk details.
 - Keep department actions large and clear on tablet/mobile.

@@ -804,6 +804,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - SKU Image Groups
 - Ready Stock View
 - Production Job Entry
+- Production Review / Create Production Job
+- Draft Production Queue
 - Job Detail
 
 **Step-by-step User Actions**
@@ -816,7 +818,10 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 6. For stock production, admin presses `ผลิตเข้าสต๊อก` / `ผลิตสินค้าชิ้นนี้` on an enabled color.
 7. System opens `สร้างงานผลิต` in `ผลิตจาก SKU` mode with that SKU Variant prefilled.
 8. Admin may keep the prefilled SKU Variant, choose another SKU Variant, or switch to `งานผลิตพิเศษ`.
-9. Admin creates production and lands on Job Detail.
+9. Admin enters production quantity, confirms or edits work detail, chooses starting queue, and presses `สร้างงานผลิต`.
+10. Admin reviews `ตรวจสอบก่อนสร้างงานผลิต`.
+11. Admin presses `ยืนยันสร้างงานผลิต`.
+12. System opens the new `JOB-P` Job Detail.
 
 **System Actions**
 
@@ -827,12 +832,20 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Hides disabled colors from new Order selection, `ผลิตจาก SKU`, normal product list expansion, and normal stock selection, while preserving history.
 - Uses SKU Variant image groups first and falls back to Product Model image groups by purpose.
 - Treats Product Detail SKU prefill as a convenience only; changing SKU or mode resets that context.
+- Creates a persistent `ร่างงานผลิต` only when the user chooses `บันทึกร่าง` or `ออกและบันทึก`.
+- Keeps `ร่างงานผลิต` out of Job queues, stock changes, and active production reports.
+- Opens Production Review before creating a real `JOB-P`.
+- Requires starting queue before Review; default is `ช่างไม้`.
+- Routes created `JOB-P` to the selected starting point: `ช่างไม้`, `รอรับเข้าโรงงานสี`, or `รอระบุ/ส่งรักสมุก`.
 
 **Status Changes**
 
 - Color option can become enabled or disabled for a Product Model, subject to stock/order/production blockers.
-- Production entry creates a `JOB-P / งานผลิต`.
-- Receiving stock happens later from completed Production/Job context, not from Product Detail.
+- Unsaved Production entry -> saved `ร่างงานผลิต`, if the user saves.
+- Saved `ร่างงานผลิต` active -> converted/archived/read-only, if user confirms from a draft.
+- Production Review confirmation creates a `JOB-P / งานผลิต`.
+- Completed `JOB-P` tied to SKU increases Ready Stock by its production quantity.
+- Completed `งานผลิตพิเศษ` not tied to SKU becomes Done without stock change.
 
 **Exit Condition**
 
@@ -849,6 +862,9 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - `ขายได้`
 - Product and color-specific images
 - Production links
+- Production quantity
+- Starting queue
+- Draft production number where saved
 
 **UX Risks**
 
@@ -856,7 +872,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Disabled colors look like sold-out colors instead of unavailable product options.
 - Product Detail becomes an inline stock editor.
 - Product Detail prefill looks like a locked special production path.
-- Users expect stock receipt to start from Product Detail instead of completed Production/Job context.
+- Domain/code must distinguish Product Ready Stock update from Material Stock Receipt even when Thai UI wording overlaps.
 
 **Blocking Open UX Questions**
 
@@ -936,6 +952,108 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Blocking Open UX Questions**
 
 - None for the flow map.
+
+## F13 - Product Stock Purchase Receipt And Count
+
+**Actors**
+
+- Stock-permission user
+- Product purchase-permission user
+- Finance/payment-audit permission user
+- Manager / owner
+
+**Trigger**
+
+- Staff need to bring finished SKU items into Ready Stock from a purchase document, or count/correct product stock.
+
+**Entry Point**
+
+- `สินค้า / สต๊อก` -> `สินค้าพร้อมส่ง`
+- Ready Stock View -> `สร้างใบสั่งซื้อสินค้า`
+- Ready Stock View -> `ตรวจนับสต๊อกสินค้า`
+- Ready Stock View / SKU Variant Detail -> `ปรับยอดสต๊อกสินค้า`
+
+**Screens Involved**
+
+- Ready Stock View
+- Product Purchase Order
+- Product Stock Receipt
+- Stock Count
+- Stock Adjustment
+- SKU Stock Movement
+- Payment Audit Follow-up
+
+**Step-by-step User Actions**
+
+1. Stock or purchase user creates `ใบสั่งซื้อสินค้า` with date, Supplier/Store, SKU lines, and ordered quantities.
+2. The document becomes `รอรับเข้า`.
+3. User can print/export the document in any status.
+4. When goods arrive, user opens receipt, enters actual received quantities per SKU line, or marks a line as fully received.
+5. System blocks receipt quantities above remaining ordered quantity.
+6. System increases Ready Stock for received SKU quantities and records SKU Stock Movement.
+7. If not all quantities are received and the team is still waiting, the document becomes `รับเข้าบางส่วน`.
+8. If all quantities are received, the document becomes `รับเข้าสต๊อกแล้ว` and creates Payment Audit Follow-up for the full purchase document.
+9. If remaining quantities will not arrive or were already handled by adjustment, user chooses `ปิดยอดที่เหลือ` on the affected SKU line with reason; the line/document becomes `รับเข้าสต๊อกยังไม่ครบ`.
+10. Separately, stock user can create a `ตรวจนับสต๊อกสินค้า` round, add selected SKUs, and enter physical counts.
+11. When closing the count round, system creates Stock Movement for every counted SKU, including zero-difference `ยืนยันสต๊อกถูกต้อง`.
+
+**System Actions**
+
+- Keeps Product Purchase Order separate from Material Purchase Order.
+- Allows one Product Purchase Order to contain many SKU/color lines.
+- Uses one Supplier/Store per Product Purchase Order and snapshots supplier data on the document.
+- Does not require or create Supplier-SKU relationships in the first workflow.
+- Allows SKU picker to choose any active SKU Variant.
+- Supports partial receipt per line.
+- Does not allow received quantity to exceed remaining ordered quantity.
+- Does not create or store pending over-delivery records; excess goods require a user-created new Product Purchase Order.
+- Allows editing only unreceived remaining quantities after partial receipt.
+- Keeps Product Stock Receipt rounds immutable after save; receipt mistakes are corrected through Stock Adjustment / Stock Movement.
+- Requires reason for `ปิดยอดที่เหลือ`.
+- Requires a linked same-SKU positive Stock Movement when the `ปิดยอดที่เหลือ` reason is `ปรับยอดแล้ว`; the movement quantity must cover the closed remaining quantity.
+- Does not create Payment Audit Follow-up for `ยกเลิก` or `รับเข้าสต๊อกยังไม่ครบ`.
+- Creates Payment Audit Follow-up only when the Product Purchase Order is fully received and every line has `รับเข้าแล้ว = จำนวนสั่งซื้อ`.
+- Does not auto-edit/cancel an existing Payment Audit Follow-up if a later stock correction reveals receipt error.
+- In Stock Count / Adjustment, records physical `มีอยู่ในร้าน` only and hides `จองแล้ว` / `ขายได้` from count entry.
+- Lets `ขายได้` become negative after count if physical Stock On Hand is lower than Reserved Stock.
+- Keeps Stock Movement immutable; wrong movements are corrected by new adjustment movement.
+
+**Status Changes**
+
+- Product Purchase Order: `รอรับเข้า` -> `รับเข้าบางส่วน` -> `รับเข้าสต๊อกแล้ว`.
+- Product Purchase Order can become `รับเข้าสต๊อกยังไม่ครบ` when any line is closed with `ปิดยอดที่เหลือ`.
+- Product Purchase Order can become `ยกเลิก` if no receipt has happened.
+- Stock Count: `กำลังนับ` -> `นับเสร็จแล้ว`, or `ยกเลิก`.
+- Ready Stock increases from Product Stock Receipt or SKU-tied `JOB-P` completion.
+- Ready Stock changes from Stock Adjustment.
+
+**Exit Condition**
+
+- Product purchase receipts and count adjustments update Ready Stock with auditable movement history, while Material Stock remains a separate purchase/receipt flow.
+
+**Key Data Shown**
+
+- Product Purchase Order number
+- Supplier/Store snapshot
+- SKU Variant / color
+- Ordered quantity
+- Received quantity
+- Remaining quantity
+- Receipt rounds with receiver/date
+- Optional evidence
+- Counted physical quantity
+- Stock Movement type/reason
+
+**UX Risks**
+
+- Users confuse Product Purchase Order with Material Purchase Order.
+- Users expect Supplier to filter SKU selection, creating hidden relations.
+- Counters see `จองแล้ว` / `ขายได้` and start solving sales reservations instead of counting physical stock.
+- Over-delivery is stored invisibly instead of requiring a new user-created purchase document.
+
+**Blocking Open UX Questions**
+
+- None for the starting workflow.
 
 ## F12 - Light Material Stock To Purchase And Adjustment
 

@@ -26,14 +26,14 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows, dark navy emphasis
 
 Screen purpose:
-Admin reviews the selected SKU ย่อย and production details before creating `JOB-P / งานผลิต`. This screen must show that the work came from SKU selection, not from Order and not from `งานผลิตพิเศษ`. If the SKU was prefilled from Product Detail, this is still the normal `สร้างงานผลิต` screen and should not show a special Product Detail back/cancel path.
+Admin reviews the selected SKU ย่อย and production details before the Production Review step. Pressing `สร้างงานผลิต` opens `ตรวจสอบก่อนสร้างงานผลิต`; the real `JOB-P / งานผลิต` is issued only after `ยืนยันสร้างงานผลิต`. This screen must show that the work came from SKU selection, not from Order and not from `งานผลิตพิเศษ`. If the SKU was prefilled from Product Detail, this is still the normal `สร้างงานผลิต` screen and should not show a special Product Detail back/cancel path.
 
 Header area:
 - Page title: สร้างงานผลิต
 - Context line: งานผลิตเข้าสต๊อก / เลือกจาก SKU ย่อย
-- Large chips: JOB-P, งานผลิต, ผลิตจาก SKU, ผูกสินค้าแล้ว, พร้อมบันทึก
+- Large chips: ร่างงานผลิต, งานผลิต, ผลิตจาก SKU, ผูกสินค้าแล้ว, พร้อมตรวจสอบ
 - Primary button: สร้างงานผลิต
-- Secondary button: บันทึกไว้ก่อน
+- Secondary button: บันทึกร่าง
 
 Main layout:
 Use a clear two-column admin form. Main form on the left, readiness/source panel on the right. No modal is open in this state.
@@ -54,15 +54,17 @@ Row card 1: รายละเอียดสินค้า
 - Product model/category: โต๊ะ / ไม้สัก
 - Color: สีโอ๊คเข้ม
 - Stock signal: ขายได้ 0 / หมด
-- Planned result: รับเข้าสต๊อก
+- Planned result: เมื่อจบงานจะเพิ่มสต๊อกตามจำนวนผลิต
 - Quantity input: จำนวนผลิต 6 ชิ้น
-- Compact chips: ผลิตจาก SKU, ผูกสินค้าแล้ว, หมด, รับเข้าสต๊อก
+- Starting queue selector: คิวเริ่มต้น ช่างไม้
+- Compact chips: ผลิตจาก SKU, ผูกสินค้าแล้ว, หมด, จบงานแล้วเพิ่มสต๊อก
 - Purple secondary button: เปลี่ยนสินค้า
 
 Row card 2: ข้อมูลงานผลิต
 - Fields prefilled from SKU but editable for this production work:
   - ชื่องาน: โต๊ะข้างไม้สัก สีโอ๊คเข้ม
   - จำนวนผลิต: 6 ชิ้น
+  - คิวเริ่มต้น: ช่างไม้
   - ขนาดโดยรวม: กว้าง 45 ลึก 45 สูง 55 ซม.
   - หมายเหตุงาน: ผลิตเพิ่มสำหรับสต๊อกหน้าร้าน
 - Keep form controls clean and readable.
@@ -97,6 +99,7 @@ Title: ตรวจความพร้อม
 - Checklist with checked items:
   - เลือกสินค้า
   - ระบุจำนวนผลิต
+  - เลือกคิวเริ่มต้น
   - ตรวจรายละเอียดจาก SKU
   - มีรูปหลัก
   - มีรายละเอียดช่างไม้
@@ -104,9 +107,11 @@ Title: ตรวจความพร้อม
 - Source summary:
   - แหล่งที่มา: งานผลิตเข้าสต๊อก
   - SKU ย่อย: TBR-TBL-123-OAK
-  - รหัสงาน: จะสร้างหลังบันทึก
-  - ผลลัพธ์: รับเข้าสต๊อก
-  - สถานะ: พร้อมบันทึก
+  - รหัสร่าง: ยังไม่ได้บันทึก
+  - รหัสงาน: จะสร้างหลังยืนยัน
+  - ผลลัพธ์: จบงานแล้วเพิ่มสต๊อก 6 ชิ้น
+  - คิวเริ่มต้น: ช่างไม้
+  - สถานะ: พร้อมตรวจสอบ
 - Primary action button at bottom should be enabled: สร้างงานผลิต
 
 Visual rules:
@@ -116,6 +121,9 @@ Visual rules:
 - Do not show the SKU search modal in this state
 - Do not show `งานผลิตพิเศษ` body in this state
 - Do not make this look like an Order screen
+- Do not show a real `JOB-P` number before the Review confirmation
+- Do not imply a separate stock receipt screen for SKU-tied production; completion increases Ready Stock
+- Do not imply that `สร้างงานผลิต` creates `JOB-P` directly; it opens Review first
 - Make the selected SKU identity obvious
 - Make `เปลี่ยนสินค้า` available but secondary
 - If user selects another SKU or switches to `งานผลิตพิเศษ`, reset the initial SKU context like opening this screen fresh

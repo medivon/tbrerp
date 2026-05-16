@@ -4,7 +4,7 @@
 
 The Product Model Detail screen is the desktop detail and management page for one `SKU หลัก` / `SKU ใหญ่` / Product Model. It defines the parent product identity, shared dimensions, shared images/instructions, enabled color options, color-specific SKU Variants, stock visibility, and stock-production shortcuts.
 
-This page is not an inline stock editor. Stock changes happen through Stock Adjustment, Stock Count, Order reservation, or production receipt flows.
+This page is not an inline stock editor. Stock changes happen through Product Purchase Order receipt, Stock Count, Stock Adjustment, Order reservation, or SKU-tied Production completion flows.
 
 ## 2. Primary Users
 
@@ -62,7 +62,7 @@ This page is not an inline stock editor. Stock changes happen through Stock Adju
 - `สีของสินค้า` table
 - Color open/close controls
 - Stock-by-color values
-- Per-color `ปรับยอดสต๊อก` action
+- Per-color `ปรับยอดสต๊อกสินค้า` action
 - Per-color `ผลิตเข้าสต๊อก` / `ผลิตสินค้าชิ้นนี้` action
 - Product-level image group preview
 - Department instruction preview
@@ -116,7 +116,7 @@ Show both enabled and disabled colors. Disabled rows remain visible for manageme
 | Disable color | ปิดสีนี้ | Product permission / manager | Hides this color from new selection if no stock or unfinished work exists. | Yes if allowed |
 | Re-enable color | เปิดใช้สีนี้ | Product permission | Reopens the existing SKU Variant and code. | No |
 | Open SKU Variant | เปิด SKU ย่อย | Product/stock permission | Opens SKU Variant Detail where needed. | No |
-| Stock adjustment | ปรับยอดสต๊อก | Stock permission / manager | Opens Stock Adjustment with the color/SKU Variant preselected. | No |
+| Stock adjustment | ปรับยอดสต๊อกสินค้า | Stock permission / manager | Opens Stock Adjustment with the color/SKU Variant preselected. | No |
 | Create production | ผลิตเข้าสต๊อก / ผลิตสินค้าชิ้นนี้ | Product/production permission | Opens Production Job Entry in `ผลิตจาก SKU` mode with the selected SKU Variant prefilled. | No |
 | Open related production | ดูงานผลิตที่เกี่ยวข้อง | Product/production permission | Opens related production list or job view. | No |
 | Open Review Album | เปิดคลังรีวิว | Product/CRM permission | Opens linked Review Album. | No |
@@ -135,7 +135,7 @@ Show both enabled and disabled colors. Disabled rows remain visible for manageme
 | Sold out | หมด | Total `ขายได้` is zero or below. | Neutral/orange chip. |
 | Negative stock | มีรายการติดลบ | Any color has negative `ขายได้`. | Warning chip. |
 | In production | กำลังผลิต | Related production exists. | Secondary chip. |
-| Waiting receipt | รอรับเข้า | Completed production awaits stock receipt. | Secondary chip. |
+| Waiting receipt | รอรับเข้า | Thai UI stock wording; in domain/code, SKU-tied `JOB-P` completion updates Ready Stock directly. | Secondary chip. |
 | Has reviews | มีรีวิว | Review Album exists. | Green chip. |
 | Source Job | อ้างอิง Job | Product Model has source Job reference. | Neutral chip. |
 
@@ -157,7 +157,7 @@ If no colors exist, show `ยังไม่มีสีของสินค้
 - This screen is read-first, but color open/close and action buttons are allowed where permitted.
 - Field-level product editing happens in a dedicated edit flow.
 - Direct stock quantity edits are not allowed.
-- `รับเข้าจากงานผลิต` does not start from Product Detail; it starts from completed Production/Job context.
+- `รับเข้าจากงานผลิต` does not start from Product Detail; in domain/code, SKU-tied `JOB-P` completion updates Ready Stock directly.
 - Sensitive cost, labor rate, profit, sales price, tax, and accounting data must not appear in the normal visual.
 - Source Job reference is traceability only and must not copy or sync Job data/images automatically.
 - Disabled colors are hidden from new Order and Production selection but remain visible in Product Detail and historical records.

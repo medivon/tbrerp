@@ -96,6 +96,78 @@ Why it matters:
 
 - This resolved the Material Stock table, Material Purchase Order line picker, supplier filter, and purchase document boundary.
 
+## Recently Resolved Production Job Entry Questions
+
+### OQ-PROD-001 - Production draft boundary
+
+Decision:
+
+- `สร้างงานผลิต` has a real `ร่างงานผลิต` state with `PROD-DRAFT-xxxx`.
+- A draft does not create `JOB-P`, enter department queues, affect stock, or appear in active production reports.
+- Drafts live under `งานสั่งทำ / ผลิต` -> `ร่างงานผลิต`, and can be edited by the creator, same-permission users, or higher-permission users.
+
+### OQ-PROD-002 - Production Review before JOB-P
+
+Decision:
+
+- Pressing `สร้างงานผลิต` opens `ตรวจสอบก่อนสร้างงานผลิต`.
+- `ยืนยันสร้างงานผลิต` creates the real `JOB-P`, archives the draft as read-only, and opens Job Detail.
+- After `JOB-P` exists, production-affecting edits go through Job Detail / Revision, not back through the entry form.
+
+### OQ-PROD-003 - Starting queue
+
+Decision:
+
+- Starting queue is required before Review and defaults to `ช่างไม้`.
+- Starting options are `ช่างไม้`, `รอรับเข้าโรงงานสี`, and `ส่งไปรักสมุก`.
+- This supports work that starts from outside/received pieces, coloring, or Rak Samuk instead of always starting at woodwork.
+
+### OQ-PROD-004 - SKU-tied production stock result
+
+Decision:
+
+- When a SKU-tied `JOB-P` is marked complete, Ready Stock increases immediately by the Job's production quantity.
+- There is no separate stock-receipt screen for `JOB-P` in the starting workflow.
+- `งานผลิตพิเศษ` not tied to SKU becomes Done without stock change; the creator follows up manually if it later becomes a SKU or prototype reference.
+
+## Recently Resolved Product Stock Questions
+
+### OQ-STOCK-001 - Product stock-in boundary
+
+Decision:
+
+- Product Ready Stock has its own `ใบสั่งซื้อสินค้า` and `รับเข้าสินค้า` workflow.
+- It is separate from Material Purchase Order / Material Stock Receipt.
+- SKU-tied `JOB-P` completion still increases Ready Stock directly and does not go through product receipt.
+
+### OQ-STOCK-002 - Product Purchase Order partial receipt
+
+Decision:
+
+- Product Purchase Order supports partial receipt per SKU line.
+- Statuses are `รอรับเข้า`, `รับเข้าบางส่วน`, `รับเข้าสต๊อกแล้ว`, `รับเข้าสต๊อกยังไม่ครบ`, and `ยกเลิก`.
+- Use action `ปิดยอดที่เหลือ` to close remaining quantity on an affected SKU line; the terminal incomplete status is `รับเข้าสต๊อกยังไม่ครบ`.
+- Reason `ปรับยอดแล้ว` requires a linked same-SKU Stock Count / Stock Adjustment movement with positive quantity covering the closed remainder.
+- Over-delivery is not recorded automatically; users create a new Product Purchase Order for excess goods when needed.
+- Product Stock Receipt rounds are immutable; mistakes are corrected by Stock Adjustment / Stock Movement.
+- Payment Audit Follow-up is created only when every line is fully received as `รับเข้าสต๊อกแล้ว`.
+
+### OQ-STOCK-003 - Supplier boundary for product purchase
+
+Decision:
+
+- Supplier/Store master may be shared between product and material purchase contexts.
+- Product Purchase Order does not require Supplier-SKU relationships.
+- Product Purchase Order SKU picker can choose any active SKU Variant.
+
+### OQ-STOCK-004 - Product stock count and movement
+
+Decision:
+
+- Product Stock Count records actual physical `มีอยู่ในร้าน`, hiding `จองแล้ว` and `ขายได้` from count entry.
+- Closing a Stock Count creates Stock Movement for every counted SKU, including zero-difference `ยืนยันสต๊อกถูกต้อง`.
+- Stock Movement is immutable; corrections happen through a new adjustment.
+
 ## Material / Stock Boundary Follow-up Questions
 
 ### OQ-MAT-002 - Material purchase/payment handoff detail

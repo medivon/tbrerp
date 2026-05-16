@@ -17,7 +17,7 @@ Visual/content anchors:
 ## High-Fidelity GPT Image 2 Prompt
 
 ```text
-Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “สร้างงานผลิต”. This is the `งานผลิตพิเศษ` tab of the production workflow. It creates `JOB-P / งานผลิต` from a custom/internal production specification, similar to the `รายละเอียดงานสั่งทำ` body pattern, but without customer, Order, COD, payment, or shipment context.
+Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “สร้างงานผลิต”. This is the `งานผลิตพิเศษ` tab of the production workflow. It prepares a custom/internal production specification before Production Review creates the real `JOB-P / งานผลิต`, similar to the `รายละเอียดงานสั่งทำ` body pattern, but without customer, Order, COD, payment, or shipment context.
 
 Use the approved THAIBORAN Admin Dashboard app shell:
 - Fixed light left sidebar with THAIBORAN logo/brand, matching the approved light Admin Dashboard baseline
@@ -27,14 +27,14 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows, dark navy emphasis
 
 Screen purpose:
-Admin creates an internal special production work item that is not selected from an existing SKU. This screen should feel like custom-work detail entry, but its source is internal production (`JOB-P / งานผลิต`) and it must not include customer/order/shipment fields.
+Admin prepares an internal special production work item that is not selected from an existing SKU. Pressing `สร้างงานผลิต` opens `ตรวจสอบก่อนสร้างงานผลิต`; the real `JOB-P` is issued only after `ยืนยันสร้างงานผลิต`. This screen should feel like custom-work detail entry, but its source is internal production and it must not include customer/order/shipment fields.
 
 Header area:
 - Page title: สร้างงานผลิต
 - Context line: งานผลิตภายใน / งานผลิตพิเศษ
-- Large chips: JOB-P, งานผลิต, งานผลิตพิเศษ, ยังไม่ผูกสินค้า, พร้อมบันทึก
+- Large chips: ร่างงานผลิต, งานผลิต, งานผลิตพิเศษ, ยังไม่ผูกสินค้า, พร้อมตรวจสอบ
 - Primary button: สร้างงานผลิต
-- Secondary buttons: บันทึกไว้ก่อน, กลับไปงานผลิต
+- Secondary buttons: บันทึกร่าง, กลับไปงานผลิต
 
 Main layout:
 Use a clear two-column admin form. Main form on the left, readiness/source panel on the right.
@@ -51,6 +51,7 @@ Row card 1: ข้อมูลงานผลิตพิเศษ
 - Fields with filled sample values:
   - ชื่องาน: ตู้พระต้นแบบลายพิกุล
   - จำนวนผลิต: 1 ชิ้น
+  - คิวเริ่มต้น: ช่างไม้
   - ขนาดโดยรวม: กว้าง 90 ลึก 45 สูง 160 ซม.
   - ประเภทงาน: งานต้นแบบ / ยังไม่ผูกสินค้า
   - หมายเหตุงาน: ทดลองขนาดใหม่ก่อนตัดสินใจสร้าง SKU
@@ -85,6 +86,7 @@ Title: ตรวจความพร้อม
 - Checklist:
   - มีชื่องาน
   - ระบุจำนวนผลิต
+  - เลือกคิวเริ่มต้น
   - มีรูปหลัก
   - มีรายละเอียดช่างไม้
   - มีรายละเอียดสี/ตกแต่ง
@@ -92,9 +94,11 @@ Title: ตรวจความพร้อม
 - Source summary:
   - แหล่งที่มา: งานผลิตภายใน
   - รูปแบบ: งานผลิตพิเศษ
-  - รหัสงาน: JOB-P-0019
-  - ผลลัพธ์: จบงานผลิต / ยังไม่รับเข้าสต๊อก
-  - สถานะ: พร้อมบันทึก
+  - รหัสร่าง: ยังไม่ได้บันทึก
+  - รหัสงาน: จะสร้างหลังยืนยัน
+  - ผลลัพธ์: จบงานผลิต / ไม่เพิ่มสต๊อกอัตโนมัติ
+  - คิวเริ่มต้น: ช่างไม้
+  - สถานะ: พร้อมตรวจสอบ
 - Primary action button at bottom should be enabled: สร้างงานผลิต
 
 Visual rules:
@@ -104,6 +108,9 @@ Visual rules:
 - Do not show SKU search modal in this state
 - Do not show selected SKU detail in this state
 - Do not make this look like an Order screen
+- Do not show a real `JOB-P` number before the Review confirmation
+- Do not imply that unlinked special production adds stock automatically
+- Do not imply that `สร้างงานผลิต` creates `JOB-P` directly; it opens Review first
 - Make `งานผลิตพิเศษ` clearly active
 - Make the body feel like custom-work detail entry, but with internal production source
 - Use the approved light sidebar baseline; do not switch to a dark sidebar
