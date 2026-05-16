@@ -24,12 +24,14 @@ Related visual system:
 ## 3. User Goals
 
 - See how many confirmed Orders still need operational handling.
-- See how many Jobs are currently in production and where they sit by department.
+- See how many Jobs are currently in production and open the production overview.
 - Enter the ready-to-ship queue to create shipment rounds.
 - Confirm shipments after delivery staff have marked them sent and attached evidence.
 - Notice production follow-up cases that require admin communication.
 - Keep COD/Payment follow-up visible without blocking Order Completion.
 - Quickly see a few high-risk work items with product image, customer, received date, Order ID, and Job ID.
+- Avoid showing money amounts on the Admin Dashboard.
+- Avoid showing Owner or Current Handler as primary dashboard signals.
 
 ## 4. Entry Points
 
@@ -57,6 +59,7 @@ Related visual system:
 - Card interaction: clicking a card opens the matching overview or queue.
 - No top quick action button on this dashboard.
 - No Draft Order card on this dashboard.
+- No personal task mode on this dashboard in the starting workflow.
 
 ## 7. Approved Sidebar Navigation
 
@@ -94,7 +97,7 @@ Rules:
 | Card | Thai Title | Count Unit | Example Count | Status Chip | Subtext | Action |
 |---|---|---:|---:|---|---|---|
 | Orders Follow-up | `ออเดอร์ที่ต้องติดตาม` | Order | 18 | `ยังต้องตามงาน` | `กำลังผลิต 11 • พร้อมสร้างรอบจัดส่ง 7` | `ดูออเดอร์` |
-| Active Jobs | `งานกำลังผลิต` | Job | 17 | `กำลังทำงาน` | `ช่างไม้ 8 • ฝ่ายสี 6 • รักสมุก 3` | `ดูภาพรวมงาน` |
+| Active Jobs | `งานกำลังผลิต` | Job | 17 | `กำลังทำงาน` | `งานลูกค้า 11 • ผลิตเข้าสต๊อก 6` | `ดูภาพรวมงาน` |
 | Waiting Shipment Creation | `รอสร้างรอบจัดส่ง` | Order | 7 | `พร้อมสร้างรอบจัดส่ง` | `มี COD 3 ออเดอร์` | `เปิดคิวงาน` |
 | Shipment Confirmation | `ยืนยันการจัดส่ง` | Shipment round | 4 | `รอเพิ่มข้อมูล` | `เพิ่มเลขติดตามพัสดุ / หลักฐานขนส่ง` | `เปิดคิวงาน` |
 | Production Follow-up | `งานผลิตต้องติดตาม` | Follow-up case | 2 | `รอรับทราบ Revision` | `ไม่เข้าใจให้ติดต่อหา 1` | `เปิดคิวงาน` |
@@ -107,7 +110,12 @@ Card rules:
 - `รอสร้างรอบจัดส่ง` counts Orders, not item lines.
 - `ยืนยันการจัดส่ง` counts shipment rounds, not Orders.
 - `งานผลิตต้องติดตาม` counts only cases needing admin communication or decision, not all aged production work.
-- `ติดตาม COD / Payment` is separate from operational completion.
+- `ติดตาม COD / Payment` counts unresolved Financial Follow-up items and is separate from operational completion.
+- Dashboard counts refresh on page load and after important actions; realtime updates are later.
+- Cards may show finance-related counts or labels, but must not show baht amounts.
+- Cards do not show Owner or Current Handler / next department as primary signals.
+- Service Case count is not a main dashboard card first.
+- Low-stock is not a main dashboard card first; stock-negative warnings may appear as summary/risk signals.
 
 ## 10. Bottom Preview Section
 
@@ -131,7 +139,7 @@ Each item should show:
 | Received date | `วันที่รับงาน` | `08 พ.ค. 67` |
 | Reference | Order ID / Job ID | `ORD-240522-018 / JOB-O-0241` |
 | Risk chip | Status chip | `งานด่วน`, `ค้าง 18 วัน`, `ใกล้ส่ง` |
-| Current queue | Current state | `อยู่คิวช่างไม้`, `รอสร้างรอบจัดส่ง`, `ยืนยันการจัดส่ง` |
+| Risk context | Short reason | `ค้างนาน`, `รอหลักฐานส่ง`, `สต๊อกติดลบ` |
 | Related date | Delivery date | `กำหนดส่ง 26 พ.ค. 67` |
 
 Rules:
@@ -140,6 +148,8 @@ Rules:
 - Use product imagery because THAIBORAN work is visually specific.
 - If a right-side control is needed, use `ดูทั้งหมด`.
 - Do not show an empty-state label when delayed or urgent work is visible.
+- Critical preview may surface urgent/old work, overdue or near delivery, waiting materials, stock-negative warning, and shipment-confirmation risk.
+- Critical preview does not become an individual performance report or personal task list.
 
 ## 11. Status / Chips
 
@@ -169,6 +179,14 @@ Rules:
 | Critical item reference | Order ID / Job ID | Order / Job | Small metadata for communication. |
 | Customer | `ลูกค้า` | Customer | Shown in bottom preview. |
 | Received date | `วันที่รับงาน` | Order / Job | Shown in bottom preview. |
+| Risk signal | Status chip / warning | Order / Job / Shipment / Stock | Urgent, old, near delivery, waiting materials, stock-negative, or shipment confirmation risk. |
+
+Rules:
+
+- Do not show money amounts.
+- Do not show Owner.
+- Do not show Current Handler, current queue, or next department as a primary dashboard field.
+- Show enough reference IDs for admin to open the right working queue/detail.
 
 ## 13. Actions
 
@@ -196,9 +214,11 @@ Rules:
 
 - Admin queues are shared by role/permission.
 - Same-permission or higher-permission users can continue shared queue work.
-- Owner remains visible for traceability but is not an exclusive lock.
-- Finance-sensitive amounts and Rak Samuk rates must not be shown without finance permission.
-- This dashboard may show counts for COD/Payment follow-up where allowed, but should avoid detailed money values.
+- Owner remains stored for traceability but is not shown on this dashboard and is not an exclusive lock.
+- Finance-sensitive amounts and Rak Samuk rates must not be shown.
+- This dashboard may show counts for COD/Payment follow-up where allowed, but must not show money amounts.
+- This dashboard should not expose finance-sensitive details through shortcuts, subtext, or previews.
+- Owner and Current Handler are traceability/detail data, not dashboard fields.
 
 ## 16. What Not To Show
 
@@ -207,6 +227,12 @@ Rules:
 - No top quick action button such as `+ สร้างออเดอร์`.
 - No full task table.
 - No accounting charts or analytics widgets.
+- No money amounts.
+- No Owner or Current Handler columns/fields.
+- No personal task mode.
+- No Service Case count card in the first dashboard.
+- No low-stock card in the first dashboard.
+- No individual performance report.
 - No marketing hero or decorative landing-page layout.
 - No contradictory empty-state labels.
 

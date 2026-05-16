@@ -198,10 +198,12 @@ Expected subcategories:
 - Expense Entry
 - Payment Voucher
 - Financial Follow-up where permission allows
+- Expense reports / export where permission allows
 
 Rules:
 
 - Dashboard may show `ติดตาม COD / Payment`, but detailed finance-sensitive information remains permission-aware.
+- Expense export CSV/XLSX is allowed from the expense area; general report export is not part of the starting report scope.
 
 ### ตั้งค่า
 
@@ -213,6 +215,12 @@ Expected subcategories:
 
 - Roles / Permissions
 - ตั้งค่าสินค้า
+- Customer Tier
+- Expense Category
+- Payment Method
+- Carrier list
+- Service Case Type
+- Operational thresholds where included
 - Carrier/evidence settings later
 
 Rules:
@@ -220,6 +228,27 @@ Rules:
 - `ตั้งค่าสินค้า` contains tabs for `หมวดหมู่สินค้า`, `แท็กสินค้า`, `รายการสี`, `รายการลายรักสมุก`, `รายการลายแกะสลัก`, and `รายการสีคริสตัล`.
 - Users without product-settings permission do not see `ตั้งค่าสินค้า`.
 - Do not expose `CRUD`, `Master`, or `ข้อมูลตั้งต้นสินค้า` as staff-facing labels.
+- Use contextual mini managers for material unit/category inside the material area instead of a separate deep material settings area first.
+- Print templates, dashboard cards, report presets, and detailed evidence rules are fixed first, not user-configurable settings.
+- Used setting values are closed/inactivated instead of deleted; unused values may be deleted.
+- Settings changes are Management Log events.
+
+### รายงาน
+
+Purpose:
+
+- Operational and management summaries inside relevant modules rather than a heavy analytics suite.
+
+Rules:
+
+- Manager view emphasizes unfinished work, urgency, blockers, and age.
+- First management report is unfinished work by department/status.
+- First sales report is sales by period from real Orders and excludes cancelled Orders by default.
+- Sales report uses Order creation date.
+- Delivery report uses Shipment close / delivery close date.
+- Expense report uses actual payment date.
+- Starting reports use summary cards and tables.
+- General report export is later.
 
 ## Top Bar Navigation Pattern
 

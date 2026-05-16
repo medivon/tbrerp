@@ -12,6 +12,6 @@ The starting Service Case scope supports records such as `คืนเงิน`
 
 ## Consequences
 
-Original Order history remains stable for sales, shipment completion, and payment records. After-sales handling remains traceable without changing past operational history. Refunds, returned goods, or send-back work must be represented in Service Case notes, Financial Follow-up, Expense Entry, or Service Shipment as appropriate instead of mutating the original Order.
+Original Order history remains stable for sales, shipment completion, and payment records. After-sales handling remains traceable without changing past operational history. Refunds are recorded as Expense Entries with Service Case context. Returned goods or send-back work must be represented in Service Case notes or Service Shipment as appropriate instead of mutating the original Order.
 
 The first scope avoids pulling repair production, Order recalculation, stock return automation, and accounting adjustment rules into the main Job/Order workflow. If repeated repair-production cases become important later, they should be designed as a separate service-work workflow rather than silently reusing customer Order Jobs.
