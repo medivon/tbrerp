@@ -320,6 +320,10 @@ _Avoid_: Employee, internal workshop user
 The standard per-piece rate stored on the Product Model.
 _Avoid_: Sales price, SKU Variant price
 
+**Rak Samuk Proposed Price (ราคาที่แจ้งต่อชิ้น)**:
+The per-piece price proposed by a Rak Samuk Worker for one assigned missing-price Rak Samuk Work item before finance/payment approval.
+_Avoid_: Total job price, sales price, worker payout round
+
 **Payment Voucher (ใบสำคัญจ่าย / PV)**:
 A payment document issued after payment is confirmed, using monthly running numbers.
 _Avoid_: Draft payout, invoice
@@ -437,6 +441,7 @@ _Avoid_: Accounting journal
 - A **Service Case** may reference a **Customer** or **Order** for context, and may create a **Service Shipment**, but it does not reopen, close, edit, or recalculate the referenced Order. The referenced Order also does not control the Service Case's status.
 - **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** in the first scope.
 - A **Rak Samuk Worker** can see only their assigned work and limited own-payment information.
+- A **Rak Samuk Proposed Price** belongs to one missing-price **Rak Samuk Work** item and must be approved by a finance/payment-permission user before it becomes the approved per-piece work price.
 - **Rak Samuk Return** always sends the Job to **Waiting for Coloring Intake** in the starting workflow.
 - A **Payment Voucher** is issued only after payment is confirmed and receives a monthly running PV number.
 - A **Review Album** can link to zero or many SKU Variants and optionally to one Customer or Order.

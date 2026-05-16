@@ -585,10 +585,10 @@ Note:
 - Related flow IDs: `F05`
 - Priority: `P1`
 - Device target: mobile / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Rak Samuk Work, Proposed Price, Rak Samuk Standard Rate, Product Model
-- Main actions: Submit proposed price.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Main actions: Submit proposed per-piece price for the missing-price work item.
+- Related source docs: `docs/ux-ui/screens/SCR-RS-003-rak-samuk-missing-price.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-005 - Proposed-price Approval
 
@@ -602,10 +602,10 @@ Note:
 - Related flow IDs: `F05`
 - Priority: `P1`
 - Device target: desktop / tablet
-- Design status: needs decision
+- Design status: ready
 - Main data objects: Proposed Price, Rak Samuk Work, Product Model, Rak Samuk Standard Rate
-- Main actions: Review proposed price, approve price.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Main actions: Review proposed per-piece price, approve price with finance/payment permission.
+- Related source docs: `docs/ux-ui/screens/SCR-RS-004-rak-samuk-price-approval.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-006 - Receive Rak Samuk Work Back
 

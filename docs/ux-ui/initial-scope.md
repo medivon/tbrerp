@@ -556,7 +556,8 @@ Confirmed rules:
 - If Product Model has Rak Samuk Standard Rate, worker cannot request price in system.
 - If no rate exists, show `ไม่มีราคา / ให้แจ้งราคา`.
 - Worker can propose price only for missing-price items.
-- Finance-permission user approves proposed price.
+- Worker enters the per-piece price for that specific missing-price work item, not a total job price.
+- Finance/payment-permission user approves proposed price.
 
 ### Standard Rate Update
 

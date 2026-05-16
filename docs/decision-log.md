@@ -467,7 +467,8 @@ Rules:
 - If standard rate exists, worker cannot request price in system.
 - If no rate exists, item shows `ไม่มีราคา / ให้แจ้งราคา`.
 - Worker can propose price only for missing-price items.
-- Finance-permission user approves proposed price.
+- Proposed price is the per-piece price for that specific missing-price work item, not the total price for all assigned work.
+- Finance/payment-permission user approves proposed price.
 - Standard rate lives on Product Model (SKU ใหญ่), not variant.
 - Approved first rate from 0/missing can update Product Model standard rate automatically with log.
 - If existing non-zero standard rate differs from paid rate, after PV process approver must choose whether to update standard rate.

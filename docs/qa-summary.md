@@ -668,6 +668,12 @@ A: No, unless finance permission.
 **Q: When can Rak Samuk Worker propose price?**
 A: Only when item has no standard rate and shows `ไม่มีราคา / ให้แจ้งราคา`.
 
+**Q: What price does Rak Samuk Worker enter for missing-price work?**
+A: The per-piece price for that specific missing-price item, not the total price for all assigned work.
+
+**Q: Who approves the proposed Rak Samuk price?**
+A: A finance/payment-permission user.
+
 **Q: If standard rate exists, can worker request price change in system?**
 A: No. If they want higher rate, discuss outside chat; finance user edits during payout if accepted.
 

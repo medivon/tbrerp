@@ -111,6 +111,16 @@ Decision:
 - `งานด่วน` is set or changed from the selected-row side drawer.
 - `รอวัตถุดิบ` is a high blocker and sorts above normal aged work.
 
+## Recently Resolved P1 UX / Needs-decision Questions
+
+### OQ-UX-004 - Rak Samuk missing-price proposal and approval
+
+Decision:
+
+- Rak Samuk Worker enters `ราคาที่แจ้งต่อชิ้น` for the specific missing-price work item.
+- Worker does not enter a total price for all assigned work.
+- Finance/payment-permission user approves the proposed Rak Samuk price.
+
 ## Recently Resolved Material Boundary Questions
 
 ### OQ-MAT-001 - Supplier/material cardinality

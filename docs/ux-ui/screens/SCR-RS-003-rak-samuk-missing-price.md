@@ -12,7 +12,7 @@ The Rak Samuk Missing Price screen lets a Rak Samuk Worker submit a proposed pri
 
 - Understand which assigned work has no price.
 - Review only the images and instructions needed to propose a price.
-- Submit a proposed own work price.
+- Submit the per-piece price for that specific missing-price work item.
 - Avoid seeing customer data, Order ID, sales price, other workers' work, or internal approval details.
 
 ## 4. Entry Points
@@ -30,8 +30,8 @@ The Rak Samuk Missing Price screen lets a Rak Samuk Worker submit a proposed pri
 
 - Header: `ไม่มีราคา / ให้แจ้งราคา`.
 - Work preview: image, work name, quantity, Rak Samuk instruction.
-- Price form: proposed price input and optional short note.
-- Guidance text: simple Thai copy explaining this is the worker's proposed price for this assigned work.
+- Price form: proposed per-piece price input and optional short note.
+- Guidance text: simple Thai copy explaining this is the worker's proposed per-piece price for this assigned missing-price item.
 - Submit area: `ส่งราคา` button and cancel/back.
 - Submitted state: shows that price was sent for approval.
 
@@ -56,7 +56,7 @@ The Rak Samuk Missing Price screen lets a Rak Samuk Worker submit a proposed pri
 | Main image | รูปงาน | Cabinet detail thumbnail | Department Instruction Images | Needed for price proposal. |
 | Rak Samuk instruction | รายละเอียดรักสมุก | ลายดอกพิกุลหน้าบาน | Department Instruction Images | Main work instruction. |
 | Quantity | จำนวน | 1 ชิ้น | Rak Samuk Work | Assigned quantity. |
-| Proposed price | ราคาที่แจ้ง | 500 บาท/ชิ้น | Proposed Price | Worker proposal, not sales price. |
+| Proposed price | ราคาที่แจ้งต่อชิ้น | 500 บาท/ชิ้น | Proposed Price | Worker proposal for this missing-price item, not sales price or total job price. |
 | Note | หมายเหตุ | ลายละเอียดมาก ใช้เวลานาน | Proposed Price | Optional short explanation. |
 | Submitted state | ส่งราคาแล้ว | รออนุมัติ | Proposed Price | Approval handled by finance-permission user elsewhere. |
 
@@ -64,7 +64,7 @@ The Rak Samuk Missing Price screen lets a Rak Samuk Worker submit a proposed pri
 
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
-| Enter proposed price | กรอกราคา | Assigned Rak Samuk Worker | Adds proposed price. | No |
+| Enter proposed price | กรอกราคาต่อชิ้น | Assigned Rak Samuk Worker | Adds proposed per-piece price for this work item. | No |
 | Add note | เพิ่มหมายเหตุ | Assigned Rak Samuk Worker | Adds optional explanation. | No |
 | Submit price | ส่งราคา | Assigned Rak Samuk Worker | Sends proposed price for approval. | Yes |
 | Cancel/back | กลับ | Assigned Rak Samuk Worker | Returns to work list without submitting. | No |
@@ -103,15 +103,14 @@ This screen should not open without a specific missing-price work item. If opene
 
 - Make this feel like a small task, not a finance form.
 - Keep image and instruction visible while entering price.
-- Label the price as the worker's proposed work price, never as sales price.
+- Label the price as the worker's proposed per-piece work price, never as sales price or total job price.
 - After submit, replace the form with a clear `ส่งราคาแล้ว / รออนุมัติ` state.
 - Avoid exposing who approves, customer context, or internal costing history.
 
 ## 15. Image Generation Prompt
 
-Create a mobile form UI for a Thai Rak Samuk outsource worker submitting a missing price. Header "ไม่มีราคา / ให้แจ้งราคา". Show a work preview card with image, work name "ตู้โชว์ไม้สักแกะลาย", instruction "ลายดอกพิกุลหน้าบาน", quantity 1. Form has fields "ราคาที่แจ้ง" and "หมายเหตุ", with button "ส่งราคา". Include pending state "ส่งราคาแล้ว / รออนุมัติ". No customer name, no Order ID, no sales price, no admin controls.
+Create a mobile form UI for a Thai Rak Samuk outsource worker submitting a missing price. Header "ไม่มีราคา / ให้แจ้งราคา". Show a work preview card with image, work name "ตู้โชว์ไม้สักแกะลาย", instruction "ลายดอกพิกุลหน้าบาน", quantity 1. Form has fields "ราคาที่แจ้งต่อชิ้น" and "หมายเหตุ", with button "ส่งราคา". Include pending state "ส่งราคาแล้ว / รออนุมัติ". No customer name, no Order ID, no sales price, no admin controls.
 
 ## 16. Open UX Questions
 
 - None blocking for this missing-price screen.
-

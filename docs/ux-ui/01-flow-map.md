@@ -394,8 +394,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 5. Rak Samuk Worker reviews assigned work and needed instruction images.
 6. If a standard rate exists, Rak Samuk Worker continues without proposing price.
 7. If no rate exists, Rak Samuk Worker sees `ไม่มีราคา / ให้แจ้งราคา`.
-8. Rak Samuk Worker submits proposed price only for missing-price work.
-9. Finance-permission user approves proposed price when required.
+8. Rak Samuk Worker submits the per-piece proposed price for that missing-price work item.
+9. Finance/payment-permission user approves proposed price when required.
 10. Internal staff receives the work back.
 11. Work enters `รอรับเข้าโรงงานสี`.
 
@@ -407,7 +407,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Shows Rak Samuk Worker only their own assigned work.
 - Hides Customer data, Order ID, sales price, and other workers' work from Rak Samuk Worker.
 - Shows own price only for own work.
-- Allows price proposal only when standard rate is missing.
+- Allows price proposal only when standard rate is missing, and stores it as a per-piece proposed price for that work item.
 - Keeps workflow status control with internal staff, not Rak Samuk Worker.
 - Routes received-back Rak Samuk Work to `รอรับเข้าโรงงานสี` with no P0 destination picker.
 
