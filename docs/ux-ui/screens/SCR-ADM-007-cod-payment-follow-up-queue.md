@@ -25,6 +25,8 @@ This screen helps Admin or finance-permission users see which Orders or shipment
 - Close follow-up items when the money issue is resolved.
 - Treat close as operational finance follow-up resolution, not full accounting approval.
 - Correct Payment Records only with visible old/new values and reason.
+- Re-check a closed follow-up if the Payment Record amount used to close it is later corrected.
+- Avoid overpayment workflow complexity; record the accepted Order/context amount and handle any excess outside this workflow.
 
 ## 4. Entry Points
 
@@ -130,6 +132,8 @@ Show `ไม่มีรายการ COD / Payment ต้องติดต�
 - COD follow-up cannot be closed before the related Shipment is closed, even if money is already confirmed.
 - A follow-up item can be closed when required payment evidence or an explanatory note is enough for the operational audit trail; this is not a full accounting approval flow.
 - Payment Records require evidence and can be corrected only with old/new values, reason, editor, and follow-up visibility.
+- If only payment method is wrong but the amount is correct, no new finance follow-up is required.
+- Do not add automated image-health checking for missing/unreadable slip files; permitted users may correct/replace evidence with log when needed.
 - Audit/management review remains separate from normal payment recording.
 
 ## 14. UX Notes for Designer

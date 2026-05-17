@@ -19,6 +19,7 @@ Approved mockup:
 - Preview recipient and address information before printing.
 - Confirm carrier, phone, address, and delivery notes.
 - Print Shipping Sheet alone or with Delivery Note.
+- Preview the same document format on mobile before printing/sharing.
 - Avoid confusing Shipping Sheet with Delivery Note.
 
 ## 4. Entry Points
@@ -66,7 +67,7 @@ Approved mockup:
 | Address | ที่อยู่จัดส่ง | 99/12 ถ.เจริญกรุง กรุงเทพฯ | Shipment address snapshot | Main document content. |
 | Carrier | ขนส่ง | รถร้าน | Shipment | Delivery team cannot change later. |
 | Delivery date | วันจัดส่ง | 20 พ.ค. 2569 | Shipment | If empty, delivery dashboard treats as today. |
-| COD | COD | 12,000 บาท | Shipment | Show on Shipping Sheet when the Shipment carries COD. |
+| COD | COD | 12,000 บาท | Shipment | Show on Shipping Sheet when the Shipment carries COD and the user has COD/payment permission. |
 | Short item summary | สรุปรายการ | ตู้โชว์ไม้สัก 1 ชิ้น | Shipment / Order Line | Summary only; full item list is Delivery Note. |
 | Delivery note | หมายเหตุจัดส่ง | โทรก่อนส่ง | Shipment | Useful for delivery team. |
 
@@ -102,9 +103,11 @@ If recipient/address data is missing, show `ไม่มีข้อมูลผ
 ## 13. Permission Rules
 
 - Admin can preview and print.
+- COD amount is visible/printable only to users with COD/payment permission.
 - Delivery Team cannot edit address, carrier, or COD.
 - Delivery Team may receive the printed/physical Shipping Sheet; COD amount is not shown in the Delivery Team system UI.
 - Shipping Sheet focuses on recipient/address; Delivery Note handles full item detail.
+- Routine reprint does not need a print log in the starting workflow.
 - Barcode, QR, and label printer flows are outside Stage 1.
 
 ## 14. UX Notes for Designer

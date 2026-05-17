@@ -149,6 +149,10 @@ Rules:
 - If a right-side control is needed, use `ดูทั้งหมด`.
 - Do not show an empty-state label when delayed or urgent work is visible.
 - Critical preview may surface urgent/old work, overdue or near delivery, waiting materials, stock-negative warning, and shipment-confirmation risk.
+- Critical preview priority is near/overdue delivery, urgent work, old work, waiting materials, then shipment confirmation waiting to close.
+- If urgent work is also waiting for materials, show `รอวัตถุดิบ` as the primary blocker.
+- If near-delivery work is still waiting for materials, show near-delivery risk as primary and keep the material blocker visible.
+- Financial Follow-up does not enter this preview; it stays in `ติดตาม COD / Payment`.
 - Critical preview does not become an individual performance report or personal task list.
 
 ## 11. Status / Chips

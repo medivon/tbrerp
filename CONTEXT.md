@@ -99,7 +99,7 @@ The commercial agreement for how an Order should be paid.
 _Avoid_: Payment record
 
 **Payment Record (รายการรับเงิน)**:
-An actual payment entry such as transfer, cash, card, or COD amount recorded against an Order, Shipment, or finance follow-up context. It must store payment date/time, amount, payment method, evidence slip/photo, related object, and recorder. If corrected later, the old value, new value, reason, editor, and follow-up visibility must be logged clearly.
+An accepted payment entry such as transfer, cash, card, or COD amount recorded against an Order, Shipment, or finance follow-up context. It must store payment date/time, amount, payment method, evidence slip/photo, related object, and recorder. In the starting workflow, overpayment is not a separate system flow; record the amount accepted for the Order/context and let admin handle any excess outside the system workflow.
 _Avoid_: Payment term, audit confirmation, Job approval
 
 **Financial Follow-up (ติดตามการเงิน)**:
@@ -123,7 +123,7 @@ A named module event that creates or updates an Operational Alert, such as urgen
 _Avoid_: One-off toast text, unstructured notification message
 
 **Management Report (รายงานบริหาร)**:
-A first-scope summary for unfinished work, urgency, blockers, age, sales, delivery, expense, rough profit, and finance follow-up. It supports operational clarity and management review, not formal accounting statements.
+A first-scope summary for unfinished work, urgency, blockers, age, sales, delivery send-out, expense, rough profit, and finance follow-up. It supports operational clarity and management review, not formal accounting statements.
 _Avoid_: Tax report, accounting ledger, individual performance scorecard
 
 ### Product and Custom Work
@@ -145,7 +145,7 @@ The Settings area for product-related reference lists used when creating product
 _Avoid_: ข้อมูลตั้งต้นสินค้า, CRUD, Master in staff-facing labels
 
 **System Controlled List (รายการตั้งค่าควบคุม)**:
-A simple configurable list used to reduce free-text chaos in operational work, such as payment methods, expense categories, Customer Tiers, Service Case Types, carriers, material units, or material categories. Used values are closed/inactivated rather than deleted.
+A simple configurable list used to reduce free-text chaos in operational work, such as payment methods, expense categories, Customer Tiers, Service Case Types, carriers, material units, or material categories. Used values may be renamed when the meaning stays the same, while historical documents keep their captured snapshots. If the meaning changes, close/inactivate the old value and create a new one.
 _Avoid_: Full workflow builder, technical master table label, hard-deleting used values
 
 **Product Setting Item Status (สถานะรายการตั้งค่าสินค้า)**:
@@ -312,7 +312,7 @@ _Avoid_: Deadline
 
 **Hold (พักงานระดับ Job)**:
 A Job state used when work should not proceed until released.
-_Avoid_: Shipment hold, customer cancellation
+_Avoid_: Shipment Send-out Hold, customer cancellation
 
 **Waiting for Materials (รอวัตถุดิบ)**:
 A Job state set by a workshop department when work is blocked by missing materials.
@@ -366,12 +366,16 @@ _Avoid_: Delivery Note
 The Delivery Team's operational handoff that records a released Shipment has left for delivery and should enter admin shipment confirmation.
 _Avoid_: Shipment close, proof capture, tracking confirmation
 
+**Shipment Send-out Hold (พักการส่งออก)**:
+A delivery-step hold used when a Shipment or ready-to-ship work should not be sent out yet. It does not move the Order Line, Job, or Service Case backward out of ready-to-ship; the issue is handled in the shipment/send-out step.
+_Avoid_: Job Hold, reverting ready-to-ship status, cancelling upstream work
+
 **Shipment Evidence (หลักฐานจัดส่ง)**:
 The admin-confirmed delivery proof captured before closing a Shipment, either tracking or one or more delivery evidence photos.
 _Avoid_: Carrier-specific evidence checklist, payment evidence, COD audit
 
 **Service Case (งานบริการหลังการขาย)**:
-An after-sales record used for follow-up events such as refund notes, returned goods, sending goods back to the customer, claim notes, or similar service handling. It may reference a Customer or an old Order for context only, but its actions and status do not affect that Order, and changes to the Order do not affect the Service Case.
+An after-sales record used for real follow-up events such as refund notes, returned goods, sending goods back to the customer, claim notes, or similar service handling after the event exists. It may reference a Customer or an old Order for context only, but its actions and status do not affect that Order, and changes to the Order do not affect the Service Case.
 _Avoid_: Reopening the original Order, repair Job, Order status
 
 **Service Shipment (รอบจัดส่งงานบริการ)**:
@@ -444,8 +448,10 @@ _Avoid_: Accounting journal
 - A custom **Order Line** carries **Custom Work Detail** during order entry or guarded Order Line Edit, and creates one **Order Job** when the Order is confirmed or when the completed new custom line is saved after confirmation.
 - A ready-stock **Order Line** reserves **Ready Stock** when the Order is confirmed or when the line is added after confirmation, but does not create a **Job**.
 - A **Payment Record** may be captured during Order entry or later Financial Follow-up, but missing Payment Records do not block **Order Job** creation.
-- A **Payment Record** can be corrected later only with clear old/new value, reason, editor, and follow-up visibility; corrections do not silently rewrite received-money history.
+- A **Payment Record** can be corrected later only with clear old/new value, reason, editor, and follow-up visibility; corrections do not silently rewrite received-money history. If a closed follow-up depended on the corrected amount, finance should re-check that follow-up.
+- Payment Method mistakes do not require a new follow-up when the amount is correct.
 - A **Financial Follow-up** item is resolved when a permitted finance user closes it with required payment evidence or explanatory note; operational Order and Shipment completion remain separate.
+- COD belongs to the Shipment round that carries it. A Shipment COD amount can be corrected before send-out by an authorized user with log; after send-out or close, avoid changing the Shipment and handle rare mistakes through finance notes/manual handling.
 - **Financial Reconciliation** can block saving an Order total edit when the new sales total does not line up with financial records or adjustment notes; this is separate from normal Order operation.
 - A **Job** has exactly one **Job Source Type**: Order or Production.
 - An **Order Job** belongs to an Order Line and becomes ready for **Shipment** only after production is complete.
@@ -453,9 +459,11 @@ _Avoid_: Accounting journal
 - A **Production Batch** has many **Production Lots**; a Production Lot may create one or more **Production Jobs** depending on how production is split.
 - A **Production Job** tied to an SKU Variant increases **Ready Stock** by its production quantity when completed; a custom/prototype Production Job may end as Done without entering stock.
 - A **Shipment** creates one **Delivery Note** and one **Shipping Sheet**; users may print either or both.
-- A **Shipment** may be marked **Delivery Send-out** by the **Delivery Team** without **Shipment Evidence**; it can be closed only by admin after at least tracking or one delivery evidence photo is recorded.
+- A **Shipment** may be marked **Delivery Send-out** by the **Delivery Team** without **Shipment Evidence**; it can be closed only by admin after at least tracking or one delivery evidence photo is recorded. Delivery reporting uses the **Delivery Send-out** date, while Order Completion still waits for Shipment close.
+- Ready-to-ship work should not move backward during Shipment creation. If a ready Shipment should not leave yet, use **Shipment Send-out Hold** or manual shipment-step handling instead of reverting the upstream Order Line, Job, or Service Case.
 - **Order Completion** happens when all required Order Shipments are closed; **Financial Follow-up** is separate.
-- A **Service Case** may reference a **Customer** or **Order** for context, and may create a **Service Shipment**, but it does not reopen, close, edit, or recalculate the referenced Order. The referenced Order also does not control the Service Case's status.
+- A **Service Case** may reference a **Customer** or **Order** for context, and may create a **Service Shipment**, but it does not reopen, close, edit, or recalculate the referenced Order. The referenced Order also does not control the Service Case's status. If the reference is wrong, it may be corrected with log because it is contextual only.
+- A **Service Case** should be recorded after the real event exists. Do not create hypothetical/draft service-finance records before the business event happens.
 - **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** in the first scope.
 - A **Rak Samuk Worker** can see only their assigned work and limited own-payment information.
 - A **Rak Samuk Proposed Price** belongs to one missing-price **Rak Samuk Work** item and must be approved by a finance/payment-permission user before it becomes the approved per-piece work price.
@@ -492,7 +500,8 @@ _Avoid_: Accounting journal
 - Manual Material Purchase Orders cannot link Jobs after creation. Material Purchase Orders created from waiting-material notes cannot add new Job links later, though they may add normal unlinked material lines.
 - Receiving a Material Purchase Order that is linked to waiting Jobs releases only those linked Jobs from **Waiting for Materials**, returns them to their previous department queue, and writes the release in the Job Activity Log. It does not add a badge or separate notification.
 - **Expense Entries** and stock movements are separate first-scope records; neither updates the other automatically.
-- **Operational Alerts** are in-app queue/status/event signals in the starting workflow. They do not have a separate read/unread inbox or notification history; resolved work state is the source of truth.
+- **Expense Entries** can be corrected by permission with log for operational mistakes such as wrong category; report grouping follows the latest active value in this non-accounting starting workflow.
+- **Operational Alerts** are in-app queue/status/event signals in the starting workflow. They do not have a separate read/unread inbox or notification history; resolved work state is the source of truth. Existing alerts should not repeatedly open modals/toasts; keep the chip/queue state visible.
 - **Alert Events** should stay module-specific and named clearly enough to support future external hooks, APIs, or webhooks.
 - **Management Reports** summarize work and money for operating visibility. They are separate from formal accounting and tax reporting.
 - **System Controlled List** values can be configured where they reduce operational chaos. Values already used by history are closed/inactivated instead of deleted.

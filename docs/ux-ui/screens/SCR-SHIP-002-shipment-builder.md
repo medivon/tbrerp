@@ -141,7 +141,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Create fails: `สร้างรอบจัดส่งไม่สำเร็จ`.
 - Release fails: `ปล่อยให้ฝ่ายจัดส่งไม่สำเร็จ`.
 - Selected item already in another Draft Shipment: show `รายการนี้กำลังถูกเตรียมรอบจัดส่งแล้ว`.
-- Selected items are no longer shippable: show `รายการที่เลือกยังไม่พร้อมสร้างรอบจัดส่ง` and return to Order Detail.
+- Selected item is no longer valid because it is already in another Shipment/cancelled: show `รายการนี้ไม่สามารถสร้างรอบจัดส่งได้` and return to the source queue/detail.
 - Stock-negative ready-stock line: show acknowledgement modal with `รับทราบและสร้างรอบจัดส่งต่อ` and `กลับไปตรวจสต๊อก`; do not require reason or Manager approval.
 - COD warning without note: show `กรุณาระบุหมายเหตุ COD`.
 
@@ -153,9 +153,12 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Finance-sensitive COD/payment detail is permission-aware.
 - Service Case sources create Service Shipments only and do not update any referenced Order status, total, or completion state.
 - Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them or see COD amount in the Delivery Team system UI.
+- COD belongs to this Shipment round. Do not add a flow where this round collects COD intended for another Shipment round.
+- After release/send-out, avoid changing Shipment COD; rare mistakes are handled through finance notes/manual handling rather than changing this closed/send-out document path.
 - Draft Shipment items are not shipped and Order is not complete.
 - Bulk users do not enter this screen for default/simple creation.
 - Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
+- Ready-to-ship work should not be rolled backward while building a Shipment. If the Shipment should not leave yet, hold or handle it in the shipment/send-out step.
 - When opened from Order Detail, Shipment Builder receives recipient name, address, phone, selected items, item main images, quantities, and carrier name when already chosen.
 - Recipient/address/carrier edits in Shipment Builder are Shipment snapshots first; they do not update Customer or Order automatically.
 - If the Shipment address differs from existing Customer addresses and the Customer has fewer than 3 saved addresses, the user may explicitly save it as a secondary Address Entry. This must not change the Customer default address unless a later Customer flow says so.

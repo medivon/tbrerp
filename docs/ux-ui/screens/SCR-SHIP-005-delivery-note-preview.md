@@ -19,6 +19,7 @@ Approved mockup:
 - Preview the item list before printing.
 - Confirm item names, quantities, images, and notes.
 - Print Delivery Note alone or alongside Shipping Sheet.
+- Reprint from the correct Shipment snapshot when needed.
 - Avoid confusing Delivery Note with Shipping Sheet.
 
 ## 4. Entry Points
@@ -103,6 +104,8 @@ If no items are available, show `ไม่มีรายการสินค�
 - Delivery Team may receive printed/physical document but does not edit it.
 - Delivery Note must not show sales price.
 - Delivery Note must not show COD amount; COD belongs on Shipping Sheet where relevant.
+- Routine reprint does not need a print log in the starting workflow.
+- If Shipment is already closed, reprint uses the closed Shipment snapshot.
 - Barcode, QR, and label printer flows are outside Stage 1.
 
 ## 14. UX Notes for Designer

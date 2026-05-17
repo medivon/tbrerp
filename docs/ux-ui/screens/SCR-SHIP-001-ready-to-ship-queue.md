@@ -57,7 +57,7 @@ Note: this mockup approves the inner content/workbench structure only. Its dark 
 - Order row/card: Customer, recipient, item count, source chips, COD chip where allowed, delivery date/target date, age, primary action `สร้างรอบจัดส่ง`.
 - Expandable item preview: thumbnails, item names, quantities, source badges.
 - Right drawer: selected Order summary and shipment-start action.
-- No separate Hold state here; if not ready, the item should not be in this queue.
+- No separate Hold state here. Items that are not ready should not be in this queue; if a ready item should not leave after Shipment work begins, hold/handle it in the shipment/send-out step.
 
 ## 7. Main Components
 

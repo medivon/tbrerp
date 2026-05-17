@@ -22,6 +22,7 @@ Admin may also view this screen for operational visibility, but the primary work
 - Open a Shipment and review item, recipient, address, phone, carrier, and notes.
 - Optionally add `รูปหลักฐานจัดส่ง` on an individual Shipment when useful.
 - Mark one Shipment `ส่งออกแล้ว` from a row/card action, or bulk-select today's/no-date Shipments and confirm `บันทึกว่าส่งออกแล้ว`.
+- Record the delivery report date through the `ส่งออกแล้ว` action.
 - Check a simple `ส่งออกแล้ววันนี้` history view.
 - Avoid editing master Shipment data or closing Shipment.
 
@@ -96,8 +97,8 @@ Admin may also view this screen for operational visibility, but the primary work
 | Open Shipment | เปิดรอบจัดส่ง | Delivery Team | Opens delivery detail view. | No |
 | Add optional photo | เพิ่มรูปหลักฐานจัดส่ง | Delivery Team | Adds optional delivery evidence photos to one Shipment. | No |
 | Add delivery note | เพิ่มหมายเหตุ | Delivery Team | Adds short delivery note. | No |
-| Mark one sent out | ส่งออกแล้ว | Delivery Team | Moves one Shipment to admin `ยืนยันการจัดส่ง`. | Yes |
-| Bulk mark sent out | บันทึกว่าส่งออกแล้ว | Delivery Team, today's/no-date Shipments only | Moves selected Shipments to admin `ยืนยันการจัดส่ง`. | Yes |
+| Mark one sent out | ส่งออกแล้ว | Delivery Team | Moves one Shipment to admin `ยืนยันการจัดส่ง` and records the delivery report date. | Yes |
+| Bulk mark sent out | บันทึกว่าส่งออกแล้ว | Delivery Team, today's/no-date Shipments only | Moves selected Shipments to admin `ยืนยันการจัดส่ง` and records the delivery report date. | Yes |
 | Open same-day history | ส่งออกแล้ววันนี้ | Delivery Team | Shows Shipments marked sent out today. | No |
 
 ## 10. Status / Chips

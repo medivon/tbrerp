@@ -245,7 +245,7 @@ Rules:
 - First management report is unfinished work by department/status.
 - First sales report is sales by period from real Orders and excludes cancelled Orders by default.
 - Sales report uses Order creation date.
-- Delivery report uses Shipment close / delivery close date.
+- Delivery report uses Delivery Send-out (`ส่งออกแล้ว`) date.
 - Expense report uses actual payment date.
 - Starting reports use summary cards and tables.
 - General report export is later.

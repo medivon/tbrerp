@@ -558,7 +558,7 @@ A: Order becomes `จัดส่งครบแล้ว`; cancelled lines rema
 ## 7. Payment and Finance Follow-up
 
 **Q: Should Payment Term and Payment Record be separate?**
-A: Yes. Payment Term คือข้อตกลง, Payment Record คือเงินเข้าจริง.
+A: Yes. Payment Term คือข้อตกลง, Payment Record คือเงินที่รับ/ยอมรับเข้ากับออเดอร์หรือบริบทนั้น.
 
 **Q: Should payment audit block work?**
 A: No. Audit is management layer and separate.
@@ -1703,7 +1703,7 @@ A: No, first-scope management summaries.
 A: Default by Order creation date.
 
 **Q: What delivery report basis?**
-A: Shipment/Order closed date.
+A: Delivery Send-out (`ส่งออกแล้ว`) date.
 
 **Q: What expense report basis?**
 A: Actual payment date.
@@ -1738,7 +1738,7 @@ A: No. Exclude cancelled Orders by default, with a separate filter/view for canc
 A: Order creation date.
 
 **Q: Which date does the delivery report use?**
-A: Shipment close / delivery close date.
+A: Delivery Send-out (`ส่งออกแล้ว`) date.
 
 **Q: Which date does the expense report use?**
 A: Actual payment date.
@@ -1881,7 +1881,7 @@ A: Yes, when relevant to that Shipment.
 A: Yes. They use document/status snapshots and can be regenerated from the current snapshot/status.
 
 **Q: Are print actions logged?**
-A: Important print actions should have a light log.
+A: Routine reprint does not need a print log in the starting workflow.
 
 **Q: Can Delivery Note and Shipping Sheet print separately?**
 A: Yes.
@@ -1893,7 +1893,7 @@ A: After payment is confirmed.
 A: Buddhist year/month running format, for example `PV-2568-03-004`.
 
 **Q: Which exports are included?**
-A: Expense export CSV/XLSX is included. Order list export is later. Sensitive exports remain permission-aware.
+A: Expense export CSV/XLSX is included using a fixed/simple template without evidence images or evidence links. Order list export is later. Sensitive exports remain permission-aware.
 
 **Q: How should printed documents feel?**
 A: Functional, readable, and stable.
@@ -1918,13 +1918,174 @@ A: PV line-item detail, full accounting, tax, quotation, channel analytics, payr
 **Q: Should Data Migration / Starting Data be grilled in this round?**
 A: No. The user explicitly removed migration/import/start-data questions from this phase so they should not be asked again in this decision-gate set.
 
-## 27. Current UX Q&A Status
+## 27. Edge Decision Gates After Q150
 
-**Q: Has UX/UI Question 1 been resolved?**
-A: Yes. The first screen is `Admin Dashboard`.
+These 50 follow-up questions were asked only to close flow/condition edges from the first 150 decision gates. They do not reopen User/Role/Login/Permission or Data Migration.
 
-**Q: What was the next UX question proposed?**
-A: Whether Admin Dashboard should be cards/counts first, then click into queues.
+### Finance / Payment
 
-**Q: Has UX/UI Question 2 been answered?**
-A: Not yet at the time this summary was created.
+**Q1: If a Financial Follow-up was closed and the Payment Record amount is later found wrong, what happens?**
+A: Correct the Payment Record with old/new value, reason, editor, time, and follow-up visibility; finance should re-check the follow-up.
+
+**Q2: Can one COD Shipment round collect the full COD meant for other Shipment rounds?**
+A: No. COD is separated by Shipment round, so this premise should not be designed.
+
+**Q3: Is overpayment a system workflow?**
+A: No. Record the amount accepted for the Order/context and let admin handle any excess outside the system workflow.
+
+**Q4: When is refund Expense Entry created if the amount is not known?**
+A: Do not record it until the real payment/refund event and amount exist.
+
+**Q5: Should the system deeply check whether uploaded slip files later disappear or cannot be opened?**
+A: No automated image-health checking first. If evidence must be changed, permitted users can correct/replace it with log.
+
+**Q6: If COD is wrong before Shipment send-out, where is it fixed?**
+A: Fix COD on Shipment before send-out with log.
+
+**Q7: Should there be a special flow for COD being wrong after send-out but before close?**
+A: No special flow first; this should rarely happen and should not drive complex logic.
+
+**Q8: If closed Shipment COD is later found wrong, should Shipment be changed?**
+A: No. Do not touch closed Shipment; use finance note/manual handling.
+
+**Q9: If payment method is wrong but amount is correct, does finance need a new follow-up?**
+A: No. Amount correctness is the main concern; correction can be light or left as-is by admin judgment.
+
+**Q10: Can Expense Category be corrected?**
+A: Yes, with log.
+
+### Service Case
+
+**Q11: Can the referenced old Order on a Service Case be corrected?**
+A: Yes, with log, because it is context only.
+
+**Q12: If Service Case is `พร้อมส่งกลับ` and customer changes their mind, should the case move backward?**
+A: No. End/close that case appropriately and open a new Service Case if a new matter starts.
+
+**Q13: If Service Shipment exists but goods are not actually ready to leave, should the Shipment be rolled back?**
+A: No. Keep/hold the Shipment at the shipment/send-out step.
+
+**Q14: If a closed refund Service Case is followed by a new return matter, reuse the old case?**
+A: No. Create a new Service Case.
+
+**Q15: Should Service Case payment/charge/refund be drafted before the event happens?**
+A: No. Record only after the real event exists; no hypothetical/draft service-finance records.
+
+### Dashboard / Priority
+
+**Q16: What is `งานที่ต้องรีบดู` priority?**
+A: Near/overdue delivery, urgent work, old work, waiting materials, then shipment confirmation waiting to close.
+
+**Q17: If a Job is urgent and waiting for materials, what is primary?**
+A: `รอวัตถุดิบ` is primary because work cannot continue.
+
+**Q18: Can stock-negative work still enter ready-to-ship?**
+A: Yes, with warning/acknowledgement in Shipment Builder.
+
+**Q19: Does long-open Financial Follow-up enter `งานที่ต้องรีบดู`?**
+A: No. It stays in COD/Payment queue/card.
+
+**Q20: What if there are no critical items?**
+A: Show a short empty state; do not fill the section with normal work.
+
+### Reports
+
+**Q21: If Order is created this month and delivered next month, which month gets sales?**
+A: Order creation month.
+
+**Q22: If an Order is cancelled after appearing in a prior sales report, how does report behave?**
+A: Report reflects latest status: cancelled Orders are excluded by default and available through cancelled filter/view.
+
+**Q23: If Expense is entered today but actual payment date is last month, which month gets expense?**
+A: Actual payment date month.
+
+**Q24: If delivery marks `ส่งออกแล้ว` today and admin closes Shipment tomorrow, which date does delivery report use?**
+A: The `ส่งออกแล้ว` date.
+
+**Q25: Do unfinished-work reports include `รอวัตถุดิบ`?**
+A: Yes, with blocker/status clearly separated.
+
+### Alerts
+
+**Q26: How should missing required data errors show?**
+A: Blocking inline error near the missing field/section.
+
+**Q27: Should unresolved alerts pop toast/modal every time a page opens?**
+A: No. Keep chip/queue state visible without repeated popups.
+
+**Q28: If near-delivery work is still waiting for materials, what is primary?**
+A: Near-delivery risk is primary because it should be close to done; keep the material blocker visible.
+
+**Q29: After stock-negative is acknowledged, does warning remain?**
+A: Yes, show it in context, but do not block the same action repeatedly.
+
+**Q30: Does Payment Audit Follow-up enter admin critical preview?**
+A: No. It stays in finance follow-up queue/card.
+
+### Settings
+
+**Q31: Can a used controlled-list value be renamed?**
+A: Yes, when the meaning stays the same; old documents/history keep snapshots.
+
+**Q32: How does a closed Carrier appear in history?**
+A: Show the old name with closed/inactive badge.
+
+**Q33: How does a retired Service Case Type behave?**
+A: Close/inactivate it for new cases; old cases still show it.
+
+**Q34: Rename vs new Expense Category?**
+A: Rename with log if the meaning is the same; close old and create new if the meaning changes.
+
+**Q35: If aging thresholds change, do old work visuals update?**
+A: Yes. Aging is a current operational view, not a historical event.
+
+### Print / Export
+
+**Q36: If Delivery Note is printed and Shipment data changes before send-out, can it print again?**
+A: Yes, reprint from current snapshot; no routine print log needed.
+
+**Q37: If Shipment is closed, what data does reprint use?**
+A: The closed Shipment snapshot.
+
+**Q38: Can a user without COD permission print Shipping Sheet COD amount?**
+A: No. COD amount is visible/printable only to users with COD/payment permission.
+
+**Q39: How does Expense export handle evidence images?**
+A: It does not export evidence images or evidence links in the starting workflow; use a fixed/simple export template.
+
+**Q40: Should mobile print open preview first?**
+A: Yes, same document format as desktop before printing/sharing.
+
+### Cross-module Edges
+
+**Q41: Does cancelling an Order affect a Service Case referencing it?**
+A: No.
+
+**Q42: Does deactivating a Customer stop open Service Cases?**
+A: No. Existing Service Cases continue.
+
+**Q43: Does deactivating a Customer stop Financial Follow-up?**
+A: No. Existing finance follow-up continues.
+
+**Q44: How do closed Product/SKU values appear in old history?**
+A: Show original value with closed/inactive badge where relevant.
+
+**Q45: If a Material Item referenced by `รอวัตถุดิบ` is closed later, what happens?**
+A: The Job remains waiting; old reference is readable, but the material is not selectable for new work.
+
+### Final Boundaries
+
+**Q46: Can ready-to-ship work become not-ready during Shipment creation?**
+A: No. Ready-to-ship means ready-to-ship; if it should not leave yet, hold/handle it at shipment send-out step.
+
+**Q47: Should reports realtime-refresh?**
+A: No. Provide refresh/load-new-data and latest data timestamp.
+
+**Q48: Are exports permission-aware?**
+A: Yes, like UI; hide/block money-sensitive columns/reports by permission.
+
+**Q49: How much edit history appears on Service Case / Financial Follow-up / Expense detail?**
+A: Short timeline of important events; full logs remain behind permissioned log views.
+
+**Q50: How should rare edge cases be handled if they do not affect core totals/statuses?**
+A: Prefer note + log + manual handling before creating a dedicated workflow.

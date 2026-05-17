@@ -1,6 +1,6 @@
 # Product Setting Codes And Used Values Are Stable
 
-Product settings use `ตั้งค่าสินค้า` as the staff-facing area, and records that have already affected SKU, Product, Order, or Job history are not silently deleted or rewritten. Color/category codes that have appeared in SKU Variant codes become locked, used records are closed with `ปิดใช้งาน` instead of deleted, and old Order/Job/document snapshots keep the values captured at the time of work so operational history stays readable.
+Product settings use `ตั้งค่าสินค้า` as the staff-facing area, and records that have already affected SKU, Product, Order, or Job history are not silently deleted or rewritten. Color/category codes that have appeared in SKU Variant codes become locked. Used records may be renamed when the business meaning stays the same, but old Order/Job/document snapshots keep the values captured at the time of work. When the meaning changes or the value is retired, close it with `ปิดใช้งาน` instead of deleting it.
 
 ## Considered Options
 

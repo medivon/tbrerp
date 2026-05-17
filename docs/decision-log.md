@@ -299,21 +299,28 @@ Rules:
 ## Payment Terms and Payment Records
 
 - Payment Term is the agreement, separate from actual money received.
-- Payment Record is the actual received money entry.
+- Payment Record is the accepted money entry for the related Order/Shipment/follow-up context.
 - Payment Records are normal admin work.
 - Payment audit/confirmation is a management/audit layer and does not block normal flow in first scope.
 - Payment Records do not approve or block `JOB-O` creation. `JOB-O` creation depends on Order confirmation and complete Custom Work Detail, not on payment state.
 - Payment Records can be corrected later, but not silently: the system must keep old value, new value, reason, editor, edit time, and make the correction visible to the finance follow-up context.
+- If a Financial Follow-up was already closed using a Payment Record and that amount is corrected later, finance should re-check the follow-up item.
+- If only the payment method is wrong but the amount is correct, no new finance follow-up is required; admin may leave it as-is or use a light correction by permission/log.
 - Payment Record requires evidence in the starting workflow.
+- Do not add automated image-health checking for missing/unreadable slip files in the starting workflow; if evidence must be changed, permitted users can correct/replace it with log.
 - Minimum Payment Record fields are payment date/time, amount, payment method, evidence slip/photo, related Order/Shipment/Service Case or follow-up context, and recorder.
 - Payment Method is a controlled list, with `โอนเงิน` as the default method.
 - A deposit is just a partial Payment Record; do not create a separate deposit module in the starting workflow.
+- Do not create an overpayment workflow in the starting workflow. If a customer transfers more than the Order/context amount, record the amount accepted for the Order and let admin handle any excess outside the system workflow.
 - Order total edits are the exception where Financial Reconciliation can block save: the edited sales total must line up with Payment Records, COD to collect, or adjustment/refund/credit notes before `บันทึกการแก้ไข` is enabled.
 - Refund from Service Case is recorded as Expense Entry only, with the Service Case carrying the reference/context. It does not change the original Order or Customer Sales Summary in the starting workflow.
 - Whole-Order cancellation is not blocked by existing Payment Records. If money may need refund/credit later, Order Detail shows a financial note/follow-up placeholder instead of changing or hiding the Payment Record.
 - Payment Terms live mainly on Order.
 - Shipment can carry COD amount for that delivery round.
+- COD is separated by Shipment round. Do not design a case where one Shipment round's COD collects the full amount intended for other rounds.
 - System may suggest COD remaining balance, but admin confirms/edits.
+- COD can be corrected on the Shipment before send-out by an authorized user with log.
+- Do not add a special post-send-out COD edit flow for rare mistakes. After send-out or Shipment close, avoid changing the Shipment; handle exceptions through finance notes/manual handling.
 - COD follow-up is created automatically when a Shipment carries COD.
 - COD follow-up cannot be closed before the related Shipment is closed, even if the money is already confirmed.
 - If actual COD is lower than expected, record the actual amount and reason, such as carrier fee deduction; this does not change the Order total.
@@ -336,6 +343,7 @@ Rules:
 - Expense Entry has no approval flow in the starting workflow.
 - Expense Entry may have optional line items or be total-only.
 - Expense Categories are user-defined, not a full chart of accounts.
+- Expense Category can be corrected with log when the wrong category was selected.
 - Expense reports use actual payment date, not record creation date.
 - Expense Entry can be cancelled but not physically deleted.
 - Payment Voucher is the first automated payout document flow for Rak Samuk payout.
@@ -901,7 +909,7 @@ Not in first scope:
 - Ready-stock and completed Jobs appear in admin ready-to-ship queue.
 - Admin ready-to-ship queue should show Orders, not loose individual chaos.
 - Ready-to-ship queue uses simple central search only.
-- No Hold status in ready-to-ship queue; if not ready, it stays there.
+- No Hold status in ready-to-ship queue. Items that are not ready should not enter the queue; if a ready item should not leave after Shipment work begins, hold/handle it in the shipment/send-out step.
 - Bulk Shipment:
   - One Order creates one Shipment.
   - Cannot include Orders with Jobs.
@@ -984,12 +992,17 @@ Not in first scope:
   - `ส่งกลับแล้ว`
   - `ปิดเคส`
 - Service Case requires a Customer, but referencing an old Order is optional.
+- If a Service Case references the wrong old Order, the reference may be corrected with log because it is context only.
+- Service Case records real after-sales events only. Do not create hypothetical, draft, or "if this happens" service-finance records before the event happens.
 - Service Case can attach optional photos/files.
 - Service Case notes are internal-only in the starting workflow; do not introduce customer-visible notes yet.
 - Service Case appears in Customer Detail as a compact history list.
 - If a Service Case references an Order, Order Detail may show only a short link/history when useful, not a full Service Case section.
 - Closing a Service Case does not require a note.
 - Closed Service Cases are not reopened in the starting workflow; create a new case if more after-sales work is needed.
+- If a Service Case reaches `พร้อมส่งกลับ` and the customer changes their mind, do not bounce the case backward through statuses. Close/end that case appropriately and create a new Service Case if a new after-sales matter begins.
+- If a Service Shipment has already been created but the goods are not actually ready to leave, keep/hold the Shipment in the shipment/send-out step rather than rolling the Service Case backward.
+- If refund amount or paid service charge is still unknown, do not create Expense Entry, Financial Follow-up, or draft finance records. Record only after the real payment/charge event exists.
 - Service Case reporting starts with counts by type/status only; no full service cost/profit analysis.
 - Service Case design principle: record after-sales events without mutating original sales history.
 
@@ -1012,6 +1025,16 @@ Not in first scope:
 - Service Case count is not on the main Admin Dashboard first.
 - Overdue delivery appears in the critical preview / urgent queues, not as a separate dashboard system.
 - Waiting materials appears through production/material signals or the critical preview.
+- `งานที่ต้องรีบดู` priority is:
+  1. Near/overdue delivery
+  2. Urgent work
+  3. Old work
+  4. Waiting for Materials
+  5. Shipment confirmation waiting to close
+- If a Job is both urgent and waiting for materials, show `รอวัตถุดิบ` as the primary blocker because work cannot continue.
+- If a Job is near delivery but still waiting for materials, show near-delivery risk as the primary critical signal and keep the waiting-material blocker visible.
+- Financial Follow-up items do not enter `งานที่ต้องรีบดู`; they stay in `ติดตาม COD / Payment` and finance queues.
+- If there are no truly critical items, show a short empty state rather than filling the section with normal active work.
 - Admin Dashboard does not have personal task mode; shared queues come first.
 - Individual performance reporting is not in the first management dashboard. Preserve data for a later User Dashboard design.
 - Dashboard/report principle: operational clarity before analytics.
@@ -1020,8 +1043,11 @@ Not in first scope:
 - The first sales report is sales by period from real Orders.
 - Sales reports exclude cancelled Orders by default, while allowing a separate filter/view for cancelled Orders.
 - Sales reports use Order creation date.
-- Delivery reports use Shipment close / delivery close date.
+- Delivery reports use the Delivery Send-out (`ส่งออกแล้ว`) date.
 - Expense reports use actual payment date.
+- Sales reports reflect the latest active/cancelled Order state, not a frozen accounting period. Cancelled Orders are excluded from sales by default and available through a separate filter/view.
+- Unfinished-work reports include Jobs waiting for materials, with blocker/status separated clearly.
+- Reports do not need realtime updates; provide refresh/load-new-data behavior and show the latest data timestamp.
 - Starting reports do not need export; report export can be added later.
 - Report UI starts with summary cards plus tables.
 
@@ -1043,7 +1069,10 @@ Not in first scope:
 - Stock-negative warnings appear on relevant pages and summaries.
 - Low material stock is not an automatic alert in the starting workflow; use summaries and waiting-material notes first.
 - Delivery send-out enters the shipment confirmation queue.
-- Failed save/action uses inline error or toast.
+- Failed save/action caused by missing required data uses a blocking inline error near the missing field/section. Use toast only for non-blocking feedback.
+- Existing unresolved alerts do not repeatedly open modals or toasts when the user opens a page; keep the chip/queue state visible.
+- Stock-negative warnings that have been acknowledged remain visible in the relevant stock/order/shipment context, but do not block the same action repeatedly.
+- Payment Audit Follow-up stays in finance follow-up queue/card and does not enter the admin critical preview.
 - No separate read/unread notification state in the starting workflow; queue/work state is the source of truth.
 - Alerts are not dismissible by user preference; they resolve through the relevant action or status change.
 - Use default thresholds first; detailed alert-threshold settings are later.
@@ -1071,9 +1100,13 @@ Not in first scope:
 - Dashboard card settings are not in the starting workflow; keep the fixed dashboard.
 - Report date presets are fixed first.
 - Settings changes are recorded in Management Log.
-- Used setting values cannot be deleted; close/inactivate them.
+- Used setting values cannot be deleted.
+- Used setting values may be renamed when the meaning remains the same; old documents/history keep their captured snapshots.
+- If the meaning changes, close/inactivate the old value and create a new value.
 - Unused setting values can be deleted.
 - Closed setting values remain visible in history with a closed/inactive badge.
+- Closed carriers, Service Case Types, Product/SKU values, material categories, and similar used values remain readable in history with a closed/inactive badge.
+- Aging threshold changes apply to current visual/report views for old and new work because aging is a present operational view, not a historical event.
 - No settings import/export in the starting workflow.
 - Settings principle: use controlled lists only where they reduce chaos.
 
@@ -1283,8 +1316,11 @@ Rules:
 
 - Sales default by Order creation date.
 - Sales reports exclude cancelled Orders by default, while allowing a separate cancelled view/filter.
-- Delivery view by Shipment close / delivery close date.
+- Delivery view by Delivery Send-out (`ส่งออกแล้ว`) date.
 - Expenses by actual payment date.
+- Cancelled Orders are excluded from sales by default according to latest status, while remaining available in a cancelled filter/view.
+- Unfinished-work reports include Jobs in `รอวัตถุดิบ` and show that blocker clearly.
+- Reports provide refresh/load-new-data behavior and show latest data timestamp rather than realtime updates.
 - Report UI starts with summary cards and tables.
 - Starting reports do not include export.
 - Dashboard and reports prioritize operating visibility over analytics depth.
@@ -1304,13 +1340,16 @@ Rules:
 - Shipping Sheet shows COD when the Shipment has COD.
 - Printable documents use snapshots.
 - Documents can be regenerated from the current snapshot/status.
-- Important print actions should have a light log.
+- Routine reprint does not need a print log in the starting workflow.
+- If Shipment is already closed, reprinting Delivery Note uses the closed Shipment snapshot.
 - Delivery Note and Shipping Sheet can be printed separately.
 - Payment Voucher is printable after payment is confirmed.
 - PV number runs by Buddhist year and month, e.g. `PV-2568-03-004`.
 - Expense export to CSV/XLSX is included.
+- Expense export uses a fixed/simple template and does not export evidence images or evidence links in the starting workflow.
 - Order list export is later.
 - Sensitive exports remain permission-aware.
+- Shipping Sheet COD amount is visible/printable only for users with COD/payment permission.
 - Printed documents should be functional, readable, and stable.
 - Printing may be initiated from mobile, but the printed document/template format is the same as desktop.
 - Print/export principle: document snapshots and simple outputs, with no accounting or tax promise.
@@ -1341,3 +1380,15 @@ These were discussed but intentionally not detailed now:
 - Customer merge
 - Carrier API
 - Wholesale pricing rules
+
+## Cross-module Edge Rules
+
+- Cancelling an Order does not affect Service Cases that reference it.
+- Deactivating a Customer does not stop open Service Cases for that Customer.
+- Deactivating a Customer does not stop existing Financial Follow-up work for that Customer.
+- Product/SKU values closed after historical use remain visible in old Order Lines, Shipments, and history with a closed/inactive badge.
+- If a Material Item referenced by a waiting-material note is closed later, the Job remains in `รอวัตถุดิบ`; the old reference remains readable, but the material is not selectable for new work.
+- Ready-to-ship means ready-to-ship. During Shipment creation, do not design a rollback where the Order/line stops being ready. If a Shipment should not leave yet, use shipment/send-out hold or manual handling at the shipment step.
+- Exports are permission-aware like UI. Users without permission for money-sensitive data cannot export those money columns/reports.
+- Service Case, Financial Follow-up, and Expense detail screens should show a short timeline of important events, while full logs remain behind permissioned Activity/Management/Audit Log views.
+- For rare edge cases that do not affect core totals or core statuses, prefer note + log + manual handling before adding a dedicated workflow.
