@@ -12,7 +12,7 @@ This screen helps Admin or finance-permission users see which Orders or shipment
 
 ## 2. Primary Users
 
-- Admin with finance permission
+- Admin/Sales for follow-ups from Orders/Shipments they manage
 - Owner / Manager
 - Finance-permission user
 
@@ -90,13 +90,13 @@ This screen helps Admin or finance-permission users see which Orders or shipment
 
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
-| Open Order | เปิดออเดอร์ | Finance-permission user | Opens related Order. | No |
-| Open Shipment | เปิดรอบจัดส่ง | Finance-permission user | Opens related Shipment. | No |
-| Record payment | บันทึกรับเงิน | Finance-permission user | Adds Payment Record with required evidence. | No |
-| Correct payment record | แก้ไขรายการรับเงิน | Finance-permission user | Updates Payment Record with old/new values, reason, editor, and follow-up visibility. | Yes |
-| Add note | เพิ่มหมายเหตุ | Finance-permission user | Adds follow-up note. | No |
-| Close follow-up | ปิดรายการติดตาม | Finance-permission user | Follow-up item becomes resolved after payment evidence or explanatory note is recorded. | Yes |
-| Add abnormal COD note | ใส่หมายเหตุ COD ผิดปกติ | Finance-permission user | Stores note when actual COD differs from expected amount. | Yes |
+| Open Order | เปิดออเดอร์ | Admin/Sales in scope, Finance, Manager, Owner | Opens related Order. | No |
+| Open Shipment | เปิดรอบจัดส่ง | Admin/Sales in scope, Finance, Manager, Owner | Opens related Shipment. | No |
+| Record payment | บันทึกรับเงิน | Admin/Sales in scope or Finance | Adds Payment Record with required evidence. | No |
+| Correct payment record | แก้ไขรายการรับเงิน | Finance, Manager, Owner | Updates Payment Record with old/new values, reason, editor, and follow-up visibility. | Yes |
+| Add note | เพิ่มหมายเหตุ | Admin/Sales in scope, Finance, Manager, Owner | Adds follow-up note. | No |
+| Close follow-up | ปิดรายการติดตาม | Admin/Sales in scope, Finance, Manager, Owner | Follow-up item becomes resolved after payment evidence or explanatory note is recorded. | Yes |
+| Add abnormal COD note | ใส่หมายเหตุ COD ผิดปกติ | Admin/Sales in scope, Finance, Manager, Owner | Stores note when actual COD differs from expected amount. | Yes |
 
 ## 10. Status / Chips
 

@@ -80,6 +80,163 @@ If documents conflict, use this order:
 - Data should be closed, archived, hidden, cancelled, or deactivated, not physically deleted.
 - Images are hidden/deactivated, not physically deleted.
 
+## Identity and Access
+
+### Identity Rules
+
+- The ERP uses one shared `User` identity system for internal employees and Outsource workers.
+- `Employee` is not a separate login system; it is represented by User Type `พนักงานภายใน`.
+- Starting User Types are `พนักงานภายใน` and `Outsource`.
+- Active internal employees and active Outsource users can login.
+- Every person who performs actions in the ERP must use a personal account; shared team accounts are not used.
+- Internal employees receive the base role `พนักงานไทยโบราณ`.
+- Outsource users receive the base role `Outsource`.
+- Base roles see only Personal Dashboard/profile and own documents/income where relevant; they do not see main ERP menus.
+- One User can hold multiple roles; permissions combine from assigned roles/permissions.
+- If the same person changes between internal employee and Outsource, keep the same User and change User Type/status instead of creating a second identity.
+- User Type changes are rare, require a reason, and write Audit Log.
+- New Users automatically receive the base role for their User Type.
+
+### Starting Role List
+
+- `Super Admin / Owner`
+- `Manager`
+- `Admin / Sales`
+- `Finance`
+- `Product / Stock`
+- `Woodwork`
+- `Coloring`
+- `Delivery Team`
+- `พนักงานไทยโบราณ`
+- `Outsource`
+- `Rak Samuk Worker`
+
+### Login and First Screen
+
+- All active Users use one login page.
+- After login, the first screen is chosen by role priority, not by user preference in the first scope.
+- First-screen priority is: `Super Admin / Owner`, `Manager`, `Admin / Sales`, `Finance`, `Product / Stock`, `Woodwork`, `Coloring`, `Delivery Team`, `Rak Samuk Worker`, then Personal Dashboard.
+- Users with only base roles land on Personal Dashboard.
+- If permission is changed while a User is logged in, the change takes effect immediately.
+- If a logged-in User is on a page they no longer have permission for, the system sends them back to their first screen or shows no-access.
+- Direct links to pages without permission are blocked and show a no-access page with a return-to-own-home action.
+- In the first scope, avoid cases where a User can see a list but cannot open detail; list access implies role-appropriate detail access.
+
+### Role and Permission Administration
+
+- `Super Admin / Owner` is restricted to the owner/highest authority and should be very limited.
+- Only `Super Admin / Owner` can assign or edit Role/Permission for other users.
+- `Roles / Permissions` settings are visible and editable only by `Super Admin / Owner`.
+- Role/Permission changes do not require a reason in the first scope, but they write Audit Log.
+- Users do not need a system notification when Owner changes their permissions.
+- `Super Admin / Owner` and `Manager` can create/edit basic User information, but Role/Permission assignment remains Owner-only.
+- Owner and Manager can deactivate/reactivate Users. Reactivation writes Management Log. Any Role/Permission change during reactivation still follows Owner-only Audit Log rules.
+- User deactivation requires a reason and writes Management Log.
+- Deactivated Users cannot login or be selected for new work, but their names, history, documents, income, and logs remain visible by permission with `ปิดใช้งาน` badge.
+- If deactivating a User who still has assigned Rak Samuk work not yet received into coloring, the system must require choosing a new Rak Samuk User before confirming deactivation.
+
+### Module Visibility Summary
+
+| Role | Main Visibility |
+|---|---|
+| `Super Admin / Owner` | Sees and can act across all modules, including Audit Log, sensitive finance, Role/Permission, and override areas. |
+| `Manager` | Sees all main work modules and management reports; sees finance summaries; cannot manage Role/Permission or Owner-level Audit authority. |
+| `Admin / Sales` | Sees Dashboard, Order, Job/Production, Shipment/Delivery, Customer/CRM, Product/SKU lookup and Ready Stock availability, related COD/Payment follow-up, and limited Expense creation/list scope. |
+| `Finance` | Sees finance dashboard/queues, COD/Payment follow-up, Expense, PV, finance reports, full CRM read-only, and related Order/Shipment context for finance. |
+| `Product / Stock` | Sees Product/SKU, Product Settings, Ready Stock, Stock Count/Adjustment, Material Stock, Material Purchase Orders/Receipt, and stock/material reports. |
+| `Woodwork` | Sees woodwork queue, work-to-do, production details/images/instructions, and relevant production activity; no customer, Order ID, price, finance, full stock, or settings. |
+| `Coloring` | Same worker pattern as Woodwork, focused on coloring queue/intake and coloring-related production work. |
+| `Delivery Team` | Sees released delivery work, recipient/phone/address, carrier, item list, notes, delivery evidence, and COD amount only for responsible Shipments. |
+| `Rak Samuk Worker` | Sees assigned Rak Samuk work, Full Production Job Detail for that work, own price/status, and own payout/payment status. |
+| `พนักงานไทยโบราณ` / base `Outsource` | Sees Personal Dashboard/profile and own documents/income only. |
+
+### Sensitive Data Visibility
+
+- Sensitive fields hidden from a User are removed from the UI entirely, without labels, placeholders, or masked values.
+- Roles unrelated to money do not see financial signals at all, including COD, payment status, money amounts, or sales price.
+- Admin/Sales sees sales price, discount, total, Payment Term, customer-facing Payment Record, and related COD follow-up, but not cost, profit, labor, payout, expense detail, or Audit Log.
+- Product/Stock, Owner, Manager, and Finance can see product/work cost and purchase/supplier payment information. Rough profit is visible only to Owner, Manager, and Finance.
+- Customer/CRM is fully visible to Owner, Manager, Admin/Sales, and Finance; Finance is read-only for customer master data.
+- Customer Sales Summary is visible to Owner, Manager, Admin/Sales, and Finance.
+- There is no private CRM Note in the first scope; all CRM Notes under a Customer are visible to roles with full CRM access.
+- Payment evidence is visible to Owner, Manager, relevant Admin/Sales, and Finance. Delivery Team does not see payment evidence.
+- Delivery evidence is visible to Owner, Manager, Admin/Sales, related Delivery Team, and Finance when needed for COD/payment context.
+- Production images are visible to roles involved with production context: Admin/Sales, Manager, Owner, Woodwork, Coloring, assigned Rak Samuk Worker, and Product/Stock when tied to Product/SKU context.
+- CRM attachments follow full CRM access.
+- Expense evidence is visible to Owner, Manager, Finance, and to Admin/Sales only for Expense records created by themselves or their group.
+- PV attachments are visible to Owner, Manager, Finance, and the payee/User only for their own appropriate documents/payment status.
+- Attachments/images are hidden/deactivated with log, not physically deleted. Money evidence changes write Management Log.
+
+### Action Permissions
+
+- Order create/confirm/post-confirm edit is mainly Admin/Sales work. Manager/Owner can act or edit on behalf. Finance can view and edit payment-related parts only.
+- Post-confirm Order edits require a reason when they affect money, item lines, quantity, custom work, recipient/address after Shipment exists, or important status. General notes do not require a reason.
+- Whole-Order cancellation can be done by Admin/Sales only in simple cases. If Shipment, Payment, or Job already exists, Manager/Owner permission is required. Whole-Order cancellation always requires a reason and writes Management Log.
+- `JOB-P` creation uses the same authority as Order creation: Admin/Sales, Manager, Owner. Product/Stock and workshop roles do not create `JOB-P` in the first scope.
+- Core production instructions on `JOB-O` / `JOB-P` can be edited by Admin/Sales, Manager, Owner.
+- Woodwork/Coloring can add notes, status, and images from their own work, but cannot edit core production instructions.
+- If Woodwork/Coloring find missing or incorrect production detail, first scope uses outside-system communication rather than a formal revision/request action.
+- Woodwork/Coloring operational actions write Activity Log.
+- Admin/Sales has full operational Shipment/Delivery authority: create Shipment, release to delivery team, see/print related COD, mark `ส่งออกแล้ว` on behalf of delivery team, record/correct tracking/evidence before close, and close Shipment.
+- Delivery Team performs field delivery work only: view released work, see COD for own work, add delivery note/evidence, and mark `ส่งออกแล้ว`. Delivery Team cannot edit address, carrier, items, tracking, close Shipment, or close finance follow-up.
+- After Shipment close, Manager/Owner can edit Shipment data where needed; Admin/Sales can correct tracking/evidence when operationally necessary. Corrections write Management Log and finance reviews if money/COD is affected.
+- Product/Stock, Manager, Owner can create/edit Product Model, SKU Variant, Product Settings, Stock Count, Stock Adjustment, Material Stock, Material Purchase Order, and Material Receipt where applicable.
+- Deactivating/reopening Product Model or SKU Variant requires a reason and writes Management Log.
+- Stock Adjustment requires a reason and writes Management Log.
+- Admin/Sales sees only Job-level material blocker status such as `รอวัตถุดิบ` / `ปลดรอวัตถุดิบแล้ว`; Admin/Sales does not see Material Stock detail, purchase detail, supplier, or cost.
+- Owner, Manager, Admin/Sales can edit Customer/CRM master data. Finance sees full CRM but cannot edit customer master data.
+- Customer Tier / Tier discount / deactivate-reactivate Customer can be changed by Owner, Manager, and Admin/Sales with CRM settings permission. Changing into/out of `ระวังเป็นพิเศษ` or deactivate/reactivate requires a reason and writes Management Log.
+- Admin/Sales and Finance can record Payment Record/evidence. Finance/Manager/Owner can correct or replace evidence later.
+- Admin/Sales can close COD/Payment Follow-up when it belongs to an Order/Shipment they manage and evidence or explanatory note is sufficient. Finance/Manager/Owner can close all finance follow-ups according to permission. Delivery Team cannot close finance follow-up.
+- Closing COD/Payment Follow-up requires payment evidence or explanatory note and writes Activity Log. Later reversal/edit/amount change writes Management Log or Audit Log depending on severity.
+- After payment follow-up is closed, evidence/note correction writes Management Log, while amount correction writes Audit Log.
+- Admin/Sales can create Expense and see Expense records created by themselves or their Admin/Sales group. They cannot approve/pay Expense or create PV without Finance permission.
+- Admin/Sales in the same group can edit/cancel unpaid/unclosed Expense records created by the group; edit/cancel writes Management Log.
+- Finance creates, groups, and closes PV payment rounds. Owner/Manager can view, approve, override, and edit closed PV. Closed PV edits do not require a reason but write Management Log with old/new value.
+- Salary, daily wage, and commission are visibility-only in this phase; payroll action/payment flow is deferred.
+
+### Rak Samuk Access and Price Rules
+
+- Sending work to Rak Samuk must select the Rak Samuk User immediately. If the worker is not known, the work cannot be sent to Rak Samuk.
+- Woodwork/Coloring, Admin/Sales, Manager, and Owner can send work to Rak Samuk. Returning/receiving Rak Samuk work back toward coloring can be done by Admin/Sales, Manager, Owner, and Coloring; Woodwork is excluded after the work has moved out of woodwork.
+- Rak Samuk Worker does not move internal workflow status or mark work complete.
+- Rak Samuk User can be changed before `รับเข้าโรงงานสี` by the same authority group. No reason is required, but Activity Log / Rak Samuk work history records it.
+- Rak Samuk Standard Rate is visible only to Owner, Manager, Finance.
+- Rak Samuk Standard Rate is tied to Product Model / SKU หลัก.
+- Order, Production, and Job workflow pages never show Rak Samuk prices.
+- Rak Samuk Worker sees their own assigned work price. If no price exists, they see `ไม่มีราคา / ให้แจ้งราคา`.
+- Rak Samuk Worker can submit `ขอเสนอราคา` for assigned work until the related PV round is closed.
+- UI should use `ขอเสนอราคา`; do not use `ตีโต้` in staff-facing UI.
+- Owner/Manager approve Rak Samuk proposed prices. Finance pays/creates PV from the approved price.
+- If the work is linked to a SKU/Product Model, the approver must always be asked whether to update the SKU Rak Samuk Standard Rate. Updating the standard rate writes Management Log with old/new price and approver.
+
+### Completed Order, Service Case, and Special Shipment
+
+- Once an Order is completed / fully shipped, no role can edit the original Order data in normal workflow.
+- Admin/Sales, Manager, Owner, and Finance can add relevant notes to completed Orders. Added notes write Activity Log; later edit/hide writes Management Log.
+- Important completed Order errors are handled through Service Case, finance note, or correction record rather than editing the original Order.
+- For shipment mistakes after Order completion, Owner/Manager can create a `รอบจัดส่งพิเศษ` from completed Order Detail.
+- `รอบจัดส่งพิเศษ` requires a reason, does not affect stock, does not affect Order completion, and appears as a record in the Order.
+- `รอบจัดส่งพิเศษ` writes Management Log with reason, creator, selected items, and a flag that it does not affect stock or Order completion.
+- Admin/Sales does not see the special shipment button; Admin/Sales handles post-completion customer problems through Service Case linked to the Order.
+- Service Case can be created/viewed/managed by Admin/Sales, Manager, Owner. Finance sees only parts that affect money. Service Case does not affect the original Order.
+
+### Logs, Export, Print, and Overrides
+
+- Activity Log appears inside related detail screens in role-appropriate form.
+- Owner/Manager see full Management Log.
+- Admin/Sales sees management events tied to their operational work, such as shipment correction/cancel or Order edit reason.
+- Finance sees Management Log for money/expense/payment/PV/Rak Samuk payout and Order/Shipment events that affect money.
+- Worker/base roles do not see Management Log.
+- Audit Log is visible only to `Super Admin / Owner`.
+- Audit Log records Role/Permission change, User Type change, Owner-level emergency override, sensitive finance correction affecting closed/paid money, and highest-level system access/change.
+- Export is permission-aware like UI; Users can export only data/columns they can see.
+- Print is permission-aware like UI; printed documents must not reveal data the printing User cannot see.
+- Owner override can do everything the system supports, but even Owner cannot physically delete or rewrite Audit Log, Action Log, payment/delivery evidence, User, Order, or Job. Use deactivate, hide, or correction instead.
+- Owner override writes Audit Log only when it touches Role/Permission, User Type, sensitive finance after close/pay, Audit/system settings, or severely bypasses normal rules.
+- Manager override covers most operational/business corrections according to permission, but excludes Role/Permission, Audit Log, and Owner-level authority.
+- Manager override requires a reason only for actions already defined as reason-required.
+
 ## Admin Dashboard
 
 Confirmed first dashboard cards:
@@ -496,31 +653,31 @@ Rules:
 - Rak Samuk Work is assigned to one Rak Samuk Worker in first scope.
 - Customer Job should not split Rak Samuk work across multiple workers.
 - Production large quantity should split by Production Lot.
-- Woodwork marks `ส่งไปรักสมุก`; work enters shared queue `รอระบุ/ส่งรักสมุก`.
-- A user with outsource permission chooses the Rak Samuk Worker and sends work.
+- Woodwork/Coloring, Admin/Sales, Manager, and Owner can send work to Rak Samuk.
+- Sending work to Rak Samuk must choose the Rak Samuk Worker immediately; if the worker is not known, the work cannot be sent to Rak Samuk.
 - Rak Samuk Worker can login.
-- Rak Samuk Worker sees only their own work.
+- Rak Samuk Worker sees only their own work and Full Production Job Detail for that work.
 - Rak Samuk Worker does not move workflow status.
 - Rak Samuk Worker does not mark work complete.
-- Internal staff without finance permission should not see Rak Samuk rates.
+- Internal staff without Owner/Manager/Finance visibility should not see Rak Samuk rates.
 - Rak Samuk Worker can see own price for own work.
-- If standard rate exists, worker cannot request price in system.
+- If standard rate exists, it is the starting work price when the Job references that SKU/Product Model.
 - If no rate exists, item shows `ไม่มีราคา / ให้แจ้งราคา`.
-- Worker can propose price only for missing-price items.
-- Proposed price is the per-piece price for that specific missing-price work item, not the total price for all assigned work.
-- Finance/payment-permission user approves proposed price.
-- Standard rate lives on Product Model (SKU ใหญ่), not variant.
-- Approved first rate from 0/missing can update Product Model standard rate automatically with log.
-- If existing non-zero standard rate differs from paid rate, after PV process approver must choose whether to update standard rate.
+- Rak Samuk Worker can use `ขอเสนอราคา` until the related PV round is closed.
+- Proposed price is the per-piece price for that specific work item, not the total price for all assigned work.
+- Owner/Manager approves proposed Rak Samuk prices; Finance pays or creates PV from the approved price.
+- Standard rate lives on Product Model / SKU หลัก, not variant.
+- If approved proposed price is linked to SKU/Product Model, the approver must choose whether to update the standard rate; updates are not automatic and write Management Log with old/new value.
 - New standard rate applies only to future work.
 - No retroactive price update.
-- Custom Job paid rate is stored as Job cost history visible only to finance permission.
+- Rak Samuk price is not shown on Order, Production, or Job workflow pages.
 - Rak Samuk has no deadline in first scope.
 - Rak Samuk can show urgent label if authorized user set it.
-- Rak Samuk Worker list uses a simple mobile worker shell with assigned-work cards and a limited detail view.
-- Rak Samuk Worker can see their own price both on the work card and in the limited work detail.
+- Rak Samuk Worker list uses a simple mobile worker shell with assigned-work cards and Full Production Job Detail for assigned work only.
+- Rak Samuk Worker can see their own price both on the work card and in their own work detail.
 - Rak Samuk Worker cannot mark work done and cannot move workflow status.
-- Internal staff receives Rak Samuk Work back with `รับงานรักสมุกกลับ`.
+- Admin/Sales, Manager, Owner, and Coloring receive Rak Samuk Work back with `รับงานรักสมุกกลับ`; Woodwork is excluded after work leaves woodwork.
+- The Rak Samuk User can be changed before `รับเข้าโรงงานสี` without a required reason, but the change is recorded in Activity Log / Rak Samuk work history.
 - `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี` in the starting workflow; there is no destination picker in P0.
 - Rak Samuk worker history shows:
   - รับงานกลับแล้ว / รอเข้ารอบจ่าย
@@ -565,7 +722,7 @@ Rules:
 - Starting queue is required before Review and defaults to `ช่างไม้`.
 - Starting queue options in the starting workflow are `ช่างไม้`, `รอรับเข้าโรงงานสี`, and `ส่งไปรักสมุก`.
 - If starting at `รอรับเข้าโรงงานสี`, the created `JOB-P` enters coloring intake first; coloring or an authorized user still receives it into active Coloring work later.
-- If starting at `ส่งไปรักสมุก`, the created `JOB-P` enters the shared `รอระบุ/ส่งรักสมุก` queue so a permitted user can choose the Rak Samuk Worker.
+- If starting at `ส่งไปรักสมุก`, the created `JOB-P` must choose the Rak Samuk Worker before confirmation; if the worker is not known, do not start the `JOB-P` at Rak Samuk.
 - `ผลิตจาก SKU` Review blocks confirmation if the selected SKU/color has been disabled or closed after draft save. The user must choose another SKU or reopen the color where allowed.
 - `ขายได้ 0` / `หมด` does not block `ผลิตจาก SKU`; it is context for producing more stock.
 - A completed `JOB-P` tied to SKU increases Ready Stock by the full `จำนวนผลิต`.
@@ -931,13 +1088,15 @@ Not in first scope:
   - Bulk-select today's/no-date Shipments and confirm `บันทึกว่าส่งออกแล้ว`
   - Attach `รูปหลักฐานจัดส่ง` optionally on an individual Shipment when useful
   - Add short note
+  - See COD amount for Shipments they are responsible for
 - Delivery team cannot:
   - Change items
   - Change address
   - Change carrier
   - Add or edit tracking
-  - View or change COD amount in the system UI
+  - Change COD amount
   - Close Shipment
+  - Close COD/payment follow-up
 - Delivery team marks `ส่งออกแล้ว` once for the whole Shipment round, not per item.
 - Delivery send-out does not require tracking or delivery evidence.
 - After row send-out or bulk send-out, the Shipment leaves the Delivery Team's active today list and enters admin `ยืนยันการจัดส่ง`.
@@ -948,7 +1107,7 @@ Not in first scope:
 - Admin closes Shipment after evidence/tracking review.
 - Before admin close, admin must add or correct tracking and delivery evidence in `ยืนยันการจัดส่ง` when missing.
 - Closing a Shipment requires at least tracking or one delivery evidence photo.
-- After Shipment close, tracking/evidence correction is allowed only for manager/higher permission and is recorded in Management Log.
+- After Shipment close, Manager/Owner can edit where needed; Admin/Sales can correct tracking/evidence when operationally necessary. Corrections are recorded in Management Log.
 - Evidence types:
   - Tracking
   - `รูปหลักฐานจัดส่ง` as one multi-photo field
@@ -1294,6 +1453,9 @@ Not in first scope:
 - ผู้จัดทำ/ผู้อนุมัติ/ผู้จ่ายเงิน can be digital inside system.
 - ผู้รับเงิน signs printed document.
 - One person can hold multiple internal PV roles in first scope.
+- Finance creates, groups, and closes PV payment rounds.
+- Owner/Manager can approve, override, and edit closed PV.
+- Owner/Manager edits to closed PV do not require a reason, but write Management Log with old/new value.
 - Exact printed detail table for Rak Samuk PV is deferred.
 
 ## Reports
@@ -1349,7 +1511,7 @@ Rules:
 - Expense export uses a fixed/simple template and does not export evidence images or evidence links in the starting workflow.
 - Order list export is later.
 - Sensitive exports remain permission-aware.
-- Shipping Sheet COD amount is visible/printable only for users with COD/payment permission.
+- Shipping Sheet COD amount is visible/printable to users allowed to see that COD, including Delivery Team for Shipments they are responsible for.
 - Printed documents should be functional, readable, and stable.
 - Printing may be initiated from mobile, but the printed document/template format is the same as desktop.
 - Print/export principle: document snapshots and simple outputs, with no accounting or tax promise.

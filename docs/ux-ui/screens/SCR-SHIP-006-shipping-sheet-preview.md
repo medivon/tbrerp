@@ -103,9 +103,9 @@ If recipient/address data is missing, show `ไม่มีข้อมูลผ
 ## 13. Permission Rules
 
 - Admin can preview and print.
-- COD amount is visible/printable only to users with COD/payment permission.
+- COD amount is visible/printable to users allowed to see that COD, including Delivery Team for Shipments they are responsible for.
 - Delivery Team cannot edit address, carrier, or COD.
-- Delivery Team may receive the printed/physical Shipping Sheet; COD amount is not shown in the Delivery Team system UI.
+- Delivery Team may receive the printed/physical Shipping Sheet and see COD amount for assigned Shipments.
 - Shipping Sheet focuses on recipient/address; Delivery Note handles full item detail.
 - Routine reprint does not need a print log in the starting workflow.
 - Barcode, QR, and label printer flows are outside Stage 1.

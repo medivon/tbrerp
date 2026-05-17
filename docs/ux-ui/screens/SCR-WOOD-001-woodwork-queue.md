@@ -79,7 +79,7 @@ The Woodwork Queue is the simple mobile/tablet work list for the woodwork depart
 | Accept work | รับงาน | Woodwork Department | Marks work accepted by woodwork. | No |
 | Waiting materials | รอวัตถุดิบ | Woodwork Department | Marks department-level blocker. | Yes |
 | Send to coloring | ส่งไปสี | Woodwork Department | Removes work from active Woodwork Queue and sends to coloring intake. | Yes |
-| Send to Rak Samuk | ส่งไปรักสมุก | Woodwork Department | Removes work from active queue and sends to `รอระบุ/ส่งรักสมุก`. | Yes |
+| Send to Rak Samuk | ส่งไปรักสมุก | Woodwork Department | Opens worker selection and removes work from active queue only after a Rak Samuk Worker is chosen. | Yes |
 | Send to carving | กำลังส่งไปแกะสลัก | Woodwork Department | Marks carving handoff note/status for first flow. | Yes |
 | Open history | ประวัติงานของฉัน | Woodwork Department | Opens woodwork history. | No |
 
@@ -129,4 +129,3 @@ Create a mobile/tablet ERP work queue UI for Thai furniture woodworkers. Page ti
 ## 16. Open UX Questions
 
 - None blocking for this queue.
-

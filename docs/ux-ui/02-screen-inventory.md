@@ -124,14 +124,14 @@ Design status:
 - Design status: ready
 - Main data objects: Job, Job Revision, Activity Log
 - Main actions: Open follow-up case, review acknowledgement state, follow up with department.
-- Related source docs: `docs/ux-ui/screens/SCR-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/mockups/SCR-ADM-006-production-follow-up-queue/SCR-ADM-006-approved.png`; `docs/ux-ui/01-flow-map.md` F01/F04; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-RS-004-rak-samuk-price-approval.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-007 - COD/Payment Follow-up Queue
 
 - Screen ID: `ADM-007`
 - Screen name: COD/Payment Follow-up Queue
 - Thai UI label: `ติดตาม COD / Payment`
-- Primary actor: Admin / finance-permission user
+- Primary actor: Admin/Sales in scope / Finance / Manager / Owner
 - Purpose: Track operational payment/COD follow-up separately from Order Completion.
 - Entry point: `Admin Dashboard` -> `ติดตาม COD / Payment`.
 - Exit point: Financial follow-up record or related Order/Shipment.
@@ -522,21 +522,21 @@ Note:
 
 ## 6. Rak Samuk
 
-### RSK-001 - Rak Samuk Send Queue
+### RSK-001 - Rak Samuk Send / Worker Selection
 
 - Screen ID: `RSK-001`
-- Screen name: Rak Samuk Send Queue
-- Thai UI label: `รอระบุ/ส่งรักสมุก`
-- Primary actor: User with outsource permission
-- Purpose: Assign work sent to Rak Samuk to one Rak Samuk Worker.
+- Screen name: Rak Samuk Send / Worker Selection
+- Thai UI label: `เลือกช่างรักสมุก`
+- Primary actor: Woodwork / Coloring / Admin / Manager / Owner where allowed
+- Purpose: Send work to Rak Samuk by selecting one Rak Samuk Worker before confirmation.
 - Entry point: Department action `ส่งไปรักสมุก`.
-- Exit point: Rak Samuk Worker assignment.
+- Exit point: Rak Samuk Worker `งานที่ต้องทำ`.
 - Related flow IDs: `F05`
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Rak Samuk Work, Rak Samuk Worker
-- Main actions: Open work, choose worker.
+- Main actions: Review work, choose worker, confirm send.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-002 - Rak Samuk Worker Assignment
@@ -544,9 +544,9 @@ Note:
 - Screen ID: `RSK-002`
 - Screen name: Rak Samuk Worker Assignment
 - Thai UI label: `ส่งรักสมุก`
-- Primary actor: User with outsource permission
+- Primary actor: Allowed Rak Samuk sender
 - Purpose: Confirm the one worker assigned to Rak Samuk Work.
-- Entry point: `รอระบุ/ส่งรักสมุก`.
+- Entry point: `เลือกช่างรักสมุก`.
 - Exit point: Rak Samuk Worker `งานที่ต้องทำ`.
 - Related flow IDs: `F05`
 - Priority: `P0`
@@ -570,16 +570,16 @@ Note:
 - Device target: mobile / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Job, Department Instruction Images, Rak Samuk Standard Rate
-- Main actions: Open assigned work, view own price on card/detail where allowed, propose price only when missing.
+- Main actions: Open assigned work, view own price on card/detail where allowed, submit `ขอเสนอราคา` until the related PV round is closed.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
-### RSK-004 - Missing-price Proposal
+### RSK-004 - Price Proposal
 
 - Screen ID: `RSK-004`
-- Screen name: Missing-price Proposal
+- Screen name: Price Proposal
 - Thai UI label: `ไม่มีราคา / ให้แจ้งราคา`
 - Primary actor: Rak Samuk Worker
-- Purpose: Let worker propose price only when standard rate is missing.
+- Purpose: Let worker submit `ขอเสนอราคา` for assigned work until the related PV round is closed.
 - Entry point: Rak Samuk Worker Work List / Work Detail.
 - Exit point: Proposed price approval.
 - Related flow IDs: `F05`
@@ -587,7 +587,7 @@ Note:
 - Device target: mobile / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Proposed Price, Rak Samuk Standard Rate, Product Model
-- Main actions: Submit proposed per-piece price for the missing-price work item.
+- Main actions: Submit proposed per-piece price for the assigned work item.
 - Related source docs: `docs/ux-ui/screens/SCR-RS-003-rak-samuk-missing-price.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-005 - Proposed-price Approval
@@ -595,8 +595,8 @@ Note:
 - Screen ID: `RSK-005`
 - Screen name: Proposed-price Approval
 - Thai UI label: `อนุมัติราคา`
-- Primary actor: Finance-permission user
-- Purpose: Approve proposed price for missing-price Rak Samuk Work.
+- Primary actor: Owner / Manager
+- Purpose: Approve proposed price for Rak Samuk Work.
 - Entry point: Missing-price proposal notification/list.
 - Exit point: Rak Samuk Work continues with approved price.
 - Related flow IDs: `F05`
@@ -1202,7 +1202,7 @@ Note:
 - Screen ID: `SUP-011`
 - Screen name: Payment Voucher
 - Thai UI label: `ใบสำคัญจ่าย / PV`
-- Primary actor: Finance-permission user
+- Primary actor: Finance, with Owner/Manager approval/override visibility
 - Purpose: Support Rak Samuk payout after payment is confirmed.
 - Entry point: Rak Samuk payout preparation.
 - Exit point: PV print/signature flow.

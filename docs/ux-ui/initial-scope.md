@@ -77,6 +77,7 @@ Main responsibilities:
 - Enter custom-work detail inside Order Create/Edit so `JOB-O` can be created at Order confirmation
 - Create Shipment from ready-to-ship items
 - Close Shipment after delivery team marks sent
+- Mark `ส่งออกแล้ว` on behalf of Delivery Team when needed
 - Record payment information as normal work
 - Monitor COD/payment follow-up
 - Manage Customer, Address Entry, CRM Note, and Order history
@@ -93,6 +94,7 @@ Main responsibilities:
 - Set or change Urgent Label from the selected-row side drawer
 - Review sensitive logs and financial information according to permission
 - Override or approve special cases when needed
+- Create Owner/Manager-only special shipment rounds after Order completion when required, with reason and no stock/order-completion effect
 
 ### Woodwork Department (ช่างไม้)
 
@@ -113,10 +115,11 @@ Allowed actions:
 Behavior:
 
 - Work appears as a simple list.
+- Woodwork sees Full Production Job Detail for `JOB-O` and `JOB-P`, but not customer, Order ID, price, payment, cost, payout, or sensitive logs.
 - Urgent work uses color/icon, such as yellow and lightning.
 - Abnormal states use status color.
 - Work that is sent onward leaves the main list.
-- History is available in a secondary screen: `ประวัติงานของฉัน`.
+- History is available as role/department history rather than personal assignment history in the first scope.
 
 ### Coloring Department (ฝ่ายสี)
 
@@ -139,6 +142,7 @@ Behavior:
 - Work waiting to physically enter the color workshop sits in `รอรับเข้าโรงงานสี`.
 - This is not part of the active Coloring Queue until coloring confirms intake.
 - When coloring marks an Order Job ready, it goes to admin `รอสร้างรอบจัดส่ง`, not directly to delivery.
+- Coloring sees Full Production Job Detail for `JOB-O` and `JOB-P`, but not customer, Order ID, price, payment, cost, payout, or sensitive logs.
 
 ### Rak Samuk Worker (ช่างรักสมุก)
 
@@ -153,15 +157,17 @@ Main UI labels:
 Allowed:
 
 - See only assigned Rak Samuk Work
-- See Job work details and instruction images needed for Rak Samuk
+- See Full Production Job Detail for assigned work
 - See own price only for own work
-- Submit proposed price only when the item is missing a standard rate
+- Submit `ขอเสนอราคา` for own work until the related PV round is closed
 
 Not allowed:
 
 - See Customer data
 - See Order ID
 - See sales price
+- See Rak Samuk standard rate
+- See Rak Samuk price on Order / Production / Job workflow pages
 - Move workflow status
 - Mark work complete
 - See other workers' work or payout
@@ -178,6 +184,7 @@ Main tabs:
 Allowed:
 
 - See product image, quantity, item list, recipient, address, phone, carrier, and notes
+- See COD amount for Shipments they are responsible for
 - Mark `ส่งออกแล้ว` from a row action or bulk `บันทึกว่าส่งออกแล้ว`
 - Add optional `รูปหลักฐานจัดส่ง` on an individual Shipment when useful
 - Add short delivery note
@@ -188,8 +195,9 @@ Not allowed:
 - Change address
 - Change carrier
 - Add or edit Tracking
-- View or change COD amount in the system UI
+- Change COD amount
 - Close Shipment
+- Close COD/payment follow-up
 
 ## Admin Dashboard Cards
 
@@ -336,7 +344,7 @@ Rules:
 - Expense export uses a fixed/simple template and does not export evidence images or evidence links in the starting workflow.
 - Order list export is later.
 - Sensitive exports are permission-aware.
-- Shipping Sheet COD amount is visible/printable only for users with COD/payment permission.
+- Shipping Sheet COD amount is permission-aware and visible/printable to Delivery Team for Shipments they are responsible for.
 - Printing may be started from mobile, but the printed document/template format is the same as desktop.
 - Print/export principle: document snapshots, simple outputs, and no accounting/tax promise.
 
@@ -650,7 +658,7 @@ Confirmed behavior:
 - Production quantity defaults to `1` and is entered by the user. Production Batch/Lot can be shown as reference context but does not lock quantity.
 - Starting queue is required before Review, defaults to `ช่างไม้`, and can be `ช่างไม้`, `รอรับเข้าโรงงานสี`, or `ส่งไปรักสมุก`.
 - Starting at `รอรับเข้าโรงงานสี` sends the created `JOB-P` to coloring intake first.
-- Starting at `ส่งไปรักสมุก` sends the created `JOB-P` to `รอระบุ/ส่งรักสมุก`.
+- Starting at `ส่งไปรักสมุก` requires choosing the Rak Samuk Worker before confirmation; if the worker is not known, the user should not start the `JOB-P` at Rak Samuk.
 - Disabled/closed SKU colors block Review confirmation for `ผลิตจาก SKU`.
 - `ขายได้ 0` / `หมด` does not block production from SKU.
 
@@ -660,11 +668,10 @@ Confirmed behavior:
 
 Confirmed flow:
 
-1. Woodwork marks `ส่งไปรักสมุก`
-2. Work leaves Woodwork Queue
-3. Work enters shared queue `รอระบุ/ส่งรักสมุก`
-4. User with outsource permission chooses Rak Samuk Worker
-5. Work appears in that worker's own view
+1. Woodwork, Coloring, Admin/Sales, Manager, or Owner chooses `ส่งไปรักสมุก`
+2. User selects the Rak Samuk Worker before confirming send-out
+3. Work leaves the sending queue
+4. Work appears in that worker's own view
 
 Rules:
 
@@ -673,9 +680,10 @@ Rules:
 - Production large quantity should be split by Production Lot before sending.
 - Rak Samuk has no return deadline in the first scope.
 - Urgent Label can appear if set by authorized user.
-- Rak Samuk Worker uses a simple mobile worker shell with assigned-work cards and a limited detail view.
+- Rak Samuk Worker uses a simple mobile worker shell with assigned-work cards and Full Production Job Detail for assigned work.
 - Rak Samuk Worker sees own price on both the work card and detail.
 - Rak Samuk Worker cannot mark work complete or move workflow status.
+- Rak Samuk User can be changed before `รับเข้าโรงงานสี` without required reason, but the change is recorded in Activity Log / Rak Samuk work history.
 - Internal staff receives work back with `รับงานรักสมุกกลับ`.
 - `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`; P0 has no alternate destination picker.
 
@@ -685,22 +693,23 @@ Confirmed rules:
 
 - Internal staff without finance permission should not see Rak Samuk rate.
 - Rak Samuk Worker can see own price for own work.
-- If Product Model has Rak Samuk Standard Rate, worker cannot request price in system.
+- Order, Production, and Job workflow pages never show Rak Samuk price.
+- If Product Model has Rak Samuk Standard Rate, it is the starting work price.
 - If no rate exists, show `ไม่มีราคา / ให้แจ้งราคา`.
-- Worker can propose price only for missing-price items.
-- Worker enters the per-piece price for that specific missing-price work item, not a total job price.
-- Finance/payment-permission user approves proposed price.
+- Worker can use `ขอเสนอราคา` for assigned work until the related PV round is closed.
+- Worker enters the per-piece price for that specific work item, not a total job price.
+- Owner/Manager approves proposed price; Finance pays or creates PV from the approved price.
 
 ### Standard Rate Update
 
 Confirmed rules:
 
 - Rak Samuk Standard Rate lives on Product Model (SKU ใหญ่).
-- If old rate is 0 or missing, approved first payment can update standard rate automatically with log.
-- If old rate is non-zero and paid rate differs, after Payment Voucher process the approver must answer whether to update standard rate.
+- If approved proposed price is linked to SKU/Product Model, the approver must answer whether to update standard rate.
+- Standard rate update is never automatic and writes Management Log with old/new value.
 - New standard rate applies only to future work.
 - No retroactive update to already sent work.
-- Custom Job paid rate stays in Job cost history visible only to finance permission.
+- Rak Samuk work price stays in Rak Samuk Worker own view, Finance/PV/payment area, and Owner/Manager approval/reporting views.
 
 ## Shipment UX
 
@@ -1283,7 +1292,7 @@ These labels should remain Thai for shop staff:
 - `รอวัตถุดิบ`
 - `งานด่วน`
 - `ส่งไปรักสมุก`
-- `รอระบุ/ส่งรักสมุก`
+- `เลือกช่างรักสมุก`
 - `ไม่มีราคา / ให้แจ้งราคา`
 - `รายการต้องจัดส่งวันนี้`
 - `รายการรอวันจัดส่ง`

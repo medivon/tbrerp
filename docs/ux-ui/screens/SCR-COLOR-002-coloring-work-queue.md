@@ -78,7 +78,7 @@ The Coloring Work Queue is the simple active work list for the coloring and deco
 | Open Job | เปิดงาน | Coloring Department | Opens Job Detail Work Card. | No |
 | Accept work | รับงาน | Coloring Department | Marks work accepted by coloring. | No |
 | Waiting materials | รอวัตถุดิบ | Coloring Department | Marks department-level blocker. | Yes |
-| Send to Rak Samuk | ส่งไปรักสมุก | Coloring Department where allowed | Sends work to `รอระบุ/ส่งรักสมุก`. | Yes |
+| Send to Rak Samuk | ส่งไปรักสมุก | Coloring Department where allowed | Opens worker selection and sends work only after a Rak Samuk Worker is chosen. | Yes |
 | Mark ready | งานเสร็จ/พร้อมส่ง | Coloring Department | Sends completed `JOB-O` to admin `รอสร้างรอบจัดส่ง`. | Yes |
 | Open intake queue | รอรับเข้าโรงงานสี | Coloring Department | Opens intake queue. | No |
 | Open history | ประวัติงานของฉัน | Coloring Department | Opens coloring history. | No |

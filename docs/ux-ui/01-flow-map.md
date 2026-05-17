@@ -360,9 +360,9 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 - Woodwork Department
 - Coloring Department
-- User with outsource permission
+- Admin/Sales, Manager, or Owner when acting from admin workflow
 - Rak Samuk Worker
-- Finance-permission user when price approval is required
+- Owner/Manager when price approval is required
 - Internal receiver
 
 **Trigger**
@@ -376,7 +376,6 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Screens Involved**
 
 - Department Job work card
-- `รอระบุ/ส่งรักสมุก`
 - Rak Samuk Worker assignment
 - Rak Samuk Worker `งานที่ต้องทำ`
 - `ไม่มีราคา / ให้แจ้งราคา`
@@ -388,34 +387,32 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Step-by-step User Actions**
 
 1. Woodwork or Coloring selects `ส่งไปรักสมุก`.
-2. User with outsource permission opens `รอระบุ/ส่งรักสมุก`.
-3. User selects one Rak Samuk Worker.
-4. Rak Samuk Worker opens `งานที่ต้องทำ`.
-5. Rak Samuk Worker reviews assigned work and needed instruction images.
-6. If a standard rate exists, Rak Samuk Worker continues without proposing price.
-7. If no rate exists, Rak Samuk Worker sees `ไม่มีราคา / ให้แจ้งราคา`.
-8. Rak Samuk Worker submits the per-piece proposed price for that missing-price work item.
-9. Finance/payment-permission user approves proposed price when required.
-10. Internal staff receives the work back.
-11. Work enters `รอรับเข้าโรงงานสี`.
+2. The sending user selects the Rak Samuk Worker before confirming send-out.
+3. Rak Samuk Worker opens `งานที่ต้องทำ`.
+4. Rak Samuk Worker reviews assigned Full Production Job Detail and needed instruction images.
+5. If a SKU/Product Model standard rate exists, it is used as the starting work price, but not shown on Order/Production/Job workflow pages.
+6. If no rate exists, Rak Samuk Worker sees `ไม่มีราคา / ให้แจ้งราคา`.
+7. Rak Samuk Worker may submit `ขอเสนอราคา` for that work until the related PV round is closed.
+8. Owner/Manager approves proposed price when required.
+9. Internal staff receives the work back.
+10. Work enters `รอรับเข้าโรงงานสี`.
 
 **System Actions**
 
 - Removes the Job from the sending department active list.
-- Places the work in `รอระบุ/ส่งรักสมุก` until worker assignment.
-- Assigns Rak Samuk Work to exactly one Rak Samuk Worker for a customer Job.
+- Blocks send-out if no Rak Samuk Worker is selected.
+- Assigns Rak Samuk Work to exactly one Rak Samuk Worker.
 - Shows Rak Samuk Worker only their own assigned work.
-- Hides Customer data, Order ID, sales price, and other workers' work from Rak Samuk Worker.
+- Shows assigned Rak Samuk Worker Full Production Job Detail, but hides Customer data, Order ID, sales price, payment, cost, other workers' work, Management Log, and Audit Log.
 - Shows own price only for own work.
-- Allows price proposal only when standard rate is missing, and stores it as a per-piece proposed price for that work item.
+- Allows `ขอเสนอราคา` until the related PV round is closed.
 - Keeps workflow status control with internal staff, not Rak Samuk Worker.
+- Allows changing Rak Samuk Worker before `รับเข้าโรงงานสี` without required reason, recorded in Activity Log / Rak Samuk work history.
 - Routes received-back Rak Samuk Work to `รอรับเข้าโรงงานสี` with no P0 destination picker.
 
 **Status Changes**
 
 - Department active Job -> sent to Rak Samuk.
-- Sent work -> waiting in `รอระบุ/ส่งรักสมุก`.
-- Waiting outsource assignment -> assigned to Rak Samuk Worker.
 - Missing price -> proposed price -> approved price, when applicable.
 - Rak Samuk Work -> received back.
 - Received work -> `รอรับเข้าโรงงานสี`.
@@ -430,6 +427,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Work name
 - Main image
 - Quantity
+- Full Production Job Detail needed for assigned work
 - Rak Samuk instruction images and text
 - Urgent Label if set
 - Worker name for internal users
@@ -442,6 +440,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Rak Samuk Worker can infer customer, Order ID, or sales price.
 - Worker appears able to move internal workflow status.
 - Missing-price work is not obvious enough.
+- UI wording accidentally uses `ตีโต้ราคา` instead of the approved label `ขอเสนอราคา`.
 - Returned Rak Samuk work does not need a destination decision; it always goes to `รอรับเข้าโรงงานสี` in P0.
 - One customer Job is accidentally split across multiple Rak Samuk Workers.
 
@@ -571,7 +570,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 1. Delivery Team opens dashboard.
 2. Delivery Team chooses `รายการต้องจัดส่งวันนี้` or `รายการรอวันจัดส่ง`.
-3. Delivery Team reviews row/card summary: recipient, short address, phone, carrier, item thumbnail/summary, and notes.
+3. Delivery Team reviews row/card summary: recipient, short address, phone, carrier, item thumbnail/summary, notes, and COD amount when the Shipment is COD.
 4. Delivery Team may open Shipment detail to review full address and optionally attach `รูปหลักฐานจัดส่ง`.
 5. Delivery Team marks one Shipment `ส่งออกแล้ว` from the row action, or bulk-selects today's/no-date Shipments and confirms `บันทึกว่าส่งออกแล้ว`.
 6. Delivery Team may review `ส่งออกแล้ววันนี้` if they need to check what was already sent today.
@@ -582,7 +581,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Places Shipments without delivery date in `รายการต้องจัดส่งวันนี้`.
 - Places future-date Shipments in `รายการรอวันจัดส่ง`.
 - Moves future-date Shipments to today's tab on the delivery date.
-- Prevents Delivery Team from changing item list, address, carrier, COD, tracking, or closing Shipment.
+- Prevents Delivery Team from changing item list, address, carrier, COD, tracking, closing Shipment, or closing COD/payment follow-up.
+- Shows COD amount only for Shipments the Delivery Team is responsible for.
 - Allows `ส่งออกแล้ว` without tracking or delivery evidence.
 - Allows optional delivery evidence photos only on individual Shipment detail, not as a bulk requirement.
 - Allows bulk `บันทึกว่าส่งออกแล้ว` only from `รายการต้องจัดส่งวันนี้`, including no-date Shipments.
@@ -608,6 +608,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Address
 - Phone
 - Carrier
+- COD amount when relevant
 - Notes
 - Optional `รูปหลักฐานจัดส่ง`
 - Same-day sent-out status
@@ -615,7 +616,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **UX Risks**
 
 - Delivery Team sees edit controls for master shipment data.
-- Delivery Team sees COD amount in the system UI, even though COD follow-up belongs to admin/audit/finance and COD amount belongs on the Shipping Sheet.
+- Delivery Team cannot see COD amount for unrelated Shipments.
+- Delivery Team appears able to close COD/payment follow-up after seeing COD amount.
 - Delivery Team sees a tracking field even though tracking belongs to admin confirmation.
 - Bulk send-out accidentally includes future-date Shipments.
 - Future Shipments are mixed into today's work.
@@ -667,6 +669,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Completes the Order only when all required Order Shipments are closed.
 - Keeps Financial Follow-up separate from Order Completion.
 - Records post-sent-out tracking/evidence correction in Management Log.
+- After Shipment close, Manager/Owner can edit where needed; Admin/Sales can correct tracking/evidence when operationally necessary, with Management Log and Finance review if money/COD is affected.
 
 **Status Changes**
 
@@ -703,6 +706,59 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **Blocking Open UX Questions**
 
 - None for the flow map.
+
+## F08A - Completed Order Special Shipment Exception
+
+**Actors**
+
+- Owner
+- Manager
+
+**Trigger**
+
+- A completed Order needs an exceptional send-back or correction Shipment, such as after a wrong delivery, without reopening or recalculating the original Order.
+
+**Entry Point**
+
+- Completed Order Detail
+
+**Screens Involved**
+
+- Completed Order Detail
+- Special shipment modal
+- Shipment detail/history record
+
+**Step-by-step User Actions**
+
+1. Owner or Manager opens a completed Order.
+2. Owner or Manager opens `รอบจัดส่งพิเศษ`.
+3. Owner or Manager selects the items to include and enters a required reason.
+4. System creates the special Shipment record.
+5. The special Shipment can be handled and closed as a delivery record, but it does not affect Order completion or stock.
+
+**System Actions**
+
+- Shows the `รอบจัดส่งพิเศษ` action only to Owner/Manager after Order completion.
+- Hides this action from Admin/Sales; Admin/Sales uses Service Case for post-completion customer issues.
+- Records reason, creator, selected items, and `ไม่กระทบสต๊อก / ไม่กระทบสถานะออเดอร์` in Management Log.
+- Keeps the special Shipment visible in the Order history/detail as an exception record.
+- Does not adjust stock; any required stock correction must be handled separately in the stock area.
+- Does not reopen, recalculate, or change the original Order status.
+
+**Status Changes**
+
+- Original Order remains completed.
+- Stock remains unchanged.
+
+**UX Risks**
+
+- Special Shipment looks like normal shipment creation and silently changes stock.
+- Admin/Sales uses special Shipment to hide a customer problem instead of creating Service Case.
+- Users assume this changes Order completion or sales reports.
+
+**Blocking Open UX Questions**
+
+- None for the business rule; modal wording and layout can be handled during screen design.
 
 ## F09 - Manager Unfinished-work Overview
 
@@ -846,7 +902,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Keeps `ร่างงานผลิต` out of Job queues, stock changes, and active production reports.
 - Opens Production Review before creating a real `JOB-P`.
 - Requires starting queue before Review; default is `ช่างไม้`.
-- Routes created `JOB-P` to the selected starting point: `ช่างไม้`, `รอรับเข้าโรงงานสี`, or `รอระบุ/ส่งรักสมุก`.
+- Routes created `JOB-P` to the selected starting point: `ช่างไม้`, `รอรับเข้าโรงงานสี`, or assigned Rak Samuk Worker when `ส่งไปรักสมุก` is selected.
 
 **Status Changes**
 

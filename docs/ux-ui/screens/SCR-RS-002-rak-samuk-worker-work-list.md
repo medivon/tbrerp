@@ -101,17 +101,17 @@ Show `ยังไม่มีงานที่ต้องทำ` with a secon
 ## 13. Permission Rules
 
 - Rak Samuk Worker sees only their own assigned work.
-- Rak Samuk Worker must not see Customer data, Order ID, Customer phone/address, CRM notes, sales price, other workers' work, or internal workflow status controls.
+- Rak Samuk Worker can see Full Production Job Detail for assigned work, but must not see Customer data, Order ID, Customer phone/address, CRM notes, sales price, payment, cost, other workers' work, Management Log, Audit Log, or internal workflow status controls.
 - Rak Samuk Worker can see own price only for own work.
-- Rak Samuk Worker can propose price only when standard rate is missing.
+- Rak Samuk Worker can use `ขอเสนอราคา` until the related PV round is closed.
 - Rak Samuk Worker cannot mark work complete and cannot move workflow status.
 - Worker cannot print/download payout in first scope.
 
 ## 14. UX Notes for Designer
 
 - Mobile-first: most Rak Samuk workers will likely use a phone.
-- Keep the screen very simple: image, instruction, quantity, own price/missing price.
-- Show own price on both the list card and limited detail view.
+- Keep the screen simple while showing Full Production Job Detail needed for the assigned work.
+- Show own price on both the list card and assigned-work detail view.
 - Use `ไม่มีราคา / ให้แจ้งราคา` as an obvious action state.
 - Avoid internal words like Order ID, Customer, payment audit, sales price, or workflow routing.
 - Do not show assignment controls; the worker only views assigned work and proposes price when allowed.

@@ -79,6 +79,19 @@ Decision:
 
 ## Recently Resolved P0 UX / Needs-decision Questions
 
+### OQ-IA-001 - Identity and access consolidation
+
+Decision:
+
+- Identity & Access Grill Me round IA-001 to IA-150 is complete enough for first implementation documentation.
+- Use one User system for internal employees and Outsource users.
+- Base roles see only Personal Dashboard; operational menus are permission-aware.
+- Delivery Team can see COD amount for Shipments they are responsible for, but cannot close COD/payment follow-up.
+- Rak Samuk send-out requires choosing the Rak Samuk Worker immediately.
+- Rak Samuk Worker uses `ขอเสนอราคา`; Owner/Manager approve proposed prices, and Finance pays from approved prices.
+- Completed Orders are not edited in normal workflow. Use notes, Service Case, finance note, correction record, or Owner/Manager-only `รอบจัดส่งพิเศษ`.
+- This consolidation supersedes older Identity/Access notes that say Finance approves Rak Samuk proposed price, Delivery Team cannot see COD amount, or Rak Samuk work can wait in an unassigned send queue.
+
 ### OQ-UX-001 - Delivery Team send-out and admin proof boundary
 
 Decision:
@@ -87,6 +100,8 @@ Decision:
 - Delivery Team can mark one Shipment `ส่งออกแล้ว` from the row/card action.
 - Delivery Team can bulk-select today's/no-date Shipments and confirm `บันทึกว่าส่งออกแล้ว`.
 - Delivery Team does not enter Tracking.
+- Delivery Team can see COD amount only for Shipments they are responsible for.
+- Delivery Team cannot change COD amount or close COD/payment follow-up.
 - Delivery Team may attach optional `รูปหลักฐานจัดส่ง` on an individual Shipment, but send-out does not require evidence.
 - After send-out, the Shipment leaves the active today list and enters admin `ยืนยันการจัดส่ง`.
 - Admin records Tracking or at least one delivery evidence photo before closing Shipment.
@@ -96,9 +111,10 @@ Decision:
 
 Decision:
 
-- Rak Samuk Worker uses a simple mobile worker shell with assigned-work cards and a limited detail view.
+- Rak Samuk Worker uses a simple mobile worker shell with assigned-work cards and Full Production Job Detail for assigned work.
 - Rak Samuk Worker sees own price on both card and detail.
 - Rak Samuk Worker cannot mark work complete or move workflow status.
+- Sending work to Rak Samuk must select the Rak Samuk Worker immediately; unknown worker means the work is not sent yet.
 - `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`.
 - P0 has no receive-back destination picker.
 
@@ -117,9 +133,11 @@ Decision:
 
 Decision:
 
-- Rak Samuk Worker enters `ราคาที่แจ้งต่อชิ้น` for the specific missing-price work item.
+- Rak Samuk Worker uses `ขอเสนอราคา` for the specific assigned work item.
 - Worker does not enter a total price for all assigned work.
-- Finance/payment-permission user approves the proposed Rak Samuk price.
+- Owner/Manager approves the proposed Rak Samuk price.
+- Finance pays or creates PV from the approved price.
+- If the work links to a SKU/Product Model, the approver must choose whether to update the Rak Samuk Standard Rate.
 
 ## Recently Resolved Material Boundary Questions
 

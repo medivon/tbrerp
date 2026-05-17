@@ -10,8 +10,8 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 - Manager / Owner
 - Woodwork Department
 - Coloring Department
-- User with outsource permission
-- Rak Samuk Worker in limited assigned-work view
+- Allowed Rak Samuk sender
+- Rak Samuk Worker in assigned-work production view
 
 ## 3. User Goals
 
@@ -106,7 +106,7 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 | Accept work | รับงาน | Woodwork / Coloring where assigned | Job enters active department work. | No |
 | Waiting materials | รอวัตถุดิบ | Woodwork / Coloring | Marks department-level blocker and stops department aging. | Yes |
 | Send to coloring | ส่งไปสี | Woodwork | Leaves Woodwork active list and enters coloring intake path. | Yes |
-| Send to Rak Samuk | ส่งไปรักสมุก | Woodwork / Coloring where allowed | Leaves current department list and enters `รอระบุ/ส่งรักสมุก`. | Yes |
+| Send to Rak Samuk | ส่งไปรักสมุก | Woodwork / Coloring where allowed | Opens worker selection and leaves current department list only after a Rak Samuk Worker is chosen. | Yes |
 | Send to carving | กำลังส่งไปแกะสลัก | Woodwork | Marks carving handoff note/status for first flow. | Yes |
 | Receive coloring intake | รับเข้าโรงงานสี | Coloring / authorized higher permission | Moves work into active Coloring queue. | Yes |
 | Mark ready | งานเสร็จ/พร้อมส่ง | Coloring | Sends `JOB-O` to admin `รอสร้างรอบจัดส่ง`. | Yes |

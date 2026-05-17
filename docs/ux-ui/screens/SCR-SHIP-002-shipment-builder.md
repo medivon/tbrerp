@@ -152,7 +152,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Shipment Owner is the creator, but close queue is shared later.
 - Finance-sensitive COD/payment detail is permission-aware.
 - Service Case sources create Service Shipments only and do not update any referenced Order status, total, or completion state.
-- Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them or see COD amount in the Delivery Team system UI.
+- Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them, but can see COD amount for Shipments they are responsible for.
 - COD belongs to this Shipment round. Do not add a flow where this round collects COD intended for another Shipment round.
 - After release/send-out, avoid changing Shipment COD; rare mistakes are handled through finance notes/manual handling rather than changing this closed/send-out document path.
 - Draft Shipment items are not shipped and Order is not complete.

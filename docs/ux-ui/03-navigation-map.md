@@ -28,6 +28,7 @@ Rules:
 - Treat this sidebar as the current desktop admin navigation baseline.
 - Keep sidebar labels Thai-first.
 - Keep English only where it is an established internal term, such as `CRM`.
+- Main navigation is permission-aware; base roles such as `พนักงานไทยโบราณ` and `Outsource` see only Personal Dashboard/profile/own documents or income.
 - Do not show `ร่างออเดอร์` as a dashboard card or sidebar badge.
 - `ร่างออเดอร์` belongs under `ออเดอร์`.
 - `งานสั่งทำ / ผลิต` is the navigation home for Job Tracking, including `JOB-O` and `JOB-P`.
@@ -94,6 +95,8 @@ Rules:
 - Shipment creation, payment follow-up, and other operational actions happen after opening Order Detail, not as crowded row actions in `ออเดอร์ทั้งหมด`.
 - In Order Detail, `จัดการออเดอร์` is the header shortcut menu; line shipment creation happens in `จัดการรอบจัดส่ง`.
 - `แก้ไขรายการสินค้า` and `แก้ไขงานสั่งทำ` enter the guarded `แก้ไขรายการออเดอร์` edit mode from Order Detail, not casual inline editing inside the report and not a separate standalone module.
+- Completed Orders are not edited in normal workflow; they accept notes and may link to Service Case / finance note / correction record.
+- Owner/Manager may create `รอบจัดส่งพิเศษ` from completed Order Detail when needed; it requires a reason and does not affect stock or Order completion.
 
 ### งานสั่งทำ / ผลิต
 
@@ -140,6 +143,7 @@ Rules:
 - `รายการรอวันจัดส่ง` is a delivery work screen for released future-date Shipments.
 - `ยืนยันการจัดส่ง` dashboard count uses number of shipment rounds.
 - Admin creates and confirms shipment rounds; delivery team marks sent, while admin records required tracking/evidence before closing.
+- Delivery Team can see COD amount only for Shipments they are responsible for and cannot close COD/payment follow-up.
 
 ### สินค้า / สต๊อก
 
@@ -203,6 +207,7 @@ Expected subcategories:
 Rules:
 
 - Dashboard may show `ติดตาม COD / Payment`, but detailed finance-sensitive information remains permission-aware.
+- Admin/Sales may create Expense and see Expense records created by their group; full Expense/PV visibility remains Owner/Manager/Finance.
 - Expense export CSV/XLSX is allowed from the expense area; general report export is not part of the starting report scope.
 
 ### ตั้งค่า
@@ -226,6 +231,8 @@ Expected subcategories:
 Rules:
 
 - `ตั้งค่าสินค้า` contains tabs for `หมวดหมู่สินค้า`, `แท็กสินค้า`, `รายการสี`, `รายการลายรักสมุก`, `รายการลายแกะสลัก`, and `รายการสีคริสตัล`.
+- `Roles / Permissions` is visible and editable only by `Super Admin / Owner`.
+- The `ตั้งค่า` menu appears only when the user has at least one settings permission; submenus are scoped to that permission.
 - Users without product-settings permission do not see `ตั้งค่าสินค้า`.
 - Do not expose `CRUD`, `Master`, or `ข้อมูลตั้งต้นสินค้า` as staff-facing labels.
 - Use contextual mini managers for material unit/category inside the material area instead of a separate deep material settings area first.

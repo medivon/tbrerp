@@ -4,6 +4,52 @@ This context defines the shared business language for the THAIBORAN ERP. It focu
 
 ## Language
 
+### Identity and Access
+
+**User (ผู้ใช้งาน)**:
+A person recorded in the ERP identity system, whether internal employee or outsource worker, who may login while active.
+_Avoid_: Treating Employee and Outsource as separate login systems
+
+**User Type (ประเภทผู้ใช้งาน)**:
+The business relationship of a User, starting with `พนักงานภายใน` or `Outsource`.
+_Avoid_: Permission role, department, payroll category
+
+**Internal Employee (พนักงานภายใน)**:
+A User who works inside THAIBORAN and may have regular income such as salary, daily wage, or commission.
+_Avoid_: User with ERP work permission
+
+**Outsource User (ผู้ใช้งาน Outsource)**:
+A User outside the internal staff relationship who may see their own assigned work, documents, and work-based income.
+_Avoid_: Supplier, Customer, internal employee
+
+**Base Role (สิทธิ์พื้นฐาน)**:
+The starting personal-access role automatically given by User Type, such as `พนักงานไทยโบราณ` for internal employees or `Outsource` for outsource users.
+_Avoid_: Operational department role
+
+**Work Role (บทบาทงาน)**:
+A role that opens operational menus or actions, such as Admin/Sales, Finance, Product/Stock, Woodwork, Coloring, Delivery Team, or Rak Samuk Worker.
+_Avoid_: User Type
+
+**Personal Dashboard (แดชบอร์ดส่วนตัว)**:
+The personal area where a User can see their own profile, documents, work-income status, and future personal income summaries where allowed.
+_Avoid_: Admin Dashboard, shared operational queue
+
+**Special Work Income (รายได้พิเศษตามงาน)**:
+Work-based income attached to one User outside regular salary, daily wage, or commission.
+_Avoid_: Role, permission, Product cost
+
+**Deactivated User (ผู้ใช้งานที่ปิดใช้งาน)**:
+A User whose login and new-work selection are disabled while historical names, records, documents, income, and logs remain visible by permission.
+_Avoid_: Deleted user
+
+**Owner Override (อำนาจแก้ไขของเจ้าของ)**:
+The highest-authority ability to perform any supported system action while still respecting non-deletion history rules and required logs.
+_Avoid_: Physical deletion of history
+
+**Manager Override (อำนาจแก้ไขของผู้จัดการ)**:
+Broad operational correction authority that excludes Role/Permission management, Audit Log access, and Owner-only system authority.
+_Avoid_: Owner-level permission control
+
 ### Commercial Work
 
 **Customer (ลูกค้า)**:
@@ -188,6 +234,14 @@ _Avoid_: Order, Production Batch, Custom Product
 The production-ready detail entered on a custom Order Line before confirmation, which becomes the Order Job detail when the Order is confirmed.
 _Avoid_: Draft Job, Order note, private CRM note
 
+**Full Production Job Detail (รายละเอียดงานผลิตเต็ม)**:
+The production information needed to understand and execute a Job, excluding customer identity, Order ID, price, payment, cost, payout, and sensitive logs.
+_Avoid_: Full Business Detail
+
+**Full Business Detail (รายละเอียดธุรกิจเต็ม)**:
+The customer, sales, finance, cost, payout, permission, and log context around work.
+_Avoid_: Production instruction detail
+
 **Job Source Type (ประเภทต้นทางของ Job)**:
 The source of a Job, either Order or Production.
 _Avoid_: Inferring source from the ID only
@@ -324,21 +378,29 @@ _Avoid_: Hold
 Outsource decorative line work routed from a Job or Production Lot to one Rak Samuk worker.
 _Avoid_: Generic outsource when discussing first-scope payment flow
 
+**Rak Samuk Assignment (การส่งงานรักสมุก)**:
+The act of sending work to Rak Samuk with a specific Rak Samuk Worker selected immediately.
+_Avoid_: Unassigned outsource waiting queue
+
 **Rak Samuk Return (รับงานรักสมุกกลับ)**:
 The internal receipt of Rak Samuk Work back into the shop; in the starting workflow it always routes to Waiting for Coloring Intake.
 _Avoid_: Worker completion, destination picker, returning to sender
 
 **Rak Samuk Worker (ช่างรักสมุก)**:
-An outsource worker account that can view assigned Rak Samuk Work and limited payment information for their own work.
+An Outsource User with the Rak Samuk Worker role who can view assigned Rak Samuk Work, Full Production Job Detail for that work, and their own work price.
 _Avoid_: Employee, internal workshop user
 
 **Rak Samuk Standard Rate (ราคามาตรฐานรักสมุก)**:
-The standard per-piece rate stored on the Product Model.
+The standard per-piece rate stored on the Product Model and visible only to Owner, Manager, and Finance.
 _Avoid_: Sales price, SKU Variant price
 
-**Rak Samuk Proposed Price (ราคาที่แจ้งต่อชิ้น)**:
-The per-piece price proposed by a Rak Samuk Worker for one assigned missing-price Rak Samuk Work item before finance/payment approval.
+**Rak Samuk Proposed Price (ขอเสนอราคา)**:
+The per-piece price a Rak Samuk Worker proposes for their assigned work before the related PV round is closed.
 _Avoid_: Total job price, sales price, worker payout round
+
+**Rak Samuk Work Price (ราคางานรักสมุก)**:
+The approved per-piece price for one Rak Samuk Work item, visible to the assigned worker, Owner, Manager, Finance, and PV/payment views only.
+_Avoid_: Order price, Job workflow field, Product profit
 
 **Payment Voucher (ใบสำคัญจ่าย / PV)**:
 A payment document issued after payment is confirmed, using monthly running numbers.
@@ -382,6 +444,10 @@ _Avoid_: Reopening the original Order, repair Job, Order status
 A Shipment created from a Service Case that does not affect the original Order completion or sales total.
 _Avoid_: Order Shipment
 
+**Special Shipment (รอบจัดส่งพิเศษ)**:
+An Owner/Manager-only bypass Shipment recorded on a completed Order for exceptional post-completion send-back or correction cases.
+_Avoid_: Reopening Order, stock movement, normal Shipment
+
 ### CRM and Media
 
 **CRM Note (บันทึก CRM)**:
@@ -399,6 +465,22 @@ _Avoid_: Product image, CRM image
 **Department Instruction Images (รูปงานตามแผนก)**:
 Images on a Product Model, SKU, or Job grouped for woodwork, coloring/decoration, or Rak Samuk instructions.
 _Avoid_: Review images
+
+**Payment Evidence (หลักฐานการรับเงิน)**:
+Slip, photo, or note evidence used to support a Payment Record or Financial Follow-up.
+_Avoid_: Delivery evidence
+
+**Delivery Evidence (หลักฐานจัดส่ง)**:
+Tracking or delivery photos used to support Shipment closure.
+_Avoid_: Payment evidence
+
+**Expense Evidence (หลักฐานค่าใช้จ่าย)**:
+Receipt, slip, photo, or note evidence used to support an Expense Entry.
+_Avoid_: Payment evidence, PV attachment
+
+**PV Attachment (เอกสารประกอบ PV)**:
+Supporting document or evidence attached to a Payment Voucher or payout round.
+_Avoid_: Expense evidence
 
 ### Operations and Audit
 
@@ -430,12 +512,22 @@ _Avoid_: Activity log
 Business-sensitive information that must be hidden from users without the matching permission, such as product cost, profit, COD/payment detail, Rak Samuk rates outside the worker's own price, other workers' payout, and Audit Log detail.
 _Avoid_: Disabled-only action, public queue summary
 
+**Correction Record (บันทึกแก้ไขย้อนหลัง)**:
+A separate record used to explain or correct a completed or closed business event without rewriting the original record.
+_Avoid_: Reopening completed Order
+
 **Expense Entry (รายการค่าใช้จ่าย)**:
 A simple internal expense record with actual payment date, amount, user-defined category, payee, evidence, and optional line items. It can record refunds from Service Cases and does not update stock automatically.
 _Avoid_: Accounting journal
 
 ## Relationships
 
+- A **User** has one current **User Type**, at least one **Base Role**, and zero or more **Work Roles**.
+- An **Internal Employee** and an **Outsource User** use the same **User** identity system; User Type describes relationship, while roles and permissions control access.
+- A **User** may login while active; a **Deactivated User** cannot login or be selected for new work, but remains visible in history by permission.
+- **Role/Permission** changes are Owner-only, take effect immediately, and write **Audit Log**.
+- Same-permission users may continue work in a **Shared Queue**; **Owner** remains traceability and is not a lock.
+- First-scope department work is usually handled through shared role/department queues, while person-specific work mainly applies to **Rak Samuk Work** and **Special Work Income**.
 - A **Customer** has one **Customer Code**, one **Customer Primary Phone**, zero or more **Customer Social Contacts**, up to three **Address Entries**, many **Orders**, many **CRM Notes**, many **Customer Tags**, many **Service Cases**, and optional **Review Albums**; each Customer has one **Customer Tier**, one **Customer Status**, and one **Customer Sales Summary**.
 - A **Customer Tier** may define **Customer Tier Discounts** for ready-stock goods and custom work; those defaults are suggested during Order creation and copied into the Order as editable/logged discount context.
 - An **Address Entry** belongs to exactly one **Customer**, one Address Entry may be the default, an **Order** has frozen **Order Recipient Detail**, and a **Shipment** stores its own recipient/address snapshot used at dispatch time.
@@ -462,13 +554,17 @@ _Avoid_: Accounting journal
 - A **Shipment** may be marked **Delivery Send-out** by the **Delivery Team** without **Shipment Evidence**; it can be closed only by admin after at least tracking or one delivery evidence photo is recorded. Delivery reporting uses the **Delivery Send-out** date, while Order Completion still waits for Shipment close.
 - Ready-to-ship work should not move backward during Shipment creation. If a ready Shipment should not leave yet, use **Shipment Send-out Hold** or manual shipment-step handling instead of reverting the upstream Order Line, Job, or Service Case.
 - **Order Completion** happens when all required Order Shipments are closed; **Financial Follow-up** is separate.
+- Completed **Orders** are not edited in normal workflow; later notes, **Service Cases**, finance notes, **Correction Records**, or Owner/Manager-only **Special Shipments** preserve follow-up without rewriting the original Order.
 - A **Service Case** may reference a **Customer** or **Order** for context, and may create a **Service Shipment**, but it does not reopen, close, edit, or recalculate the referenced Order. The referenced Order also does not control the Service Case's status. If the reference is wrong, it may be corrected with log because it is contextual only.
 - A **Service Case** should be recorded after the real event exists. Do not create hypothetical/draft service-finance records before the business event happens.
-- **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** in the first scope.
-- A **Rak Samuk Worker** can see only their assigned work and limited own-payment information.
-- A **Rak Samuk Proposed Price** belongs to one missing-price **Rak Samuk Work** item and must be approved by a finance/payment-permission user before it becomes the approved per-piece work price.
+- A **Special Shipment** is created from completed Order Detail by Owner/Manager only, requires a reason, does not affect stock or Order Completion, and writes **Management Log**.
+- **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** at send time; if the worker is not known, the work cannot be sent to Rak Samuk.
+- A **Rak Samuk Worker** can see only assigned work, **Full Production Job Detail** for that work, and their own **Rak Samuk Work Price**.
+- **Rak Samuk Standard Rate** lives on the **Product Model**. If assigned work references a Product Model, that rate is the starting work price; work without a reference starts missing/zero and can use **Rak Samuk Proposed Price**.
+- A **Rak Samuk Proposed Price** can be submitted until the related **Payment Voucher** round is closed and must be approved by Owner/Manager before it becomes the approved **Rak Samuk Work Price**.
+- When an approved proposed price is linked to a Product Model, the approver must choose whether to update the **Rak Samuk Standard Rate**; updates write **Management Log** and are not automatic.
 - **Rak Samuk Return** always sends the Job to **Waiting for Coloring Intake** in the starting workflow.
-- A **Payment Voucher** is issued only after payment is confirmed and receives a monthly running PV number.
+- A **Payment Voucher** is issued only after payment is confirmed and receives a monthly running PV number; closed PVs remain editable by Owner/Manager with old/new value in **Management Log**.
 - A **Review Album** can link to zero or many SKU Variants and optionally to one Customer or Order.
 - **Product Settings** contains controlled product lists for categories, tags, colors, patterns, and decoration values.
 - A **Product Category** can have many **Product Subcategories** and many **Product Models**.
@@ -500,6 +596,7 @@ _Avoid_: Accounting journal
 - Manual Material Purchase Orders cannot link Jobs after creation. Material Purchase Orders created from waiting-material notes cannot add new Job links later, though they may add normal unlinked material lines.
 - Receiving a Material Purchase Order that is linked to waiting Jobs releases only those linked Jobs from **Waiting for Materials**, returns them to their previous department queue, and writes the release in the Job Activity Log. It does not add a badge or separate notification.
 - **Expense Entries** and stock movements are separate first-scope records; neither updates the other automatically.
+- **Expense Entries** created by Admin/Sales are visible to the same role/group before full finance visibility; paid or closed Expense work is controlled by Finance, Manager, or Owner.
 - **Expense Entries** can be corrected by permission with log for operational mistakes such as wrong category; report grouping follows the latest active value in this non-accounting starting workflow.
 - **Operational Alerts** are in-app queue/status/event signals in the starting workflow. They do not have a separate read/unread inbox or notification history; resolved work state is the source of truth. Existing alerts should not repeatedly open modals/toasts; keep the chip/queue state visible.
 - **Alert Events** should stay module-specific and named clearly enough to support future external hooks, APIs, or webhooks.
@@ -549,6 +646,12 @@ Explicitly outside the starting scope:
 > **Dev:** "Does the Delivery Team need Tracking or a photo before pressing `ส่งออกแล้ว`?"
 > **Domain expert:** "No. `ส่งออกแล้ว` is only the delivery handoff. Admin records Tracking or a delivery photo later before closing the Shipment."
 
+> **Dev:** "Can admin fix a completed Order by changing the original Order?"
+> **Domain expert:** "No. Completed Orders stay stable. Use a note, Service Case, finance note, correction record, or an Owner/Manager special shipment that does not affect stock or Order completion."
+
+> **Dev:** "If a Rak Samuk worker asks for a different price, does Finance approve it?"
+> **Domain expert:** "No. The worker uses `ขอเสนอราคา`, Owner or Manager approves the work price, and Finance pays from the approved price."
+
 ## Flagged ambiguities
 
 - "Job" was used to mean both customer custom work and production custom work. Resolved: use **Job** as the shared custom work unit with **Job Source Type** and prefixes **JOB-O** / **JOB-P**.
@@ -557,6 +660,7 @@ Explicitly outside the starting scope:
 - "Order done" could mean shipped or financially settled. Resolved: **Order Completion** means all required shipments are closed; **Financial Follow-up** is separate.
 - "Order status" and "Shipment status" were mixed in Order List. Resolved: **Order Status** and **Shipment Summary** are separate; `รอยืนยันการจัดส่ง` belongs to Shipment Summary, not Order Status.
 - "Customer" was used for both buyer and delivery receiver. Resolved: **Customer** owns CRM and buying history; **Recipient** is the delivery receiver snapshot/address entry.
+- "User" and "Employee" were at risk of becoming separate identity systems. Resolved: use one **User** system, with **User Type** distinguishing internal employees and Outsource users.
 - "Payment" was used as if it approved `JOB-O` creation. Resolved: **Payment Record** is financial evidence/follow-up, not a gate for creating **Order Jobs**.
 - "Payment never blocks Order" was too broad. Resolved: Payment does not block normal Order creation or operation, but **Financial Reconciliation** blocks saving an Order total edit when the edited total does not match financial evidence or adjustment notes.
 - "Order Line Edit" sounded like a standalone screen. Resolved: **Order Line Edit** is a guarded edit mode/sub-flow entered from **Order Detail**, not a separate module or Draft Order.
@@ -573,7 +677,11 @@ Explicitly outside the starting scope:
 - "Level ลูกค้า" could mean a free tag or a controlled level. Resolved: **Customer Tier** is the controlled broad customer level; **Customer Tag** is a CRM label with no Order logic.
 - "Shipment address" sounded like it might update the Customer address book. Resolved: a **Shipment** stores a recipient/address snapshot; saving it as a secondary **Address Entry** requires an explicit user choice.
 - "`ส่งออกแล้ว`" sounded like final Shipment proof/close. Resolved: **Delivery Send-out** is the Delivery Team handoff without required proof; **Shipment Evidence** is captured by admin before Shipment close.
+- "Completed Order correction" sounded like reopening or editing the old Order. Resolved: completed Orders are stable; follow-up uses notes, Service Cases, finance notes, Correction Records, or Owner/Manager-only Special Shipments.
+- "Delivery Team COD visibility" conflicted with earlier stricter finance-only wording. Resolved: Delivery Team can see COD amount only for Shipments they are responsible for, but cannot close financial follow-up.
 - "`รับงานรักสมุกกลับ`" sounded like it might return to any prior or selected department. Resolved: **Rak Samuk Return** always routes to **Waiting for Coloring Intake** in the starting workflow.
+- "`รอระบุ/ส่งรักสมุก`" sounded like a required unassigned outsource queue. Resolved: **Rak Samuk Assignment** requires choosing the Rak Samuk Worker when sending; unknown worker means the work is not sent yet.
+- "ราคาที่แจ้งต่อชิ้น" and casual wording like "ตีโต้ราคา" were not precise enough for UI. Resolved: use **Rak Samuk Proposed Price** / `ขอเสนอราคา`; never use `ตีโต้` in staff-facing UI.
 - "Facebook name" sounded like a one-off field. Resolved: use **Customer Social Contact** so Facebook is the first row and other platforms can be added later.
 - "ลูกค้าส่ง" and wholesale pricing were considered for Customer Tier. Resolved: wholesale is outside the starting scope; Customer Tier keeps only simple retail/VIP warning levels and optional percentage discounts.
 - "Private CRM Note" was deferred to avoid permission-rule complexity in the starting Customer/CRM scope. Resolved: use normal **CRM Notes** only for now.

@@ -84,7 +84,8 @@ Final review screen before issuing a real `JOB-P / งานผลิต`.
 - Created `JOB-P` routes to the selected starting point:
   - `ช่างไม้`
   - `รอรับเข้าโรงงานสี`
-  - `รอระบุ/ส่งรักสมุก`
+  - Assigned Rak Samuk Worker when `ส่งไปรักสมุก` is selected
+- If the Rak Samuk Worker is not known, the user should choose another starting point and not start the `JOB-P` at Rak Samuk.
 - If the `JOB-P` is tied to SKU, marking it complete later increases Ready Stock by `จำนวนผลิต`.
 - If it is unlinked special production, marking it complete later ends the Job without stock change.
 
