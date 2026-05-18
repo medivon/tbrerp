@@ -47,7 +47,7 @@ const mainNavigation: NavigationItem[] = [
     label: "ออเดอร์",
     path: "/modules/orders",
     icon: ClipboardList,
-    implemented: false,
+    implemented: true,
   },
   {
     id: "jobs",

@@ -10,6 +10,10 @@ export function canAccessMainNavigation(user: FixtureUser): boolean {
   return canAccessAdminDashboard(user);
 }
 
+export function canAccessOrders(user: FixtureUser): boolean {
+  return canAccessMainNavigation(user);
+}
+
 export function getOwnHome(user: FixtureUser): AppDestination {
   return canAccessAdminDashboard(user) ? "dashboard" : "personal";
 }

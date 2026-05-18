@@ -1,0 +1,659 @@
+export const orderStatusLabels = [
+  "กำลังดำเนินการ",
+  "กำลังผลิต",
+  "พร้อมสร้างรอบจัดส่ง",
+  "ส่งบางส่วน",
+  "จัดส่งครบแล้ว",
+  "ยกเลิก",
+] as const;
+
+export type OrderStatus = (typeof orderStatusLabels)[number];
+
+export type DraftOrderStatus =
+  | "ร่างออเดอร์"
+  | "ข้อมูลยังไม่ครบ"
+  | "พร้อมตรวจสอบ";
+
+export type OrderLineType = "ready-stock" | "custom-work";
+
+export type ShipmentSummaryKind =
+  | "none"
+  | "round-without-tracking"
+  | "waiting-confirmation"
+  | "partial"
+  | "tracked"
+  | "delivered";
+
+export type OrderLineFixture = {
+  id: string;
+  type: OrderLineType;
+  title: string;
+  imageAlt: string;
+  imageSrc: string;
+  quantity: number;
+  skuCode?: string;
+  skuName?: string;
+  color?: string;
+  dimensions?: string;
+  lineTotalBaht: number;
+  shipmentState: string;
+  shipmentNo?: string;
+  stockWarning?: string;
+  customDetail?: string;
+  deliveryDate?: string;
+  job?: {
+    currentDepartment: string;
+    id: string;
+    status: string;
+  };
+  readyForShipment: boolean;
+  shipmentBlockedReason?: string;
+  editable: boolean;
+  editBlockedReason?: string;
+  cancelledReason?: string;
+};
+
+export type ShipmentRoundFixture = {
+  carrier: string;
+  createdDate: string;
+  sentOutDate?: string;
+  shipmentNo: string;
+  status: string;
+  tracking?: string;
+};
+
+export type OrderFixture = {
+  address: string;
+  createdDate: string;
+  createdDateShort: string;
+  customerName: string;
+  customerPhone: string;
+  customerTier: string;
+  hasCustomWork: boolean;
+  id: string;
+  lines: OrderLineFixture[];
+  netTotalBaht: number;
+  orderStatus: OrderStatus;
+  payment: {
+    followUpStatus: string;
+    outstandingBaht: number;
+    paidBaht: number;
+    term: string;
+  };
+  recipientName: string;
+  recipientPhone: string;
+  shipmentRounds: ShipmentRoundFixture[];
+  shipmentSummary: {
+    detail: string;
+    kind: ShipmentSummaryKind;
+    label: string;
+  };
+  socialContact?: string;
+  timeline: Array<{
+    detail: string;
+    title: string;
+  }>;
+};
+
+export type DraftOrderFixture = {
+  customerName: string;
+  customerPhone: string;
+  draftNo: string;
+  hasCustomWork: boolean;
+  itemCount: number;
+  itemSummary: string;
+  lastUpdated: string;
+  missingData: string[];
+  ownerName: string;
+  recipientName: string;
+  status: DraftOrderStatus;
+};
+
+export type OrderEntryFixture = {
+  address: string;
+  customerName: string;
+  customerPhone: string;
+  customerTier: string;
+  customLines: OrderLineFixture[];
+  optionalPaymentRecord?: {
+    amountBaht: number;
+    method: string;
+    note: string;
+  };
+  paymentTerm: string;
+  readyStockLines: OrderLineFixture[];
+  recipientName: string;
+  recipientPhone: string;
+  shipmentIntent?: string;
+  socialContact?: string;
+  stockWarnings: string[];
+};
+
+const imageSources = {
+  cabinet: "/sector-1-thumbnails/teak-display-cabinet.png",
+  chairSet: "/sector-1-thumbnails/shipment-chair-set.png",
+  consoleTable: "/sector-1-thumbnails/carved-console-table.png",
+};
+
+export const orderFixtures: OrderFixture[] = [
+  {
+    id: "ORD-240522-018",
+    customerName: "คุณศิริพร ตัวอย่าง",
+    customerPhone: "080-000-0018",
+    socialContact: "Facebook: Siriporn Sample Home",
+    customerTier: "ลูกค้า VIP",
+    recipientName: "คุณศิริพร ตัวอย่าง",
+    recipientPhone: "080-000-0018",
+    address: "99/12 หมู่ 4 ต.หางดง อ.หางดง จ.เชียงใหม่ 50230",
+    createdDate: "22 พ.ค. 67",
+    createdDateShort: "22 พ.ค. 67",
+    orderStatus: "กำลังผลิต",
+    shipmentSummary: {
+      kind: "none",
+      label: "ยังไม่ได้จัดส่ง",
+      detail: "ยังไม่มีรอบจัดส่ง เพราะงานสั่งทำยังผลิตไม่เสร็จ",
+    },
+    netTotalBaht: 58500,
+    hasCustomWork: true,
+    payment: {
+      term: "มัดจำ 50% ก่อนเริ่มงาน ส่วนที่เหลือก่อนจัดส่ง",
+      paidBaht: 29250,
+      outstandingBaht: 29250,
+      followUpStatus: "มีรายการติดตามการเงิน",
+    },
+    lines: [
+      {
+        id: "line-ready-chair-018",
+        type: "ready-stock",
+        title: "ชุดเก้าอี้รับแขกไม้สักพร้อมส่ง",
+        skuName: "ชุดเก้าอี้รับแขก",
+        skuCode: "TBR-CHR-SET-NAT",
+        color: "สีธรรมชาติ",
+        dimensions: "4 ที่นั่ง",
+        imageSrc: imageSources.chairSet,
+        imageAlt: "ชุดเก้าอี้รับแขกไม้สัก",
+        quantity: 1,
+        lineTotalBaht: 18500,
+        shipmentState: "พร้อมรอส่งพร้อมงานสั่งทำ",
+        readyForShipment: true,
+        shipmentBlockedReason:
+          "ออเดอร์ผสมตั้งต้นเป็นส่งพร้อมกัน เลือกส่งแยกได้จากหน้า Shipment Builder ในภายหลัง",
+        editable: true,
+      },
+      {
+        id: "line-custom-cabinet-018",
+        type: "custom-work",
+        title: "ตู้โชว์ไม้สักแกะลายสั่งทำ",
+        customDetail:
+          "รายละเอียดงานสั่งทำ: ไม้สัก สีโอ๊คเข้ม ลายแกะดอกพิกุล มีไฟในตู้",
+        imageSrc: imageSources.cabinet,
+        imageAlt: "ตู้โชว์ไม้สักแกะลาย",
+        quantity: 1,
+        lineTotalBaht: 40000,
+        shipmentState: "ยังผลิตไม่เสร็จ",
+        deliveryDate: "26 พ.ค. 67",
+        job: {
+          id: "JOB-O-0241",
+          status: "กำลังผลิต",
+          currentDepartment: "ฝ่ายสี",
+        },
+        readyForShipment: false,
+        shipmentBlockedReason: "ยังผลิตไม่เสร็จ",
+        editable: false,
+        editBlockedReason: "มี JOB-O แล้ว ต้องแก้รายละเอียดผลิตจากหน้า Job",
+      },
+    ],
+    shipmentRounds: [],
+    timeline: [
+      {
+        title: "สร้างออเดอร์",
+        detail: "แอดมินฝ่ายขายสร้างออเดอร์และส่งงานสั่งทำเข้าสู่คิวผลิต",
+      },
+      {
+        title: "สร้าง JOB-O",
+        detail: "JOB-O-0241 ถูกสร้างจากรายการงานสั่งทำหลังยืนยันออเดอร์",
+      },
+    ],
+  },
+  {
+    id: "ORD-240528-014",
+    customerName: "คุณมาลี ตัวอย่าง",
+    customerPhone: "080-000-0014",
+    socialContact: "Facebook: Malee Sample Living",
+    customerTier: "ลูกค้าปกติ",
+    recipientName: "คุณภพ ตัวอย่าง",
+    recipientPhone: "080-000-0114",
+    address: "12/8 ถ.ตัวอย่าง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
+    createdDate: "28 พ.ค. 67",
+    createdDateShort: "28 พ.ค. 67",
+    orderStatus: "พร้อมสร้างรอบจัดส่ง",
+    shipmentSummary: {
+      kind: "none",
+      label: "ยังไม่ได้จัดส่ง",
+      detail: "ยังไม่มีรอบจัดส่ง รายการพร้อมให้เลือกจาก Order Detail",
+    },
+    netTotalBaht: 24500,
+    hasCustomWork: false,
+    payment: {
+      term: "ชำระเต็มจำนวนก่อนจัดส่ง",
+      paidBaht: 24500,
+      outstandingBaht: 0,
+      followUpStatus: "ไม่มีรายการติดตามการเงิน",
+    },
+    lines: [
+      {
+        id: "line-ready-chair-014",
+        type: "ready-stock",
+        title: "ชุดเก้าอี้รับแขกไม้สักสีธรรมชาติ",
+        skuName: "ชุดเก้าอี้รับแขก",
+        skuCode: "TBR-CHR-SET-NAT",
+        color: "สีธรรมชาติ",
+        dimensions: "4 ที่นั่ง",
+        imageSrc: imageSources.chairSet,
+        imageAlt: "ชุดเก้าอี้ไม้สักพร้อมส่ง",
+        quantity: 1,
+        lineTotalBaht: 24500,
+        shipmentState: "พร้อมสร้างรอบจัดส่ง",
+        readyForShipment: true,
+        editable: true,
+      },
+    ],
+    shipmentRounds: [],
+    timeline: [
+      {
+        title: "สร้างออเดอร์",
+        detail: "สร้างออเดอร์พร้อมสินค้าพร้อมส่ง 1 รายการ",
+      },
+    ],
+  },
+  {
+    id: "ORD-240531-006",
+    customerName: "คุณนภัส ตัวอย่าง",
+    customerPhone: "080-000-0006",
+    customerTier: "ลูกค้า VIP",
+    recipientName: "คุณนภัส ตัวอย่าง",
+    recipientPhone: "080-000-0006",
+    address: "88/5 หมู่ 2 ต.สันกำแพง อ.สันกำแพง จ.เชียงใหม่ 50130",
+    createdDate: "31 พ.ค. 67",
+    createdDateShort: "31 พ.ค. 67",
+    orderStatus: "ส่งบางส่วน",
+    shipmentSummary: {
+      kind: "partial",
+      label: "จัดส่งยังไม่ครบ",
+      detail: "รอบแรกส่งออกแล้ว เหลืองานสั่งทำที่ยังอยู่ฝ่ายสี",
+    },
+    netTotalBaht: 72000,
+    hasCustomWork: true,
+    payment: {
+      term: "เก็บปลายทางเฉพาะรอบสุดท้าย",
+      paidBaht: 20000,
+      outstandingBaht: 52000,
+      followUpStatus: "มีรายการติดตามการเงิน",
+    },
+    lines: [
+      {
+        id: "line-ready-console-006",
+        type: "ready-stock",
+        title: "โต๊ะคอนโซลแกะลายพร้อมส่ง",
+        skuName: "โต๊ะคอนโซลแกะลาย",
+        skuCode: "TBR-CNS-CRV-OAK",
+        color: "โอ๊คเข้ม",
+        dimensions: "120 x 38 x 80 ซม.",
+        imageSrc: imageSources.consoleTable,
+        imageAlt: "โต๊ะคอนโซลแกะลาย",
+        quantity: 1,
+        lineTotalBaht: 22000,
+        shipmentState: "ส่งแล้ว",
+        shipmentNo: "SHP-240601-004",
+        readyForShipment: false,
+        shipmentBlockedReason: "ส่งแล้ว",
+        editable: false,
+        editBlockedReason: "รายการนี้ส่งออกแล้ว",
+      },
+      {
+        id: "line-custom-cabinet-006",
+        type: "custom-work",
+        title: "ตู้พระไม้สักสั่งทำ",
+        customDetail:
+          "รายละเอียดงานสั่งทำ: ขนาด 180 ซม. สีโอ๊คเข้ม ช่องเก็บของล่าง",
+        imageSrc: imageSources.cabinet,
+        imageAlt: "ตู้พระไม้สักสั่งทำ",
+        quantity: 1,
+        lineTotalBaht: 50000,
+        shipmentState: "ยังผลิตไม่เสร็จ",
+        deliveryDate: "05 มิ.ย. 67",
+        job: {
+          id: "JOB-O-0250",
+          status: "รอวัตถุดิบ",
+          currentDepartment: "ช่างไม้",
+        },
+        readyForShipment: false,
+        shipmentBlockedReason: "ยังผลิตไม่เสร็จ",
+        editable: false,
+        editBlockedReason: "มี JOB-O แล้ว ต้องแก้รายละเอียดผลิตจากหน้า Job",
+      },
+    ],
+    shipmentRounds: [
+      {
+        shipmentNo: "SHP-240601-004",
+        createdDate: "01 มิ.ย. 67",
+        sentOutDate: "01 มิ.ย. 67",
+        carrier: "Kerry",
+        tracking: "KR-SAMPLE-240601",
+        status: "ปิดรอบจัดส่งแล้ว",
+      },
+    ],
+    timeline: [
+      {
+        title: "สร้างรอบจัดส่ง",
+        detail: "SHP-240601-004 สำหรับโต๊ะคอนโซล",
+      },
+      {
+        title: "ส่งออก",
+        detail: "รอบจัดส่งแรกส่งออกแล้ว งานสั่งทำยังผลิตต่อ",
+      },
+    ],
+  },
+  {
+    id: "ORD-240602-009",
+    customerName: "คุณอรุณ ตัวอย่าง",
+    customerPhone: "080-000-0009",
+    customerTier: "ลูกค้าปกติ",
+    recipientName: "คุณอรุณ ตัวอย่าง",
+    recipientPhone: "080-000-0009",
+    address: "45/3 ต.ช้างเผือก อ.เมือง จ.เชียงใหม่ 50300",
+    createdDate: "02 มิ.ย. 67",
+    createdDateShort: "02 มิ.ย. 67",
+    orderStatus: "กำลังดำเนินการ",
+    shipmentSummary: {
+      kind: "waiting-confirmation",
+      label: "รอยืนยันการจัดส่ง",
+      detail: "SHP-240603-002 ส่งออกแล้ว รอแอดมินยืนยันหลักฐานจัดส่ง",
+    },
+    netTotalBaht: 16800,
+    hasCustomWork: false,
+    payment: {
+      term: "ชำระเต็มจำนวนก่อนจัดส่ง",
+      paidBaht: 16800,
+      outstandingBaht: 0,
+      followUpStatus: "ไม่มีรายการติดตามการเงิน",
+    },
+    lines: [
+      {
+        id: "line-ready-cabinet-009",
+        type: "ready-stock",
+        title: "ตู้โชว์ไม้สักขนาดเล็กพร้อมส่ง",
+        skuName: "ตู้โชว์ไม้สักขนาดเล็ก",
+        skuCode: "TBR-CAB-SM-NAT",
+        color: "สีธรรมชาติ",
+        dimensions: "90 x 40 x 140 ซม.",
+        imageSrc: imageSources.cabinet,
+        imageAlt: "ตู้โชว์ไม้สักขนาดเล็ก",
+        quantity: 1,
+        lineTotalBaht: 16800,
+        shipmentState: "รอยืนยันการจัดส่ง",
+        shipmentNo: "SHP-240603-002",
+        readyForShipment: false,
+        shipmentBlockedReason: "อยู่ในรอบจัดส่งแล้ว",
+        editable: false,
+        editBlockedReason: "อยู่ในรอบจัดส่งแล้ว",
+      },
+    ],
+    shipmentRounds: [
+      {
+        shipmentNo: "SHP-240603-002",
+        createdDate: "03 มิ.ย. 67",
+        sentOutDate: "03 มิ.ย. 67",
+        carrier: "ขนส่งร้าน",
+        status: "รอยืนยันการจัดส่ง",
+      },
+    ],
+    timeline: [
+      {
+        title: "สร้างรอบจัดส่ง",
+        detail: "SHP-240603-002 ถูกปล่อยให้ฝ่ายจัดส่ง",
+      },
+      {
+        title: "ส่งออก",
+        detail: "ฝ่ายจัดส่งบันทึกว่าส่งออกแล้ว รอแอดมินปิดรอบ",
+      },
+    ],
+  },
+  {
+    id: "ORD-240604-002",
+    customerName: "คุณพิมพ์ ตัวอย่าง",
+    customerPhone: "080-000-0002",
+    customerTier: "ลูกค้า VVIP",
+    recipientName: "คุณพิมพ์ ตัวอย่าง",
+    recipientPhone: "080-000-0002",
+    address: "19/9 ต.สุเทพ อ.เมือง จ.เชียงใหม่ 50200",
+    createdDate: "04 มิ.ย. 67",
+    createdDateShort: "04 มิ.ย. 67",
+    orderStatus: "จัดส่งครบแล้ว",
+    shipmentSummary: {
+      kind: "tracked",
+      label: "Kerry : KR-SAMPLE-240604",
+      detail: "จัดส่งครบแล้วด้วยรอบจัดส่ง SHP-240604-001",
+    },
+    netTotalBaht: 42000,
+    hasCustomWork: true,
+    payment: {
+      term: "ชำระเต็มจำนวนก่อนจัดส่ง",
+      paidBaht: 42000,
+      outstandingBaht: 0,
+      followUpStatus: "ปิดการติดตามแล้ว",
+    },
+    lines: [
+      {
+        id: "line-custom-table-002",
+        type: "custom-work",
+        title: "โต๊ะคอนโซลแกะลายสั่งทำ",
+        customDetail:
+          "รายละเอียดงานสั่งทำ: ลายแกะขอบโต๊ะ สีโอ๊คเข้ม เคลือบด้าน",
+        imageSrc: imageSources.consoleTable,
+        imageAlt: "โต๊ะคอนโซลแกะลายสั่งทำ",
+        quantity: 1,
+        lineTotalBaht: 42000,
+        shipmentState: "ส่งแล้ว",
+        shipmentNo: "SHP-240604-001",
+        deliveryDate: "04 มิ.ย. 67",
+        job: {
+          id: "JOB-O-0262",
+          status: "พร้อมส่ง",
+          currentDepartment: "เสร็จแล้ว",
+        },
+        readyForShipment: false,
+        shipmentBlockedReason: "ส่งแล้ว",
+        editable: false,
+        editBlockedReason:
+          "ออเดอร์จัดส่งครบแล้ว ต้นฉบับอ่านอย่างเดียวใน workflow ปกติ",
+      },
+    ],
+    shipmentRounds: [
+      {
+        shipmentNo: "SHP-240604-001",
+        createdDate: "04 มิ.ย. 67",
+        sentOutDate: "04 มิ.ย. 67",
+        carrier: "Kerry",
+        tracking: "KR-SAMPLE-240604",
+        status: "ปิดรอบจัดส่งแล้ว",
+      },
+    ],
+    timeline: [
+      {
+        title: "ปิดรอบจัดส่ง",
+        detail: "จัดส่งครบทุก active line แล้ว ออเดอร์เป็นอ่านอย่างเดียว",
+      },
+    ],
+  },
+  {
+    id: "ORD-240605-004",
+    customerName: "คุณลลิตา ตัวอย่าง",
+    customerPhone: "080-000-0004",
+    customerTier: "ลูกค้าปกติ",
+    recipientName: "คุณลลิตา ตัวอย่าง",
+    recipientPhone: "080-000-0004",
+    address: "7/2 ต.แม่ริม อ.แม่ริม จ.เชียงใหม่ 50180",
+    createdDate: "05 มิ.ย. 67",
+    createdDateShort: "05 มิ.ย. 67",
+    orderStatus: "ยกเลิก",
+    shipmentSummary: {
+      kind: "none",
+      label: "ยังไม่ได้จัดส่ง",
+      detail: "ออเดอร์ถูกยกเลิกก่อนสร้างรอบจัดส่ง",
+    },
+    netTotalBaht: 12000,
+    hasCustomWork: false,
+    payment: {
+      term: "ชำระก่อนจัดส่ง",
+      paidBaht: 0,
+      outstandingBaht: 0,
+      followUpStatus: "ยกเลิกแล้ว ไม่มีรายการติดตามการเงินในตัวอย่างนี้",
+    },
+    lines: [
+      {
+        id: "line-cancelled-chair-004",
+        type: "ready-stock",
+        title: "เก้าอี้ไม้สักสีธรรมชาติ",
+        skuName: "เก้าอี้ไม้สัก",
+        skuCode: "TBR-CHR-NAT",
+        color: "สีธรรมชาติ",
+        dimensions: "45 x 45 x 92 ซม.",
+        imageSrc: imageSources.chairSet,
+        imageAlt: "เก้าอี้ไม้สักสีธรรมชาติ",
+        quantity: 2,
+        lineTotalBaht: 12000,
+        shipmentState: "ยกเลิกรายการแล้ว",
+        readyForShipment: false,
+        editable: false,
+        cancelledReason: "ลูกค้าขอยกเลิกก่อนยืนยันรอบจัดส่ง",
+        editBlockedReason: "ออเดอร์ยกเลิกแล้ว",
+      },
+    ],
+    shipmentRounds: [],
+    timeline: [
+      {
+        title: "ยกเลิกออเดอร์",
+        detail: "ยกเลิกก่อนเกิดงาน downstream ในตัวอย่าง fixture",
+      },
+    ],
+  },
+];
+
+export const draftOrderFixtures: DraftOrderFixture[] = [
+  {
+    draftNo: "DRAFT-00034",
+    customerName: "คุณมาลี ตัวอย่าง",
+    customerPhone: "080-000-0034",
+    recipientName: "คุณภพ ตัวอย่าง",
+    itemSummary: "ตู้โชว์ไม้สักสั่งทำ + 1 รายการ",
+    itemCount: 2,
+    ownerName: "แอดมินฝ่ายขาย",
+    lastUpdated: "วันนี้ 14:20",
+    status: "ข้อมูลยังไม่ครบ",
+    missingData: ["ยังไม่มีเงื่อนไขชำระเงิน"],
+    hasCustomWork: true,
+  },
+  {
+    draftNo: "DRAFT-00035",
+    customerName: "คุณปริญญา ตัวอย่าง",
+    customerPhone: "080-000-0035",
+    recipientName: "คุณปริญญา ตัวอย่าง",
+    itemSummary: "ชุดเก้าอี้รับแขกพร้อมส่ง",
+    itemCount: 1,
+    ownerName: "แอดมินฝ่ายขาย",
+    lastUpdated: "เมื่อวาน 16:10",
+    status: "พร้อมตรวจสอบ",
+    missingData: [],
+    hasCustomWork: false,
+  },
+  {
+    draftNo: "DRAFT-00036",
+    customerName: "คุณณิชา ตัวอย่าง",
+    customerPhone: "080-000-0036",
+    recipientName: "คุณณิชา ตัวอย่าง",
+    itemSummary: "โต๊ะคอนโซลแกะลายสั่งทำ",
+    itemCount: 1,
+    ownerName: "คุณผู้จัดการ",
+    lastUpdated: "3 วันก่อน",
+    status: "ร่างออเดอร์",
+    missingData: ["รายละเอียดงานสั่งทำยังไม่ครบ"],
+    hasCustomWork: true,
+  },
+];
+
+export const orderEntryFixture: OrderEntryFixture = {
+  customerName: "คุณมาลี ตัวอย่าง",
+  customerPhone: "080-000-0099",
+  socialContact: "Facebook: Malee Sample Living",
+  customerTier: "ลูกค้า VIP",
+  recipientName: "คุณภพ ตัวอย่าง",
+  recipientPhone: "080-000-0199",
+  address: "55/10 หมู่ 1 ต.หนองควาย อ.หางดง จ.เชียงใหม่ 50230",
+  readyStockLines: [
+    {
+      id: "entry-ready-chair",
+      type: "ready-stock",
+      title: "ชุดเก้าอี้รับแขกไม้สักสีธรรมชาติ",
+      skuName: "ชุดเก้าอี้รับแขก",
+      skuCode: "TBR-CHR-SET-NAT",
+      color: "สีธรรมชาติ",
+      dimensions: "4 ที่นั่ง",
+      imageSrc: imageSources.chairSet,
+      imageAlt: "ชุดเก้าอี้รับแขกไม้สัก",
+      quantity: 2,
+      lineTotalBaht: 49000,
+      shipmentState: "ยังไม่สร้างรอบจัดส่ง",
+      stockWarning: "จำนวนเกินที่ขายได้: ขายได้ 1 ชิ้น",
+      readyForShipment: false,
+      editable: true,
+    },
+  ],
+  customLines: [
+    {
+      id: "entry-custom-cabinet",
+      type: "custom-work",
+      title: "ตู้โชว์ไม้สักแกะลายสั่งทำ",
+      customDetail:
+        "รายละเอียดงานสั่งทำ: สีโอ๊คเข้ม ลายแกะดอกพิกุล ขนาด 160 x 45 x 210 ซม.",
+      imageSrc: imageSources.cabinet,
+      imageAlt: "ตู้โชว์ไม้สักแกะลายสั่งทำ",
+      quantity: 1,
+      lineTotalBaht: 42000,
+      deliveryDate: "20 มิ.ย. 67",
+      shipmentState: "ยังไม่สร้างรอบจัดส่ง",
+      readyForShipment: false,
+      editable: true,
+    },
+  ],
+  paymentTerm: "มัดจำ 50% ก่อนเริ่มงาน ส่วนที่เหลือก่อนจัดส่ง",
+  optionalPaymentRecord: {
+    amountBaht: 30000,
+    method: "โอนเงิน",
+    note: "ตัวอย่างรายการรับเงินในขั้นตอนกรอกออเดอร์",
+  },
+  shipmentIntent: "ส่งพร้อมกัน",
+  stockWarnings: ["ชุดเก้าอี้รับแขกไม้สักสีธรรมชาติ จำนวนเกินที่ขายได้"],
+};
+
+export function getOrderById(orderId: string): OrderFixture | undefined {
+  return orderFixtures.find((order) => order.id === orderId);
+}
+
+export function getFollowUpOrders(): OrderFixture[] {
+  return orderFixtures.filter(
+    (order) =>
+      order.orderStatus !== "จัดส่งครบแล้ว" && order.orderStatus !== "ยกเลิก",
+  );
+}
+
+export function getClosedAndCancelledOrders(): OrderFixture[] {
+  return orderFixtures.filter(
+    (order) =>
+      order.orderStatus === "จัดส่งครบแล้ว" || order.orderStatus === "ยกเลิก",
+  );
+}
+
+export function formatBaht(amount: number): string {
+  return `${new Intl.NumberFormat("th-TH").format(amount)} บาท`;
+}
