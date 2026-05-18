@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils";
 
 export const statusChipVariants = cva(
-  "inline-flex w-fit max-w-full items-center gap-1 whitespace-nowrap rounded-full border font-semibold leading-none",
+  "inline-flex w-fit max-w-full items-center gap-1 whitespace-normal break-words rounded-full border text-left font-semibold leading-snug",
   {
     variants: {
       size: {

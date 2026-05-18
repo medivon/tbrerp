@@ -2,10 +2,12 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { Button } from "./button";
 import { EmptyState } from "./empty-state";
 import { NoAccessState } from "./no-access-state";
 import { QueueLauncherCard } from "./queue-launcher-card";
 import { StaleStateBanner } from "./stale-state-banner";
+import { StatusChip } from "./status-chip";
 import { WorkPreviewCard } from "./work-preview-card";
 
 describe("THAIBORAN visual components", () => {
@@ -58,5 +60,23 @@ describe("THAIBORAN visual components", () => {
     expect(screen.getByText("ไม่มีรายการตามตัวกรองนี้")).toBeTruthy();
     expect(screen.getByText("รายการตัวอย่าง")).toBeTruthy();
     expect(screen.getByText("REF-SAFE-001")).toBeTruthy();
+  });
+
+  it("keeps shared commands and chips cursor-visible and Thai-wrap safe", () => {
+    render(
+      <>
+        <Button>คำสั่งตัวอย่างที่มีข้อความภาษาไทยยาวมาก</Button>
+        <StatusChip>สถานะภาษาไทยยาวสำหรับตรวจการตัดบรรทัด</StatusChip>
+      </>,
+    );
+
+    expect(
+      screen.getByRole("button", {
+        name: "คำสั่งตัวอย่างที่มีข้อความภาษาไทยยาวมาก",
+      }).className,
+    ).toContain("cursor-pointer");
+    expect(
+      screen.getByText("สถานะภาษาไทยยาวสำหรับตรวจการตัดบรรทัด").className,
+    ).toContain("whitespace-normal");
   });
 });
