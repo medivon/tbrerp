@@ -9,9 +9,6 @@ Related screen spec:
 - `docs/ux-ui/screens/SCR-DEL-001-delivery-dashboard.md`
 
 Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-SHIP-005-delivery-note-preview/SCR-SHIP-005-approved.png`
-- `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

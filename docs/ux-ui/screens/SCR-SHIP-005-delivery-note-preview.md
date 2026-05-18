@@ -4,10 +4,6 @@
 
 The Delivery Note Preview shows the printable A4 item list for a Shipment. It focuses on product identification, quantity, image, and item notes. It must not show prices or COD amount.
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-SHIP-005-delivery-note-preview/SCR-SHIP-005-approved.png`
-
 ## 2. Primary Users
 
 - Admin
@@ -40,7 +36,7 @@ Approved mockup:
 ## 6. Layout Structure
 
 - Header: `ใบส่งของ`, Shipment ID, Order ID, print actions.
-- Preview area: A4 page mockup with document title, item table/cards, images, quantities, notes.
+- Preview area: A4 page preview with document title, item table/cards, images, quantities, notes.
 - Side panel: document options such as print Delivery Note, print both, go to Shipping Sheet.
 - Footer: page count if multiple pages.
 - Desktop focus: printable preview should be central and legible.
@@ -113,7 +109,7 @@ If no items are available, show `ไม่มีรายการสินค�
 
 ## 14. UX Notes for Designer
 
-- Preserve the approved `SCR-SHIP-005` mockup layout.
+- Preserve the current `SCR-SHIP-005` document-preview layout.
 - Make this look like an A4 print artifact, not an editable page.
 - Keep item images small but useful for identification.
 - Separate clearly from Shipping Sheet: this is product/item focused.

@@ -6,10 +6,6 @@ Orders Follow-up Overview shows confirmed Orders that need operational follow-up
 
 This screen answers: which Orders still need handling, whether they are still producing or ready to ship, and which Order should admin open next.
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ADM-002-active-orders-overview/SCR-ADM-002-approved.png`
-
 ## 2. Primary Users
 
 - Admin
@@ -141,7 +137,7 @@ Do not show Draft Orders in this empty state.
 ## 15. UX Notes for Designer
 
 - Preserve the approved Admin Dashboard app shell.
-- Preserve the approved `SCR-ADM-002` mockup layout and right-detail-drawer pattern.
+- Preserve the current `SCR-ADM-002` screen layout and right-detail-drawer pattern.
 - Keep `ออเดอร์` active in the sidebar.
 - Use Thai UI labels as the primary language.
 - Use images in rows/cards because THAIBORAN work is visually specific.

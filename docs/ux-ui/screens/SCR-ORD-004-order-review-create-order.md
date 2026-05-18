@@ -1,9 +1,5 @@
 # SCR-ORD-004 - Order Review / Create Order
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ORD-004-order-review-create-order/SCR-ORD-004-approved.png`
-
 ## 1. Purpose
 
 Order Review / Create Order is the final admin review screen before issuing a real Order ID. It reviews the current Order Create/Edit data, whether or not that data has previously been saved as a Draft Order.
@@ -161,4 +157,4 @@ Use `docs/ux-ui/image-prompts/IMG-ORD-004-order-review-create-order.md`.
 
 ## 16. Open UX Questions
 
-- None blocking for the next Order mockup pass.
+- None blocking for the next Order screen pass.

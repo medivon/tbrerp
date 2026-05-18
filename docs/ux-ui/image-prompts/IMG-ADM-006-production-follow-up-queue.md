@@ -5,10 +5,6 @@ Related screen spec:
 - `docs/ux-ui/screens/SCR-ADM-006-production-follow-up-queue.md`
 
 Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-ADM-006-production-follow-up-queue/SCR-ADM-006-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-003-active-jobs-overview/SCR-ADM-003-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

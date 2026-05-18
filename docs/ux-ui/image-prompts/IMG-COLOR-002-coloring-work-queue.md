@@ -4,7 +4,7 @@
 
 Create a low-fidelity mobile/tablet wireframe for the active Coloring Work Queue. Inherit the approved Admin Dashboard visual language only and reuse the Woodwork Queue card pattern: card style, chip style, typography, spacing, calm ERP feel, and image-led work recognition. Do not force the full desktop sidebar into this shop-floor screen. The title is `งานที่ต้องทำ`, with a visible link/chip to `รอรับเข้าโรงงานสี`. Show image-led active coloring cards only, not intake items mixed into the list.
 
-## 2. High-fidelity UI mockup prompt
+## 2. High-fidelity UI image prompt
 
 Create a high-fidelity tablet/mobile ERP work queue UI for a Thai furniture coloring and decorating department. Preserve the approved THAIBORAN Admin Dashboard visual language without using the full desktop sidebar: quiet operational style, compact chips, clean white cards, restrained colors, larger touch targets, and clear Thai labels. Page title `งานที่ต้องทำ` with a small link `รอรับเข้าโรงงานสี`. Show image cards for jobs with `JOB-O-2568-0042 / งานลูกค้า`, work name `ตู้โชว์ไม้สักแกะลาย`, color instruction `สีโอ๊คเข้ม เคลือบด้าน`, quantity, urgent chip, delivery date, and action buttons `รับงาน`, `รอวัตถุดิบ`, `ส่งไปรักสมุก`, `งานเสร็จ/พร้อมส่ง`.
 

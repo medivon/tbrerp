@@ -73,7 +73,7 @@ Design status:
 - Design status: ready
 - Main data objects: Job, Order Job, Production Job, Woodwork Queue, Coloring Queue, Rak Samuk Work
 - Main actions: Review production overview, open Job, filter by department/source.
-- Related source docs: `docs/ux-ui/screens/SCR-ADM-003-active-jobs-overview.md`; `docs/ux-ui/image-prompts/IMG-ADM-003-active-jobs-overview.md`; `docs/ux-ui/mockups/SCR-ADM-003-active-jobs-overview/SCR-ADM-003-approved.png`; `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-003-active-jobs-overview.md`; `docs/ux-ui/image-prompts/IMG-ADM-003-active-jobs-overview.md`; `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-004 - Waiting to Create Shipment Round Queue
 
@@ -107,7 +107,7 @@ Design status:
 - Design status: ready
 - Main data objects: Shipment, Delivery Note, Shipping Sheet, Order, Financial Follow-up
 - Main actions: Open Shipment, add or review tracking/evidence, close Shipment.
-- Related source docs: `docs/ux-ui/screens/SCR-ADM-005-shipment-confirmation-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-005-shipment-confirmation-queue.md`; `docs/ux-ui/mockups/SCR-ADM-005-shipment-confirmation-queue/SCR-ADM-005-approved.png`; `docs/ux-ui/01-flow-map.md` F01/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-005-shipment-confirmation-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-005-shipment-confirmation-queue.md`; `docs/ux-ui/01-flow-map.md` F01/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-006 - Production Follow-up Queue
 
@@ -124,7 +124,7 @@ Design status:
 - Design status: ready
 - Main data objects: Job, Job Revision, Activity Log
 - Main actions: Open follow-up case, review acknowledgement state, follow up with department.
-- Related source docs: `docs/ux-ui/screens/SCR-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/mockups/SCR-ADM-006-production-follow-up-queue/SCR-ADM-006-approved.png`; `docs/ux-ui/01-flow-map.md` F01/F04; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/01-flow-map.md` F01/F04; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-007 - COD/Payment Follow-up Queue
 
@@ -141,7 +141,7 @@ Design status:
 - Design status: ready
 - Main data objects: Payment Term, Payment Record, Shipment COD, Financial Follow-up, Order
 - Main actions: Review follow-up item, open related Order or Shipment, record payment evidence or note, close follow-up when resolved.
-- Related source docs: `docs/ux-ui/screens/SCR-ADM-007-cod-payment-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-007-cod-payment-follow-up-queue.md`; `docs/ux-ui/mockups/SCR-ADM-007-cod-payment-follow-up-queue/SCR-ADM-007-approved.png`; `docs/ux-ui/01-flow-map.md` F01/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-007-cod-payment-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-007-cod-payment-follow-up-queue.md`; `docs/ux-ui/01-flow-map.md` F01/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-008 - Draft Order Queue
 
@@ -158,7 +158,7 @@ Design status:
 - Design status: ready
 - Main data objects: Draft Order, Customer, Address Entry, Order Line
 - Main actions: Open draft, continue draft, create a new Order.
-- Related source docs: `docs/ux-ui/screens/SCR-ADM-008-draft-order-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-008-draft-order-queue.md`; `docs/ux-ui/mockups/SCR-ADM-008-draft-order-queue/SCR-ADM-008-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-008-draft-order-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-008-draft-order-queue.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 Note:
 
@@ -183,7 +183,7 @@ Note:
 - Design status: ready
 - Main data objects: Order Entry Session, Draft Order, Customer, Address Entry, Order Line, Product Model, SKU Variant, Ready Stock, Custom Work Detail, Order Shipment Plan, Payment Term, Payment Record
 - Main actions: Select/create customer, add address, add ready-stock line through Product Model/color selection, choose no-stock products with warning, add custom-work line, save draft, continue to review.
-- Related source docs: `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`; `docs/ux-ui/image-prompts/IMG-ORD-001-draft-order-editor.md`; `docs/ux-ui/mockups/SCR-ORD-001-draft-order-editor/SCR-ORD-001-approved.png`; `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`; `docs/ux-ui/image-prompts/IMG-ORD-001-draft-order-editor.md`; `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### ORD-002 - Customer Search / Select
 
@@ -234,7 +234,7 @@ Note:
 - Design status: ready
 - Main data objects: Order Entry Session, optional Draft Order, Order, Order Line, Custom Work Detail, Order Shipment Plan, Payment Term, Payment Record
 - Main actions: Review Order, save draft, return to edit, create Order ID.
-- Related source docs: `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`; `docs/ux-ui/image-prompts/IMG-ORD-004-order-review-create-order.md`; `docs/ux-ui/mockups/SCR-ORD-004-order-review-create-order/SCR-ORD-004-approved.png`; `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`; `docs/ux-ui/image-prompts/IMG-ORD-004-order-review-create-order.md`; `docs/ux-ui/01-flow-map.md` F02; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-005 - Order Detail
 
@@ -251,7 +251,7 @@ Note:
 - Design status: ready
 - Main data objects: Order, Order Line, Customer, Address Entry, Payment Term, Payment Record, Shipment, Order Status, Shipment Summary
 - Main actions: Review Order sections, manage Order, edit safe sections, select ready lines for Shipment, open Shipment, open related Job, review Order status and shipment summary separately.
-- Related source docs: `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`; `docs/ux-ui/image-prompts/IMG-ORD-005-order-detail.md`; `docs/ux-ui/mockups/SCR-ORD-005-order-detail/SCR-ORD-005-approved.png`; `docs/ux-ui/01-flow-map.md` F02/F03/F06/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`; `docs/ux-ui/image-prompts/IMG-ORD-005-order-detail.md`; `docs/ux-ui/01-flow-map.md` F02/F03/F06/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ORD-006 - All Orders List
 
@@ -304,12 +304,12 @@ Note:
 - Design status: ready
 - Main data objects: Custom Work Detail, Job Source Type preview, Order Line, Department Instruction Images
 - Main actions: Enter production details, attach instruction images, complete custom-work requirements before Order Review.
-- Related source docs: `docs/ux-ui/screens/SCR-JOB-001-job-create-from-order-line.md`; `docs/ux-ui/image-prompts/IMG-JOB-001-job-create-from-order-line.md`; `docs/ux-ui/mockups/SCR-JOB-001-job-create-from-order-line/SCR-JOB-001-approved.png`; `docs/ux-ui/01-flow-map.md` F03; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-JOB-001-job-create-from-order-line.md`; `docs/ux-ui/image-prompts/IMG-JOB-001-job-create-from-order-line.md`; `docs/ux-ui/01-flow-map.md` F03; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 Note:
 
 - This is no longer a separate post-confirmation Job creation screen for customer custom work.
-- The existing mockup remains a visual reference for the embedded `รายละเอียดงานสั่งทำ` section.
+- The current screen spec and image prompt remain the source for the embedded `รายละเอียดงานสั่งทำ` section.
 - After Order confirmation, editing production-affecting details happens through Job Detail / Job Revision.
 
 ### JOB-002 - Job Detail
@@ -327,7 +327,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Job Source Type, Order Line, Production Lot, Department Instruction Images, Activity Log
 - Main actions: Review Job, inspect timeline, open related workflow, set/view urgency where allowed.
-- Related source docs: `docs/ux-ui/screens/SCR-JOB-002-job-detail-work-card.md`; `docs/ux-ui/image-prompts/IMG-JOB-002-job-detail-work-card.md`; `docs/ux-ui/mockups/SCR-JOB-002-job-detail-work-card/SCR-JOB-002-approved.png`; `docs/ux-ui/01-flow-map.md` F03/F04/F05/F09; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-JOB-002-job-detail-work-card.md`; `docs/ux-ui/image-prompts/IMG-JOB-002-job-detail-work-card.md`; `docs/ux-ui/01-flow-map.md` F03/F04/F05/F09; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### JOB-003 - Job Revision View
 
@@ -361,7 +361,7 @@ Note:
 - Design status: ready
 - Main data objects: Draft Production Job, SKU Variant, Product Model, optional Production Batch, optional Production Lot, Department Instruction Images
 - Main actions: Select or prefill SKU Variant for `ผลิตจาก SKU`, switch to `งานผลิตพิเศษ` when needed, set production quantity, choose starting queue, save draft, continue to Production Review.
-- Related source docs: `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-sku-selected.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-special-work.md`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-modal-approved.png`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-selected-approved.png`; `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-special-work-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-entry.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-job-sku-selected.md`; `docs/ux-ui/image-prompts/IMG-JOB-004-production-special-work.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### JOB-005 - Production Review / Create Production Job
 
@@ -658,7 +658,7 @@ Note:
 - Design status: ready
 - Main data objects: Order, Order Line, Job, Service Case, Ready Stock, Shipment
 - Main actions: Search, filter/sort/group, select eligible Orders, open ready items, create Shipment, bulk-create eligible simple Shipments.
-- Related source docs: `docs/ux-ui/screens/SCR-SHIP-001-ready-to-ship-queue.md`; `docs/ux-ui/image-prompts/IMG-SHIP-001-ready-to-ship-queue.md`; `docs/ux-ui/mockups/SCR-SHIP-001-ready-to-ship-queue/SCR-SHIP-001-content-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-SHIP-001-ready-to-ship-queue.md`; `docs/ux-ui/image-prompts/IMG-SHIP-001-ready-to-ship-queue.md`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### SHP-002 - Shipment Builder
 
@@ -675,7 +675,7 @@ Note:
 - Design status: ready
 - Main data objects: Shipment, Order, Order Line, Job, Address Snapshot, Delivery Note, Shipping Sheet
 - Main actions: Review selected ready lines, edit delivery info/note where needed, preview documents, confirm `พร้อมจัดส่ง`. Shipment Builder does not edit COD and does not persist a saved shipment draft in the starting workflow.
-- Related source docs: `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`; `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`; `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`; `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SHP-004 - Released Shipment Detail
 
@@ -709,7 +709,7 @@ Note:
 - Design status: ready
 - Main data objects: Delivery Note, Shipment, Order Line, product image
 - Main actions: Preview, print, without price or COD amount.
-- Related source docs: `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-005-delivery-note-preview/SCR-SHIP-005-approved.png`; `docs/ux-ui/01-flow-map.md` F06/F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/01-flow-map.md` F06/F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### SHP-006 - Shipping Sheet Preview
 
@@ -726,7 +726,7 @@ Note:
 - Design status: ready
 - Main data objects: Shipping Sheet, Shipment, Recipient, Address Snapshot, carrier, COD
 - Main actions: Preview, print, with COD visibility limited to users allowed to see that Shipment COD.
-- Related source docs: `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`; `docs/ux-ui/01-flow-map.md` F06/F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/01-flow-map.md` F06/F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### SHP-007 - Bulk Shipment Creation
 
@@ -957,7 +957,7 @@ Note:
 - Design status: ready
 - Main data objects: Product Model, SKU Variant, Ready Stock, Production Job, Review Album, Job Reference on Product Model
 - Main actions: Search/filter products, filter category/color/stock status, expand stocked rows to view color/SKU Variant stock, open Product Detail, create Product Model with initial color set, navigate to stock actions.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-014-product-sku-table.md`; `docs/ux-ui/image-prompts/IMG-SUP-014-product-sku-table.md`; `docs/ux-ui/mockups/SCR-SUP-014-product-sku-table/SCR-SUP-014-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-014-product-sku-table.md`; `docs/ux-ui/image-prompts/IMG-SUP-014-product-sku-table.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-003 - Product Model Detail
 
@@ -974,7 +974,7 @@ Note:
 - Design status: ready
 - Main data objects: Product Model, Product Color Option, SKU Variant, Ready Stock, Department Instruction Images, Production Job
 - Main actions: View Product Model, open/close colors, open SKU variants, adjust stock by color via dedicated screen, create production from an enabled color, manage product images, open review album, open source Job reference where present.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-003-product-model-detail.md`; `docs/ux-ui/image-prompts/IMG-SUP-003-product-model-detail.md`; `docs/ux-ui/mockups/SCR-SUP-003-product-model-detail/SCR-SUP-003-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-003-product-model-detail.md`; `docs/ux-ui/image-prompts/IMG-SUP-003-product-model-detail.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-004 - SKU Variant Detail
 
@@ -991,7 +991,7 @@ Note:
 - Design status: ready
 - Main data objects: SKU Variant, Product Model, Product Color Option, Ready Stock
 - Main actions: View SKU Variant, inspect color status, open Product Model, open stock actions, create production where the color is enabled.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-004-sku-variant-detail.md`; `docs/ux-ui/image-prompts/IMG-SUP-004-sku-variant-detail.md`; `docs/ux-ui/mockups/SCR-SUP-004-sku-variant-detail/SCR-SUP-004-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-004-sku-variant-detail.md`; `docs/ux-ui/image-prompts/IMG-SUP-004-sku-variant-detail.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-005 - SKU Image Groups
 
@@ -1008,7 +1008,7 @@ Note:
 - Design status: ready
 - Main data objects: Product Model, SKU Variant, Department Instruction Images, Review Album
 - Main actions: Upload images, reorder images, add optional text where useful, move image groups, soft delete/hide images, open Review Album.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-005-sku-image-groups.md`; `docs/ux-ui/image-prompts/IMG-SUP-005-sku-image-groups.md`; `docs/ux-ui/mockups/SCR-SUP-005-sku-image-groups/SCR-SUP-005-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-005-sku-image-groups.md`; `docs/ux-ui/image-prompts/IMG-SUP-005-sku-image-groups.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-006 - Ready Stock View
 
@@ -1110,7 +1110,7 @@ Note:
 - Design status: ready
 - Main data objects: Material Item, Material Category, Supplier, Material Need Note, Material Movement
 - Main actions: View material quantity on hand, see waiting-materials alerts, add material items, create purchase order summary, receive through purchase order, open material adjustment, view simple movement history.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-015-material-stock.md`; `docs/ux-ui/image-prompts/IMG-SUP-015-material-stock.md`; `docs/ux-ui/mockups/SCR-SUP-015-material-stock/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-015-material-stock.md`; `docs/ux-ui/image-prompts/IMG-SUP-015-material-stock.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-016 - Material Purchase Order
 
@@ -1127,7 +1127,7 @@ Note:
 - Design status: ready
 - Main data objects: Material Purchase Order, Material Item, Supplier, Material Stock Receipt, attachment, Payment Audit Follow-up
 - Main actions: Create `รอรับเข้า` document for one supplier, print/export A4/JPG, edit while waiting, accept whole document into stock, release linked waiting-material Jobs on receipt, cancel waiting document, attach evidence in any status.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-016-material-purchase-order.md`; `docs/ux-ui/image-prompts/IMG-SUP-016-material-purchase-order.md`; `docs/ux-ui/mockups/SCR-SUP-016-material-purchase-order/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-016-material-purchase-order.md`; `docs/ux-ui/image-prompts/IMG-SUP-016-material-purchase-order.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-017 - Material Adjustment
 
@@ -1144,7 +1144,7 @@ Note:
 - Design status: ready
 - Main data objects: Material Adjustment, Material Item, Material Movement, attachment, Management Log
 - Main actions: Search/select materials, enter actual count for multiple materials, calculate differences, save optional evidence for the adjustment session, view summaries by date/range.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-017-material-adjustment.md`; `docs/ux-ui/image-prompts/IMG-SUP-017-material-adjustment.md`; `docs/ux-ui/mockups/SCR-SUP-017-material-adjustment/README.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-017-material-adjustment.md`; `docs/ux-ui/image-prompts/IMG-SUP-017-material-adjustment.md`; `CONTEXT.md`; `docs/adr/0009-light-material-stock-boundary.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-009 - Review Album
 
@@ -1212,7 +1212,7 @@ Note:
 - Design status: later
 - Main data objects: หมวดหมู่สินค้า, หมวดหมู่ย่อย, แท็กสินค้า, รายการสี, รายการลายรักสมุก, รายการลายแกะสลัก, รายการสีคริสตัล
 - Main actions: Add, edit, close, reopen, search, and filter setting records where allowed. Delete is allowed only when the record has never been used; used records must be `ปิดใช้งาน`. Management Log is required for setting changes.
-- Related source docs: `docs/ux-ui/screens/SCR-SUP-012-product-settings.md`; `docs/ux-ui/image-prompts/IMG-SUP-012-product-settings.md`; `docs/ux-ui/mockups/SCR-SUP-012-product-settings/README.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-012-product-settings.md`; `docs/ux-ui/image-prompts/IMG-SUP-012-product-settings.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-013 - Service Case
 

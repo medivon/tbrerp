@@ -172,8 +172,8 @@ The screen should not be opened without a Job. For empty instruction groups, sho
 
 ## 15. Image Generation Prompt
 
-Use `docs/ux-ui/image-prompts/IMG-JOB-002-job-detail-work-card.md` as the image generation prompt source. The first approved mockup should represent the desktop admin version opened from `Order Detail -> เปิด Job`.
+Use `docs/ux-ui/image-prompts/IMG-JOB-002-job-detail-work-card.md` as the image generation prompt source. Future visual work should start from the desktop admin version opened from `Order Detail -> เปิด Job`.
 
 ## 16. Open UX Questions
 
-- Later worker/mobile variants still need their own app-shell decision. Do not use this desktop admin mockup as the final mobile worker baseline.
+- Later worker/mobile variants still need their own app-shell decision. Do not use archived desktop admin images as the final mobile worker baseline.

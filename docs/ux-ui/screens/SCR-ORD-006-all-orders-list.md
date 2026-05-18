@@ -206,7 +206,7 @@ Do not duplicate `สร้างออเดอร์ใหม่` in this empt
 - Full production workflow.
 - Full shipment workflow.
 - Accounting exports or reports.
-- Export button in the first mockup.
+- Export button in the first screen pass.
 
 ## 17. UX Notes for Designer
 
@@ -215,7 +215,7 @@ Do not duplicate `สร้างออเดอร์ใหม่` in this empt
 - Use popovers to keep the table narrow while preserving detail access.
 - Keep the custom-work indicator near the end of the row before `วันที่สร้าง`.
 - Use short Thai date format such as `22 พ.ค. 67`.
-- The first mockup should prioritize the table, filters, and popover behavior over secondary actions.
+- The first screen pass should prioritize the table, filters, and popover behavior over secondary actions.
 
 ## 18. Image Generation Prompt
 

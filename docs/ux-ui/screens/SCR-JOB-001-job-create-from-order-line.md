@@ -121,4 +121,4 @@ Use `docs/ux-ui/image-prompts/IMG-JOB-001-job-create-from-order-line.md` as the 
 
 ## 16. Open UX Questions
 
-- None blocking for the next Order mockup pass.
+- None blocking for the next Order screen pass.

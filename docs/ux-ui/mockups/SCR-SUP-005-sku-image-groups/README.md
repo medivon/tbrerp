@@ -1,32 +1,18 @@
 # SCR-SUP-005 - SKU Image Groups Mockup
 
-Status: Approved
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-SUP-005-sku-image-groups/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-SUP-005-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-SUP-005-sku-image-groups/SCR-SUP-005-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-SUP-005-sku-image-groups.md`
 - `docs/ux-ui/image-prompts/IMG-SUP-005-sku-image-groups.md`
 
-## Approved Role
-
-This mockup is the current source of truth for the desktop admin `จัดการรูปสินค้า` screen.
-
-It confirms:
-
-- This screen is an image-management workbench, not a product edit form.
-- It supports both Product Model / `SKU หลัก` and SKU Variant / `SKU ย่อย` image contexts.
-- SKU ย่อย images are optional overrides; if a SKU ย่อย lacks an image group for a purpose, downstream Order/Job display falls back to the SKU หลัก image group for that purpose.
-- Image groups are separated by purpose: `รูปหลัก`, `รูปเพิ่มเติม`, `รูปสำหรับช่างไม้`, `รูปสำหรับฝ่ายสี/ตกแต่ง`, `รูปสำหรับรักสมุก`, and `คลังรีวิว`.
-- Review Album / `คลังรีวิว` must remain visually separate from normal product image groups.
-- Thumbnails should be large enough to inspect handcrafted furniture details.
-- Drag/drop, reorder, optional short notes, move group, and soft delete/hide are the main interactions.
-- Product fields, stock, price, cost, labor rate, and accounting data must not appear here.
-- Historical Job images must not be silently removed when product images are changed.
-
-## Regeneration Rule
-
-Future prompts for this screen must keep the grouped image-management workbench structure and must not turn the page into a product detail form, gallery landing page, stock screen, or place where SKU code/color options are edited.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

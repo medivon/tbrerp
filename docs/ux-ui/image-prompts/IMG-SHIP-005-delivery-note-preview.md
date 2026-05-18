@@ -4,14 +4,7 @@ Related screen spec:
 
 - `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-SHIP-005-delivery-note-preview/SCR-SHIP-005-approved.png`
-
-Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`
-- `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`
+Related source documents:
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

@@ -1,9 +1,5 @@
 # SCR-ADM-006 - Production Follow-up Queue
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ADM-006-production-follow-up-queue/SCR-ADM-006-approved.png`
-
 ## 1. Purpose
 
 Production Follow-up Queue is the desktop/tablet admin screen `งานผลิตต้องติดตาม`. It shows only production cases that need admin communication, clarification, or decision. It is not a full unfinished-work report and not a worker queue.
@@ -136,4 +132,4 @@ Use `docs/ux-ui/image-prompts/IMG-ADM-006-production-follow-up-queue.md`.
 
 ## 16. Open UX Questions
 
-- None blocking for the first mockup.
+- None blocking for the first screen pass.

@@ -6,10 +6,6 @@ Active Jobs Overview shows Jobs currently in production across `JOB-O` customer 
 
 This screen answers: which Jobs are active, where each Job is, which department owns the next action, what is urgent, what is waiting, and which Job should admin or manager open next.
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ADM-003-active-jobs-overview/SCR-ADM-003-approved.png`
-
 ## 2. Primary Users
 
 - Admin
@@ -146,7 +142,7 @@ Do not show `รอสร้าง Job` empty state.
 ## 15. UX Notes for Designer
 
 - Preserve the approved Admin Dashboard app shell.
-- Preserve the approved `SCR-ADM-003` mockup layout and right-detail-drawer pattern.
+- Preserve the current `SCR-ADM-003` screen layout and right-detail-drawer pattern.
 - Keep `งานสั่งทำ / ผลิต` active in the sidebar.
 - Use Thai UI labels as the primary language.
 - Keep English only for `Job`, `JOB-O`, `JOB-P`, and `Revision`.

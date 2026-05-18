@@ -6,10 +6,6 @@ The Admin Dashboard is the approved desktop visual and navigation baseline for t
 
 This screen is a queue launcher and risk preview. It is not a full task table, report page, accounting dashboard, or order creation page.
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
-
 Related visual system:
 
 - `docs/ux-ui/design-system/app-shell.md`
@@ -52,7 +48,7 @@ Related visual system:
 ## 6. Layout Structure
 
 - App shell: fixed left sidebar, top bar, and main work area.
-- Sidebar: approved main navigation from the mockup.
+- Sidebar: approved main navigation from the current navigation map and app-shell docs.
 - Top bar: menu icon, page title, current date, user avatar, user name, role, and account menu.
 - Main content: six operational cards in a 3-column by 2-row desktop grid.
 - Bottom section: `งานที่ต้องรีบดู` critical work preview with 3 image-led item cards.
@@ -244,7 +240,7 @@ Rules:
 
 - Treat this as a daily operational dashboard.
 - Keep the six cards as the dominant structure.
-- Keep Thai UI labels as shown in the approved mockup.
+- Keep Thai UI labels as specified in this screen spec.
 - Use English only for `Job`, `JOB-O`, `JOB-P`, `COD`, `Payment`, and `Revision`.
 - Preserve the approved quiet, dense, clean visual direction.
 - Preserve the image-led `งานที่ต้องรีบดู` bottom section.
@@ -256,4 +252,4 @@ Use `docs/ux-ui/image-prompts/IMG-ADM-001-admin-dashboard.md`.
 
 ## 19. Conflicts Found
 
-None in the approved mockup relative to active business rules, ADRs, `CONTEXT.md`, and what-not-to-show rules.
+None identified relative to active business rules, ADRs, `CONTEXT.md`, and what-not-to-show rules.

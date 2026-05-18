@@ -1,28 +1,18 @@
 # SCR-JOB-002 - Job Detail Mockup
 
-Status: Approved
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-JOB-002-job-detail-work-card/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-JOB-002-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-JOB-002-job-detail-work-card/SCR-JOB-002-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-JOB-002-job-detail-work-card.md`
 - `docs/ux-ui/image-prompts/IMG-JOB-002-job-detail-work-card.md`
 
-## Approved Role
-
-This mockup is the current source of truth for the desktop admin `รายละเอียด Job` screen opened from `เปิด Job` on an Order Detail item card or from the active jobs overview.
-
-It confirms:
-
-- `รายละเอียด Job` uses the approved desktop admin app shell.
-- Job detail should be separated into stacked row cards, not one blended information panel.
-- `ข้อมูลงาน`, `รายละเอียดช่างไม้`, `สีและการตกแต่ง`, `รายละเอียดรักสมุก`, `สถานะพิเศษ`, and `ประวัติการทำงาน` are visually distinct sections.
-- The right action panel shows current department, allowed actions, and production movement.
-- The screen is for admin/manager inspection; later worker/mobile variants still need their own shell decisions.
-
-## Regeneration Rule
-
-Future prompts for `SCR-JOB-002` should preserve the row-card section structure and must not collapse department instructions into one combined paragraph or table.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

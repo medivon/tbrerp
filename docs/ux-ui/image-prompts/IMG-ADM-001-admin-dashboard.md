@@ -1,10 +1,6 @@
 # IMG-ADM-001 - Admin Dashboard
 
-This prompt preserves the approved Admin Dashboard direction for future regeneration. It is based on the approved mockup and final correction feedback.
-
-Approved visual anchor:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
+This prompt preserves the current Admin Dashboard direction for future regeneration. It is based on the active screen spec, source-of-truth docs, and final correction feedback.
 
 Related screen spec:
 
@@ -17,7 +13,7 @@ Related reusable visual system:
 ## High-Fidelity Regeneration Prompt
 
 ```text
-Use the approved Admin Dashboard mockup as the visual baseline for IMG-ADM-001-admin-dashboard. Preserve the overall desktop ERP layout: fixed left sidebar, top bar/header, THAIBORAN branding, 3-column by 2-row dashboard card grid, and bottom critical-work preview section.
+Use the current Admin Dashboard screen spec and app-shell docs as the layout direction for IMG-ADM-001-admin-dashboard. Preserve the overall desktop ERP layout: fixed left sidebar, top bar/header, THAIBORAN branding, 3-column by 2-row dashboard card grid, and bottom critical-work preview section.
 
 This is an Admin Dashboard for a Thai furniture and handmade production ERP. The dashboard is not a generic ERP landing page, not a report page, and not an order creation screen. It is an operational control screen for admin users to track active Orders, active custom production Jobs, shipment-round creation, shipment confirmation, production follow-up, and COD/Payment follow-up.
 

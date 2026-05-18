@@ -1,10 +1,6 @@
 # Navigation Map
 
-This file records the current UX/UI navigation baseline. It is derived from the approved Admin Dashboard mockup and the active domain documents. It is not a new requirements summary.
-
-Approved visual anchor:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
+This file records the current UX/UI navigation baseline. It is derived from the current Admin Dashboard screen spec and app-shell docs and the active domain documents. It is not a new requirements summary.
 
 Reusable shell reference:
 

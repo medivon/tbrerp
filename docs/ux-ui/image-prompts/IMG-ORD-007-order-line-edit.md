@@ -5,10 +5,6 @@ Related screen spec:
 - `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`
 
 Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-ORD-005-order-detail/SCR-ORD-005-approved.png`
-- `docs/ux-ui/mockups/SCR-ORD-001-draft-order-editor/SCR-ORD-001-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

@@ -1,9 +1,5 @@
 # SCR-ADM-005 - Shipment Confirmation Queue
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ADM-005-shipment-confirmation-queue/SCR-ADM-005-approved.png`
-
 ## 1. Purpose
 
 Shipment Confirmation Queue is the desktop/tablet admin screen `ยืนยันการจัดส่ง`. It shows shipment rounds that Delivery Team has marked `ส่งออกแล้ว` and are waiting for admin to record or review tracking/evidence before closing the shipment round.

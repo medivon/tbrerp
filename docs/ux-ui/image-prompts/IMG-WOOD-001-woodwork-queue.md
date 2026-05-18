@@ -4,7 +4,7 @@
 
 Create a low-fidelity mobile/tablet wireframe for the Woodwork Queue. Inherit the approved Admin Dashboard visual language only: card style, chip style, typography, spacing, calm ERP feel, and image-led work recognition. Do not force the full desktop sidebar into this shop-floor screen. The screen title is `งานที่ต้องทำ`. Use large image-led job cards, a compact filter strip, and a secondary link to `ประวัติงานของฉัน`. Each card shows only woodwork-relevant details and actions.
 
-## 2. High-fidelity UI mockup prompt
+## 2. High-fidelity UI image prompt
 
 Create a high-fidelity mobile/tablet ERP work queue UI for Thai furniture woodworkers. Use the approved Admin Dashboard visual language at shop-floor scale: quiet operational styling, compact chips, clean white cards, modest radius, restrained colors, clear Thai labels, larger touch targets, and image-led work recognition. Do not include the full desktop sidebar. Page title `งานที่ต้องทำ`. Show large image cards for jobs such as `JOB-O-2568-0042 / งานลูกค้า / ตู้โชว์ไม้สักแกะลาย`, quantity, urgent chip `งานด่วน`, delivery date, status `รอรับงาน`, and simple action buttons `รับงาน`, `รอวัตถุดิบ`, `ส่งไปสี`, `ส่งไปรักสมุก`. Include a visible link `ประวัติงานของฉัน`.
 

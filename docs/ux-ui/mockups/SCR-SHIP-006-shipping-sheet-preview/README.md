@@ -1,37 +1,20 @@
 # SCR-SHIP-006 - Shipping Sheet Preview Mockup
 
-Status: Approved
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-SHIP-006-shipping-sheet-preview/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-SHIP-006-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`
 - `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`
 - `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`
 - `docs/ux-ui/image-prompts/IMG-SHIP-005-delivery-note-preview.md`
 
-## Approved Role
-
-This mockup is the current source of truth for `ใบจัดส่ง`.
-
-It confirms:
-
-- `ใบจัดส่ง` is the address/recipient-focused print preview.
-- Recipient name, phone, and address are the dominant content.
-- Item information is short summary only.
-- Print controls stay outside the A4 printable area.
-- The screen includes actions to print Shipping Sheet, print both documents, view Delivery Note, and return to Shipment.
-
-## Key Decisions Captured By This Mockup
-
-- `ใบจัดส่ง` and `ใบส่งของ` are separate documents.
-- `ใบจัดส่ง` is not the full item list.
-- `ใบจัดส่ง` may show COD signal and delivery note where relevant.
-- No product price, sales price, accounting data, tax, ad spend, profit, or private CRM note appears.
-
-## Regeneration Rule
-
-Future prompts for `SCR-SHIP-006` should preserve the A4 print preview layout and the address-dominant hierarchy.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

@@ -1,32 +1,19 @@
 # SCR-ORD-007 - Order Line Edit Mockup
 
-Status: Approved visual anchor
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-ORD-007-order-line-edit/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-ORD-007-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-ORD-007-order-line-edit/SCR-ORD-007-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`
 - `docs/ux-ui/image-prompts/IMG-ORD-007-order-line-edit.md`
 - `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
 
-## Approved Role
-
-This mockup is the visual anchor for guarded post-confirmation Order Line editing. It should feel similar enough to Order Create/Edit for efficiency, but clearly be a live confirmed Order edit mode with downstream guards.
-
-Latest workflow decisions require:
-
-- No Draft/autosave state after Order confirmation.
-- Existing `JOB-O` production detail and cancellation route to Job Detail / Job Revision / Job cancellation.
-- Ready-stock lines already in Shipment Builder temporary work or an existing released Shipment cannot be changed until removed from that shipment work or until the Shipment is cancelled.
-- Adding/changing a ready-stock line uses the same SKU หลัก first, then color / SKU ย่อย selection model as Order Create/Edit.
-- Changing SKU/color releases the old SKU ย่อย reservation and reserves the newly selected SKU ย่อย only after Review Changes is saved.
-- Sent/completed lines remain read-only.
-- `Review Changes` is required before saving.
-- Financial Reconciliation blocks save when edited sales total does not match Payment/COD/adjustment evidence.
-
-## Regeneration Rule
-
-Future prompts for `SCR-ORD-007` should preserve blocked read-only rows with reasons, Product Model-first ready-stock changes, the right impact panel, Review Changes, and clear routing to Job or Shipment owning flows.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

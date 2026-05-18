@@ -1,9 +1,5 @@
 # SCR-ORD-001 — Order Create/Edit
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ORD-001-draft-order-editor/SCR-ORD-001-approved.png`
-
 ## 1. Purpose
 
 Order Create/Edit lets admin or permitted sales users enter the information needed to create a real Order: Customer, Address Entry, ready-stock lines, custom-work lines, Payment Term, optional Payment Record, conditional shipment plan for mixed Orders, and `รายละเอียดงานสั่งทำ`.
@@ -183,4 +179,4 @@ Use `docs/ux-ui/image-prompts/IMG-ORD-001-draft-order-editor.md`.
 
 ## 16. Open UX Questions
 
-- None blocking for the next Order mockup pass.
+- None blocking for the next Order screen pass.

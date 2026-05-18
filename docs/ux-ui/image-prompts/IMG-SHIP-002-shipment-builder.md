@@ -4,16 +4,7 @@ Related screen spec:
 
 - `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`
-
-Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-002-active-orders-overview/SCR-ADM-002-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-003-active-jobs-overview/SCR-ADM-003-approved.png`
-- `docs/ux-ui/mockups/SCR-SHIP-001-ready-to-ship-queue/SCR-SHIP-001-content-approved.png`
+Related source documents:
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

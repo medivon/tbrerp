@@ -1,13 +1,9 @@
 # SCR-ORD-005 - Order Detail
 
-Approved visual anchor:
-
-- `docs/ux-ui/mockups/SCR-ORD-005-order-detail/SCR-ORD-005-approved.png`
-
 Current decision note:
 
-- The approved image remains a visual anchor for the THAIBORAN app shell and card-based Order detail density.
-- Later Q&A supersedes the old tabbed/expanded-card behavior. The current source of truth is a read-first, single-page report with section-based editing.
+- Archived images are historical references only; use this screen spec for the THAIBORAN app shell and card-based Order detail density.
+- Later Q&A supersedes the old tabbed/expanded-card behavior. The current source of truth is this read-first, single-page report with section-based editing.
 
 ## 1. Purpose
 
@@ -402,4 +398,4 @@ Use `docs/ux-ui/image-prompts/IMG-ORD-005-order-detail.md`.
 
 ## 23. Open UX Questions
 
-- None blocking for the next Order Detail mockup pass.
+- None blocking for the next Order Detail screen pass.

@@ -1,10 +1,7 @@
 # App Shell Visual System
 
-This file records reusable visual decisions extracted from the approved `SCR-ADM-001-admin-dashboard` mockup. It is a UX/UI working reference, not a new requirements summary.
+This file records reusable visual decisions extracted from the current `SCR-ADM-001-admin-dashboard` screen spec and image prompt. It is a UX/UI working reference, not a new requirements summary.
 
-Approved visual anchor:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 - `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`
 - `docs/ux-ui/image-prompts/IMG-ADM-001-admin-dashboard.md`
 

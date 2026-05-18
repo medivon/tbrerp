@@ -44,7 +44,7 @@ Decision:
 Decision:
 
 - `ปิดแล้ว / ยกเลิก` reuses the `ออเดอร์ทั้งหมด` table/layout with the tab/filter applied.
-- It does not need a separate screen/prompt/mockup unless future behavior diverges.
+- It does not need a separate screen, prompt, or visual asset unless future behavior diverges.
 
 ### OQ-ORD-006 - Order status vs Shipment status
 

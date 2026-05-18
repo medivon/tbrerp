@@ -4,17 +4,10 @@ Related screen spec:
 
 - `docs/ux-ui/screens/SCR-SHIP-001-ready-to-ship-queue.md`
 
-Visual anchors:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-002-active-orders-overview/SCR-ADM-002-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-003-active-jobs-overview/SCR-ADM-003-approved.png`
-- `docs/ux-ui/mockups/SCR-SHIP-001-ready-to-ship-queue/SCR-SHIP-001-content-approved.png`
+Related source documents:
 - `docs/ux-ui/design-system/app-shell.md`
 
 Note:
-
-- `SCR-SHIP-001-content-approved.png` approves the inner content/workbench structure only.
 - Do not treat its dark sidebar/altered logo as the global app-shell baseline.
 
 ## High-Fidelity GPT Image 2 Prompt
@@ -22,7 +15,7 @@ Note:
 ```text
 Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “รอสร้างรอบจัดส่ง”. This is the next screen after clicking the approved Admin Dashboard card “รอสร้างรอบจัดส่ง”.
 
-Use the approved Admin Dashboard app shell as the visual baseline:
+Use the current Admin Dashboard screen spec and app-shell docs as the app-shell direction:
 - Fixed left sidebar with THAIBORAN logo/brand at top
 - Approved main navigation: แดชบอร์ด, ออเดอร์, งานสั่งทำ / ผลิต, รอบจัดส่ง, สินค้า / สต๊อก, ลูกค้า / CRM, รายจ่าย, ตั้งค่า
 - Highlight the sidebar item “รอบจัดส่ง” as active

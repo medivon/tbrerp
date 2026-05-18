@@ -1,33 +1,18 @@
 # SCR-SUP-004 - SKU Variant Detail Mockup
 
-Status: Approved
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-SUP-004-sku-variant-detail/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-SUP-004-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-SUP-004-sku-variant-detail/SCR-SUP-004-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-SUP-004-sku-variant-detail.md`
 - `docs/ux-ui/image-prompts/IMG-SUP-004-sku-variant-detail.md`
 
-## Approved Role
-
-This mockup is the current source of truth for the desktop admin `รายละเอียด SKU ย่อย` screen.
-
-It confirms:
-
-- This screen is a read-only SKU Variant / `SKU ย่อย` detail page, not an edit form.
-- The parent Product Model / `SKU หลัก` remains visible and is the place for product-level editing and color open/close decisions.
-- The page should be card-based and image-first so staff can recognize the product quickly.
-- Dimensions are split into separate fields: `กว้าง`, `ลึก`, `สูง`.
-- Images use SKU ย่อย overrides when available and fall back to SKU หลัก images by purpose.
-- Image groups are separated by purpose: main product images, department images, and review images.
-- Review Album is separate from normal product image groups.
-- Stock columns use `มีอยู่ในร้าน`, `จองแล้ว`, and `ขายได้`.
-- Stock changes must happen through dedicated screens such as `ดูสต๊อก`, `ตรวจนับสต๊อก`, and `ปรับยอดสต๊อก`.
-- Job reference is not owned by SKU ย่อย; if shown, it should be clearly marked as belonging to SKU หลัก.
-
-## Regeneration Rule
-
-Future prompts for this screen must keep the read-only SKU ย่อย card/detail structure and must not turn the page into a form editor, Product Model editor, or inline stock adjustment screen.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

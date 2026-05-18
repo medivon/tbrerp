@@ -1,30 +1,19 @@
 # SCR-SUP-017 - Material Adjustment Mockup
 
-Status: Spec Needed
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-SUP-017-material-adjustment/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- None yet.
+Archived image files:
 
-Related documents:
+- None currently archived for this screen.
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-SUP-017-material-adjustment.md`
 - `docs/ux-ui/image-prompts/IMG-SUP-017-material-adjustment.md`
 - `docs/adr/0009-light-material-stock-boundary.md`
 
-## Intended Role
-
-This future mockup should become the visual anchor for `ปรับยอดวัสดุ`, the practical material count/correction screen.
-
-It must preserve:
-
-- One visible feature name: `ปรับยอดวัสดุ`.
-- `กระทบยอด` is a reason/mode inside the same screen.
-- Staff enter actual counted quantities and the system calculates differences.
-- Multiple material items can be adjusted in one session.
-- Evidence images are optional at save time for the session.
-- Summaries are filterable by date/range.
-
-## Pending Before Approval
-
-- Generate and review a high-fidelity mockup from `IMG-SUP-017`.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

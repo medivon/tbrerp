@@ -5,11 +5,8 @@ Related screen spec:
 - `docs/ux-ui/screens/SCR-SUP-015-material-stock.md`
 
 Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-SUP-014-product-sku-table/SCR-SUP-014-approved.png`
 - `docs/ux-ui/screens/SCR-SUP-006-ready-stock-view.md`
 - `docs/ux-ui/image-prompts/IMG-SUP-006-ready-stock-view.md`
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

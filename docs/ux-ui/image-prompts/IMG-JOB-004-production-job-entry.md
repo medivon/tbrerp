@@ -5,12 +5,6 @@ Related screen spec:
 - `docs/ux-ui/screens/SCR-JOB-004-production-job-entry.md`
 
 Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-JOB-004-production-job-entry/SCR-JOB-004-sku-modal-approved.png`
-- `docs/ux-ui/mockups/SCR-JOB-001-job-create-from-order-line/SCR-JOB-001-approved.png`
-- `docs/ux-ui/mockups/SCR-JOB-002-job-detail-work-card/SCR-JOB-002-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-003-active-jobs-overview/SCR-ADM-003-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt
@@ -75,7 +69,7 @@ If this page was opened from Product Detail with a preselected SKU ย่อย,
 
 Inactive `งานผลิตพิเศษ` tab:
 - Visible as an inactive tab only
-- Do not render its body in this mockup
+- Do not render its body in this screen image
 - This mode would use the same body pattern as `รายละเอียดงานสั่งทำ`, but without customer/order/shipment context
 
 Right panel:
@@ -112,6 +106,6 @@ Visual rules:
 - Use the approved light sidebar baseline; do not switch to a dark sidebar
 - Make `JOB-P / งานผลิต` clearly different from `JOB-O / งานลูกค้า`
 - Show that production can be `ผลิตจาก SKU` or `งานผลิตพิเศษ`
-- The purple `เลือกสินค้า` button and SKU search modal are the main focus of this mockup
+- The purple `เลือกสินค้า` button and SKU search modal are the main focus of this screen image
 - Keep the design aligned with the approved desktop admin app shell
 ```

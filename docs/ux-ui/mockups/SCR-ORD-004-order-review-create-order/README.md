@@ -1,42 +1,20 @@
 # SCR-ORD-004 - Order Review / Create Order Mockup
 
-Status: Approved
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-ORD-004-order-review-create-order/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-ORD-004-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-ORD-004-order-review-create-order/SCR-ORD-004-approved.png`
+- `docs/archive/mockups/SCR-ORD-004-order-review-create-order/SCR-ORD-004-old-approved-v2.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`
 - `docs/ux-ui/image-prompts/IMG-ORD-004-order-review-create-order.md`
 - `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`
 
-## Approved Role
-
-This mockup remains the visual anchor for the final `ตรวจสอบก่อนสร้างออเดอร์` step before a real Order ID is issued.
-
-It confirms:
-
-- The screen reviews current Order Create/Edit data; it should not show Draft No.
-- Admin must see downstream results before confirming.
-- Ready-stock lines will reserve stock after confirmation.
-- Ready-stock lines show SKU หลัก, color / SKU ย่อย, SKU code, display image, and latest `ขายได้` stock check before confirmation.
-- Complete custom lines will create `JOB-O` immediately after confirmation.
-- Shipment rounds are not created from this screen.
-- The Review screen itself is the final confirmation step; `ยืนยันสร้างออเดอร์` does not open another confirmation modal.
-- Inline warnings and acknowledgement controls block confirmation until resolved.
-
-## Key Decisions Captured By This Mockup
-
-- A confirmed Order ID is not shown before confirmation.
-- `จะจองสต๊อก` and `จะสร้าง JOB-O` are preview chips, not completed actions.
-- `ยังไม่สร้างรอบจัดส่ง` remains explicit.
-- Ready-stock and custom-work detail should be shown as detailed row/cards, with the custom section hidden when no custom work exists.
-- Confirmation snapshots ready-stock SKU code, product name, color, dimensions, display image, and relevant department images.
-- The screen is not a quotation, invoice, accounting ledger, or Order Detail page.
-- No product cost, profit, tax filing detail, ad spend, or private CRM note appears.
-
-## Regeneration Rule
-
-Future prompts for `SCR-ORD-004` should preserve the final-review layout, detailed Product Model/color/SKU row sections, the downstream result panel, and the clear distinction between Review and confirmed Order.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

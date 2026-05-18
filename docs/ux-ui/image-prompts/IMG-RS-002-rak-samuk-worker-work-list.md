@@ -4,7 +4,7 @@
 
 Create a low-fidelity mobile wireframe for the Rak Samuk Worker Work List. Inherit the approved Admin Dashboard visual language only: card style, chip style, typography, spacing, calm ERP feel, and image-led work recognition. Do not force the full desktop sidebar into this outsource worker screen. The title is `งานที่ต้องทำ`. Show only assigned work cards with image, work name, quantity, Rak Samuk instruction, own price or missing-price state, and a link to `ประวัติการทำงาน`.
 
-## 2. High-fidelity UI mockup prompt
+## 2. High-fidelity UI image prompt
 
 Create a high-fidelity mobile work list UI for an outsourced Thai Rak Samuk craft worker. Preserve the approved Admin Dashboard visual language through typography, chips, clean white cards, modest radius, restrained colors, and calm operational styling, but make it simpler and mobile-first. Do not include the desktop sidebar or internal admin navigation. Title `งานที่ต้องทำ`. Show simple cards with furniture detail images, work name `ตู้โชว์ไม้สักแกะลาย`, instruction `ลายดอกพิกุลหน้าบาน`, quantity `1 ชิ้น`, urgent chip `งานด่วน`, and own price state `450 บาท/ชิ้น` or warning `ไม่มีราคา / ให้แจ้งราคา` with button `ขอเสนอราคา`. Include a limited detail state/sheet showing larger images, full Rak Samuk instructions, quantity, and own price again. Include secondary navigation `ประวัติการทำงาน`.
 

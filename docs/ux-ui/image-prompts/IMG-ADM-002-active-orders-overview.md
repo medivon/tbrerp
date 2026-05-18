@@ -1,9 +1,5 @@
 # IMG-ADM-002 - Orders Follow-up Overview
 
-Approved visual anchor:
-
-- `docs/ux-ui/mockups/SCR-ADM-002-active-orders-overview/SCR-ADM-002-approved.png`
-
 Related screen spec:
 
 - `docs/ux-ui/screens/SCR-ADM-002-active-orders-overview.md`
@@ -13,7 +9,7 @@ Related screen spec:
 ```text
 Create a high-fidelity desktop/tablet ERP screen for THAIBORAN called “ออเดอร์ที่ต้องติดตาม”. This is the next screen after clicking the Admin Dashboard card “ออเดอร์ที่ต้องติดตาม”.
 
-Use the approved Admin Dashboard app shell as the visual baseline:
+Use the current Admin Dashboard screen spec and app-shell docs as the app-shell direction:
 - Fixed left sidebar with THAIBORAN logo/brand at top
 - Approved main navigation: แดชบอร์ด, ออเดอร์, งานสั่งทำ / ผลิต, รอบจัดส่ง, สินค้า / สต๊อก, ลูกค้า / CRM, รายจ่าย, ตั้งค่า
 - Highlight the sidebar item “ออเดอร์” as active

@@ -4,10 +4,6 @@
 
 The Shipping Sheet Preview shows the printable A4 recipient/address sheet for a Shipment. It focuses on recipient, phone, address, carrier, references, COD amount where relevant, and a short item summary.
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`
-
 ## 2. Primary Users
 
 - Admin
@@ -41,7 +37,7 @@ Approved mockup:
 ## 6. Layout Structure
 
 - Header: `ใบจัดส่ง`, Shipment ID, print actions.
-- Preview area: A4 page mockup focused on recipient/address block.
+- Preview area: A4 page preview focused on recipient/address block.
 - Main document content: recipient, phone, address, carrier, delivery date, COD amount if relevant, short item summary, notes.
 - Side panel: print Shipping Sheet, print both, open Delivery Note.
 - Desktop focus: printable page centered, controls outside print area.
@@ -115,7 +111,7 @@ If recipient/address data is missing, show `ไม่มีข้อมูลผ
 
 ## 14. UX Notes for Designer
 
-- Preserve the approved `SCR-SHIP-006` mockup layout.
+- Preserve the current `SCR-SHIP-006` document-preview layout.
 - Make recipient name, phone, and address the dominant content.
 - Keep item summary short.
 - Keep print controls outside the A4 preview area.

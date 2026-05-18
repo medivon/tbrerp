@@ -89,7 +89,7 @@ Visual rules:
 - Use ส่งแล้ว for a closed Shipment round that has รูปหลักฐานจัดส่ง but no Tracking.
 - Do not include cancelled lines in the product popover; cancelled lines are reviewed in Order Detail.
 - Use faded row styling only for ยกเลิก Orders.
-- Do not include export button in this mockup.
+- Do not include export button in this screen image.
 - Do not show accounting/profit/tax analytics.
 - Do not show private CRM notes.
 ```

@@ -1,9 +1,5 @@
 # SCR-ADM-007 - COD/Payment Follow-up Queue
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-ADM-007-cod-payment-follow-up-queue/SCR-ADM-007-approved.png`
-
 ## 1. Purpose
 
 COD/Payment Follow-up Queue is the desktop admin screen `ติดตาม COD / Payment`. It tracks payment/COD follow-up items separately from operational Order Completion and Shipment close.
@@ -155,4 +151,4 @@ Use `docs/ux-ui/image-prompts/IMG-ADM-007-cod-payment-follow-up-queue.md`.
 
 ## 16. Open UX Questions
 
-- None blocking for the first mockup.
+- None blocking for the first screen pass.

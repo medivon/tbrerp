@@ -4,7 +4,7 @@
 
 Create a low-fidelity desktop/tablet wireframe for the Manager Unfinished Work Overview. Use the approved Admin Dashboard app shell from `docs/ux-ui/design-system/app-shell.md`: fixed left sidebar, top bar with page title/date/user role, and the approved main navigation. Highlight `งานสั่งทำ / ผลิต` in the sidebar. Use a header, KPI strip, work-type toggles, and a sortable unfinished Job table. The screen must answer: which Jobs are unfinished, where each Job is, what is urgent, what is old, and what is near delivery.
 
-## 2. High-fidelity UI mockup prompt
+## 2. High-fidelity UI image prompt
 
 Create a high-fidelity desktop/tablet manager overview UI for a Thai furniture ERP. Inherit the approved Admin Dashboard app shell: THAIBORAN sidebar with `แดชบอร์ด`, `ออเดอร์`, `งานสั่งทำ / ผลิต`, `รอบจัดส่ง`, `สินค้า / สต๊อก`, `ลูกค้า / CRM`, `รายจ่าย`, `ตั้งค่า`; top bar with page title, date, user avatar, user name/role, and account menu. Highlight `งานสั่งทำ / ผลิต` as active. Preserve the approved visual system: quiet operational style, dense but readable layout, white cards, compact chips, restrained colors, dark navy count typography, and clear Thai labels. Title `ภาพรวมงานค้าง`. Show KPI cards for unfinished jobs, urgent jobs, material blockers, old jobs, and near-delivery jobs. Include toggles `งานลูกค้า` selected by default, `ทั้งหมด`, and `ผลิตเข้าสต๊อก`. Main table is one priority-sorted list showing Job ID, source label, work name, department location, status, urgent chip, delivery date, total Job age, and department age. Include a right side drawer for the selected row with timeline preview and action `ตั้งงานด่วน`. Use examples like `JOB-O-2568-0042 / ตู้โชว์ไม้สักแกะลาย / ฝ่ายสี / รอวัตถุดิบ / งานด่วน / อีก 3 วัน`.
 
@@ -81,4 +81,4 @@ Create a high-fidelity desktop/tablet manager overview UI for a Thai furniture E
 
 ## 8. Consistency notes
 
-Use the approved Admin Dashboard visual anchor directly: same sidebar/header style, KPI/card design, chip language, typography, and restrained palette. This screen may be denser and table-led, but it should still feel like the management sibling of the Admin Dashboard. Keep the approved main navigation labels unchanged.
+Use the current Admin Dashboard screen spec and app-shell docs directly: same sidebar/header style, KPI/card design, chip language, typography, and restrained palette. This screen may be denser and table-led, but it should still feel like the management sibling of the Admin Dashboard. Keep the approved main navigation labels unchanged.

@@ -515,7 +515,7 @@ Confirmed table behavior:
 - Do not make the whole row a primary click target.
 - Page primary action: `สร้างออเดอร์ใหม่`, which opens Order Create/Edit directly.
 - Empty state after filtering/searching: show `ล้างตัวกรอง`.
-- No export in the first mockup for this tab.
+- No export in the first screen pass for this tab.
 
 Product summary:
 

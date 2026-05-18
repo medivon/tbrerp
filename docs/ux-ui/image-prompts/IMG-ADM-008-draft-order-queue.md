@@ -13,8 +13,6 @@ Related source docs:
 - `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`
 
 Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 - `docs/ux-ui/design-system/app-shell.md`
 
 ## High-Fidelity GPT Image 2 Prompt

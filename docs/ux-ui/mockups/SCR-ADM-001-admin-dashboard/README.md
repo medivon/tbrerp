@@ -1,72 +1,21 @@
 # SCR-ADM-001 - Admin Dashboard Mockup
 
-Status: Approved visual anchor
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-ADM-001-admin-dashboard/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-ADM-001-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`
 - `docs/ux-ui/image-prompts/IMG-ADM-001-admin-dashboard.md`
 - `docs/ux-ui/design-system/app-shell.md`
 - `docs/ux-ui/02-screen-inventory.md`
 - `docs/ux-ui/03-navigation-map.md`
 
-## Approved Role
-
-This mockup is the current source of truth for:
-
-- Desktop admin visual direction
-- Main sidebar navigation
-- Top bar/header pattern
-- Dashboard terminology
-- Reusable app-shell visual system
-
-## Approved Global Navigation
-
-- `แดชบอร์ด`
-- `ออเดอร์`
-- `งานสั่งทำ / ผลิต`
-- `รอบจัดส่ง`
-- `สินค้า / สต๊อก`
-- `ลูกค้า / CRM`
-- `รายจ่าย`
-- `ตั้งค่า`
-
-## Approved Dashboard Cards
-
-- `ออเดอร์ที่ต้องติดตาม`
-- `งานกำลังผลิต`
-- `รอสร้างรอบจัดส่ง`
-- `ยืนยันการจัดส่ง`
-- `งานผลิตต้องติดตาม`
-- `ติดตาม COD / Payment`
-
-## Approved Bottom Section
-
-Section label:
-
-- `งานที่ต้องรีบดู`
-
-Pattern:
-
-- Three image-led critical work preview cards.
-- Each item shows customer, received date, Order ID / Job ID, status chips, current queue/status, and related delivery date.
-
-## Key Decisions Captured By This Mockup
-
-- Draft Order is no longer a dashboard card.
-- Draft Order belongs under the Order page as a subcategory, tab, or filter.
-- `รอสร้าง Job` is no longer a dashboard card.
-- Jobs are created as part of confirmed Order or Production flows.
-- `งานกำลังผลิต` is the dashboard-level Job Tracking overview.
-- `รอสร้างรอบจัดส่ง` count is by Order.
-- `ยืนยันการจัดส่ง` count is by shipment round.
-- Top bar does not include a quick action button.
-- Sidebar/menu and dashboard wording in this mockup are the current approved direction.
-
-## Regeneration Rule
-
-Future image prompts for the Admin Dashboard should preserve this composition and terminology unless a later approved decision explicitly changes it.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.

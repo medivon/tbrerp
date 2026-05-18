@@ -6,11 +6,7 @@ The Ready-to-Ship Queue is the admin `รอสร้างรอบจัดส
 
 This screen is before the Shipment exists. It is not the delivery team's `รายการต้องจัดส่งวันนี้` screen.
 
-Content-approved mockup:
-
-- `docs/ux-ui/mockups/SCR-SHIP-001-ready-to-ship-queue/SCR-SHIP-001-content-approved.png`
-
-Note: this mockup approves the inner content/workbench structure only. Its dark sidebar/altered logo is not a global app-shell decision.
+The current screen spec covers the inner content/workbench structure. Global sidebar, logo, and shell behavior come from `docs/ux-ui/design-system/app-shell.md`.
 
 ## 2. Primary Users
 

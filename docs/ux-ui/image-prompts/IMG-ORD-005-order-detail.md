@@ -4,17 +4,12 @@ Related screen spec:
 
 - `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
 
-Visual/content anchors:
-
-- `docs/ux-ui/mockups/SCR-ORD-005-order-detail/SCR-ORD-005-approved.png`
-- `docs/ux-ui/mockups/SCR-ORD-004-order-review-create-order/SCR-ORD-004-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-002-active-orders-overview/SCR-ADM-002-approved.png`
-- `docs/ux-ui/mockups/SCR-ADM-001-admin-dashboard/SCR-ADM-001-approved.png`
+Related source documents:
 - `docs/ux-ui/design-system/app-shell.md`
 
 Important prompt note:
 
-- The approved image is only a visual anchor for shell, density, and card style. Later Q&A supersedes old tabbed/expanded-card behavior. Generate the new mockup as a single read-first report page with section-based editing.
+- Archived images are historical references only. Later Q&A supersedes old tabbed/expanded-card behavior. Generate the new screen image from the current single read-first report page with section-based editing.
 
 ## High-Fidelity GPT Image 2 Prompt
 

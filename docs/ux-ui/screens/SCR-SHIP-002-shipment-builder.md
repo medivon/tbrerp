@@ -6,10 +6,6 @@ Shipment Builder is the `สร้างรอบจัดส่ง` screen for 
 
 This screen is not used for bulk shipment creation. Bulk creation bypasses this screen and uses saved Order Recipient Detail snapshots as delivery defaults to create the Shipment documents directly.
 
-Approved mockup:
-
-- `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`
-
 ## 2. Primary Users
 
 - Admin

@@ -1,38 +1,18 @@
 # SCR-ORD-001 - Order Create/Edit Mockup
 
-Status: Approved
+Status: Archived visual reference only
 
-Approved image:
+The old mockup image files for this screen are archived under `docs/archive/mockups/SCR-ORD-001-draft-order-editor/` when images exist. Archived images are historical visual references only. They are not active source of truth and must not override current UX, function, permission, or QA decisions.
 
-- `./SCR-ORD-001-approved.png`
+Archived image files:
 
-Related documents:
+- `docs/archive/mockups/SCR-ORD-001-draft-order-editor/SCR-ORD-001-approved.png`
 
+Active source documents:
+
+- `CONTEXT.md`
+- `docs/decision-log.md`
 - `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`
 - `docs/ux-ui/image-prompts/IMG-ORD-001-draft-order-editor.md`
 
-## Approved Role
-
-This mockup remains the visual anchor for the admin `สร้างออเดอร์` / Order Create/Edit editor before a real Order ID is issued. Newer workflow decisions clarify that a persistent Draft No. appears only after the user explicitly saves as `ร่างออเดอร์`.
-
-It confirms:
-
-- Order entry can include Customer, recipient/address, ready-stock lines, custom-work lines, Payment Term, optional Payment Record, shipment plan, and custom-work detail.
-- Draft No. must not appear for unsaved new entry; when shown for a saved Draft Order, it must not look like a confirmed Order ID.
-- Saved Draft data does not reserve stock, create Job, create Shipment, or enter reports.
-- The right summary panel explains what is complete and what will happen after `สร้างออเดอร์`.
-
-## Key Decisions Captured By This Mockup
-
-- Ready-stock and custom-work lines can exist in the same draft.
-- Ready-stock and custom-work lines are added through separate buttons: `เพิ่มสินค้าพร้อมส่ง` and `เพิ่มงานสั่งทำ`.
-- `เพิ่มสินค้าพร้อมส่ง` selects SKU หลัก first, then an enabled color / SKU ย่อย inside that product.
-- Default ready-stock selection shows only items with `ขายได้ > 0`; `เลือกสินค้าที่ไม่มีสต๊อก` allows enabled colors that show `หมด`.
-- Custom-work details are captured as `รายละเอียดงานสั่งทำ` before real Order creation and create `JOB-O` immediately when confirmed.
-- If an Order mixes ready-stock and custom work, the shipment plan defaults to `ส่งพร้อมกัน`; actual split shipment is handled later by selecting ready lines when creating Shipment rounds.
-- Payment Term is required before real Order creation; Payment Record is optional in the flow.
-- No quotation, lead, tax filing, accounting ledger, product cost, profit, ad spend, or private CRM note appears.
-
-## Regeneration Rule
-
-Future prompts for `SCR-ORD-001` should preserve the two-column admin editor, the clear unsaved/Draft/Order distinction, the Product Model-first ready-stock selector, the right-side readiness summary, and the embedded `รายละเอียดงานสั่งทำ` section.
+Use the active docs above for future AI/dev work. Do not treat archived mockup images as approved implementation guidance unless the owner explicitly re-approves them in current docs.
