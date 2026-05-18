@@ -4,13 +4,17 @@
 
 :root {
   --font-thaiboran-sans: "Noto Sans Thai", "Noto Sans", Arial, sans-serif;
-  --background: 0 0% 99%;
-  --foreground: 222 22% 12%;
-  --muted: 210 14% 94%;
-  --muted-foreground: 215 12% 35%;
-  --primary: 170 48% 28%;
+  --background: 150 13% 97%;
+  --foreground: 158 22% 11%;
+  --surface: 0 0% 100%;
+  --subtle: 160 24% 94%;
+  --muted: 160 24% 94%;
+  --muted-foreground: 158 7% 42%;
+  --primary: 173 50% 24%;
   --primary-foreground: 0 0% 100%;
-  --border: 214 18% 84%;
+  --primary-soft: 165 39% 89%;
+  --border: 160 17% 87%;
+  --action: 221 83% 53%;
 }
 
 * {
@@ -27,4 +31,9 @@ body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-thaiboran-sans);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }

@@ -10,6 +10,9 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         border: "hsl(var(--border))",
+        surface: "hsl(var(--surface))",
+        subtle: "hsl(var(--subtle))",
+        action: "hsl(var(--action))",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -17,7 +20,11 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          soft: "hsl(var(--primary-soft))",
         },
+      },
+      boxShadow: {
+        soft: "0 1px 2px rgba(23,35,31,0.06)",
       },
       fontFamily: {
         sans: ["var(--font-thaiboran-sans)", "system-ui", "sans-serif"],
