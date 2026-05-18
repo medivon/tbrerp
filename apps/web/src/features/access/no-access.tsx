@@ -1,4 +1,4 @@
-import { Button, SurfaceCard } from "@thaiboran/ui";
+import { Button, NoAccessState as UiNoAccessState } from "@thaiboran/ui";
 
 import { UserSelector } from "@/shared/app-shell/user-selector";
 import type { FixtureUser } from "@/shared/fixtures/users";
@@ -24,20 +24,13 @@ export function NoAccessState({
           {showUserSelector ? <UserSelector currentUser={currentUser} /> : null}
         </header>
 
-        <SurfaceCard className="grid gap-4 p-6">
-          <div>
-            <p className="text-2xl font-bold text-foreground">
-              ไม่มีสิทธิ์เข้าถึงหน้านี้
-            </p>
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              หน้านี้ไม่แสดงข้อมูลหรือรายการที่ผู้ใช้งานไม่มีสิทธิ์ดู
-            </p>
-          </div>
-
-          <Button asChild>
-            <a href={getOwnHomePath(currentUser)}>กลับหน้าแรกของฉัน</a>
-          </Button>
-        </SurfaceCard>
+        <UiNoAccessState
+          action={
+            <Button asChild>
+              <a href={getOwnHomePath(currentUser)}>กลับหน้าแรกของฉัน</a>
+            </Button>
+          }
+        />
       </div>
     </main>
   );

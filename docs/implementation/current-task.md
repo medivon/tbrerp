@@ -1,29 +1,46 @@
 # Current Implementation Task
 
 Status: ready for review
-Sector: Sector 1 - App Shell + Access Foundation + Admin Dashboard Read-only
+Sector: Sector 2 - Shared UI Components / Visual Component System
 Task owner: Codex implementer
 Date started: 2026-05-19
 
 ## Goal
 
-Implement a read-only, role-aware app shell and Admin Dashboard foundation for THAIBORAN ERP using safe fixture data only.
+Create a reusable THAIBORAN ERP visual component layer so future screens can share premium operational styling, dense Thai-first layouts, and permission-safe state patterns without rebuilding visual polish per route.
 
 ## Scope
 
-- App shell with Thai-first sidebar, quiet top bar, and mock fixture-user selector.
-- Role-aware landing for Owner, Manager, Admin/Sales, internal base role, and base Outsource role.
-- Personal Dashboard placeholder for base-role users.
-- No-access state with return-to-own-home action.
-- Read-only Admin Dashboard cards and critical preview section.
-- Responsive desktop/tablet/mobile baseline.
+- Improve `packages/ui` with reusable business-neutral visual components for cards, headers, chips, badges, banners, toolbars, empty/no-access states, and responsive panels.
+- Apply shared components to existing Sector 1 surfaces where appropriate: Admin Dashboard cards, critical preview cards, no-access state, Personal Dashboard placeholder, and safe app-shell surface treatment.
+- Keep route/page files thin and keep fixtures outside UI components.
+- Add lightweight reusable component tests where practical.
+- Add an internal non-business UI preview route only if it helps reviewer validation.
 
 ## Out of Scope
 
-- No real authentication, sessions, database, Prisma schema, migrations, seed data, or API contracts.
-- No Order creation, Job actions, Shipment creation, Payment/COD actions, Stock/Material actions, CRM/Settings implementation, or business mutation.
+- No new dashboard metrics.
+- No new workflow states.
+- No real data fetching, real auth, database schema, migrations, API contracts, or business mutation.
+- No Order, Job, Shipment, Payment, Stock, CRM, Finance, Settings, or other domain workflow implementation.
 - No business-rule changes.
-- No unrelated modules or refactors.
+- No sensitive-data masking component that receives hidden data; sensitive data must be omitted before rendering.
+- No new mockup images or archived mockup/image-prompt dependency.
+
+## Visual Intent
+
+- Visual mood: premium operational ERP for a Thai furniture business, calm and professional rather than generic SaaS or marketing.
+- Density: data-dense dashboard/workbench primitives with compact spacing, stable card heights, tabular counts, and short Thai labels.
+- Shell/palette direction: continue the dark/navy shell where it improves hierarchy, while keeping main work surfaces light, high-contrast, and readable.
+- Component polish goals: consistent 8px-radius surfaces, restrained semantic chips, clear hover/focus/cursor states, accessible empty/no-access/stale states, and reusable header/toolbar rhythm.
+- Responsive behavior: components should wrap cleanly at phone/tablet widths, avoid horizontal page overflow, support drawer-to-sheet style containers, and preserve mobile touch targets.
+- What not to do: no marketing hero styling, no overdone gradients/glass effects, no full dark-mode work surfaces, no hidden sensitive placeholders, no invented business states, and no route-level visual one-offs where a reusable component fits.
+
+## UI UX Pro Max Guidance Used
+
+- Design system query: `ERP SaaS data-dense dashboard professional operational Thai admin`.
+- Active guidance applied: Data-Dense Dashboard pattern, compact grid/workbench spacing, blue/amber operational accent restraint adapted to THAIBORAN tokens, visible focus rings, hover/tap feedback, no horizontal mobile overflow, and Next.js responsive image handling with stable containers.
+- Project baseline remains `docs/ux-ui/design-system/visual-design-system.md`; UI UX Pro Max may polish hierarchy/accessibility but must not alter permissions, workflow, sensitive-data visibility, or business rules.
 
 ## Source Docs To Read
 
@@ -32,65 +49,93 @@ Implement a read-only, role-aware app shell and Admin Dashboard foundation for T
 - `docs/implementation/sector-plan.md`
 - `docs/implementation/foundation-proposal.md`
 - `CONTEXT.md`
-- `docs/adr/0001-ux-starts-with-custom-job-operations.md`
-- `docs/adr/0015-operational-alerts-are-queue-status-events.md`
-- `docs/adr/0016-unified-user-identity-for-staff-and-outsource.md`
+- `docs/adr/`
 - `docs/decision-log.md`
 - `docs/qa-summary.md`
+- `docs/implementation/review-report.md`
 - `docs/ux-ui/design-system/visual-design-system.md`
 - `docs/ux-ui/design-system/responsive-mobile.md`
 - `docs/ux-ui/design-system/app-shell.md`
 - `docs/ux-ui/design-system/table-patterns.md`
 - `docs/ux-ui/design-system/pages/admin-dashboard.md`
-- `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`
-- `docs/ux-ui/03-navigation-map.md`
+- `docs/ux-ui/design-system/pages/order.md`
+- `docs/ux-ui/design-system/pages/job-worker-rak-samuk.md`
+- `docs/ux-ui/design-system/pages/shipment-delivery.md`
+- `docs/ux-ui/design-system/pages/finance-payment-pv.md`
+- `docs/ux-ui/design-system/pages/product-stock-material.md`
+- `docs/ux-ui/design-system/pages/customer-crm-settings.md`
 - `docs/ux-ui/04-interaction-modal-behavior.md`
+- `apps/web/src/features/admin-dashboard/admin-dashboard.tsx`
+- `apps/web/src/shared/app-shell/app-shell.tsx`
+- `packages/ui/src/*`
 
 ## Permission and Sensitive Data Rules
 
 - Missing-permission navigation and actions are hidden.
 - State-blocked actions are disabled with reason.
 - Sensitive fields are omitted before rendering for users without permission.
-- No sensitive data in fixtures, tests, logs, screenshots, exports, or print previews.
+- Shared UI components must not receive hidden sensitive data and mask it.
+- No sensitive data in fixtures, tests, logs, screenshots, exports, print previews, or preview routes.
 
 ## Implementation Notes
 
-- Fixture selector uses URL state only and is not real auth.
-- Dashboard is a read-only queue launcher and risk preview, not a task table or analytics report.
-- Dashboard may show finance follow-up counts and broad labels, but no money amounts or payment evidence.
-- Future module links in the approved sidebar route to non-business placeholders for this sector.
-- Follow-up UI polish pass used `ui-ux-pro-max` search output. Applied premium enterprise gateway guidance with a dark/navy shell, improved hover/focus/accessibility treatment, and Next.js responsive image guidance while keeping main ERP work surfaces readable and practical.
+- Component APIs stay business-neutral and presentation-oriented.
+- Status and badge variants cover approved visual semantics but do not define workflow transitions.
+- Callers still own permission filtering and business-state decisions; shared UI components do not receive hidden sensitive values to mask them.
+- Internal UI preview content uses safe non-business fixture text only.
+- Browser visual check covered `/dashboard?user=admin-sales` and `/ui-preview` at `375` and `1440`; no horizontal overflow or money-symbol leakage was observed. Dashboard images rendered through stable Next.js `Image` containers, and visible preview thumbnails are marked priority.
+
+## Components Added/Changed
+
+- `SurfaceCard`: variants for default, subtle, inset, outline, shell, padding, and interactive treatment.
+- `StatusChip`: added size support while preserving restrained semantic variants.
+- `MetricCard`: compact metric/summary card for dense queue strips.
+- `QueueLauncherCard`: reusable dashboard/queue launcher with count, icon, chip, subtext, and footer action label.
+- `WorkPreviewCard`: reusable image-led preview card that accepts only caller-provided safe metadata/chips/media.
+- `SectionHeader` and `PageHeader`: compact Thai-first heading rhythm for work surfaces.
+- `EmptyState`, `NoAccessState`, and `StaleStateBanner`: standard empty, permission, and stale-state surfaces.
+- `ToolbarShell` and `ResponsivePanel`: lightweight wrappers for dense filters/actions and drawer-to-sheet-style content.
+- `RoleBadge` and `UserBadge`: reusable role/user display badges for shell and surface treatments.
 
 ## Files Changed
 
-- `apps/web/src/app/`: thin route pages for role-aware landing, dashboard, personal dashboard, no-access, and module placeholders.
-- `apps/web/src/shared/`: app shell, navigation config, fixture users, read-only dashboard fixtures, and permission helpers.
-- `apps/web/src/features/`: Admin Dashboard composition and access-state screens.
-- `apps/web/public/sector-1-thumbnails/`: generated non-sensitive local fixture thumbnails.
-- `packages/ui/src/`: reusable `SurfaceCard` and `StatusChip` primitives.
-- `apps/web/e2e/sector-1-smoke.spec.ts`, `playwright.config.ts`, and `vitest.config.ts`: Sector 1 checks and test config.
-- `apps/web/src/app/globals.css` and `apps/web/tailwind.config.ts`: visual-system tokens for the Sector 1 shell.
+- `packages/ui/src/`: shared visual component system, exports, and component tests.
+- `apps/web/src/features/admin-dashboard/admin-dashboard.tsx`: Admin Dashboard now composes reusable queue launcher and work preview cards.
+- `apps/web/src/shared/app-shell/app-shell.tsx`: top-bar user surface now uses shared `UserBadge`.
+- `apps/web/src/features/access/no-access.tsx`: no-access screen now uses shared `NoAccessState`.
+- `apps/web/src/features/access/personal-dashboard.tsx`: Personal Dashboard placeholder now uses shared header, user badge, card, and empty state.
+- `apps/web/src/features/access/module-placeholder.tsx`: future module placeholders now use shared header and empty state.
+- `apps/web/src/app/ui-preview/page.tsx` and `apps/web/src/features/ui-preview/ui-preview.tsx`: internal non-business visual preview route.
+- `docs/implementation/current-task.md`: Sector 2 Visual Intent and implementation handoff.
+
+## Sector 1 Surfaces Improved
+
+- Admin Dashboard cards now share reusable tone, focus, hover, card, count, chip, and footer behavior.
+- Critical preview cards now use a reusable image-led work preview component with stable media slots and priority thumbnails.
+- No-access state now uses one reusable permission-safe surface with only own-home action supplied by the caller.
+- Personal Dashboard placeholder now uses shared page/header/user/empty-state rhythm.
+- App shell top user display now uses shared shell-aware `UserBadge`.
 
 ## Checks Run
 
 - `pnpm lint` - passed.
 - `pnpm typecheck` - passed.
-- `pnpm test` - passed, 12 web tests.
+- `pnpm test` - passed, including 4 new `packages/ui` component tests and 12 existing web tests.
 - `pnpm format:check` - passed.
 - `pnpm build` - passed.
 - `pnpm test:e2e` - passed, 16 Playwright checks across 375, 768, 1024, and 1440 widths.
-- Visual responsive smoke via Playwright screenshots at 375, 768, 1024, and 1440 widths - dark/navy shell rendered, main work surfaces stayed readable, critical preview images rendered, and no horizontal overflow was observed.
-- Follow-up UI polish checks: `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` passed after visual refinement.
+- Browser visual QA - passed for `/dashboard?user=admin-sales` and `/ui-preview` at 375 and 1440; no horizontal overflow, no `฿` leakage, UI preview clearly labeled internal, and dashboard thumbnails rendered.
 
 ## Known Gaps or Blockers
 
 - No blockers found.
-- Future modules are intentionally non-business placeholders in this sector.
-- Mock fixture selector is URL-state only and is not real authentication or permission management.
+- `/ui-preview` is intentionally internal and not linked from main navigation.
+- No new business workflows, data fetching, auth, API, database schema, migrations, or dashboard metrics were added.
 
 ## Reviewer Focus
 
-- Verify sidebar visibility: base-role users see no main ERP menus; Owner sees settings; Manager/Admin do not see settings.
-- Verify dashboard fixture content: six approved cards only, no money amounts, no owner/current-handler fields, and no sensitive evidence.
-- Verify direct dashboard access for base-role users redirects to no-access with own-home return.
-- Verify placeholders do not implement future module workflows or actions.
+- Visual quality and reusable component consistency.
+- Responsive behavior at `375`, `768`, `1024`, and `1440` widths.
+- Permission-safe component boundaries: hidden sensitive data omitted before props.
+- No business-rule, workflow-state, auth, API, database, or fixture-data expansion.
+- Confirm that UI preview copy remains clearly internal and non-product.

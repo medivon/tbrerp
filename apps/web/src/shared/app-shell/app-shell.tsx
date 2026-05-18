@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Menu } from "lucide-react";
+import { UserBadge } from "@thaiboran/ui";
 
 import type { FixtureUser } from "@/shared/fixtures/users";
 import {
@@ -133,19 +134,12 @@ export function AppShell({
 
             <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:justify-end">
               <UserSelector currentUser={currentUser} tone="dark" />
-              <div className="flex min-w-0 items-center gap-3 rounded-lg border border-shell-border bg-shell-surface px-3 py-2 shadow-soft">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-extrabold text-shell">
-                  {currentUser.initials}
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-shell-foreground">
-                    {currentUser.displayName}
-                  </p>
-                  <p className="truncate text-xs font-semibold text-shell-muted">
-                    {currentUser.roleLabel}
-                  </p>
-                </div>
-              </div>
+              <UserBadge
+                displayName={currentUser.displayName}
+                initials={currentUser.initials}
+                roleLabel={currentUser.roleLabel}
+                tone="shell"
+              />
             </div>
           </div>
         </header>

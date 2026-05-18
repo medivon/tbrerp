@@ -4,9 +4,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils";
 
 export const statusChipVariants = cva(
-  "inline-flex w-fit max-w-full items-center whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-semibold leading-none",
+  "inline-flex w-fit max-w-full items-center gap-1 whitespace-nowrap rounded-full border font-semibold leading-none",
   {
     variants: {
+      size: {
+        md: "min-h-7 px-3 py-1.5 text-sm",
+        sm: "min-h-6 px-2.5 py-1 text-xs",
+      },
       variant: {
         action: "border-[#B9D1FF] bg-[#E0ECFF] text-[#1D4ED8]",
         danger: "border-[#FDB8B3] bg-[#FEE4E2] text-[#9F1239]",
@@ -17,6 +21,7 @@ export const statusChipVariants = cva(
       },
     },
     defaultVariants: {
+      size: "sm",
       variant: "neutral",
     },
   },
@@ -27,10 +32,15 @@ export interface StatusChipProps
     React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof statusChipVariants> {}
 
-export function StatusChip({ className, variant, ...props }: StatusChipProps) {
+export function StatusChip({
+  className,
+  size,
+  variant,
+  ...props
+}: StatusChipProps) {
   return (
     <span
-      className={cn(statusChipVariants({ className, variant }))}
+      className={cn(statusChipVariants({ className, size, variant }))}
       {...props}
     />
   );
