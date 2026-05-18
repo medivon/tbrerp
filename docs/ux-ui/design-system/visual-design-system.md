@@ -101,6 +101,8 @@ Density rules:
 
 ## Layout Grid and Responsive Behavior
 
+For explicit breakpoint, tablet, phone, drawer-to-sheet, and table-to-card rules, use `docs/ux-ui/design-system/responsive-mobile.md`.
+
 Desktop admin:
 
 - Fixed left sidebar around 240-260px.
@@ -407,3 +409,5 @@ Implementation must still read active behavior and screen specs for business rul
 - Permission, finance, shipment, stock, Rak Samuk, or completed-Order rules.
 
 When a page-specific visual guidance file exists under `docs/ux-ui/design-system/pages/`, use it together with this master file. Page-specific files narrow visual treatment for their domain but do not create new business rules.
+
+For responsive/mobile behavior, use `docs/ux-ui/design-system/responsive-mobile.md` as the companion reference.
