@@ -32,7 +32,7 @@ Approved mockup:
 - `รอสร้างรอบจัดส่ง` -> row action `สร้างรอบจัดส่ง` for one Order.
 - `รอสร้างรอบจัดส่ง` -> right drawer action `สร้างรอบจัดส่ง`.
 - Order Detail -> `จัดการรอบจัดส่ง` -> `สร้างรอบจัดส่งจากรายการที่เลือก`, with selected shippable Order lines and their default delivery context.
-- There is no Draft Shipment continuation in the starting workflow.
+- There is no saved shipment draft continuation in the starting workflow.
 
 Not an entry point:
 
@@ -149,7 +149,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Address/carrier changes happen before release by authorized admin; delivery team cannot change them, but can see COD amount for Shipments they are responsible for.
 - COD is allowed only on the final Shipment round that completes delivery for the Order. Do not add a flow where an early/partial Shipment collects COD while unfinished custom work remains.
 - After release/send-out, avoid changing Shipment COD; rare mistakes are handled through finance notes/manual handling rather than changing this closed/send-out document path.
-- The starting workflow has no persistent Draft Shipment.
+- The starting workflow has no persistent saved shipment draft.
 - Bulk users do not enter this screen for default/simple creation.
 - Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
 - Ready-to-ship work should not be rolled backward while building a Shipment. If the Shipment should not leave yet, hold or handle it in the shipment/send-out step.

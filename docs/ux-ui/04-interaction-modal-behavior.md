@@ -61,7 +61,7 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 
 ## Shipment And Delivery
 
-- The starting workflow has no `ร่างรอบจัดส่ง`. Shipment Builder is a temporary working screen. A Shipment is created only when Admin presses `พร้อมจัดส่ง`.
+- The starting workflow has no saved shipment draft state. Shipment Builder is a temporary working screen. A Shipment is created only when Admin presses `พร้อมจัดส่ง`.
 - If the user exits Shipment Builder after editing but before release, show `ออกโดยไม่สร้างรอบจัดส่ง` and `อยู่ต่อ`.
 - Before `พร้อมจัดส่ง`, show a confirmation modal summarizing recipient/address/carrier/items/COD where relevant.
 - Editing recipient/address/carrier/remarks before release does not require a reason. Log old/new values in Activity Log.
@@ -151,7 +151,7 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 
 ## Conflicts Resolved
 
-- Older docs allowed Draft Shipment. Latest rule: no `ร่างรอบจัดส่ง` in the starting workflow; Shipment Builder is temporary pre-release work.
+- Older docs allowed saved shipment draft. Latest rule: no saved shipment draft state in the starting workflow; Shipment Builder is temporary pre-release work.
 - Older docs allowed COD editing in Shipment Builder and Shipment-level COD per round. Latest rule: no COD editing in Shipment Builder, and COD is only for the final Shipment round that completes delivery for the Order.
 - Older docs treated PV as the editable payout workbench. Latest rule: `รายการรอจ่าย` / `ตัดรอบจ่าย` is the workbench; PV is the finalized payment document.
 - Older broad Product/SKU wording said deactivate/reopen requires reason. Latest interaction rule: deactivation requires reason; reopen requires confirmation and Management Log but no reason.

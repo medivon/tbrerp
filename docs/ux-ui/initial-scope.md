@@ -699,7 +699,7 @@ Confirmed rules:
 - If no rate exists, show `ไม่มีราคา / ให้แจ้งราคา`.
 - Worker can use `ขอเสนอราคา` for assigned work until the related payable item is included in a finalized PV.
 - Worker enters the per-piece price for that specific work item, not a total job price.
-- Owner/Manager approves proposed price; Finance pays or creates PV from the approved price.
+- Owner/Manager approve proposed price; Finance pays or creates PV from the approved price.
 
 ### Standard Rate Update
 
@@ -738,7 +738,7 @@ Confirmed behavior:
 Confirmed behavior:
 
 - Admin creates Shipment.
-- The starting workflow has no persistent Draft Shipment. Shipment Builder is temporary pre-release work.
+- The starting workflow has no persistent saved shipment draft. Shipment Builder is temporary pre-release work.
 - A Shipment is created/released only when Admin presses `พร้อมจัดส่ง`.
 - Shipment creates Delivery Note and Shipping Sheet together.
 - User can preview documents before release and print both or either after release.

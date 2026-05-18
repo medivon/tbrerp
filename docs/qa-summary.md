@@ -181,7 +181,7 @@ A: Missing-permission actions are hidden. State-blocked actions remain visible b
 **Q: What are the reusable reason/evidence rules?**
 A: Reason is required only for defined risky actions. One reason can cover a save batch if any included change requires it. Payment Record evidence is required; Shipment close requires Tracking or at least one delivery evidence photo; production, Expense, PV, stock count/adjustment, and material adjustment evidence are optional unless a specific action says otherwise.
 
-**Q: Does the starting workflow have a Draft Shipment?**
+**Q: Does the starting workflow have a saved shipment draft?**
 A: No. Shipment Builder is temporary pre-release work. Shipment exists only after Admin presses `พร้อมจัดส่ง`.
 
 **Q: Can Shipment Builder edit COD?**
@@ -596,7 +596,7 @@ A: No. Refund/credit จากบริบท Order เป็น note/financial 
 A: No. Payment Record ไม่ block การยกเลิก Order. แสดง note ใน Payment/Financial section ว่าอาจต้องติดตามคืนเงิน/เครดิตภายหลัง และเก็บ Payment Record เดิมไว้.
 
 **Q: Can ready-stock lines in a Shipment round be edited or removed from Order Line Edit?**
-A: No. ต้องเอาออกจากรอบจัดส่งหรือยกเลิกรอบจัดส่งก่อน ไม่ว่าจะเป็น Draft หรือ Released Shipment. ถ้ายกเลิกรอบแล้ว line ยัง active และพร้อมส่ง จะกลับไป `พร้อมสร้างรอบจัดส่ง`.
+A: No. ต้องเอาออกจากรอบจัดส่งหรือยกเลิกรอบจัดส่งก่อน ไม่ว่าจะยังอยู่ใน Shipment Builder หรืออยู่ใน Released Shipment แล้ว. ถ้ายกเลิกรอบแล้ว line ยัง active และพร้อมส่ง จะกลับไป `พร้อมสร้างรอบจัดส่ง`.
 
 **Q: Can sent/completed lines be edited or removed?**
 A: No. ใช้ service/return/adjustment flow ในอนาคต.
@@ -1243,11 +1243,11 @@ A: Admin.
 **Q: Can delivery team create/split Shipment?**
 A: No.
 
-**Q: Is Draft Shipment allowed?**
-A: No. Latest interaction decision removes persistent Draft Shipment from the starting workflow. Shipment Builder is temporary pre-release work, and Shipment exists only after Admin presses `พร้อมจัดส่ง`.
+**Q: Is saved shipment draft allowed?**
+A: No. Latest interaction decision removes persistent saved shipment draft from the starting workflow. Shipment Builder is temporary pre-release work, and Shipment exists only after Admin presses `พร้อมจัดส่ง`.
 
 **Q: What happens to selected items before Shipment Builder release?**
-A: They remain in temporary Shipment Builder work; no Draft Shipment is persisted in the starting workflow.
+A: They remain in temporary Shipment Builder work; no saved shipment draft is persisted in the starting workflow.
 
 **Q: What documents does Shipment create?**
 A: Delivery Note and Shipping Sheet together.

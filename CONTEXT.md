@@ -421,8 +421,8 @@ A dispatch round created by admin from ready-to-ship Order Lines or Service Case
 _Avoid_: Order, Delivery Note
 
 **Shipment Builder (สร้างรอบจัดส่ง)**:
-A temporary pre-release review screen for selected ready-to-ship items. In the starting workflow it is not a persistent Draft Shipment; a Shipment exists only after Admin presses `พร้อมจัดส่ง`.
-_Avoid_: Draft Shipment, saved holding state, delivery team work
+A temporary pre-release review screen for selected ready-to-ship items. In the starting workflow it is not a persistent saved shipment draft; a Shipment exists only after Admin presses `พร้อมจัดส่ง`.
+_Avoid_: saved shipment draft, saved holding state, delivery team work
 
 **Delivery Note (ใบส่งของ)**:
 The printable item list for a Shipment, focused on product identification, quantity, image, and notes.
@@ -657,8 +657,8 @@ Explicitly outside the starting scope:
 > **Dev:** "Can admin fix a completed Order by changing the original Order?"
 > **Domain expert:** "No. Completed Orders stay stable. Use a note, Service Case, finance note, correction record, or an Owner/Manager special shipment that does not affect stock or Order completion."
 
-> **Dev:** "If a Rak Samuk worker asks for a different price, does Finance approve it?"
-> **Domain expert:** "No. The worker uses `ขอเสนอราคา`, Owner or Manager approves the work price, and Finance pays from the approved price."
+> **Dev:** "If a Rak Samuk worker asks for a different price, who approves it?"
+> **Domain expert:** "The worker uses `ขอเสนอราคา`, Owner or Manager approves the work price, and Finance pays from the approved price."
 
 ## Flagged ambiguities
 

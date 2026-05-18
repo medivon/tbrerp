@@ -90,7 +90,7 @@ Decision:
 - Rak Samuk send-out requires choosing the Rak Samuk Worker immediately.
 - Rak Samuk Worker uses `ขอเสนอราคา`; Owner/Manager approve proposed prices, and Finance pays from approved prices.
 - Completed Orders are not edited in normal workflow. Use notes, Service Case, finance note, correction record, or Owner/Manager-only `รอบจัดส่งพิเศษ`.
-- This consolidation supersedes older Identity/Access notes that say Finance approves Rak Samuk proposed price, Delivery Team cannot see COD amount, or Rak Samuk work can wait in an unassigned send queue.
+- This consolidation supersedes older Identity/Access notes that moved Rak Samuk proposed-price approval away from Owner/Manager, denied all Delivery Team COD visibility, or let Rak Samuk work wait in an unassigned send queue.
 
 ### OQ-UX-001 - Delivery Team send-out and admin proof boundary
 
@@ -147,7 +147,7 @@ Decision:
 
 - IM-001 to IM-135 are complete enough for source-of-truth consolidation.
 - Use `docs/ux-ui/04-interaction-modal-behavior.md` as the consolidated interaction behavior source.
-- No persistent Draft Shipment exists in the starting workflow. Shipment Builder is temporary pre-release work, and Shipment exists only after `พร้อมจัดส่ง`.
+- No persistent saved shipment draft exists in the starting workflow. Shipment Builder is temporary pre-release work, and Shipment exists only after `พร้อมจัดส่ง`.
 - COD is allowed only on the final Shipment round that completes delivery for the Order; Shipment Builder does not edit COD.
 - Production photos/evidence are optional, including ready/complete, and can be attached later after Job completion.
 - Missing or wrong production detail is not a system workflow. Workers ask outside the system; there is no special note/action/log requirement and no open question remains.

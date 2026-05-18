@@ -4,7 +4,7 @@ Rak Samuk prices are deliberately kept out of Order, Production, and Job workflo
 
 ## Considered Options
 
-- Let Finance/payment-permission users approve proposed Rak Samuk prices.
+- Move proposed Rak Samuk price approval away from Owner/Manager and into payment permissions.
 - Show Rak Samuk price in Job cost context wherever finance permission exists.
 - Keep price approval with Owner/Manager and keep workflow pages price-free.
 

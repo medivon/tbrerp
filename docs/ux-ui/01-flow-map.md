@@ -481,7 +481,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
    - Bulk path: selects eligible Orders and bulk-creates Shipments directly.
 5. From Order Detail, Admin may select ready lines in `จัดการรอบจัดส่ง` and open `สร้างรอบจัดส่ง` with those selected lines.
 6. In the single/special path, Admin reviews item list, shipment plan, recipient/address, carrier, delivery date, notes, and COD if relevant.
-7. In the single/special path, Admin presses `พร้อมจัดส่ง` to create/release the Shipment to the delivery team. There is no persistent Draft Shipment in the starting workflow.
+7. In the single/special path, Admin presses `พร้อมจัดส่ง` to create/release the Shipment to the delivery team. There is no persistent saved shipment draft in the starting workflow.
 8. In the bulk path, the system uses each Order's saved Order Recipient Detail snapshot as the delivery default, uses the first eligible Order only as a document grouping reference where needed, and creates and releases Shipments/documents without opening `สร้างรอบจัดส่ง`.
 9. Admin may preview Delivery Note / Shipping Sheet before release and print after release.
 
@@ -612,7 +612,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **UX Risks**
 
 - Delivery Team sees edit controls for master shipment data.
-- Delivery Team cannot see COD amount for unrelated Shipments.
+- COD amount for unrelated Shipments becomes visible to Delivery Team.
 - Delivery Team appears able to close COD/payment follow-up after seeing COD amount.
 - Delivery Team sees a tracking field even though tracking belongs to admin confirmation.
 - Bulk send-out accidentally includes future-date Shipments.

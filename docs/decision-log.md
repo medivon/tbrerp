@@ -680,7 +680,7 @@ Rules:
 - If no rate exists, item shows `ไม่มีราคา / ให้แจ้งราคา`.
 - Rak Samuk Worker can use `ขอเสนอราคา` until the related payable item is included in a finalized PV.
 - Proposed price is the per-piece price for that specific work item, not the total price for all assigned work.
-- Owner/Manager approves proposed Rak Samuk prices; Finance pays or creates PV from the approved price.
+- Owner/Manager approve proposed Rak Samuk prices; Finance pays or creates PV from the approved price.
 - Standard rate lives on Product Model / SKU หลัก, not variant.
 - If approved proposed price is linked to SKU/Product Model, the approver must choose whether to update the standard rate; updates are not automatic and write Management Log with old/new value.
 - New standard rate applies only to future work.
@@ -1066,7 +1066,7 @@ Not in first scope:
 
 - Admin creates Shipment.
 - Delivery team does not create or split Shipment.
-- The starting workflow has no persistent Draft Shipment. Shipment Builder is a temporary working screen, and a Shipment exists only when Admin presses `พร้อมจัดส่ง`.
+- The starting workflow has no persistent saved shipment draft. Shipment Builder is a temporary working screen, and a Shipment exists only when Admin presses `พร้อมจัดส่ง`.
 - Exiting Shipment Builder before release discards the temporary work after warning; no draft record is created.
 - Pressing `พร้อมจัดส่ง` creates and releases the Shipment to the delivery team.
 - Shipment creates Delivery Note and Shipping Sheet together.

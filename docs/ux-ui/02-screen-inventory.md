@@ -12,15 +12,15 @@ It is an index of UX/UI screens for the confirmed starting scope. It is not a du
 
 ## Priority and Status
 
-- `P0`: required for the first Job operations flow.
-- `P1`: required support for the first flow, or needed soon after P0 to make the flow usable.
-- `P2`: confirmed supporting, uncertain, deferred, or later-detail screen. Do not spec before P0/P1 unless a later decision promotes it.
+- `starting-workflow`: required for the first Job operations flow.
+- `support`: required support for the first flow, or needed soon after the starting workflow to make the flow usable.
+- `later-detail`: confirmed supporting, uncertain, deferred, or later-detail screen. Do not spec before starting-workflow/support unless a later decision promotes it.
 
 Design status:
 
 - `ready`: enough confirmed source material exists to start screen design.
 - `needs decision`: the screen is in scope, but a layout/detail decision blocks design.
-- `later`: keep in inventory, but do not design in the first P0/P1 pass.
+- `later`: keep in inventory, but do not design in the first starting-workflow/support pass.
 
 ## 1. Admin
 
@@ -34,7 +34,7 @@ Design status:
 - Entry point: Login / main navigation.
 - Exit point: Selected working queue.
 - Related flow IDs: `F01`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Job, Shipment, Financial Follow-up
@@ -51,7 +51,7 @@ Design status:
 - Entry point: `Admin Dashboard` -> `ออเดอร์ที่ต้องติดตาม`.
 - Exit point: Order Detail.
 - Related flow IDs: `F01`, `F02`, `F06`, `F08`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Job, Shipment
@@ -68,7 +68,7 @@ Design status:
 - Entry point: `Admin Dashboard` -> `งานกำลังผลิต`.
 - Exit point: Job Detail, department queue, manager unfinished-work overview.
 - Related flow IDs: `F01`, `F03`, `F04`, `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Order Job, Production Job, Woodwork Queue, Coloring Queue, Rak Samuk Work
@@ -85,7 +85,7 @@ Design status:
 - Entry point: `Admin Dashboard` -> `รอสร้างรอบจัดส่ง`.
 - Exit point: Ready-to-ship queue / Shipment creation.
 - Related flow IDs: `F01`, `F06`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Job, Service Case, Shipment
@@ -102,7 +102,7 @@ Design status:
 - Entry point: `Admin Dashboard` -> `ยืนยันการจัดส่ง`.
 - Exit point: Shipment detail / closed Shipment.
 - Related flow IDs: `F01`, `F08`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Shipment, Delivery Note, Shipping Sheet, Order, Financial Follow-up
@@ -119,7 +119,7 @@ Design status:
 - Entry point: `Admin Dashboard` -> `งานผลิตต้องติดตาม`.
 - Exit point: Job Revision view / Job Detail.
 - Related flow IDs: `F01`, `F04`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Job Revision, Activity Log
@@ -136,7 +136,7 @@ Design status:
 - Entry point: `Admin Dashboard` -> `ติดตาม COD / Payment`.
 - Exit point: Financial follow-up record or related Order/Shipment.
 - Related flow IDs: `F01`, `F08`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop
 - Design status: ready
 - Main data objects: Payment Term, Payment Record, Shipment COD, Financial Follow-up, Order
@@ -153,7 +153,7 @@ Design status:
 - Entry point: `ออเดอร์` -> `ร่างออเดอร์`.
 - Exit point: Order Create/Edit continuation.
 - Related flow IDs: `F02`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Draft Order, Customer, Address Entry, Order Line
@@ -178,7 +178,7 @@ Note:
 - Entry point: Order page `สร้างออเดอร์` action or Draft Order queue.
 - Exit point: Order Review or saved Draft Order.
 - Related flow IDs: `F02`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order Entry Session, Draft Order, Customer, Address Entry, Order Line, Product Model, SKU Variant, Ready Stock, Custom Work Detail, Order Shipment Plan, Payment Term, Payment Record
@@ -195,7 +195,7 @@ Note:
 - Entry point: Order Create/Edit.
 - Exit point: Address Entry select/create.
 - Related flow IDs: `F02`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Customer, Customer Primary Phone, Customer Social Contact, Customer Tier, Customer Tier Discount, Address Entry, Customer Sales Summary
@@ -212,7 +212,7 @@ Note:
 - Entry point: Customer selected in Order Create/Edit.
 - Exit point: Order Line entry.
 - Related flow IDs: `F02`, `F06`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Address Entry, Recipient, Customer, Order Recipient Detail
@@ -229,7 +229,7 @@ Note:
 - Entry point: Order Create/Edit after required entry.
 - Exit point: Order Detail.
 - Related flow IDs: `F02`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order Entry Session, optional Draft Order, Order, Order Line, Custom Work Detail, Order Shipment Plan, Payment Term, Payment Record
@@ -246,7 +246,7 @@ Note:
 - Entry point: Order creation, Order search, related queue row.
 - Exit point: Shipment detail, Customer detail, Financial follow-up, Job Detail.
 - Related flow IDs: `F02`, `F03`, `F06`, `F08`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Customer, Address Entry, Payment Term, Payment Record, Shipment, Order Status, Shipment Summary
@@ -263,7 +263,7 @@ Note:
 - Entry point: Order page `ออเดอร์ทั้งหมด` tab.
 - Exit point: Order Detail or Order Create/Edit.
 - Related flow IDs: `F02`, `F06`, `F08`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Customer, Address Entry, Job, Shipment, Order Status, Shipment Summary
@@ -280,7 +280,7 @@ Note:
 - Entry point: Order Detail -> `จัดการออเดอร์` -> `แก้ไขรายการสินค้า` or `แก้ไขงานสั่งทำ`.
 - Exit point: Review Changes, Order Detail, Job Detail / Revision, or Shipment Detail when downstream state must be resolved first.
 - Related flow IDs: `F02`, `F03`, `F06`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Ready Stock, Custom Work Detail, Job, Shipment, Payment Record, COD follow-up, Financial Reconciliation
@@ -299,7 +299,7 @@ Note:
 - Entry point: Custom-work line inside Order Create/Edit.
 - Exit point: Order Review.
 - Related flow IDs: `F03`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Custom Work Detail, Job Source Type preview, Order Line, Department Instruction Images
@@ -322,7 +322,7 @@ Note:
 - Entry point: Order Detail item card, active jobs overview, Job creation, department queue, manager overview, revision queue.
 - Exit point: Department workflow action, Shipment readiness, related SKU reference, timeline review.
 - Related flow IDs: `F03`, `F04`, `F05`, `F09`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Job Source Type, Order Line, Production Lot, Department Instruction Images, Activity Log
@@ -339,7 +339,7 @@ Note:
 - Entry point: Job Revision follow-up queue or department work card.
 - Exit point: Acknowledged revision, clarification follow-up, Job Detail.
 - Related flow IDs: `F01`, `F04`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet / mobile
 - Design status: ready
 - Main data objects: Job, Job Revision, Department, Activity Log
@@ -356,7 +356,7 @@ Note:
 - Entry point: Production Batch / Production Lot workflow, Product Model Detail per-color production action, Product/SKU selection, standalone internal production creation flow, or active `ร่างงานผลิต`.
 - Exit point: Production Review, `ร่างงานผลิต` queue after save, or cancel.
 - Related flow IDs: `F10`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Draft Production Job, SKU Variant, Product Model, optional Production Batch, optional Production Lot, Department Instruction Images
@@ -373,7 +373,7 @@ Note:
 - Entry point: Production Job Entry -> `สร้างงานผลิต`.
 - Exit point: Job Detail after `ยืนยันสร้างงานผลิต`, Production Job Entry after `กลับ`, or `ร่างงานผลิต` after `บันทึกร่าง`.
 - Related flow IDs: `F10`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Draft Production Job, Production Job, SKU Variant, Product Model, Department Instruction Images, Starting Queue
@@ -390,7 +390,7 @@ Note:
 - Entry point: `งานสั่งทำ / ผลิต` -> `ร่างงานผลิต`.
 - Exit point: Production Job Entry continuation.
 - Related flow IDs: `F10`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Draft Production Job, SKU Variant, Product Model, Owner
@@ -409,7 +409,7 @@ Note:
 - Entry point: Woodwork department navigation.
 - Exit point: Woodwork Job Work Card.
 - Related flow IDs: `F04`, `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Waiting for Materials
@@ -426,7 +426,7 @@ Note:
 - Entry point: Woodwork Work Queue.
 - Exit point: Woodwork Work Queue, Rak Samuk send flow, Coloring intake flow, Woodwork history.
 - Related flow IDs: `F04`, `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Delivery Date, Activity Log
@@ -443,7 +443,7 @@ Note:
 - Entry point: Woodwork navigation or completed work card.
 - Exit point: Historical Job view.
 - Related flow IDs: `F04`
-- Priority: `P1`
+- Priority: `support`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Activity Log
@@ -462,7 +462,7 @@ Note:
 - Entry point: Coloring department navigation.
 - Exit point: Coloring Work Queue after `รับเข้าโรงงานสี`.
 - Related flow IDs: `F04`, `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Department, Activity Log
@@ -479,7 +479,7 @@ Note:
 - Entry point: Coloring navigation or `รับเข้าโรงงานสี`.
 - Exit point: Coloring Job Work Card.
 - Related flow IDs: `F04`, `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Waiting for Materials
@@ -496,7 +496,7 @@ Note:
 - Entry point: Coloring Work Queue.
 - Exit point: Coloring Work Queue, Rak Samuk send flow, `รอสร้างรอบจัดส่ง`, Coloring history.
 - Related flow IDs: `F04`, `F05`, `F06`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Delivery Date, Activity Log
@@ -513,7 +513,7 @@ Note:
 - Entry point: Coloring navigation or completed work card.
 - Exit point: Historical Job view.
 - Related flow IDs: `F04`
-- Priority: `P1`
+- Priority: `support`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Job, Activity Log
@@ -532,7 +532,7 @@ Note:
 - Entry point: Department action `ส่งไปรักสมุก`.
 - Exit point: Rak Samuk Worker `งานที่ต้องทำ`.
 - Related flow IDs: `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Rak Samuk Work, Rak Samuk Worker
@@ -549,7 +549,7 @@ Note:
 - Entry point: `เลือกช่างรักสมุก`.
 - Exit point: Rak Samuk Worker `งานที่ต้องทำ`.
 - Related flow IDs: `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Rak Samuk Worker, Job
@@ -566,7 +566,7 @@ Note:
 - Entry point: Rak Samuk Worker login/navigation.
 - Exit point: Rak Samuk Worker Work Detail.
 - Related flow IDs: `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: mobile / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Job, Department Instruction Images, Rak Samuk Work Price, Rak Samuk Proposed Price
@@ -583,7 +583,7 @@ Note:
 - Entry point: Rak Samuk Worker Work List / Work Detail.
 - Exit point: Proposed price approval.
 - Related flow IDs: `F05`
-- Priority: `P1`
+- Priority: `support`
 - Device target: mobile / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Proposed Price, Rak Samuk Work Price
@@ -600,7 +600,7 @@ Note:
 - Entry point: Missing-price proposal notification/list.
 - Exit point: Rak Samuk Work continues with approved price.
 - Related flow IDs: `F05`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Proposed Price, Rak Samuk Work, Product Model, Rak Samuk Standard Rate
@@ -617,7 +617,7 @@ Note:
 - Entry point: Rak Samuk Work detail / internal outsource queue.
 - Exit point: `รอรับเข้าโรงงานสี`.
 - Related flow IDs: `F05`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Job, Activity Log
@@ -634,7 +634,7 @@ Note:
 - Entry point: Rak Samuk Worker navigation.
 - Exit point: Historical work detail.
 - Related flow IDs: `F05`
-- Priority: `P1`
+- Priority: `support`
 - Device target: mobile / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Payment Voucher, payout status
@@ -653,7 +653,7 @@ Note:
 - Entry point: `Admin Dashboard` -> `รอสร้างรอบจัดส่ง`.
 - Exit point: Shipment creation.
 - Related flow IDs: `F06`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Order, Order Line, Job, Service Case, Ready Stock, Shipment
@@ -670,11 +670,11 @@ Note:
 - Entry point: Ready-to-Ship Queue row action for one Order or special-case review; Order Detail -> `จัดการรอบจัดส่ง` selected lines.
 - Exit point: Released Shipment detail / admin Shipment list after `พร้อมจัดส่ง`; Ready-to-Ship Queue if cancelled before creation.
 - Related flow IDs: `F06`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Shipment, Order, Order Line, Job, Address Snapshot, Delivery Note, Shipping Sheet
-- Main actions: Review selected ready lines, edit delivery info/note where needed, preview documents, confirm `พร้อมจัดส่ง`. Shipment Builder does not edit COD and does not persist a Draft Shipment in the starting workflow.
+- Main actions: Review selected ready lines, edit delivery info/note where needed, preview documents, confirm `พร้อมจัดส่ง`. Shipment Builder does not edit COD and does not persist a saved shipment draft in the starting workflow.
 - Related source docs: `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`; `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`; `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SHP-004 - Released Shipment Detail
@@ -687,7 +687,7 @@ Note:
 - Entry point: Shipment creation, Shipment list, related Order.
 - Exit point: Delivery dashboard or admin close queue depending on status.
 - Related flow IDs: `F06`, `F07`, `F08`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Shipment, Address Snapshot, Order, Delivery Note, Shipping Sheet, Shipment Evidence
@@ -704,7 +704,7 @@ Note:
 - Entry point: Shipment creation, Shipment detail, or responsible delivery view where allowed.
 - Exit point: Shipment detail, Shipping Sheet preview, or delivery view.
 - Related flow IDs: `F06`, `F07`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop
 - Design status: ready
 - Main data objects: Delivery Note, Shipment, Order Line, product image
@@ -721,7 +721,7 @@ Note:
 - Entry point: Shipment creation, Shipment detail, or responsible delivery view where allowed.
 - Exit point: Shipment detail or delivery view.
 - Related flow IDs: `F06`, `F07`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop
 - Design status: ready
 - Main data objects: Shipping Sheet, Shipment, Recipient, Address Snapshot, carrier, COD
@@ -738,7 +738,7 @@ Note:
 - Entry point: Ready-to-Ship Queue.
 - Exit point: Released Shipments.
 - Related flow IDs: `F06`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop
 - Design status: ready
 - Main data objects: Order, Shipment, Service Case, COD
@@ -757,7 +757,7 @@ Note:
 - Entry point: Delivery Team login/navigation.
 - Exit point: `รายการต้องจัดส่งวันนี้`, `รายการรอวันจัดส่ง`, or `ส่งออกแล้ววันนี้`.
 - Related flow IDs: `F07`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date, COD
@@ -778,7 +778,7 @@ Note:
 - Entry point: Delivery Dashboard.
 - Exit point: Delivery Shipment Detail.
 - Related flow IDs: `F07`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Shipment, Recipient, Address Snapshot, Carrier, COD
@@ -795,7 +795,7 @@ Note:
 - Entry point: Delivery Dashboard.
 - Exit point: Delivery Shipment Detail.
 - Related flow IDs: `F07`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date, COD
@@ -812,7 +812,7 @@ Note:
 - Entry point: Today Delivery List or Waiting-date Delivery List.
 - Exit point: `ส่งออกแล้ว`.
 - Related flow IDs: `F07`, `F08`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, COD, optional Shipment Evidence
@@ -829,7 +829,7 @@ Note:
 - Entry point: Delivery Dashboard.
 - Exit point: Delivery Dashboard or Delivery Shipment Detail in read-only sent-out state.
 - Related flow IDs: `F07`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Shipment, Activity Log, Recipient, Carrier, COD
@@ -848,7 +848,7 @@ Note:
 - Entry point: Manager navigation.
 - Exit point: Job Detail.
 - Related flow IDs: `F09`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Job Source Type, Department, Urgent Label, Delivery Date, Activity Log
@@ -865,7 +865,7 @@ Note:
 - Entry point: Management Overview.
 - Exit point: Management Overview or related operational queue.
 - Related flow IDs: `F09`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Job, Activity Log, Management Log, Department, Owner
@@ -882,7 +882,7 @@ Note:
 - Entry point: Management settings.
 - Exit point: Management Overview.
 - Related flow IDs: `F09`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop
 - Design status: later
 - Main data objects: Aging Threshold, Job, Department
@@ -901,7 +901,7 @@ Note:
 - Entry point: Sidebar `ลูกค้า / CRM`.
 - Exit point: Customer Detail, Order Create/Edit with Customer preselected.
 - Related flow IDs: `F02`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Customer, Customer Primary Phone, Customer Social Contact, Customer Tier, Customer Sales Summary, Address Entry, Customer Tag, Customer Status
@@ -918,7 +918,7 @@ Note:
 - Entry point: Customer search, Order creation, Order Detail.
 - Exit point: Order creation, Order Detail, CRM Note Timeline.
 - Related flow IDs: `F02`, `F06`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Customer, Customer Primary Phone, Customer Social Contact, Customer Tier, Customer Tier Discount, Customer Sales Summary, Customer Tag, Address Entry, CRM Note, Order, Service Case, Review Album
@@ -935,7 +935,7 @@ Note:
 - Entry point: Customer Detail.
 - Exit point: Customer Detail.
 - Related flow IDs: `F02`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: later
 - Main data objects: CRM Note, Customer, Order reference, image attachment
@@ -952,7 +952,7 @@ Note:
 - Entry point: Sidebar `สินค้า / สต๊อก`, SKU selection flows, stock navigation.
 - Exit point: Product Model Detail, Ready Stock View, Stock Count, Stock Adjustment, Review Album.
 - Related flow IDs: `F02`, `F03`, `F06`, `F09`
-- Priority: `P0`
+- Priority: `starting-workflow`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Product Model, SKU Variant, Ready Stock, Production Job, Review Album, Job Reference on Product Model
@@ -969,7 +969,7 @@ Note:
 - Entry point: Product/SKU Table, SKU detail, Job creation support.
 - Exit point: SKU Variant detail, image groups, product masters, Stock Adjustment, Production Job Entry.
 - Related flow IDs: `F03`, `F05`, `F09`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Product Model, Product Color Option, SKU Variant, Ready Stock, Department Instruction Images, Production Job
@@ -986,7 +986,7 @@ Note:
 - Entry point: Product/SKU Table, Product Model Detail, Order Line entry, Stock view.
 - Exit point: Product Model Detail, SKU image groups, Ready Stock view, Stock Adjustment, Production Job Entry.
 - Related flow IDs: `F02`, `F03`, `F06`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: SKU Variant, Product Model, Product Color Option, Ready Stock
@@ -1003,7 +1003,7 @@ Note:
 - Entry point: Product Model Detail or SKU Variant Detail.
 - Exit point: Product/SKU detail.
 - Related flow IDs: `F03`, `F04`, `F05`, `F06`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet / mobile
 - Design status: ready
 - Main data objects: Product Model, SKU Variant, Department Instruction Images, Review Album
@@ -1020,7 +1020,7 @@ Note:
 - Entry point: Order Line entry, SKU Variant Detail, stock navigation.
 - Exit point: Order Line detail, Ready-to-Ship Queue, Product Purchase Order, Stock Count, Stock Adjustment.
 - Related flow IDs: `F02`, `F06`, `F13`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Ready Stock, SKU Variant, Order Line
@@ -1037,7 +1037,7 @@ Note:
 - Entry point: Ready Stock View, Stock navigation, SKU Variant Detail.
 - Exit point: Stock Adjustment movement history, Ready Stock View.
 - Related flow IDs: `F13`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: mobile / tablet
 - Design status: ready
 - Main data objects: Stock Count, SKU Variant, Ready Stock, Stock Movement, attachment
@@ -1054,7 +1054,7 @@ Note:
 - Entry point: Ready Stock View, SKU Variant Detail, Stock Count, operational correction need.
 - Exit point: Updated Ready Stock visibility and SKU Stock Movement history.
 - Related flow IDs: `F06`, `F13`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Stock Adjustment, Ready Stock, SKU Variant, Stock Movement, Management Log, attachment
@@ -1071,7 +1071,7 @@ Note:
 - Entry point: Ready Stock View, Product/SKU Table, SKU Variant Detail, manual product purchase creation.
 - Exit point: Product Stock Receipt, Ready Stock View, Payment Audit Follow-up after full receipt.
 - Related flow IDs: `F13`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Product Purchase Order, Product Purchase Order Line, Supplier, SKU Variant, Product Stock Receipt, Stock Movement, attachment, Payment Audit Follow-up
@@ -1088,7 +1088,7 @@ Note:
 - Entry point: Product Purchase Order -> `รับเข้าสินค้า`.
 - Exit point: Product Purchase Order, Ready Stock View, SKU Stock Movement.
 - Related flow IDs: `F13`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet / mobile
 - Design status: ready
 - Main data objects: Product Stock Receipt, Product Purchase Order, Product Purchase Order Line, SKU Variant, Ready Stock, Stock Movement, attachment
@@ -1105,7 +1105,7 @@ Note:
 - Entry point: Sidebar `สินค้า / สต๊อก` -> `สต๊อกวัสดุ`, waiting-materials alerts from Jobs.
 - Exit point: Material Purchase Order, Material Adjustment, Job Detail where waiting materials originated.
 - Related flow IDs: `F04`, `F10`, `F12`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Material Item, Material Category, Supplier, Material Need Note, Material Movement
@@ -1122,7 +1122,7 @@ Note:
 - Entry point: Material Stock, waiting-materials summary, manual material purchase creation.
 - Exit point: Material Stock, Payment Audit Follow-up.
 - Related flow IDs: `F12`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Material Purchase Order, Material Item, Supplier, Material Stock Receipt, attachment, Payment Audit Follow-up
@@ -1139,7 +1139,7 @@ Note:
 - Entry point: Material Stock, material count work.
 - Exit point: Updated Material Stock and material movement history.
 - Related flow IDs: `F12`
-- Priority: `P1`
+- Priority: `support`
 - Device target: desktop / tablet / mobile
 - Design status: ready
 - Main data objects: Material Adjustment, Material Item, Material Movement, attachment, Management Log
@@ -1156,7 +1156,7 @@ Note:
 - Entry point: SKU page or Review page.
 - Exit point: SKU Variant Detail or Customer Detail where linked.
 - Related flow IDs: none
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: later
 - Main data objects: Review Album, SKU Variant, Customer, Order, review images
@@ -1173,7 +1173,7 @@ Note:
 - Entry point: Finance/supporting module navigation.
 - Exit point: Expense list/export.
 - Related flow IDs: none
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: later
 - Main data objects: Expense Entry, Expense Category, evidence image
@@ -1190,7 +1190,7 @@ Note:
 - Entry point: `รายจ่าย` -> `รายการรอจ่าย` / Rak Samuk payout preparation.
 - Exit point: PV detail/history, payee payout history, PV print/signature flow.
 - Related flow IDs: `F05`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop
 - Design status: later
 - Main data objects: Payable Item, Rak Samuk Work, custom income, Rak Samuk Worker/payee, Payment Voucher, PV number
@@ -1207,7 +1207,7 @@ Note:
 - Entry point: `ตั้งค่า > ตั้งค่าสินค้า`, and mini manager modal from Product create/edit.
 - Exit point: Product Model Detail or SKU Variant Detail.
 - Related flow IDs: `F03`, `F05`, `F10`, `F11`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop
 - Design status: later
 - Main data objects: หมวดหมู่สินค้า, หมวดหมู่ย่อย, แท็กสินค้า, รายการสี, รายการลายรักสมุก, รายการลายแกะสลัก, รายการสีคริสตัล
@@ -1224,7 +1224,7 @@ Note:
 - Entry point: Customer Detail or service navigation.
 - Exit point: Ready-to-Ship Queue / Service Shipment.
 - Related flow IDs: `F06`
-- Priority: `P2`
+- Priority: `later-detail`
 - Device target: desktop / tablet
 - Design status: later
 - Main data objects: Service Case, Service Shipment, Customer, Shipment

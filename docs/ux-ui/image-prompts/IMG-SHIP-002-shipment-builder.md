@@ -27,7 +27,7 @@ Important workflow rule:
 - This screen is for selected lines from a single Order / special case only.
 - Bulk creation does not enter this screen.
 - Bulk creation uses saved Order Recipient Detail snapshots as delivery defaults and moves directly to creating Shipment documents.
-- The starting workflow has no persistent Draft Shipment. This screen is temporary pre-release work; Shipment exists only after pressing พร้อมจัดส่ง.
+- The starting workflow has no persistent saved shipment draft. This screen is temporary pre-release work; Shipment exists only after pressing พร้อมจัดส่ง.
 - Shipment Builder does not edit COD. COD is shown only as a read-only final-round signal where relevant and is disabled when unfinished custom work remains.
 - It opens from Order Detail after the admin selects ready lines in `จัดการรอบจัดส่ง` and presses `สร้างรอบจัดส่งจากรายการที่เลือก`.
 - From Order Detail, it receives recipient name, address, phone, selected delivery items, each item's main image, quantity, and carrier name when already chosen.
