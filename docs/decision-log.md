@@ -9,7 +9,7 @@ This file works with the normal `grill-with-docs` structure:
 - `docs/decision-log.md` keeps the confirmed Q&A decision set in grouped form as a supporting log.
 - `docs/qa-summary.md` restates the same discovery as handoff notes so future sessions do not restart from zero.
 - `docs/ux-ui/initial-scope.md` is a supporting working note for the chosen UX/UI starting scope, not the main project structure.
-- `docs/ux-ui/04-interaction-modal-behavior.md` captures confirmed modal/drawer/confirmation/reason/evidence/navigation behavior for P0/P1 actions.
+- `docs/ux-ui/04-interaction-modal-behavior.md` captures confirmed modal/drawer/confirmation/reason/evidence/navigation behavior for starting-workflow actions.
 
 Legacy material has been moved to `docs/archive/` and is not part of the active source of truth.
 
@@ -208,7 +208,7 @@ If documents conflict, use this order:
 - Rak Samuk Worker sees their own assigned work price. If no price exists, they see `ไม่มีราคา / ให้แจ้งราคา`.
 - Rak Samuk Worker can submit `ขอเสนอราคา` for assigned work until the related payable item is included in a finalized PV.
 - UI should use `ขอเสนอราคา`; do not use `ตีโต้` in staff-facing UI.
-- Owner/Manager approve Rak Samuk proposed prices. Finance pays/creates PV from the approved price.
+- Owner/Manager approve Rak Samuk proposed prices. Finance pays or creates PV from the approved price.
 - If the work is linked to a SKU/Product Model, the approver must always be asked whether to update the SKU Rak Samuk Standard Rate. Updating the standard rate writes Management Log with old/new price and approver.
 
 ### Completed Order, Service Case, and Special Shipment
@@ -451,7 +451,7 @@ Rules:
 - Existing `JOB-O` production detail is not edited from the Order side. Changing Job production detail opens Job Detail / Job Revision.
 - If a custom-work line already has `JOB-O`, cancelling or removing that work must start from Job Detail / Job cancellation, even if production has not started. Order Detail then reflects the cancelled Job state and reason on the custom-work line.
 - Job cancellation does not automatically change Order sales totals. Admin must adjust Order/financial records through the appropriate Order Line Edit / Review Changes / Financial Reconciliation flow when money or total needs to change.
-- Ready-stock lines that are already in any Shipment round, including Draft or Released Shipment, must be removed from or have that Shipment round cancelled before they can be edited or removed from the Order.
+- Ready-stock lines that are already in Shipment Builder temporary work or an existing released Shipment must be removed from that shipment work or have that Shipment cancelled before they can be edited or removed from the Order.
 - Lines that have been sent out or completed cannot be edited or removed from the Order; use service, return, or financial/stock adjustment flows later.
 - `แก้ไขรายการออเดอร์` still opens even when some lines are not editable; non-editable lines remain visible as read-only with the blocking reason.
 - `แก้ไขรายการออเดอร์` must show `Review Changes` before save. The review shows only changed lines, what was added/removed/edited, and effects on total, stock, Job, and Shipment.
@@ -693,7 +693,7 @@ Rules:
 - Rak Samuk Worker cannot mark work done and cannot move workflow status.
 - Admin/Sales, Manager, Owner, and Coloring receive Rak Samuk Work back with `รับงานรักสมุกกลับ`; Woodwork is excluded after work leaves woodwork.
 - The Rak Samuk User can be changed before `รับเข้าโรงงานสี` without a required reason, but the change is recorded in Activity Log / Rak Samuk work history.
-- `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี` in the starting workflow; there is no destination picker in P0.
+- `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี` in the starting workflow; there is no destination picker in the starting workflow.
 - Rak Samuk worker history shows:
   - รับงานกลับแล้ว / รอเข้ารอบจ่าย
   - เข้ารอบจ่ายแล้ว
@@ -1066,9 +1066,9 @@ Not in first scope:
 
 - Admin creates Shipment.
 - Delivery team does not create or split Shipment.
-- P0 has no persistent Draft Shipment. Shipment Builder is a temporary working screen, and a Shipment exists only when Admin presses `พร้อมจัดส่ง`.
+- The starting workflow has no persistent Draft Shipment. Shipment Builder is a temporary working screen, and a Shipment exists only when Admin presses `พร้อมจัดส่ง`.
 - Exiting Shipment Builder before release discards the temporary work after warning; no draft record is created.
-- Pressing `พร้อมจัดส่ง` creates/releases the Shipment to the delivery team.
+- Pressing `พร้อมจัดส่ง` creates and releases the Shipment to the delivery team.
 - Shipment creates Delivery Note and Shipping Sheet together.
 - User can print both, Delivery Note only, or Shipping Sheet only.
 - Delivery Note has item list, quantity, small image if available, and notes; no price and no COD amount.
@@ -1115,7 +1115,7 @@ Not in first scope:
 - Bulk `บันทึกว่าส่งออกแล้ว` uses a modal summarizing count and selected Shipments.
 - Delivery send-out does not require tracking or delivery evidence.
 - After row send-out or bulk send-out, the Shipment leaves the Delivery Team's active today list and enters admin `ยืนยันการจัดส่ง`.
-- Delivery history in P0 is a simple `ส่งออกแล้ววันนี้` view only; full delivery history/search is not included.
+- Delivery history in the starting workflow is a simple `ส่งออกแล้ววันนี้` view only; full delivery history/search is not included.
 - Delivery Team can add photo/note later from `ส่งออกแล้ววันนี้` until Admin closes the Shipment.
 - Bulk `บันทึกว่าส่งออกแล้ว` applies only to `รายการต้องจัดส่งวันนี้`, including no-date Shipments.
 - If a shipment cannot be sent, the packing/delivery team contacts admin outside the system in the starting workflow; there is no `ส่งไม่ได้` action or issue queue.
@@ -1481,7 +1481,7 @@ Not in first scope:
 - PV number is issued only after payment is confirmed.
 - PV number runs by Buddhist year and month, e.g. `PV-2568-03-004`.
 - PV form should be similar to the existing A4 sample.
-- Slip/evidence at PV finalize is optional. There is no separate P0 PV `รอจ่ายเงิน` status because `รายการรอจ่าย` covers preparation.
+- Slip/evidence at PV finalize is optional. There is no separate starting-workflow PV `รอจ่ายเงิน` status because `รายการรอจ่าย` covers preparation.
 - Manual PV can include custom text lines and manually entered amounts, with Review before save/finalize.
 - PV roles:
   - ผู้จัดทำ
@@ -1495,7 +1495,7 @@ Not in first scope:
 - If a finalized PV is cancelled/voided, included payable items return to `รายการรอจ่าย` with trace to the voided PV and prior price.
 - Cancelling/voiding a finalized PV is Owner/Manager only, requires a reason, and writes Management Log.
 - A deactivated worker/payee can still be paid for pending payable items with a `ปิดใช้งาน` badge; reactivation is not required.
-- P0 person-level payout history shows pending payable items plus created/voided PVs with links. Do not build a full payroll ledger in P0.
+- Starting-workflow person-level payout history shows pending payable items plus created/voided PVs with links. Do not build a full payroll ledger in the starting workflow.
 - Exact printed detail table for Rak Samuk PV is deferred.
 
 ## Reports

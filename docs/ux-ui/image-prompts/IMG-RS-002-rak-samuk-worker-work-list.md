@@ -6,7 +6,7 @@ Create a low-fidelity mobile wireframe for the Rak Samuk Worker Work List. Inher
 
 ## 2. High-fidelity UI mockup prompt
 
-Create a high-fidelity mobile work list UI for an outsourced Thai Rak Samuk craft worker. Preserve the approved Admin Dashboard visual language through typography, chips, clean white cards, modest radius, restrained colors, and calm operational styling, but make it simpler and mobile-first. Do not include the desktop sidebar or internal admin navigation. Title `งานที่ต้องทำ`. Show simple cards with furniture detail images, work name `ตู้โชว์ไม้สักแกะลาย`, instruction `ลายดอกพิกุลหน้าบาน`, quantity `1 ชิ้น`, urgent chip `งานด่วน`, and own price state `450 บาท/ชิ้น` or warning `ไม่มีราคา / ให้แจ้งราคา` with button `แจ้งราคา`. Include a limited detail state/sheet showing larger images, full Rak Samuk instructions, quantity, and own price again. Include secondary navigation `ประวัติการทำงาน`.
+Create a high-fidelity mobile work list UI for an outsourced Thai Rak Samuk craft worker. Preserve the approved Admin Dashboard visual language through typography, chips, clean white cards, modest radius, restrained colors, and calm operational styling, but make it simpler and mobile-first. Do not include the desktop sidebar or internal admin navigation. Title `งานที่ต้องทำ`. Show simple cards with furniture detail images, work name `ตู้โชว์ไม้สักแกะลาย`, instruction `ลายดอกพิกุลหน้าบาน`, quantity `1 ชิ้น`, urgent chip `งานด่วน`, and own price state `450 บาท/ชิ้น` or warning `ไม่มีราคา / ให้แจ้งราคา` with button `ขอเสนอราคา`. Include a limited detail state/sheet showing larger images, full Rak Samuk instructions, quantity, and own price again. Include secondary navigation `ประวัติการทำงาน`.
 
 ## 3. Thai UI labels to preserve
 
@@ -20,7 +20,7 @@ Create a high-fidelity mobile work list UI for an outsourced Thai Rak Samuk craf
 - `ราคางานของฉัน`
 - `มีราคาแล้ว`
 - `ไม่มีราคา / ให้แจ้งราคา`
-- `แจ้งราคา`
+- `ขอเสนอราคา`
 - `ส่งราคา`
 - `รับงานกลับแล้ว`
 - `จ่ายแล้ว`
@@ -44,7 +44,7 @@ Create a high-fidelity mobile work list UI for an outsourced Thai Rak Samuk craf
 - Quantity chip
 - Own price display
 - Missing-price chip
-- `แจ้งราคา` action
+- `ขอเสนอราคา` action
 - Urgent chip
 - History link
 - Empty state

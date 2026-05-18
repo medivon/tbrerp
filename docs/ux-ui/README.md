@@ -21,7 +21,7 @@ Do not create new requirement summaries in this folder. If a requirement, term, 
 - `01-flow-map.md`: maps the confirmed operational flows and handoffs between roles/screens.
 - `02-screen-inventory.md`: lists screens needed for the confirmed starting scope and tracks which ones still need detailed specs.
 - `03-navigation-map.md`: defines how users move through the Stage 1 screens and role-based navigation.
-- `04-interaction-modal-behavior.md`: consolidates confirmed modal/drawer/confirmation/reason/evidence/navigation behavior for P0/P1 actions.
+- `04-interaction-modal-behavior.md`: consolidates confirmed modal/drawer/confirmation/reason/evidence/navigation behavior for starting-workflow actions.
 - `design-system/`: shared shell and reusable UI behavior such as table pagination.
 - `open-questions.md`: captures narrow UX/UI questions that block design details only; do not use it to restart discovery.
 - `screens/`: future per-screen UX specs.

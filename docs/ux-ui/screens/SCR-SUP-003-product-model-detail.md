@@ -87,7 +87,7 @@ This page is not an inline stock editor. Stock changes happen through Product Pu
 | Status | สถานะ | เปิดใช้งาน | Product Model | Hidden from normal selection if inactive. |
 | Main image | รูปหลัก | Product family image | Product Model | Optional; show placeholder if missing. |
 | Additional images | รูปรอง / รูปเพิ่มเติม | Product angles | Product Model | Managed in SKU Image Groups. |
-| Department images | รูปตามแผนก | Wood/color/rak samuk images | Product Model | Fallback instructions for SKU Variants. |
+| Department images | รูปตามแผนก | Woodwork/Coloring/Rak Samuk images | Product Model | Fallback instructions for SKU Variants. |
 | Review Album | คลังรีวิว | 18 รูป | Review Album | Separate from product images. |
 | Source Job | อ้างอิง Job | JOB-O-0241 | Product Model | Traceability only; no copying/syncing. |
 

@@ -18,7 +18,7 @@ Order status and Shipment status are deliberately separate. `รอยืนย�
 
 Post-confirmation Order Line Edit has no draft/autosave state. Adding ready-stock lines reserves stock when saved, removing safe ready-stock lines releases stock, quantity changes adjust the reservation difference, and adding complete custom-work lines creates `JOB-O` when saved. Blocked lines remain visible as read-only rows with reasons so users can still edit other safe lines.
 
-If a custom-work line already has `JOB-O`, cancellation starts from the Job flow even when production has not started. Order Detail reflects the cancelled custom line and reason afterward. If a ready-stock line is already in a Draft or Released Shipment round, the line must be removed from that round or the round must be cancelled before Order Line Edit can change or remove it.
+If a custom-work line already has `JOB-O`, cancellation starts from the Job flow even when production has not started. Order Detail reflects the cancelled custom line and reason afterward. If a ready-stock line is already in Shipment Builder temporary work or an existing released Shipment, the line must be removed from that shipment work or the Shipment must be cancelled before Order Line Edit can change or remove it.
 
 If price or discount changes after Payment/COD records already exist, the existing received-money records remain immutable and Review Changes blocks saving until the edited sales total is reconciled with Payment Records, COD to collect, or adjustment/refund/credit notes. Refund/credit remains a financial note/follow-up in the first scope, not a status that reopens the Order.
 

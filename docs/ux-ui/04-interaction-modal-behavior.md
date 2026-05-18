@@ -1,6 +1,6 @@
 # Interaction & Modal Behavior
 
-This file consolidates the completed Interaction & Modal Behavior Grill Me round for P0/P1 UX behavior. It is source-of-truth UX/domain behavior, not an implementation plan, database design, API contract, issue plan, or component specification.
+This file consolidates the completed Interaction & Modal Behavior Grill Me round for starting-workflow UX behavior. It is source-of-truth UX/domain behavior, not an implementation plan, database design, API contract, issue plan, or component specification.
 
 Source checkpoint notes were IM-001 through IM-135, now archived under `docs/archive/grill-notes/interaction-modal/`. Latest owner answers win where older docs conflict.
 
@@ -61,7 +61,7 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 
 ## Shipment And Delivery
 
-- P0 has no `ร่างรอบจัดส่ง`. Shipment Builder is a temporary working screen. A Shipment is created only when Admin presses `พร้อมจัดส่ง`.
+- The starting workflow has no `ร่างรอบจัดส่ง`. Shipment Builder is a temporary working screen. A Shipment is created only when Admin presses `พร้อมจัดส่ง`.
 - If the user exits Shipment Builder after editing but before release, show `ออกโดยไม่สร้างรอบจัดส่ง` and `อยู่ต่อ`.
 - Before `พร้อมจัดส่ง`, show a confirmation modal summarizing recipient/address/carrier/items/COD where relevant.
 - Editing recipient/address/carrier/remarks before release does not require a reason. Log old/new values in Activity Log.
@@ -88,7 +88,7 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 - `บันทึกรับเงิน` opens as a modal/drawer in the current Order, Shipment, or follow-up context. Evidence is required. After save, update the current page/drawer summary without navigating away.
 - A follow-up can close when there is either a Payment Record with evidence or an explanatory note sufficient for the operational audit trail.
 - If actual COD is lower than expected, record actual amount, evidence, and reason, then the follow-up can close. Do not change Order total.
-- If actual COD is higher than expected, record the accepted amount up to the expected amount and add an abnormal COD note. Handle excess outside the P0 workflow.
+- If actual COD is higher than expected, record the accepted amount up to the expected amount and add an abnormal COD note. Handle excess outside the starting workflow.
 - If payment evidence changes but amount does not change, use a correction modal showing old/new evidence, require a reason, write Management Log, and do not reopen the follow-up automatically.
 - If Payment Record amount changes after follow-up was closed, use a correction modal, require reason, write Audit Log, and reopen/recheck the follow-up.
 - If Payment Record amount changes before follow-up is closed, require reason, write Management Log, and update the follow-up summary.
@@ -105,7 +105,7 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 
 - The editable payout workspace is `รายการรอจ่าย` / `ตัดรอบจ่าย`, not the PV document.
 - Payable/income records are item-first. Create individual payable items, then group by payee/worker in the list. Do not create a persistent payee container first.
-- P0 focuses first on Rak Samuk, while allowing custom income items for future flexibility. Do not label the area as full Payroll in P0.
+- The starting workflow focuses first on Rak Samuk, while allowing custom income items for future flexibility. Do not label the area as full Payroll in the starting workflow.
 - The pending payout list groups primarily by payee/worker. The user opens one person to review items.
 - `รอบตัดจ่าย` / `รายการรอจ่าย` uses `กำลังตรวจรายการ` and `สร้าง PV แล้ว`. Do not add a separate `พร้อมสร้าง PV` status.
 - Items without price show `ยังไม่มีราคา`; they cannot be included in PV creation.
@@ -115,14 +115,14 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 - Custom income added by mistake before PV can be edited or deleted with Activity Log.
 - Before payment/PV confirmation, review payee, selected work/custom lines, total, internal PV roles, and optional evidence.
 - PV number is issued only after payment is confirmed / PV is finalized.
-- At PV save/finalize, slip/evidence is optional. There is no separate P0 PV `รอจ่ายเงิน` status because `รายการรอจ่าย` handles preparation.
+- At PV save/finalize, slip/evidence is optional. There is no separate starting-workflow PV `รอจ่ายเงิน` status because `รายการรอจ่าย` handles preparation.
 - Manual PV can include custom text lines with manually entered amounts and requires Review before save/finalize.
 - Prices from `รายการรอจ่าย` cannot be edited inside PV. If a price is wrong, correct/confirm it in the payout layer before creating/finalizing PV.
 - After creating/finalizing PV, included items are locked. Finalized PV can be printed/reprinted from PV detail/history and from payee/worker history where referenced.
 - If a worker/payee is deactivated but still has pending payable items, payment/PV can still be processed with a `ปิดใช้งาน` badge. Do not require reactivation.
 - If a finalized PV is cancelled/voided, included payout items return to `รายการรอจ่าย` with trace to the voided PV and prior price. Owner/Manager can edit the price with reason if needed.
 - Cancelling/voiding a finalized PV is Owner/Manager only, requires a reason, and writes Management Log.
-- P0 person-level payout history shows pending payable items plus created/voided PVs with links to open PV. Do not build a full payroll ledger in P0.
+- Starting-workflow person-level payout history shows pending payable items plus created/voided PVs with links to open PV. Do not build a full payroll ledger in the starting workflow.
 
 ## Product, Stock, And Material
 
@@ -151,7 +151,7 @@ Source checkpoint notes were IM-001 through IM-135, now archived under `docs/arc
 
 ## Conflicts Resolved
 
-- Older docs allowed Draft Shipment. Latest rule: no `ร่างรอบจัดส่ง` in P0; Shipment Builder is temporary pre-release work.
+- Older docs allowed Draft Shipment. Latest rule: no `ร่างรอบจัดส่ง` in the starting workflow; Shipment Builder is temporary pre-release work.
 - Older docs allowed COD editing in Shipment Builder and Shipment-level COD per round. Latest rule: no COD editing in Shipment Builder, and COD is only for the final Shipment round that completes delivery for the Order.
 - Older docs treated PV as the editable payout workbench. Latest rule: `รายการรอจ่าย` / `ตัดรอบจ่าย` is the workbench; PV is the finalized payment document.
 - Older broad Product/SKU wording said deactivate/reopen requires reason. Latest interaction rule: deactivation requires reason; reopen requires confirmation and Management Log but no reason.

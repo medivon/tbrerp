@@ -67,7 +67,7 @@ Create a high-fidelity tablet/mobile ERP work queue UI for a Thai furniture colo
 
 ## 7. What not to show
 
-- Do not show customer private data, phone/address, CRM notes, payment data, sales price, or Rak Samuk payout/rates.
+- Do not show customer private data, Order ID, phone/address, CRM notes, payment data, sales price, or Rak Samuk payout/rates.
 - Do not mix waiting intake items into the active Coloring Queue.
 - Do not show admin-only edit controls for Job master data.
 - Do not make the queue a dense desktop table.

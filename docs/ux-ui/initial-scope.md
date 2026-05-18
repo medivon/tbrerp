@@ -686,7 +686,7 @@ Rules:
 - Rak Samuk Worker cannot mark work complete or move workflow status.
 - Rak Samuk User can be changed before `รับเข้าโรงงานสี` without required reason, but the change is recorded in Activity Log / Rak Samuk work history.
 - Internal staff receives work back with `รับงานรักสมุกกลับ`.
-- `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`; P0 has no alternate destination picker.
+- `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`; the starting workflow has no alternate destination picker.
 
 ### Price Visibility and Pricing
 
@@ -738,7 +738,7 @@ Confirmed behavior:
 Confirmed behavior:
 
 - Admin creates Shipment.
-- P0 has no persistent Draft Shipment. Shipment Builder is temporary pre-release work.
+- The starting workflow has no persistent Draft Shipment. Shipment Builder is temporary pre-release work.
 - A Shipment is created/released only when Admin presses `พร้อมจัดส่ง`.
 - Shipment creates Delivery Note and Shipping Sheet together.
 - User can preview documents before release and print both or either after release.
@@ -794,7 +794,7 @@ Rules:
 - After `ส่งออกแล้ว`, the Shipment leaves the Delivery Team's active today list and enters admin `ยืนยันการจัดส่ง`.
 - Delivery reports use the date/time of `ส่งออกแล้ว`, not the later admin close date.
 - If a released Shipment should not leave yet, keep it held/pending in the send-out step rather than rolling upstream status backward.
-- Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in P0.
+- Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in the starting workflow.
 - Delivery Team can add photo/note later from `ส่งออกแล้ววันนี้` until Admin closes the Shipment.
 - The starting workflow does not use carrier-specific evidence settings.
 - Admin records or corrects Tracking/evidence in `ยืนยันการจัดส่ง`.
@@ -1236,7 +1236,7 @@ Confirmed behavior:
 - PV number is issued only after payment is confirmed.
 - PV number runs by Buddhist year and month, such as `PV-2568-03-004`.
 - Payment Voucher is a central document type, but first automated flow supports Rak Samuk payout.
-- PV evidence/slip at finalize is optional. Do not add a separate P0 PV `รอจ่ายเงิน` status.
+- PV evidence/slip at finalize is optional. Do not add a separate starting-workflow PV `รอจ่ายเงิน` status.
 - Manual PV can include custom text lines and manually entered amounts with Review before finalize.
 - Signature roles: ผู้จัดทำ, ผู้อนุมัติ, ผู้จ่ายเงิน, ผู้รับเงิน.
 - ผู้จัดทำ/ผู้อนุมัติ/ผู้จ่ายเงิน can be handled digitally in system.

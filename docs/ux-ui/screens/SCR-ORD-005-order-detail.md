@@ -295,7 +295,7 @@ Guard rules:
 - If only some lines are blocked, still allow the user to enter `แก้ไขรายการออเดอร์`; blocked lines remain visible as read-only with the reason.
 - Existing `JOB-O` production detail cannot be edited from Order Detail or Order item edit; use Job Detail / Job Revision.
 - A custom-work line with an existing `JOB-O` cannot be removed from Order Line Edit. Cancel the `JOB-O` from Job Detail / Job cancellation first, even if production has not started; then Order Detail reflects the cancelled line and reason.
-- A ready-stock line already in any Shipment round, including Draft or Released Shipment, must be removed from that round or the Shipment round must be cancelled before it can be edited or removed from the Order.
+- A ready-stock line already in Shipment Builder temporary work or an existing released Shipment must be removed from that shipment work or the Shipment must be cancelled before it can be edited or removed from the Order.
 - Sent-out or completed lines cannot be edited or removed from the Order; use service, return, or adjustment flows later.
 - Adding a complete custom-work line after confirmation creates `JOB-O` when Review Changes is saved.
 - Adding a ready-stock line after confirmation reserves stock when Review Changes is saved.

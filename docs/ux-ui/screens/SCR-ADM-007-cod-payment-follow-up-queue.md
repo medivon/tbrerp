@@ -27,7 +27,7 @@ This screen helps Admin/Sales users in their own scope, Finance, Manager, or Own
 - Correct Payment Records only with visible old/new values and reason.
 - Re-check a closed follow-up if the Payment Record amount used to close it is later corrected.
 - Record actual COD lower than expected with actual amount, evidence, and reason without changing Order total.
-- Record actual COD higher than expected by accepting only the expected amount for this context and adding an abnormal COD note; handle excess outside P0 workflow.
+- Record actual COD higher than expected by accepting only the expected amount for this context and adding an abnormal COD note; handle excess outside the starting workflow.
 - Avoid overpayment workflow complexity; record the accepted Order/context amount and handle any excess outside this workflow.
 
 ## 4. Entry Points

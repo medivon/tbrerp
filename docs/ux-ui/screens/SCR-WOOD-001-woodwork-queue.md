@@ -17,7 +17,7 @@ The Woodwork Queue is the simple mobile/tablet work list for the woodwork depart
 - Notice urgent or abnormal work.
 - Open the Job work card to review instructions.
 - Take only woodwork actions.
-- Avoid customer private data, payment data, and sales prices.
+- Avoid customer private data, Order ID, payment data, and sales prices.
 
 ## 4. Entry Points
 
@@ -108,7 +108,7 @@ Show `ไม่มีงานที่ต้องทำตอนนี้` wit
 ## 13. Permission Rules
 
 - Woodwork users see only work needed for woodwork.
-- Woodwork users do not see customer private data, Customer phone/address, CRM notes, payment data, sales price, or Rak Samuk payout/rates.
+- Woodwork users do not see customer private data, Order ID, Customer phone/address, CRM notes, payment data, sales price, or Rak Samuk payout/rates.
 - Woodwork users see limited timeline relevant to their own work only.
 - Higher-permission users may act on behalf with log where allowed.
 - Owner is not an exclusive assignment lock for shared department work.
@@ -120,11 +120,11 @@ Show `ไม่มีงานที่ต้องทำตอนนี้` wit
 - Keep text short; full instructions live in the Job Detail Work Card.
 - Use Thai action labels exactly where confirmed.
 - Make `รอวัตถุดิบ` visible in the main list, not hidden in another tab.
-- Do not include customer name, phone, address, sales price, payment state, or CRM data.
+- Do not include customer name, Order ID, phone, address, sales price, payment state, or CRM data.
 
 ## 15. Image Generation Prompt
 
-Create a mobile/tablet ERP work queue UI for Thai furniture woodworkers. Page title "งานที่ต้องทำ". Show large image cards for jobs such as "JOB-O-2568-0042 / งานลูกค้า / ตู้โชว์ไม้สักแกะลาย", quantity, urgent chip "งานด่วน", delivery date, and status "รอรับงาน". Include simple action buttons "รับงาน", "รอวัตถุดิบ", "ส่งไปสี", "ส่งไปรักสมุก". No customer names, no phone numbers, no prices. Practical shop-floor UI, large touch targets, clean neutral design.
+Create a mobile/tablet ERP work queue UI for Thai furniture woodworkers. Page title "งานที่ต้องทำ". Show large image cards for jobs such as "JOB-O-2568-0042 / งานลูกค้า / ตู้โชว์ไม้สักแกะลาย", quantity, urgent chip "งานด่วน", delivery date, and status "รอรับงาน". Include simple action buttons "รับงาน", "รอวัตถุดิบ", "ส่งไปสี", "ส่งไปรักสมุก". No customer names, no Order ID, no phone numbers, no prices. Practical shop-floor UI, large touch targets, clean neutral design.
 
 ## 16. Open UX Questions
 

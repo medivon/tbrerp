@@ -35,7 +35,7 @@ The Rak Samuk Worker Work List shows an outsource worker only their assigned Rak
 - Main content: mobile-first list of assigned work cards.
 - Work card: main image, work name, quantity, Rak Samuk instruction summary, urgent chip if any, own price/missing-price state.
 - Limited work detail: larger images, full Rak Samuk instructions, quantity, and own price/missing-price state.
-- Card action: open work detail or `แจ้งราคา` when missing price.
+- Card action: open work detail or `ขอเสนอราคา` when missing price.
 - Secondary tab/link: `ประวัติการทำงาน`.
 - Use the simple mobile worker shell; no desktop admin sidebar on mobile.
 
@@ -72,7 +72,7 @@ The Rak Samuk Worker Work List shows an outsource worker only their assigned Rak
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
 | Open work | เปิดงาน | Assigned Rak Samuk Worker | Opens limited work detail. | No |
-| Propose price | แจ้งราคา | Assigned Rak Samuk Worker, only missing-price item | Opens Missing-price Proposal. | No |
+| Propose price | ขอเสนอราคา | Assigned Rak Samuk Worker, only missing-price item | Opens Missing-price Proposal. | No |
 | Submit proposed price | ส่งราคา | Assigned Rak Samuk Worker, only missing-price item | Sends proposed price for approval. | Yes |
 | Open history | ประวัติการทำงาน | Rak Samuk Worker | Opens own work history. | No |
 
@@ -95,7 +95,7 @@ Show `ยังไม่มีงานที่ต้องทำ` with a secon
 
 - Loading fails: `โหลดงานไม่สำเร็จ` with retry.
 - Permission fails: `บัญชีนี้ไม่มีสิทธิ์ดูงานนี้`.
-- Price proposal unavailable: `รายการนี้มีราคาแล้ว ไม่ต้องแจ้งราคา`.
+- Price proposal unavailable: `รายการนี้มีราคาแล้ว ไม่ต้องขอเสนอราคา`.
 - Submit price fails: `ส่งราคาไม่สำเร็จ`.
 
 ## 13. Permission Rules
@@ -118,7 +118,7 @@ Show `ยังไม่มีงานที่ต้องทำ` with a secon
 
 ## 15. Image Generation Prompt
 
-Create a mobile work list UI for an outsourced Thai Rak Samuk craft worker. Title "งานที่ต้องทำ". Show simple cards with furniture detail images, work name "ตู้โชว์ไม้สักแกะลาย", instruction "ลายดอกพิกุลหน้าบาน", quantity 1, urgent chip "งานด่วน", and own price state "450 บาท/ชิ้น" or warning "ไม่มีราคา / ให้แจ้งราคา" with button "แจ้งราคา". No customer names, no Order ID, no sales price, no internal admin controls.
+Create a mobile work list UI for an outsourced Thai Rak Samuk craft worker. Title "งานที่ต้องทำ". Show simple cards with furniture detail images, work name "ตู้โชว์ไม้สักแกะลาย", instruction "ลายดอกพิกุลหน้าบาน", quantity 1, urgent chip "งานด่วน", and own price state "450 บาท/ชิ้น" or warning "ไม่มีราคา / ให้แจ้งราคา" with button "ขอเสนอราคา". No customer names, no Order ID, no sales price, no internal admin controls.
 
 ## 16. Open UX Questions
 

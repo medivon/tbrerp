@@ -1,4 +1,4 @@
-# Open Questions
+# UX Questions Register
 
 ## Order Workflow Follow-up Questions
 
@@ -77,7 +77,7 @@ Decision:
 - It does not block Order or Shipment operation.
 - Shipment Builder shows acknowledgement when selected ready-stock lines have negative/insufficient stock.
 
-## Recently Resolved P0 UX / Needs-decision Questions
+## Recently Resolved Starting-workflow UX Questions
 
 ### OQ-IA-001 - Identity and access consolidation
 
@@ -105,7 +105,7 @@ Decision:
 - Delivery Team may attach optional `รูปหลักฐานจัดส่ง` on an individual Shipment, but send-out does not require evidence.
 - After send-out, the Shipment leaves the active today list and enters admin `ยืนยันการจัดส่ง`.
 - Admin records Tracking or at least one delivery evidence photo before closing Shipment.
-- Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in P0.
+- Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in the starting workflow.
 
 ### OQ-UX-002 - Rak Samuk worker and receive-back boundary
 
@@ -116,7 +116,7 @@ Decision:
 - Rak Samuk Worker cannot mark work complete or move workflow status.
 - Sending work to Rak Samuk must select the Rak Samuk Worker immediately; unknown worker means the work is not sent yet.
 - `รับงานรักสมุกกลับ` always routes the Job to `รอรับเข้าโรงงานสี`.
-- P0 has no receive-back destination picker.
+- The starting workflow has no receive-back destination picker.
 
 ### OQ-UX-003 - Manager unfinished-work default
 
@@ -127,7 +127,7 @@ Decision:
 - `งานด่วน` is set or changed from the selected-row side drawer.
 - `รอวัตถุดิบ` is a high blocker and sorts above normal aged work.
 
-## Recently Resolved P1 UX / Needs-decision Questions
+## Recently Resolved Support UX Questions
 
 ### OQ-UX-004 - Rak Samuk missing-price proposal and approval
 
@@ -147,7 +147,7 @@ Decision:
 
 - IM-001 to IM-135 are complete enough for source-of-truth consolidation.
 - Use `docs/ux-ui/04-interaction-modal-behavior.md` as the consolidated interaction behavior source.
-- No P0 Draft Shipment exists. Shipment Builder is temporary pre-release work, and Shipment exists only after `พร้อมจัดส่ง`.
+- No persistent Draft Shipment exists in the starting workflow. Shipment Builder is temporary pre-release work, and Shipment exists only after `พร้อมจัดส่ง`.
 - COD is allowed only on the final Shipment round that completes delivery for the Order; Shipment Builder does not edit COD.
 - Production photos/evidence are optional, including ready/complete, and can be attached later after Job completion.
 - Missing or wrong production detail is not a system workflow. Workers ask outside the system; there is no special note/action/log requirement and no open question remains.

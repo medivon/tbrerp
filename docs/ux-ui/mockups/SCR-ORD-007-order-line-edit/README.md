@@ -20,7 +20,7 @@ Latest workflow decisions require:
 
 - No Draft/autosave state after Order confirmation.
 - Existing `JOB-O` production detail and cancellation route to Job Detail / Job Revision / Job cancellation.
-- Ready-stock lines already in Draft or Released Shipment rounds cannot be changed until removed from that round or the round is cancelled.
+- Ready-stock lines already in Shipment Builder temporary work or an existing released Shipment cannot be changed until removed from that shipment work or until the Shipment is cancelled.
 - Adding/changing a ready-stock line uses the same SKU หลัก first, then color / SKU ย่อย selection model as Order Create/Edit.
 - Changing SKU/color releases the old SKU ย่อย reservation and reserves the newly selected SKU ย่อย only after Review Changes is saved.
 - Sent/completed lines remain read-only.

@@ -181,7 +181,7 @@ A: Missing-permission actions are hidden. State-blocked actions remain visible b
 **Q: What are the reusable reason/evidence rules?**
 A: Reason is required only for defined risky actions. One reason can cover a save batch if any included change requires it. Payment Record evidence is required; Shipment close requires Tracking or at least one delivery evidence photo; production, Expense, PV, stock count/adjustment, and material adjustment evidence are optional unless a specific action says otherwise.
 
-**Q: Does P0 have Draft Shipment?**
+**Q: Does the starting workflow have a Draft Shipment?**
 A: No. Shipment Builder is temporary pre-release work. Shipment exists only after Admin presses `พร้อมจัดส่ง`.
 
 **Q: Can Shipment Builder edit COD?**
@@ -805,7 +805,7 @@ A: No in first scope.
 A: Split Production Lots, not one huge Job.
 
 **Q: Where does work go after `รับงานรักสมุกกลับ`?**
-A: It always enters `รอรับเข้าโรงงานสี` in P0. There is no alternate destination picker.
+A: It always enters `รอรับเข้าโรงงานสี` in the starting workflow. There is no alternate destination picker.
 
 ## 15. Production
 
@@ -1244,10 +1244,10 @@ A: Admin.
 A: No.
 
 **Q: Is Draft Shipment allowed?**
-A: No. Latest interaction decision removes persistent Draft Shipment from P0. Shipment Builder is temporary pre-release work, and Shipment exists only after Admin presses `พร้อมจัดส่ง`.
+A: No. Latest interaction decision removes persistent Draft Shipment from the starting workflow. Shipment Builder is temporary pre-release work, and Shipment exists only after Admin presses `พร้อมจัดส่ง`.
 
-**Q: What happens to items inside Draft Shipment?**
-A: Not applicable in P0 because there is no Draft Shipment.
+**Q: What happens to selected items before Shipment Builder release?**
+A: They remain in temporary Shipment Builder work; no Draft Shipment is persisted in the starting workflow.
 
 **Q: What documents does Shipment create?**
 A: Delivery Note and Shipping Sheet together.

@@ -158,7 +158,7 @@ Design status:
 - Design status: ready
 - Main data objects: Draft Order, Customer, Address Entry, Order Line
 - Main actions: Open draft, continue draft, create a new Order.
-- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-008-draft-order-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-008-draft-order-queue.md`; `docs/ux-ui/mockups/SCR-ADM-008-draft-order-queue/SCR-ADM-008-approved.png`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 Note:
 
@@ -414,7 +414,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Waiting for Materials
 - Main actions: Open Job, choose role-allowed action.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F04/F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-WOOD-001-woodwork-queue.md`; `docs/ux-ui/image-prompts/IMG-WOOD-001-woodwork-queue.md`; `docs/ux-ui/01-flow-map.md` F04/F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### WDW-002 - Woodwork Job Work Card
 
@@ -431,7 +431,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Delivery Date, Activity Log
 - Main actions: `รับงาน`, `รอวัตถุดิบ`, `ส่งไปสี`, `ส่งไปรักสมุก`, `กำลังส่งไปแกะสลัก`.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F04/F05; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-WOOD-001-woodwork-queue.md`; `docs/ux-ui/image-prompts/IMG-WOOD-001-woodwork-queue.md`; `docs/ux-ui/01-flow-map.md` F04/F05; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### WDW-003 - Woodwork History
 
@@ -448,7 +448,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Activity Log
 - Main actions: View past work.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F04; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-WOOD-002-woodwork-job-history.md`; `docs/ux-ui/01-flow-map.md` F04; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ## 5. Coloring
 
@@ -467,7 +467,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Department, Activity Log
 - Main actions: Open Job, `รับเข้าโรงงานสี`.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F04/F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-COLOR-001-coloring-intake-queue.md`; `docs/ux-ui/01-flow-map.md` F04/F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### CLR-002 - Coloring Work Queue
 
@@ -484,7 +484,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Waiting for Materials
 - Main actions: Open Job, choose role-allowed action.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F04/F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-COLOR-002-coloring-work-queue.md`; `docs/ux-ui/image-prompts/IMG-COLOR-002-coloring-work-queue.md`; `docs/ux-ui/01-flow-map.md` F04/F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### CLR-003 - Coloring Job Work Card
 
@@ -501,7 +501,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Department Instruction Images, Urgent Label, Delivery Date, Activity Log
 - Main actions: `รับงาน`, `รอวัตถุดิบ`, `ส่งไปรักสมุก`, `รับเข้าโรงงานสี`, `งานเสร็จ/พร้อมส่ง`.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F04/F05/F06; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-COLOR-002-coloring-work-queue.md`; `docs/ux-ui/image-prompts/IMG-COLOR-002-coloring-work-queue.md`; `docs/ux-ui/01-flow-map.md` F04/F05/F06; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### CLR-004 - Coloring History
 
@@ -621,7 +621,7 @@ Note:
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Rak Samuk Work, Job, Activity Log
-- Main actions: Confirm received back; system routes to `รอรับเข้าโรงงานสี` with no P0 destination picker.
+- Main actions: Confirm received back; system routes to `รอรับเข้าโรงงานสี` with no starting-workflow destination picker.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-007 - Rak Samuk Worker History
@@ -660,10 +660,10 @@ Note:
 - Main actions: Search, filter/sort/group, select eligible Orders, open ready items, create Shipment, bulk-create eligible simple Shipments.
 - Related source docs: `docs/ux-ui/screens/SCR-SHIP-001-ready-to-ship-queue.md`; `docs/ux-ui/image-prompts/IMG-SHIP-001-ready-to-ship-queue.md`; `docs/ux-ui/mockups/SCR-SHIP-001-ready-to-ship-queue/SCR-SHIP-001-content-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
-### SHP-002 - Shipment Creation
+### SHP-002 - Shipment Builder
 
 - Screen ID: `SHP-002`
-- Screen name: Shipment Creation
+- Screen name: Shipment Builder
 - Thai UI label: `สร้างรอบจัดส่ง`
 - Primary actor: Admin
 - Purpose: Create Shipment from selected ready-to-ship items.
@@ -674,7 +674,7 @@ Note:
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Shipment, Order, Order Line, Job, Address Snapshot, Delivery Note, Shipping Sheet
-- Main actions: Review selected ready lines, edit delivery info/note where needed, preview documents, confirm `พร้อมจัดส่ง`. Shipment Builder does not edit COD and does not save Draft Shipment in P0.
+- Main actions: Review selected ready lines, edit delivery info/note where needed, preview documents, confirm `พร้อมจัดส่ง`. Shipment Builder does not edit COD and does not persist a Draft Shipment in the starting workflow.
 - Related source docs: `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`; `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`; `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SHP-004 - Released Shipment Detail
@@ -833,7 +833,7 @@ Note:
 - Device target: tablet / mobile
 - Design status: ready
 - Main data objects: Shipment, Activity Log, Recipient, Carrier, COD
-- Main actions: Review same-day sent-out Shipments; no full search/history in P0.
+- Main actions: Review same-day sent-out Shipments; no full search/history in the starting workflow.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ## 9. Manager
@@ -853,7 +853,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Job Source Type, Department, Urgent Label, Delivery Date, Activity Log
 - Main actions: Review default `JOB-O / งานลูกค้า` table, filter all/customer/production work, sort by priority signals, open side drawer, set/change `งานด่วน` from the drawer, open Job.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F09; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-MGR-001-manager-unfinished-work-overview.md`; `docs/ux-ui/image-prompts/IMG-MGR-001-manager-unfinished-work-overview.md`; `docs/ux-ui/01-flow-map.md` F09; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### MGR-002 - Manager Job Detail / Timeline
 
@@ -1212,7 +1212,7 @@ Note:
 - Design status: later
 - Main data objects: หมวดหมู่สินค้า, หมวดหมู่ย่อย, แท็กสินค้า, รายการสี, รายการลายรักสมุก, รายการลายแกะสลัก, รายการสีคริสตัล
 - Main actions: Add, edit, close, reopen, search, and filter setting records where allowed. Delete is allowed only when the record has never been used; used records must be `ปิดใช้งาน`. Management Log is required for setting changes.
-- Related source docs: `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Related source docs: `docs/ux-ui/screens/SCR-SUP-012-product-settings.md`; `docs/ux-ui/image-prompts/IMG-SUP-012-product-settings.md`; `docs/ux-ui/mockups/SCR-SUP-012-product-settings/README.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-013 - Service Case
 

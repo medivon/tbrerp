@@ -24,7 +24,7 @@ It confirms:
 - Admin can review and edit delivery-facing details before releasing the Shipment.
 - This screen is not used for bulk shipment creation.
 - Bulk creation bypasses this screen and uses default customer/order delivery data.
-- P0 has no persistent Draft Shipment; this screen is temporary pre-release work.
+- The starting workflow has no persistent Draft Shipment; this screen is temporary pre-release work.
 - Delivery Note and Shipping Sheet can be previewed before release and printed after Shipment release.
 
 ## Approved Content Pattern

@@ -408,7 +408,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Allows `ขอเสนอราคา` until the related payable item is included in a finalized PV.
 - Keeps workflow status control with internal staff, not Rak Samuk Worker.
 - Allows changing Rak Samuk Worker before `รับเข้าโรงงานสี` without required reason, recorded in Activity Log / Rak Samuk work history.
-- Routes received-back Rak Samuk Work to `รอรับเข้าโรงงานสี` with no P0 destination picker.
+- Routes received-back Rak Samuk Work to `รอรับเข้าโรงงานสี` with no starting-workflow destination picker.
 
 **Status Changes**
 
@@ -441,7 +441,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Worker appears able to move internal workflow status.
 - Missing-price work is not obvious enough.
 - UI wording accidentally uses `ตีโต้ราคา` instead of the approved label `ขอเสนอราคา`.
-- Returned Rak Samuk work does not need a destination decision; it always goes to `รอรับเข้าโรงงานสี` in P0.
+- Returned Rak Samuk work does not need a destination decision; it always goes to `รอรับเข้าโรงงานสี` in the starting workflow.
 - One customer Job is accidentally split across multiple Rak Samuk Workers.
 
 **Blocking Open UX Questions**
@@ -481,8 +481,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
    - Bulk path: selects eligible Orders and bulk-creates Shipments directly.
 5. From Order Detail, Admin may select ready lines in `จัดการรอบจัดส่ง` and open `สร้างรอบจัดส่ง` with those selected lines.
 6. In the single/special path, Admin reviews item list, shipment plan, recipient/address, carrier, delivery date, notes, and COD if relevant.
-7. In the single/special path, Admin presses `พร้อมจัดส่ง` to create/release the Shipment to the delivery team. There is no persistent Draft Shipment in P0.
-8. In the bulk path, system uses each Order's saved Order Recipient Detail snapshot as the delivery default, using the first eligible Order only as a document grouping reference where needed, and creates/release Shipments/documents without opening `สร้างรอบจัดส่ง`.
+7. In the single/special path, Admin presses `พร้อมจัดส่ง` to create/release the Shipment to the delivery team. There is no persistent Draft Shipment in the starting workflow.
+8. In the bulk path, the system uses each Order's saved Order Recipient Detail snapshot as the delivery default, uses the first eligible Order only as a document grouping reference where needed, and creates and releases Shipments/documents without opening `สร้างรอบจัดส่ง`.
 9. Admin may preview Delivery Note / Shipping Sheet before release and print after release.
 
 **System Actions**

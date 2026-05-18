@@ -67,7 +67,7 @@ Create a high-fidelity mobile/tablet ERP work queue UI for Thai furniture woodwo
 
 ## 7. What not to show
 
-- Do not show customer name, phone, address, CRM notes, payment data, sales price, or Rak Samuk rates.
+- Do not show customer name, Order ID, phone, address, CRM notes, payment data, sales price, or Rak Samuk rates.
 - Do not show admin analytics or reports.
 - Do not make the queue a dense desktop table.
 - Do not hide `รอวัตถุดิบ` in a separate obscure tab.

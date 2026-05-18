@@ -32,7 +32,7 @@ Approved mockup:
 - `รอสร้างรอบจัดส่ง` -> row action `สร้างรอบจัดส่ง` for one Order.
 - `รอสร้างรอบจัดส่ง` -> right drawer action `สร้างรอบจัดส่ง`.
 - Order Detail -> `จัดการรอบจัดส่ง` -> `สร้างรอบจัดส่งจากรายการที่เลือก`, with selected shippable Order lines and their default delivery context.
-- There is no Draft Shipment continuation in P0.
+- There is no Draft Shipment continuation in the starting workflow.
 
 Not an entry point:
 
@@ -43,7 +43,7 @@ Not an entry point:
 - Released Shipment Detail.
 - Delivery Note Preview.
 - Shipping Sheet Preview.
-- Ready-to-Ship Queue if cancelled before create.
+- Ready-to-Ship Queue if cancelled before creation.
 
 Bulk exit:
 
@@ -104,8 +104,8 @@ Bulk exit:
 
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
-| Release as ready | พร้อมจัดส่ง | Admin and same/higher permission | Creates/release Shipment visible to Delivery Team. | Yes |
-| Cancel builder | ยกเลิก | Admin | Returns to Ready-to-Ship Queue before create. | No |
+| Release as ready | พร้อมจัดส่ง | Admin and same/higher permission | Creates and releases Shipment visible to Delivery Team. | Yes |
+| Cancel builder | ยกเลิก | Admin | Returns to Ready-to-Ship Queue before creation. | No |
 | Preview Delivery Note | ดูใบส่งของ | Admin | Opens Delivery Note Preview. | No |
 | Preview Shipping Sheet | ดูใบจัดส่ง | Admin | Opens Shipping Sheet Preview. | No |
 | Edit delivery info | แก้ไขข้อมูลจัดส่ง | Admin and same/higher permission | Edits recipient/address/carrier/date before release. | No |
@@ -149,7 +149,7 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Address/carrier changes happen before release by authorized admin; delivery team cannot change them, but can see COD amount for Shipments they are responsible for.
 - COD is allowed only on the final Shipment round that completes delivery for the Order. Do not add a flow where an early/partial Shipment collects COD while unfinished custom work remains.
 - After release/send-out, avoid changing Shipment COD; rare mistakes are handled through finance notes/manual handling rather than changing this closed/send-out document path.
-- P0 has no persistent Draft Shipment.
+- The starting workflow has no persistent Draft Shipment.
 - Bulk users do not enter this screen for default/simple creation.
 - Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
 - Ready-to-ship work should not be rolled backward while building a Shipment. If the Shipment should not leave yet, hold or handle it in the shipment/send-out step.

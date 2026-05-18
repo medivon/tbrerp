@@ -99,7 +99,7 @@ Visual rules:
 - Existing JOB-O production detail changes and cancellation route to Job Detail / Job Revision / Job cancellation
 - Do not allow sent/completed lines to look editable
 - Do not silently remove items from Shipment rounds
-- Do not remove any line that is already in a Draft or Released Shipment round until that round is cancelled or the line is removed from the round
+- Do not remove any line that is already in Shipment Builder temporary work or an existing released Shipment until that shipment work is cancelled or the line is removed from it
 - Do not show `คงเหลือ` or `พร้อมขาย` for stock availability; use `ขายได้ X ชิ้น` and `หมด`
 - Do not show every SKU ย่อย as a separate top-level product when adding/changing a ready-stock line
 - Do not show full payment workflow
