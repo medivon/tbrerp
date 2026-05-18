@@ -38,7 +38,7 @@ The six cards remain the dominant structure:
 
 Visual treatment:
 
-- White cards with 8px radius, subtle border, and soft shadow.
+- High-contrast readable cards with 8px radius, subtle border, and soft shadow.
 - Large numeric count, title, one status chip, one subtext line, and one footer action.
 - Use soft icon circles, not illustrated icons.
 - Keep all cards the same height.
@@ -154,6 +154,8 @@ Use restrained visual hierarchy:
 - Primary emphasis: queue counts and risk chips.
 - Secondary emphasis: dates, IDs, source labels.
 - Tertiary emphasis: explanatory helper text.
+
+Dark/navy shell treatment is allowed if it improves visual quality, hierarchy, and readability. Main card, preview, and queue surfaces must remain readable and practical for dense ERP work. Do not force full dark mode and do not force light-only UI.
 
 Do not use alarm colors for normal queue age. Reserve red for high-risk, blocked, destructive, or finance follow-up states.
 

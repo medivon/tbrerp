@@ -75,7 +75,7 @@ Rules:
 
 Approved dashboard cards use:
 
-- White background
+- High-contrast readable background
 - Soft border and subtle shadow
 - Rounded corners around 8-12px
 - Large numeric count
@@ -88,6 +88,7 @@ Approved dashboard cards use:
 Rules:
 
 - Cards launch working queues or overviews; they are not full tables.
+- Dark/navy shell treatment is allowed when it improves app hierarchy, but card and workbench surfaces must stay readable and practical for dense ERP scanning.
 - Counts should use the unit defined by the card, such as Order, Job, shipment round, or follow-up item.
 - Use Thai labels for visible UI text.
 - Keep English only for important internal terms: `Job`, `JOB-O`, `JOB-P`, `COD`, `Payment`, `Revision`.

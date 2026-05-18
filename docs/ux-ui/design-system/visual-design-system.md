@@ -8,7 +8,7 @@ Old mockup images and old image prompts are archived visual references only. Cur
 
 THAIBORAN ERP should feel like a calm Thai-first operations system for a custom furniture business: practical, dense, image-aware, and trustworthy. The interface should help staff recognize furniture work quickly, process many operational records, and avoid accidental finance or permission leakage.
 
-Use a light-first, neutral operations palette. Furniture images provide warmth; the UI itself should stay restrained. Avoid landing-page composition, oversized hero areas, decorative gradients, heavy animation, glass effects, and sparse SaaS styling that wastes scanning space.
+THAIBORAN ERP should use a premium operational ERP visual style. A light neutral treatment, a dark/navy shell treatment, or a mixed shell/work-surface treatment may be used when it improves visual quality, hierarchy, and readability. Main work surfaces must remain readable, practical, and dense enough for repeated ERP work. Do not force full dark mode or light-only UI. Furniture images provide warmth; the UI itself should stay restrained. Avoid landing-page composition, oversized hero areas, decorative gradients, heavy animation, glass effects, and sparse SaaS styling that wastes scanning space.
 
 ## Design Principles
 
@@ -24,13 +24,13 @@ Use a light-first, neutral operations palette. Furniture images provide warmth; 
 
 ## Color Palette
 
-Use light surfaces and restrained accents. Do not use a dark dashboard theme as the default.
+Use restrained accents and high-contrast operational surfaces. Dark/navy shell treatment is allowed when it improves visual hierarchy and readability, but main work surfaces such as cards, drawers, modals, tables, forms, and preview panels must remain practical for dense ERP scanning. Do not force full dark mode and do not force light-only UI.
 
 | Token | Hex | Use |
 |---|---:|---|
-| `bg.app` | `#F6F8F7` | App background. Slightly cool neutral, not cream. |
-| `bg.surface` | `#FFFFFF` | Cards, drawers, modals, tables, form panels. |
-| `bg.subtle` | `#EEF3F1` | Module tabs, table headers, read-only blocks. |
+| `bg.app` | `#F6F8F7` | Default app background for light treatments. Dark/navy shell variants may define an equivalent shell background. |
+| `bg.surface` | `#FFFFFF` | Default work surface for cards, drawers, modals, tables, and form panels. Dark/navy shells should still keep these surfaces readable and practical. |
+| `bg.subtle` | `#EEF3F1` | Module tabs, table headers, read-only blocks, and other low-emphasis work surfaces. |
 | `border.default` | `#D9E2DE` | Default borders and dividers. |
 | `text.strong` | `#17231F` | Primary Thai text and page titles. |
 | `text.default` | `#2F3D38` | Body text. |
@@ -127,8 +127,8 @@ Mobile worker:
 
 Use the existing `app-shell.md` as the shell baseline, refined by this file.
 
-- Background: `bg.app`.
-- Surfaces: white with `border.default` and a subtle shadow such as `0 1px 2px rgba(23,35,31,0.06)`.
+- Background: use `bg.app` for light treatments, or a dark/navy shell background when it improves premium operational hierarchy.
+- Surfaces: use high-contrast readable work surfaces with `border.default` or an equivalent visible border and a subtle shadow such as `0 1px 2px rgba(23,35,31,0.06)`.
 - Radius: 8px for cards, drawers, modals, inputs, and table containers.
 - No floating hero panels, decorative gradient blobs, or glassmorphism.
 - Keep page headers compact: title, count/status summary, and primary module action when the page owns creation.
@@ -167,7 +167,7 @@ Top bar contains page title, date, user avatar/name, role label, and account men
 
 Use dashboard cards only for high-level launchers and short summaries.
 
-- White surface, 8px radius, soft border, subtle shadow.
+- High-contrast readable surface, 8px radius, soft border, subtle shadow.
 - Large count with tabular numbers.
 - Title in Thai.
 - Icon circle with soft status color.
