@@ -31,4 +31,13 @@ describe("admin dashboard fixtures", () => {
   it("keeps the critical preview to three visible fixture items", () => {
     expect(criticalPreviewItems).toHaveLength(3);
   });
+
+  it("uses the material blocker as the primary signal when urgent work is waiting for materials", () => {
+    const waitingMaterialItem = criticalPreviewItems.find((item) =>
+      item.chips.some((chip) => chip.label === "รอวัตถุดิบ"),
+    );
+
+    expect(waitingMaterialItem?.chips[0]?.label).toBe("รอวัตถุดิบ");
+    expect(waitingMaterialItem?.riskContext).toBe("รอวัตถุดิบ");
+  });
 });

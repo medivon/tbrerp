@@ -10,5 +10,10 @@ export default async function NoAccessPage({
 }: NoAccessPageProps) {
   const params = await searchParams;
 
-  return <NoAccessState currentUser={getFixtureUser(params.user)} />;
+  return (
+    <NoAccessState
+      currentUser={getFixtureUser(params.user)}
+      showUserSelector={false}
+    />
+  );
 }

@@ -70,13 +70,40 @@ export function AppShell({
         <header className="sticky top-0 z-10 border-b border-border bg-surface">
           <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
             <div className="flex min-w-0 items-center gap-3">
-              <button
-                aria-label="เมนู"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-muted-foreground lg:hidden"
-                type="button"
-              >
-                <Menu aria-hidden className="h-5 w-5" />
-              </button>
+              {visibleNavigation.length > 0 ? (
+                <details className="group relative lg:hidden">
+                  <summary
+                    aria-label="เมนู"
+                    className="inline-flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-md border border-border bg-surface text-muted-foreground transition hover:bg-subtle hover:text-foreground [&::-webkit-details-marker]:hidden"
+                  >
+                    <Menu aria-hidden className="h-5 w-5" />
+                  </summary>
+                  <nav
+                    aria-label="เมนูหลักขนาดเล็ก"
+                    className="absolute left-0 top-12 z-30 grid w-[min(20rem,calc(100vw-2rem))] gap-1 rounded-lg border border-border bg-surface p-2 shadow-soft"
+                  >
+                    {visibleNavigation.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = item.id === activeItemId;
+
+                      return (
+                        <Link
+                          className={cn(
+                            "relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold text-muted-foreground transition hover:bg-subtle hover:text-foreground",
+                            isActive &&
+                              "bg-primary-soft text-primary before:absolute before:left-0 before:top-2 before:h-7 before:w-1 before:rounded-r-full before:bg-primary",
+                          )}
+                          href={getNavigationHref(item, currentUser)}
+                          key={item.id}
+                        >
+                          <Icon aria-hidden className="h-5 w-5 shrink-0" />
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </details>
+              ) : null}
               <div className="min-w-0">
                 <h1 className="text-xl font-bold leading-tight text-foreground sm:text-2xl">
                   {title}

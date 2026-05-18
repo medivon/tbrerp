@@ -129,10 +129,10 @@ export const criticalPreviewItems: CriticalPreviewFixture[] = [
     receivedDate: "11 พ.ค. 67",
     reference: "ORD-240525-006 / JOB-O-0250",
     chips: [
-      { label: "งานด่วน", variant: "danger" },
       { label: "รอวัตถุดิบ", variant: "warning" },
+      { label: "งานด่วน", variant: "danger" },
     ],
-    riskContext: "ใกล้กำหนดส่ง",
+    riskContext: "รอวัตถุดิบ",
     relatedDate: "กำหนดส่ง 24 พ.ค. 67",
     destination: "jobs",
   },

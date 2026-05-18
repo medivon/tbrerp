@@ -1,40 +1,62 @@
 # Review Report
 
 Status: approved
-Reviewed task: latest foundation setup commit `d1dc8fd` (`chore: initialize ERP codebase foundation`)
+Reviewed task: Sector 1 - App Shell + Access Foundation + Admin Dashboard Read-only
+Reviewed commit: `f66ad85` (`feat: add app shell and admin dashboard foundation`)
 Reviewer: Codex reviewer
-Date: 2026-05-18
+Date: 2026-05-19
 
-## Scope
+## Source Docs Read
 
-Reviewed the foundation setup against `docs/implementation/foundation-proposal.md`, Sector 0 in `docs/implementation/sector-plan.md`, the reviewer checklist, package/workspace config, and active source-of-truth docs required by `AGENTS.md`.
-
-`docs/implementation/current-task.md` currently says there is no active implementation task. This review proceeded because the reviewer task explicitly requested review of the latest foundation setup commit, and the commit scope traces to the foundation proposal.
+- `AGENTS.md`
+- `CONTEXT.md`
+- `docs/implementation/current-task.md`
+- `docs/implementation/reviewer-checklist.md`
+- `docs/implementation/implementer-rules.md`
+- `docs/implementation/sector-plan.md`
+- `docs/implementation/foundation-proposal.md`
+- `docs/ux-ui/design-system/visual-design-system.md`
+- `docs/ux-ui/design-system/responsive-mobile.md`
+- `docs/ux-ui/design-system/app-shell.md`
+- `docs/ux-ui/design-system/pages/admin-dashboard.md`
+- `docs/ux-ui/screens/SCR-ADM-001-admin-dashboard.md`
+- `docs/ux-ui/03-navigation-map.md`
+- `docs/ux-ui/04-interaction-modal-behavior.md`
+- `docs/decision-log.md`
+- `docs/qa-summary.md`
+- ADRs `0001`, `0015`, and `0016`
 
 ## Findings
 
-- Minor, fixed: `pnpm format:check` failed because Prettier was checking tracked local agent-skill packs and large source-of-truth docs that are not part of the foundation code formatting surface. Updated `.prettierignore` to leave `.agents`, `.codex`, and `docs` under manual formatting instead of mass-reflowing business/source docs.
+- Minor, fixed: the no-access route rendered the fixture user selector, leaving an extra control on a page that should expose only the return-to-own-home action. The route now renders the no-access state without the selector.
+- Minor, fixed: the tablet/phone shell rendered a menu icon without a working navigation surface. It now opens a compact permitted navigation menu for users who have main ERP navigation.
+- Minor, fixed: one critical preview item showed `งานด่วน` before `รอวัตถุดิบ` even though the docs say material waiting should be the primary blocker when urgent work is also waiting for materials. The fixture now makes `รอวัตถุดิบ` primary.
 
 ## Checklist Results
 
-- Approved stack present: Next.js App Router, React, TypeScript, pnpm workspace, Tailwind CSS, shadcn/ui-style component config, Radix primitive direction, and Prisma as future ORM direction in docs only.
-- Drizzle is not present as an active ORM direction.
-- No ERP business workflow was implemented.
-- No real auth, login, session, role selector, or permission management was implemented.
-- No ERP database schema, generated Prisma client, migrations, seed data, or database tables were created.
-- No Order, Job, Shipment, Payment, Stock, CRM, Finance, Settings, or Admin Dashboard modules were implemented.
-- Workspace structure is minimal and matches the foundation proposal: `apps/web`, `packages/ui`, `packages/domain`, `packages/data-access`, and `packages/config`.
-- README setup commands are accurate for the current foundation.
-- No archived mockups are used by active app/package code.
+- Scope matches `current-task.md`; fixes stayed within app shell, access state, dashboard fixtures, and tests.
+- App shell follows the light, Thai-first visual direction and now has responsive navigation behavior at small widths.
+- Sidebar labels match the approved navigation docs.
+- Role-aware landing uses fixture users only; no real auth/session provider was added.
+- Base-role users do not see main ERP navigation.
+- Missing-permission routes show the no-access state with own-home return.
+- Admin Dashboard contains only the six approved cards.
+- Admin Dashboard fixtures and tests contain no baht amounts, payment evidence, cost, profit, payout, Owner, Current Handler, Management Log, or Audit Log data.
+- Critical preview has three image-led items and follows documented priority after the fixture fix.
+- Responsive smoke checks pass at `375`, `768`, `1024`, and `1440`.
+- No database schema, migrations, seed data, API route contracts, real auth, or business mutation workflow was added.
+- No archived mockups, legacy screenshots, or image prompts are referenced by app/package code as source.
 
-## Checks Reviewed
+## Checks Run
 
-- `pnpm lint`: passed.
-- `pnpm typecheck`: passed.
-- `pnpm test`: passed with no tests found, as expected for the foundation baseline.
-- `pnpm build`: passed.
-- `pnpm test:e2e`: passed with no tests found.
-- `pnpm format:check`: failed before the `.prettierignore` fix; passed after the fix.
+- `pnpm lint` - passed.
+- `pnpm typecheck` - passed.
+- `pnpm test` - passed, 12 web tests.
+- `pnpm format:check` - passed.
+- `pnpm build` - passed.
+- `pnpm test:e2e` - passed, 16 Playwright checks across `375`, `768`, `1024`, and `1440`.
+
+Note: the first `pnpm test:e2e` attempt failed because the sandbox blocked binding the local Next.js dev server to port `3000` (`listen EPERM`). The suite passed after rerunning with approved local server permission.
 
 ## Source-Doc Conflicts
 

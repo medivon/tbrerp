@@ -23,6 +23,19 @@ for (const viewport of viewports) {
       await expect(page.getByText("ออเดอร์ที่ต้องติดตาม")).toBeVisible();
       await expect(page.getByText("ติดตาม COD / Payment")).toBeVisible();
       await expect(page.getByText("฿")).toHaveCount(0);
+
+      if (viewport.width < 1024) {
+        await page.getByLabel("เมนู", { exact: true }).click();
+        await expect(
+          page
+            .getByRole("navigation", { name: "เมนูหลักขนาดเล็ก" })
+            .getByText("ออเดอร์", { exact: true }),
+        ).toBeVisible();
+      } else {
+        await expect(
+          page.getByRole("navigation", { name: "เมนูหลัก" }),
+        ).toBeVisible();
+      }
     });
 
     test("routes base-role users to the Personal Dashboard", async ({
@@ -47,6 +60,7 @@ for (const viewport of viewports) {
       await expect(
         page.getByRole("link", { name: "กลับหน้าแรกของฉัน" }),
       ).toHaveAttribute("href", "/personal?user=outsource-base");
+      await expect(page.getByRole("combobox")).toHaveCount(0);
     });
 
     test("renders approved future modules as non-business placeholders", async ({
