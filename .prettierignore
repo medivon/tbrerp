@@ -5,3 +5,8 @@ coverage
 pnpm-lock.yaml
 playwright-report
 test-results
+
+# Keep local agent packs and source-of-truth docs under manual formatting.
+.agents
+.codex
+docs
