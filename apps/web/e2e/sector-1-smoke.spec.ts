@@ -66,10 +66,10 @@ for (const viewport of viewports) {
     test("renders approved future modules as non-business placeholders", async ({
       page,
     }) => {
-      await page.goto("/modules/jobs?user=admin-sales");
+      await page.goto("/modules/shipments?user=admin-sales");
 
       await expect(
-        page.getByRole("heading", { name: "งานสั่งทำ / ผลิต" }).first(),
+        page.getByRole("heading", { name: "รอบจัดส่ง" }).first(),
       ).toBeVisible();
       await expect(page.getByText(/ยังไม่มีรายการงาน/)).toBeVisible();
     });

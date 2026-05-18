@@ -1,112 +1,47 @@
 # Current Implementation Task
 
 Status: ready for review
-Sector: Sector 4 - Order Confirm + JOB-O Creation
+Sector: Sector 5 - Job / Worker / Rak Samuk
 Task owner: Codex implementer
 Date started: 2026-05-19
+Date completed: 2026-05-19
 
 ## Goal
 
-Implement the approved fixture-backed Order confirmation foundation: Review can confirm valid Order Review data, produce a confirmed Order read model, generate `JOB-O` read models from complete custom-work lines, show ready-stock reservation outcome direction, and display the post-confirm result without persistence or future-sector workflows.
+Implement fixture-backed Job, worker, and Rak Samuk workflow surfaces as one coherent reviewable slice: Job overview/detail, Woodwork queue, Coloring intake/work queues, Rak Samuk assignment, Rak Samuk Worker own-work views, missing-price proposal, Owner/Manager price approval, and receive-back/intake foundation.
 
-## Visual Intent Summary
+## Scope
 
-- Visual mood: premium operational ERP, Thai-first, dense, consequence-focused, and read-first.
-- Density: Review stays a compact workbench with row/card detail and a right-side consequence panel; result state is an operational success panel, not a marketing/celebration page.
-- Shell/palette direction: existing dark/navy shell and readable light work surfaces remain; warning/success/revision chips carry confirmation consequences.
-- Component polish: visible focus/hover/cursor states, stable panels, clear disabled reasons, inline acknowledgement, and Thai text wrapping.
-- Responsive behavior: Review keeps warnings, acknowledgement, downstream chips, final action, and result visible at `375`, `768`, `1024`, and `1440` without page-level horizontal overflow.
-- Avoided: second confirmation modal, decorative hero/marketing layout, workflow shortcuts, low-contrast dark content surfaces, and sensitive finance/cost/payout/log exposure.
+- Job overview / active Jobs and read-first Job Detail / Work Card foundation.
+- Mobile/tablet Woodwork and Coloring worker queues with fixture-backed in-memory actions only.
+- Coloring intake staging queue distinct from active Coloring work.
+- Rak Samuk assignment, worker own-work list/detail, missing-price/proposed-price foundation, Owner/Manager approval foundation, and receive-back to `รอรับเข้าโรงงานสี`.
+- Safe fixtures, pure domain helpers, route wiring, permission-aware navigation/actions, and tests for sensitive-data boundaries.
+
+## Visual Intent
+
+- Premium operational production workspace for THAIBORAN: Thai-first, image-led, restrained, and work-focused.
+- Admin Job screens use dense workbench rows, compact metrics, filters, thumbnails, current department/status chips, and explicit `เปิด Job` actions.
+- Worker screens are mobile/tablet-first with large-tap cards, practical image crops, clear disabled reasons, and no customer/payment/cost/payout/business-sensitive data.
+- Rak Samuk screens make assigned work and own price/proposed price clear without exposing standard rates or other workers' payout.
+- Existing dark/navy shell is retained; main work surfaces stay readable and practical for dense ERP work.
+- Avoided marketing UI, decorative animation, low-contrast dark content surfaces, and workflow shortcuts not present in source docs.
 
 ## UI UX Pro Max Guidance Used
 
-- Design-system query: `enterprise ERP order review dense operational Thai dashboard dark navy shell`.
-- Applied guidance: dense operational dashboard style, dark/navy shell contrast, Noto Sans Thai readability, visible focus states, clear hover/cursor treatment, and responsive verification.
-- Project baseline remained `docs/ux-ui/design-system/visual-design-system.md`, `responsive-mobile.md`, and `pages/order.md`; UI UX Pro Max did not change workflow, permissions, sensitive-data visibility, or business rules.
+- Design-system query: `ERP production operations dashboard worker mobile Thai dense image-led`.
+- React stack query: `dense responsive operations cards forms accessibility`.
+- Applied guidance: dense operational workbench hierarchy, mobile worker card ergonomics, large tap targets, hover/focus/cursor states, stable responsive cards/tables, clear image handling, and no horizontal overflow at responsive checkpoints.
+- Project visual source of truth remains `docs/ux-ui/design-system/visual-design-system.md`, `responsive-mobile.md`, and `pages/job-worker-rak-samuk.md`.
 
-## Domain Logic Added
+## Out of Scope
 
-- Added pure confirmation logic in `packages/domain/src/order-confirmation.ts`.
-- Validates:
-  - missing customer
-  - missing recipient/address
-  - missing Payment Term
-  - no Order Lines
-  - incomplete Custom Work Detail
-  - missing stock-shortage acknowledgement
-  - customer-caution acknowledgement hook
-  - stale Review input
-  - unauthorized/base-role confirmation
-- Produces:
-  - confirmed Order read model
-  - generated `JOB-O` read models for complete custom lines
-  - ready-stock reservation outcome records, including shortage/negative direction after acknowledgement
-  - acknowledged warnings
-  - fixture activity-event list
-  - converted Draft fixture state when Review came from a Draft
-- Uses deterministic fixture/dev IDs only:
-  - `ORD-FIX-S4-0001`
-  - `JOB-O-FIX-S4-0001`
-  - UI labels mark these as non-production fixture/dev IDs.
-
-## Confirmation Behavior Implemented
-
-- `ยืนยันสร้างออเดอร์` is disabled until the Review input is valid and required stock acknowledgement is checked.
-- Review remains the final confirmation surface; no second confirmation modal was added.
-- Clicking confirm runs the pure fixture-backed confirmation logic in memory and shows:
-  - confirmed Order ID
-  - generated `JOB-O` ID
-  - ready-stock reservation outcome and projected shortage
-  - warnings acknowledged
-  - converted Draft message
-  - next destination link to fixture-backed Order Detail.
-- Added fixture blocked case routing through `?case=missing-payment-term` and domain support for other blocked cases.
-- Base-role direct access to `/modules/orders/review` routes to no-access through `canConfirmOrders`.
-
-## JOB-O Output Behavior
-
-- Complete custom-work line creates a read-only `JOB-O` result in the fixture confirmation output.
-- JOB-O display includes safe production context only: work name, quantity, production detail, material/color, starting department, and status.
-- No full Job module, worker queue, JOB-O action surface, production state machine, payout, cost, profit, Management Log, or Audit Log was added.
-- Generated Order Detail shows the `JOB-O` reference on the custom line and keeps Order Detail read-first.
-
-## Ready-stock Reservation Behavior
-
-- Ready-stock lines produce reservation outcome records only; no real stock movement is persisted.
-- Acknowledged insufficient stock produces a shortage/negative direction with projected sellable stock after reservation.
-- Shipment creation remains disabled/placeheld; Payment/COD actions remain disabled/placeheld.
-
-## Draft Conversion Boundary
-
-- The fixture Review input includes `DRAFT-00035` as source context.
-- After confirm, the result states the Draft was converted/archived/read-only in fixture output.
-- No Draft record is physically deleted and no persistence layer was added.
-
-## Files Changed
-
-- `packages/domain/src/order-confirmation.ts`
-- `packages/domain/src/order-confirmation.test.ts`
-- `packages/domain/src/index.ts`
-- `apps/web/src/features/orders/order-review.tsx`
-- `apps/web/src/features/orders/components/review-impact-panel.tsx`
-- `apps/web/src/features/orders/fixtures/orders.ts`
-- `apps/web/src/features/orders/order-detail.tsx`
-- `apps/web/src/app/modules/orders/review/page.tsx`
-- `apps/web/src/shared/permissions/access.ts`
-- `apps/web/src/shared/permissions/access.test.ts`
-- `apps/web/src/features/orders/orders.test.tsx`
-- `apps/web/e2e/sector-3-orders-smoke.spec.ts`
-- `apps/web/package.json`
-- `apps/web/tsconfig.json`
-- `pnpm-lock.yaml`
-- `docs/implementation/current-task.md`
-
-## Explicit Exclusions Preserved
-
-- No Prisma schema, migrations, seed data, database tables, persistent storage, or data-access adapter.
-- No real API contracts, server mutations, real auth/session, or real permission management.
-- No real Shipment creation, Delivery workflow, Payment/COD action, Product/Stock movement, Material workflow, Customer/CRM implementation, Finance/PV behavior, Settings/Role management, full Job module, worker queues, or real Activity/Management/Audit Log persistence.
-- No business-rule changes, invented workflow states, approval steps, reports, finance gates, or sensitive-field placeholders.
+- No real database, Prisma schema, migrations, seed data, persistence, or real workflow writes.
+- No API contracts, real auth/session, real permission management, or worker payroll automation.
+- No Shipment creation, Payment/COD action, PV finalization, payout clearing, Stock/Material movement, Customer/CRM implementation, Settings implementation, or full production accounting.
+- No Management Log or Audit Log persistence.
+- No new worker revision/request workflow beyond source docs.
+- No Rak Samuk prices in Order, Production, or Job workflow pages where docs forbid it.
 
 ## Source Docs Read
 
@@ -114,6 +49,7 @@ Implement the approved fixture-backed Order confirmation foundation: Review can 
 - `docs/implementation/implementer-rules.md`
 - `docs/implementation/sector-plan.md`
 - `docs/implementation/foundation-proposal.md`
+- `docs/implementation/current-task.md`
 - `docs/implementation/review-report.md`
 - `docs/implementation/task-handoff-template.md`
 - `CONTEXT.md`
@@ -122,39 +58,86 @@ Implement the approved fixture-backed Order confirmation foundation: Review can 
 - `docs/qa-summary.md`
 - `docs/ux-ui/04-interaction-modal-behavior.md`
 - `docs/ux-ui/03-navigation-map.md`
+- `docs/ux-ui/02-screen-inventory.md`
 - `docs/ux-ui/design-system/visual-design-system.md`
 - `docs/ux-ui/design-system/responsive-mobile.md`
-- `docs/ux-ui/design-system/pages/order.md`
-- `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`
-- `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`
-- `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
-- `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`
+- `docs/ux-ui/design-system/pages/job-worker-rak-samuk.md`
+- `docs/ux-ui/screens/SCR-ADM-003-active-jobs-overview.md`
+- `docs/ux-ui/screens/SCR-JOB-002-job-detail-work-card.md`
+- `docs/ux-ui/screens/SCR-WOOD-001-woodwork-queue.md`
+- `docs/ux-ui/screens/SCR-COLOR-001-coloring-intake-queue.md`
+- `docs/ux-ui/screens/SCR-COLOR-002-coloring-work-queue.md`
+- `docs/ux-ui/screens/SCR-RS-001-rak-samuk-assignment-queue.md`
+- `docs/ux-ui/screens/SCR-RS-002-rak-samuk-worker-work-list.md`
+- `docs/ux-ui/screens/SCR-RS-003-rak-samuk-missing-price.md`
+- `docs/ux-ui/screens/SCR-RS-004-rak-samuk-price-approval.md`
+
+## Permission and Sensitive Data Rules
+
+- Missing-permission navigation and actions are hidden.
+- State-blocked actions are disabled and show the reason.
+- Sensitive fields are omitted before rendering for users without permission.
+- Worker views do not receive customer, Order ID, payment, sales price, cost, payout, Management Log, or Audit Log data.
+- Rak Samuk Worker sees only assigned work and own price/proposed-price state.
+- Rak Samuk Worker cannot move workflow status or mark work complete.
+- Finance is not the approver for Rak Samuk proposed prices.
+
+## Implementation Notes
+
+- Added pure `@thaiboran/domain` Job/Rak Samuk workflow helpers for role access, worker-visible work filtering, proposal submission rules, memory-only action simulation, and receive-back routing.
+- Added safe fake fixtures for Jobs, worker users, and Rak Samuk work; worker-facing mappers return sanitized data.
+- Wired new routes under `/modules/jobs` while keeping route/page files thin.
+- Job overview/detail surfaces are admin/manager oriented and fixture-backed only.
+- Woodwork and Coloring actions update local UI state and report `persisted: false`; no database/API/write contract was added.
+- Coloring completed JOB-O visually routes to admin `รอสร้างรอบจัดส่ง`, not directly to Delivery Team.
+- Rak Samuk assignment requires immediate worker selection and confirmation before fixture-only send state.
+- Missing price proposal is per-piece; submitted state is `ส่งราคาแล้ว / รออนุมัติ`.
+- Owner/Manager approval shows proposed per-piece price, quantity, computed total preview, and standard-rate update prompt; Finance remains blocked.
+- Receive-back always routes to `รอรับเข้าโรงงานสี`; no destination picker or evidence requirement was added.
+- Existing Sector 1 e2e placeholder smoke was updated to use `รอบจัดส่ง` because Jobs is now implemented.
+
+## Files Changed
+
+- `packages/domain/src/job-workflow.ts`
+- `packages/domain/src/job-workflow.test.ts`
+- `packages/domain/src/index.ts`
+- `apps/web/src/shared/fixtures/users.ts`
+- `apps/web/src/shared/permissions/access.ts`
+- `apps/web/src/shared/permissions/access.test.ts`
+- `apps/web/src/shared/navigation/navigation.ts`
+- `apps/web/src/shared/navigation/navigation.test.ts`
+- `apps/web/src/features/orders/order-detail.tsx`
+- `apps/web/src/features/jobs/**`
+- `apps/web/src/features/worker/**`
+- `apps/web/src/features/rak-samuk/**`
+- `apps/web/src/app/modules/jobs/**`
+- `apps/web/e2e/sector-1-smoke.spec.ts`
+- `apps/web/e2e/sector-5-jobs-worker-rak-samuk.spec.ts`
+- `docs/implementation/current-task.md`
 
 ## Checks Run
 
-- UI UX Pro Max design-system query - completed.
-- `pnpm install` - completed to link `@thaiboran/domain` into the web workspace.
+- UI UX Pro Max design-system query - passed.
+- UI UX Pro Max React stack query - passed.
+- `pnpm --filter @thaiboran/domain test` - passed.
+- Focused web tests for Sector 5 - passed during implementation.
 - `pnpm lint` - passed.
 - `pnpm typecheck` - passed.
-- `pnpm test` - passed, including 11 domain confirmation tests and updated Order UI tests.
-- `pnpm format:check` - initially found touched-file formatting; formatted touched files; final pass succeeded.
+- `pnpm test` - passed.
+- `pnpm format:check` - passed.
 - `pnpm build` - passed.
-- `pnpm test:e2e` - initial run exposed strict duplicate-text locator failures in the new e2e assertions; locators were fixed; final run passed 68 Playwright tests.
-- Browser plugin tools were not exposed after tool discovery; local visual/browser verification was covered by Playwright at `375`, `768`, `1024`, and `1440`.
+- `pnpm test:e2e` - passed: 124 tests.
 
 ## Known Gaps or Blockers
 
 - No source-doc conflicts found.
-- Confirmation result is fixture-backed/in-memory only. Reloading Review does not persist a new Order record.
-- Generated Order Detail is available through deterministic fixture ID `ORD-FIX-S4-0001`; the all-orders list does not permanently insert the generated result.
-- Shipment, Payment/COD, Stock movement, full Job workflow, worker queues, and real logs remain future-sector placeholders.
+- Browser plugin discovery did not expose an in-app browser tool in this session; responsive route/browser verification was covered by Playwright e2e at 375, 768, 1024, and 1440 widths.
+- All Job/Rak Samuk workflow effects remain fixture-backed or local UI state only by design.
 
 ## Reviewer Focus
 
-- Verify confirmation rules trace to the source docs and are not buried in React JSX.
-- Verify Review is still the final confirmation surface and no second modal exists.
-- Verify `JOB-O` output uses only safe production context and does not expose customer, cost, profit, payout, payment evidence, Management Log, or Audit Log.
-- Verify ready-stock shortage acknowledgement allows only fixture reservation outcome direction and creates no real stock movement.
-- Verify base roles cannot access confirmation surfaces and route to no-access.
-- Verify generated Order Detail stays read-first and keeps Shipment/Payment actions disabled/placeheld.
-- Verify no Prisma/database/API/persistence artifacts were introduced.
+- Verify worker and Rak Samuk Worker views do not receive or render sensitive fields.
+- Verify Rak Samuk standard rates and other workers' payout are not exposed outside allowed Owner/Manager approval context.
+- Verify memory-only actions are clearly non-persistent and do not imply real workflow writes.
+- Verify receive-back has no destination picker and always lands at `รอรับเข้าโรงงานสี`.
+- Verify the new UI stays operational, dense, Thai-first, and readable across worker and admin breakpoints.

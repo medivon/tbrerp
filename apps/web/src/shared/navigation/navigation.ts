@@ -54,7 +54,7 @@ const mainNavigation: NavigationItem[] = [
     label: "งานสั่งทำ / ผลิต",
     path: "/modules/jobs",
     icon: Boxes,
-    implemented: false,
+    implemented: true,
   },
   {
     id: "shipments",

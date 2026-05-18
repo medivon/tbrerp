@@ -16,6 +16,7 @@ describe("navigation visibility", () => {
 
     expect(labels).toContain("แดชบอร์ด");
     expect(labels).toContain("ออเดอร์");
+    expect(labels).toContain("งานสั่งทำ / ผลิต");
     expect(labels).not.toContain("ตั้งค่า");
   });
 

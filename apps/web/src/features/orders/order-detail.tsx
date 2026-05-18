@@ -10,6 +10,7 @@ import {
 } from "@thaiboran/ui";
 
 import { OrderLineCard } from "@/features/orders/components/order-line-card";
+import { jobRoutes } from "@/features/jobs/routes";
 import {
   OrderStatusChip,
   ShipmentStatusChip,
@@ -418,7 +419,11 @@ function LineGroup({
       </div>
       {lines.map((line) => (
         <OrderLineCard
-          actionHref={orderHref("/modules/jobs", currentUser)}
+          actionHref={
+            line.job
+              ? orderHref(jobRoutes.detail(line.job.id), currentUser)
+              : undefined
+          }
           key={line.id}
           line={line}
         />
