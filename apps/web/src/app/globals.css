@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-thaiboran-sans: "Noto Sans Thai", "Noto Sans", Arial, sans-serif;
+  --background: 0 0% 99%;
+  --foreground: 222 22% 12%;
+  --muted: 210 14% 94%;
+  --muted-foreground: 215 12% 35%;
+  --primary: 170 48% 28%;
+  --primary-foreground: 0 0% 100%;
+  --border: 214 18% 84%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-thaiboran-sans);
+}
