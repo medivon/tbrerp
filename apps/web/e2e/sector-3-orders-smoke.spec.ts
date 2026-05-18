@@ -33,6 +33,10 @@ const routes = [
     path: "/modules/orders/ORD-240602-009?user=admin-sales",
   },
   {
+    heading: "รายละเอียดออเดอร์ ORD-FIX-S4-0001",
+    path: "/modules/orders/ORD-FIX-S4-0001?user=admin-sales",
+  },
+  {
     heading: "แก้ไขรายการออเดอร์",
     path: "/modules/orders/ORD-240522-018/lines/edit?user=admin-sales",
   },
@@ -67,17 +71,56 @@ for (const viewport of viewports) {
       await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
     });
 
-    test("keeps Order Review confirmation disabled", async ({ page }) => {
+    test("can confirm valid fixture Review without a second modal", async ({
+      page,
+    }) => {
       await page.goto("/modules/orders/review?user=admin-sales");
 
       await expect(
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
       ).toBeDisabled();
+      await page
+        .getByRole("checkbox", { name: /รับทราบคำเตือนสต๊อกไม่พอ/ })
+        .check();
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeEnabled();
+      await page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }).click();
+      await expect(page.getByText("ORD-FIX-S4-0001")).toBeVisible();
+      await expect(
+        page.getByText("JOB-O-FIX-S4-0001", { exact: true }).first(),
+      ).toBeVisible();
+      await expect(page.getByText("คาดขายได้หลังจอง -1 ชิ้น")).toBeVisible();
+      await expect(page.getByRole("dialog")).toHaveCount(0);
       await expect(page.getByText("จะจองสต๊อก").first()).toBeVisible();
       await expect(page.getByText("จะสร้าง JOB-O").first()).toBeVisible();
       await expect(
         page.getByText("ยังไม่สร้างรอบจัดส่ง").first(),
       ).toBeVisible();
+    });
+
+    test("shows blocked Review fixture reason", async ({ page }) => {
+      await page.goto(
+        "/modules/orders/review?user=admin-sales&case=missing-payment-term",
+      );
+
+      await expect(
+        page.getByText("ต้องระบุเงื่อนไขการชำระเงินก่อนยืนยันออเดอร์").first(),
+      ).toBeVisible();
+      await page
+        .getByRole("checkbox", { name: /รับทราบคำเตือนสต๊อกไม่พอ/ })
+        .check();
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeDisabled();
+    });
+
+    test("routes base role away from confirmation surface", async ({
+      page,
+    }) => {
+      await page.goto("/modules/orders/review?user=staff-base");
+
+      await expect(page.getByText("ไม่มีสิทธิ์เข้าถึงหน้านี้")).toBeVisible();
     });
 
     test("separates Order and Shipment status in detail", async ({ page }) => {

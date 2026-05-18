@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { DraftOrderQueue } from "@/features/orders/draft-order-queue";
@@ -7,6 +7,8 @@ import { OrderDetail } from "@/features/orders/order-detail";
 import { OrderList } from "@/features/orders/order-list";
 import { OrderReview } from "@/features/orders/order-review";
 import {
+  confirmedOrderFixture,
+  confirmedOrderFixtureResult,
   draftOrderFixtures,
   orderFixtures,
 } from "@/features/orders/fixtures/orders";
@@ -54,7 +56,7 @@ describe("Order read/create foundation", () => {
     );
   });
 
-  it("does not perform real confirmation on Order Review", () => {
+  it("enables Review confirmation only after required acknowledgement and shows fixture result", () => {
     render(<OrderReview currentUser={currentUser} />);
 
     const confirmButton = screen.getByRole("button", {
@@ -62,16 +64,75 @@ describe("Order read/create foundation", () => {
     });
 
     expect((confirmButton as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.queryByText(/ORD-\d/)).toBeNull();
+    expect(screen.queryByText("ORD-FIX-S4-0001")).toBeNull();
     expect(screen.getAllByText("จะสร้าง JOB-O").length).toBeGreaterThan(0);
     expect(screen.getAllByText("ยังไม่สร้างรอบจัดส่ง").length).toBeGreaterThan(
       0,
     );
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+      }),
+    );
+
+    expect((confirmButton as HTMLButtonElement).disabled).toBe(false);
+
+    fireEvent.click(confirmButton);
+
+    expect(screen.getByText("ORD-FIX-S4-0001")).toBeTruthy();
+    expect(screen.getByText("JOB-O-FIX-S4-0001")).toBeTruthy();
+    expect(screen.getByText(/คาดขายได้หลังจอง -1 ชิ้น/)).toBeTruthy();
     expect(
-      screen.getByText(
-        "ปุ่มนี้ปิดไว้ใน foundation รอบนี้ จึงยังไม่สร้างออเดอร์จริง ไม่สร้าง JOB-O ไม่จองสต๊อก และไม่สร้างรอบจัดส่ง",
-      ),
+      screen
+        .getByRole("link", { name: /เปิด Order Detail/ })
+        .getAttribute("href"),
+    ).toBe("/modules/orders/ORD-FIX-S4-0001?user=admin-sales");
+  });
+
+  it("keeps Order Review as the final confirmation surface with no second modal", () => {
+    render(<OrderReview currentUser={currentUser} />);
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+      }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "ยืนยันสร้างออเดอร์",
+      }),
+    );
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByText(/สร้างออเดอร์สำเร็จใน fixture/)).toBeTruthy();
+  });
+
+  it("shows blocked Review fixture reasons inline", () => {
+    render(
+      <OrderReview
+        currentUser={currentUser}
+        scenarioId="missing-payment-term"
+      />,
+    );
+
+    expect(
+      screen.getByText("ต้องระบุเงื่อนไขการชำระเงินก่อนยืนยันออเดอร์"),
     ).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+      }),
+    );
+
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "ยืนยันสร้างออเดอร์",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
   });
 
   it("separates Order status from Shipment status on Order Detail", () => {
@@ -95,6 +156,8 @@ describe("Order read/create foundation", () => {
 
   it("keeps sensitive finance/cost/payout data out of general Order fixtures", () => {
     const serializedFixtures = JSON.stringify({
+      confirmedOrderFixture,
+      confirmedOrderFixtureResult,
       draftOrderFixtures,
       orderFixtures,
     });

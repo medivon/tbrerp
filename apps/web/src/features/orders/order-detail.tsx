@@ -95,9 +95,27 @@ export function OrderDetail({
         </SurfaceCard>
       ) : null}
 
+      {order.fixtureOnlyNotice ? (
+        <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
+          <p className="text-sm font-bold leading-6 text-[#166534]">
+            ผลยืนยันจาก Order Review แสดงออเดอร์ที่สร้างแล้วใน fixture/dev
+            result เท่านั้น ยังไม่มี persistence จริง
+          </p>
+          <p className="mt-1 text-sm font-semibold leading-6 text-[#166534]">
+            {order.fixtureOnlyNotice}
+          </p>
+        </SurfaceCard>
+      ) : null}
+
       <ReadFirstSection title="สรุปออเดอร์" titleId="order-summary">
         <dl className="grid md:grid-cols-2 xl:grid-cols-4">
           <Fact label="เลขออเดอร์" value={order.id} />
+          {order.sourceDraftNo ? (
+            <Fact
+              label="แหล่งที่มา"
+              value={`${order.sourceDraftNo} แปลงเป็นออเดอร์แล้ว`}
+            />
+          ) : null}
           <Fact label="ลูกค้า" value={order.customerName} />
           <Fact label="เบอร์ลูกค้า" value={order.customerPhone} />
           <Fact label="ระดับลูกค้า" value={order.customerTier} />

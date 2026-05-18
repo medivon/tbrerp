@@ -1,3 +1,11 @@
+import {
+  confirmOrderFromReview,
+  type GeneratedJobReadModel,
+  type OrderConfirmationInput,
+  type OrderConfirmationResult,
+  type ReadyStockReservationOutcome,
+} from "@thaiboran/domain";
+
 export const orderStatusLabels = [
   "กำลังดำเนินการ",
   "กำลังผลิต",
@@ -47,6 +55,7 @@ export type OrderLineFixture = {
     status: string;
   };
   readyForShipment: boolean;
+  sellableStockBefore?: number;
   shipmentBlockedReason?: string;
   editable: boolean;
   editBlockedReason?: string;
@@ -69,6 +78,7 @@ export type OrderFixture = {
   customerName: string;
   customerPhone: string;
   customerTier: string;
+  fixtureOnlyNotice?: string;
   hasCustomWork: boolean;
   id: string;
   lines: OrderLineFixture[];
@@ -89,6 +99,7 @@ export type OrderFixture = {
     label: string;
   };
   socialContact?: string;
+  sourceDraftNo?: string;
   timeline: Array<{
     detail: string;
     title: string;
@@ -605,6 +616,7 @@ export const orderEntryFixture: OrderEntryFixture = {
       lineTotalBaht: 49000,
       shipmentState: "ยังไม่สร้างรอบจัดส่ง",
       stockWarning: "จำนวนเกินที่ขายได้: ขายได้ 1 ชิ้น",
+      sellableStockBefore: 1,
       readyForShipment: false,
       editable: true,
     },
@@ -636,7 +648,246 @@ export const orderEntryFixture: OrderEntryFixture = {
   stockWarnings: ["ชุดเก้าอี้รับแขกไม้สักสีธรรมชาติ จำนวนเกินที่ขายได้"],
 };
 
+export const orderReviewScenarioIds = [
+  "valid",
+  "missing-customer",
+  "missing-address",
+  "missing-payment-term",
+  "incomplete-custom-detail",
+  "stale-review",
+] as const;
+
+export type OrderReviewScenarioId = (typeof orderReviewScenarioIds)[number];
+
+export type OrderConfirmationFixtureResult = OrderConfirmationResult;
+export type GeneratedJobFixture = GeneratedJobReadModel;
+export type ReadyStockReservationFixture = ReadyStockReservationOutcome;
+
+type ConfirmationFixtureActor = {
+  displayName: string;
+  id: string;
+};
+
+export function getOrderReviewScenarioId(
+  scenarioId?: string | string[],
+): OrderReviewScenarioId {
+  const normalizedScenarioId = Array.isArray(scenarioId)
+    ? scenarioId[0]
+    : scenarioId;
+
+  return orderReviewScenarioIds.includes(
+    normalizedScenarioId as OrderReviewScenarioId,
+  )
+    ? (normalizedScenarioId as OrderReviewScenarioId)
+    : "valid";
+}
+
+export function getOrderConfirmationInput({
+  actor,
+  scenarioId = "valid",
+  stockShortageAccepted,
+}: {
+  actor: ConfirmationFixtureActor;
+  scenarioId?: OrderReviewScenarioId;
+  stockShortageAccepted: boolean;
+}): OrderConfirmationInput {
+  const readyStockLines = orderEntryFixture.readyStockLines.map((line) => ({
+    color: line.color,
+    dimensions: line.dimensions,
+    id: line.id,
+    imageAlt: line.imageAlt,
+    imageSrc: line.imageSrc,
+    lineTotalBaht: line.lineTotalBaht,
+    quantity: line.quantity,
+    sellableStockBefore: line.sellableStockBefore ?? line.quantity,
+    skuCode: line.skuCode ?? "SKU-FIXTURE-MISSING",
+    skuName: line.skuName ?? line.title,
+    title: line.title,
+  }));
+  const customWorkLines = orderEntryFixture.customLines.map((line) => ({
+    customWorkDetail: {
+      colorDetail: "สีโอ๊คเข้ม",
+      deliveryDate: line.deliveryDate,
+      materialDetail: "ไม้สัก",
+      productionDetail: "ลายแกะดอกพิกุล มีไฟในตู้",
+      referenceImageCount: 1,
+      sizeDetail: "160 x 45 x 210 ซม.",
+      workName: line.title,
+    },
+    deliveryDate: line.deliveryDate,
+    id: line.id,
+    imageAlt: line.imageAlt,
+    imageSrc: line.imageSrc,
+    lineTotalBaht: line.lineTotalBaht,
+    quantity: line.quantity,
+    title: line.title,
+  }));
+  const input: OrderConfirmationInput = {
+    acknowledgement: {
+      stockShortageAccepted,
+    },
+    confirmedAt: "2026-05-19T09:00:00.000Z",
+    confirmedBy: {
+      displayName: actor.displayName,
+      roleId: actor.id,
+    },
+    customer: {
+      name: orderEntryFixture.customerName,
+      primaryPhone: orderEntryFixture.customerPhone,
+      socialContact: orderEntryFixture.socialContact,
+      tier: orderEntryFixture.customerTier,
+    },
+    customWorkLines,
+    fixtureIdSeed: {
+      jobIdPrefix: "JOB-O-FIX-S4-",
+      jobStart: 1,
+      orderId: "ORD-FIX-S4-0001",
+    },
+    optionalPaymentRecord: orderEntryFixture.optionalPaymentRecord,
+    paymentTerm: orderEntryFixture.paymentTerm,
+    readyStockLines,
+    recipient: {
+      address: orderEntryFixture.address,
+      name: orderEntryFixture.recipientName,
+      phone: orderEntryFixture.recipientPhone,
+    },
+    reviewId: "sector-4-order-review-fixture",
+    shipmentIntent: orderEntryFixture.shipmentIntent,
+    sourceDraftNo: "DRAFT-00035",
+    warnings: orderEntryFixture.stockWarnings.map((warning, index) => ({
+      id: `stock-warning-${index + 1}`,
+      lineId: orderEntryFixture.readyStockLines[index]?.id,
+      message: warning,
+      type: "stock-insufficient",
+    })),
+  };
+
+  if (scenarioId === "missing-customer") {
+    return {
+      ...input,
+      customer: null,
+    };
+  }
+
+  if (scenarioId === "missing-address") {
+    return {
+      ...input,
+      recipient: {
+        name: orderEntryFixture.recipientName,
+        phone: orderEntryFixture.recipientPhone,
+        address: "",
+      },
+    };
+  }
+
+  if (scenarioId === "missing-payment-term") {
+    return {
+      ...input,
+      paymentTerm: "",
+    };
+  }
+
+  if (scenarioId === "incomplete-custom-detail") {
+    return {
+      ...input,
+      customWorkLines: input.customWorkLines.map((line) => ({
+        ...line,
+        customWorkDetail: {
+          ...line.customWorkDetail,
+          productionDetail: "",
+          sizeDetail: "",
+        },
+      })),
+    };
+  }
+
+  if (scenarioId === "stale-review") {
+    return {
+      ...input,
+      stale: true,
+    };
+  }
+
+  return input;
+}
+
+export const confirmedOrderFixtureResult = confirmOrderFromReview(
+  getOrderConfirmationInput({
+    actor: {
+      displayName: "แอดมินฝ่ายขาย",
+      id: "admin-sales",
+    },
+    stockShortageAccepted: true,
+  }),
+);
+
+export const confirmedOrderFixture =
+  confirmedOrderFixtureResult.status === "confirmed"
+    ? toOrderFixture(confirmedOrderFixtureResult)
+    : undefined;
+
+function toOrderFixture(
+  result: Extract<OrderConfirmationResult, { status: "confirmed" }>,
+): OrderFixture {
+  return {
+    address: result.confirmedOrder.address,
+    createdDate: "19 พ.ค. 69",
+    createdDateShort: "19 พ.ค. 69",
+    customerName: result.confirmedOrder.customerName,
+    customerPhone: result.confirmedOrder.customerPhone,
+    customerTier: result.confirmedOrder.customerTier,
+    fixtureOnlyNotice: result.confirmedOrder.fixtureOnlyNotice,
+    hasCustomWork: result.confirmedOrder.hasCustomWork,
+    id: result.confirmedOrder.id,
+    lines: result.confirmedOrder.lines.map((line) => {
+      const generatedJob = result.generatedJobs.find(
+        (job) => job.sourceLineId === line.id,
+      );
+
+      return {
+        color: line.color,
+        customDetail: line.customDetail,
+        deliveryDate: generatedJob?.deliveryDate,
+        dimensions: line.dimensions,
+        editable: line.type === "ready-stock",
+        editBlockedReason:
+          line.type === "custom-work"
+            ? "มี JOB-O แล้ว ต้องแก้รายละเอียดผลิตจากหน้า Job"
+            : undefined,
+        id: line.id,
+        imageAlt: line.imageAlt,
+        imageSrc: line.imageSrc,
+        job: line.job,
+        lineTotalBaht: line.lineTotalBaht,
+        quantity: line.quantity,
+        readyForShipment: line.readyForShipment,
+        shipmentBlockedReason: line.shipmentBlockedReason,
+        shipmentState: line.shipmentState,
+        skuCode: line.skuCode,
+        skuName: line.skuName,
+        stockWarning: line.stockWarning,
+        title: line.title,
+        type: line.type,
+      };
+    }),
+    netTotalBaht: result.confirmedOrder.netTotalBaht,
+    orderStatus: result.confirmedOrder.orderStatus,
+    payment: result.confirmedOrder.payment,
+    recipientName: result.confirmedOrder.recipientName,
+    recipientPhone: result.confirmedOrder.recipientPhone,
+    shipmentRounds: [],
+    shipmentSummary: result.confirmedOrder.shipmentSummary,
+    socialContact: result.confirmedOrder.socialContact,
+    sourceDraftNo: result.confirmedOrder.sourceDraftNo,
+    timeline: result.activityEvents,
+  };
+}
+
 export function getOrderById(orderId: string): OrderFixture | undefined {
+  if (confirmedOrderFixture?.id === orderId) {
+    return confirmedOrderFixture;
+  }
+
   return orderFixtures.find((order) => order.id === orderId);
 }
 

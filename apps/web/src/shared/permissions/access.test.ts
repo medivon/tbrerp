@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getFixtureUser } from "@/shared/fixtures/users";
 import {
   canAccessAdminDashboard,
+  canConfirmOrders,
   getOwnHome,
   getOwnHomePath,
 } from "@/shared/permissions/access";
@@ -24,6 +25,14 @@ describe("role-aware access helpers", () => {
     expect(canAccessAdminDashboard(getFixtureUser("outsource-base"))).toBe(
       false,
     );
+  });
+
+  it("allows only Owner, Manager, and Admin/Sales fixtures to confirm Orders", () => {
+    expect(canConfirmOrders(getFixtureUser("owner"))).toBe(true);
+    expect(canConfirmOrders(getFixtureUser("manager"))).toBe(true);
+    expect(canConfirmOrders(getFixtureUser("admin-sales"))).toBe(true);
+    expect(canConfirmOrders(getFixtureUser("staff-base"))).toBe(false);
+    expect(canConfirmOrders(getFixtureUser("outsource-base"))).toBe(false);
   });
 
   it("preserves fixture user URL state in own-home links", () => {

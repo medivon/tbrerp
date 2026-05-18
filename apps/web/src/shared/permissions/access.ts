@@ -1,3 +1,5 @@
+import { canConfirmOrder } from "@thaiboran/domain";
+
 import type { FixtureUser } from "@/shared/fixtures/users";
 
 export type AppDestination = "dashboard" | "personal";
@@ -12,6 +14,10 @@ export function canAccessMainNavigation(user: FixtureUser): boolean {
 
 export function canAccessOrders(user: FixtureUser): boolean {
   return canAccessMainNavigation(user);
+}
+
+export function canConfirmOrders(user: FixtureUser): boolean {
+  return canAccessOrders(user) && canConfirmOrder(user.id);
 }
 
 export function getOwnHome(user: FixtureUser): AppDestination {

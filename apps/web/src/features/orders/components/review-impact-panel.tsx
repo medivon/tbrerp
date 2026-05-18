@@ -3,11 +3,17 @@ import { AlertTriangle, CheckCircle2, PackageCheck, Truck } from "lucide-react";
 import { Button, StatusChip, SurfaceCard } from "@thaiboran/ui";
 
 export function ReviewImpactPanel({
+  canConfirm,
   confirmDisabledReason,
   hasStockWarning = false,
+  onConfirm,
+  stockWarningAcknowledged = false,
 }: {
+  canConfirm: boolean;
   confirmDisabledReason: string;
   hasStockWarning?: boolean;
+  onConfirm: () => void;
+  stockWarningAcknowledged?: boolean;
 }) {
   return (
     <SurfaceCard
@@ -20,7 +26,7 @@ export function ReviewImpactPanel({
           ผลหลังยืนยันสร้างออเดอร์
         </p>
         <p className="mt-1 text-sm leading-6 text-shell-muted">
-          แสดงผลที่จะเกิดหลังยืนยันจริงในรอบงานถัดไป
+          ยืนยันแล้วจะสร้างผลลัพธ์ fixture/dev เท่านั้น ยังไม่เขียนฐานข้อมูลจริง
         </p>
       </div>
 
@@ -48,27 +54,29 @@ export function ReviewImpactPanel({
             <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
               <p className="text-sm font-bold">ต้องรับทราบคำเตือนสต๊อก</p>
-              <label className="mt-2 flex items-start gap-2 text-sm font-semibold leading-6">
-                <input
-                  checked
-                  className="mt-1 h-4 w-4 rounded border-[#FAD980]"
-                  disabled
-                  readOnly
-                  type="checkbox"
-                />
-                รับทราบคำเตือนสต๊อกไม่พอ
-              </label>
+              <p className="mt-1 text-sm font-semibold leading-6">
+                {stockWarningAcknowledged
+                  ? "รับทราบแล้วใน Review"
+                  : "ต้องติ๊ก acknowledgement ในคำเตือนก่อนกดยืนยัน"}
+              </p>
             </div>
           </div>
         </div>
       ) : null}
 
       <div className="grid gap-2 border-t border-shell-border pt-4">
-        <Button disabled title={confirmDisabledReason}>
+        <Button
+          disabled={!canConfirm}
+          onClick={onConfirm}
+          title={canConfirm ? undefined : confirmDisabledReason}
+          type="button"
+        >
           ยืนยันสร้างออเดอร์
         </Button>
         <p className="text-xs font-semibold leading-5 text-shell-muted">
-          {confirmDisabledReason}
+          {canConfirm
+            ? "Review นี้เป็นจุดยืนยันสุดท้าย ไม่มี modal ยืนยันซ้ำ"
+            : confirmDisabledReason}
         </p>
       </div>
     </SurfaceCard>
