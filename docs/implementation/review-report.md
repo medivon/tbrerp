@@ -1,63 +1,65 @@
 # Review Report
 
 Status: approved after reviewer fixes
-Reviewed task: Sector 2 - Shared UI Components / Visual Component System
-Reviewed implementation commit: `038e1f4` (`feat: add shared visual component system`)
+Reviewed task: Sector 3 - Order Read/Create Foundation
+Reviewed implementation commit: `7a70ee4` (`feat: add order read create foundation`)
 Reviewer: Codex reviewer
 Date: 2026-05-19
 
 ## Source Docs Read
 
 - `AGENTS.md`
+- `docs/implementation/current-task.md`
+- `docs/implementation/reviewer-checklist.md`
+- `docs/implementation/sector-plan.md`
+- `docs/implementation/foundation-proposal.md`
 - `CONTEXT.md`
 - `docs/adr/*.md`
 - `docs/decision-log.md`
 - `docs/qa-summary.md`
-- `docs/implementation/current-task.md`
-- `docs/implementation/reviewer-checklist.md`
-- `docs/implementation/sector-plan.md`
+- `docs/ux-ui/04-interaction-modal-behavior.md`
+- `docs/ux-ui/03-navigation-map.md`
 - `docs/ux-ui/design-system/visual-design-system.md`
 - `docs/ux-ui/design-system/responsive-mobile.md`
-- `docs/ux-ui/design-system/app-shell.md`
-- `docs/ux-ui/design-system/table-patterns.md`
-- `docs/ux-ui/design-system/pages/admin-dashboard.md`
 - `docs/ux-ui/design-system/pages/order.md`
-- `docs/ux-ui/design-system/pages/job-worker-rak-samuk.md`
-- `docs/ux-ui/design-system/pages/shipment-delivery.md`
-- `docs/ux-ui/04-interaction-modal-behavior.md`
-- Sector 2 code under `packages/ui/src/*`, Admin Dashboard, app shell, access, navigation, and permission files named in the review request.
+- `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`
+- `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`
+- `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
+- `docs/ux-ui/screens/SCR-ORD-006-all-orders-list.md`
+- `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`
+- UI UX Pro Max design-system guidance for dense operational ERP order work.
 
 ## Findings
 
-- Minor - fixed: shared command/chip primitives did not fully satisfy the visual-system cursor and Thai wrapping requirements. `Button` lacked an explicit pointer cursor and used fixed no-wrap sizing; `StatusChip` forced `whitespace-nowrap`, which could overflow long Thai labels in narrow layouts. Fixed in `packages/ui/src/button.tsx` and `packages/ui/src/status-chip.tsx`, with focused coverage in `packages/ui/src/visual-components.test.tsx`.
+- Minor - fixed: `รอยืนยันการจัดส่ง` was visually grouped with Order-status filters on the Order list, which could imply it was an Order status. Split filters into `สถานะออเดอร์` and `สถานะจัดส่ง`, and added a focused unit test.
+- Minor - fixed: several disabled Sector 3 placeholder actions relied on hidden `title` text instead of visible reasons. Added visible reason copy for disabled draft/save, Shipment, Payment/COD, and Order Line Edit foundation actions.
+- Minor - fixed: list and Draft toolbar search inputs could create page-level horizontal overflow on phone when combined with the leading icon. Adjusted responsive input sizing and expanded Sector 3 e2e coverage to `375`, `768`, `1024`, and `1440`.
 
 No remaining Blocker, Major, or Minor findings.
 
 ## Review Notes
 
-- Shared components remain business-neutral and presentation-oriented. Permission filtering and sensitive-data omission still happen before rendering; no generic component receives hidden data to mask.
-- Components are split by purpose in `packages/ui/src/` rather than dumped into one large file.
-- Route/page files remain thin and compose shared UI or redirect/guard helpers.
-- No Order, Job, Shipment, Payment, Stock, CRM, Finance, Settings, Reports, real auth, database schema, migration, API contract, or seed-data implementation was added.
-- Admin Dashboard still has exactly the six approved cards and no finance amounts.
-- Missing-permission navigation/actions remain hidden; direct unauthorized dashboard access still routes to no-access with only own-home return.
-- Main shell keeps the dark/navy treatment in chrome only; work surfaces remain readable light operational surfaces.
-- The UI preview route uses safe internal sample copy and is not linked from main navigation.
-- No archived mockups, screenshots, legacy files, or image prompts were used as active source.
+- Scope remains Sector 3 only: Order list/read, Draft queue, create/review foundation, read-first detail, and guarded Order Line Edit foundation.
+- No real Order creation, Draft persistence, Order ID generation, `JOB-O` creation, stock reservation, Shipment creation, Payment/COD action, API route, server mutation, Prisma schema, migration, or database artifact was added.
+- Draft fixtures show Draft No. only and no Order ID. Drafts do not imply stock reservation, Job creation, Shipment creation, or reporting.
+- Order Review remains the final confirmation surface visually, but `ยืนยันสร้างออเดอร์` is disabled and cannot create real business records in this sector.
+- Order Detail is read-first, keeps `สถานะออเดอร์` and `สถานะจัดส่ง` separate, and keeps `รอยืนยันการจัดส่ง` only in shipment status/summary.
+- Completed and cancelled Orders are read-first/read-only in normal workflow, with normal mutation actions disabled or replaced by status labels.
+- Fixtures and rendered Order surfaces omit product cost, profit, payout, hidden finance detail, payment evidence, Management Log, and Audit Log data.
+- Route/page files remain thin. Order feature files are organized under `apps/web/src/features/orders/`, with fixtures/constants outside React component bodies.
 
 ## Checks Run
 
-- UI UX Pro Max design-system query for ERP operational dashboard visual review context - completed.
-- `pnpm --filter @thaiboran/ui test` - passed, 5 component tests.
+- UI UX Pro Max design-system query for dense Thai operational ERP order work - completed.
 - `pnpm lint` - passed.
 - `pnpm typecheck` - passed.
-- `pnpm test` - passed, 17 total tests across UI and web packages.
-- `pnpm format:check` - passed.
+- `pnpm test` - passed, 18 total tests including 6 Order foundation tests.
+- `pnpm format:check` - initially failed on a touched Order file; ran Prettier on touched files; final `pnpm format:check` passed.
 - `pnpm build` - passed.
-- `pnpm test:e2e` - initial run failed because Playwright reused a stale dev server on port 3000 with corrupted `.next` module resolution; stopped that stale server and reran.
-- `pnpm test:e2e` fresh run - passed, 16 Playwright checks across `375`, `768`, `1024`, and `1440`.
-- Manual Playwright visual smoke on `/dashboard?user=admin-sales` at `375`, `768`, `1024`, and `1440` - passed: all six card titles present, no finance amount text, no horizontal overflow.
-- Manual Playwright visual smoke on `/ui-preview` at `375` and `1440` - passed: no sensitive money/evidence text and no horizontal overflow.
+- `pnpm test:e2e` - initial run reused a stale local dev server on port 3000 and failed with missing responsive CSS symptoms; stopped the stale server and reran.
+- `pnpm test:e2e` fresh run before breakpoint expansion - passed, 36 Playwright checks.
+- Expanded Sector 3 e2e breakpoints to `375`, `768`, `1024`, and `1440`.
+- Final `pnpm test:e2e` - passed, 56 Playwright checks.
 
 ## Source-Doc Conflicts
 
@@ -65,6 +67,7 @@ None found.
 
 ## Fixes Committed
 
-- Shared `Button` now exposes clear pointer behavior and permits long Thai command text to wrap without overflow.
-- Shared `StatusChip` now permits long Thai labels to wrap within constrained containers.
-- Added a focused component test for cursor-visible commands and Thai-wrap-safe chips.
+- Separated Shipment status filtering from Order status filtering.
+- Added visible disabled-action reasons for foundation-only actions.
+- Fixed mobile toolbar overflow on Order list and Draft queue.
+- Expanded Sector 3 e2e responsive coverage.

@@ -25,6 +25,24 @@ describe("Order read/create foundation", () => {
     );
   });
 
+  it("keeps shipment status filters separate from Order status filters", () => {
+    render(<OrderList currentUser={currentUser} mode="all" />);
+
+    const orderStatusFilters = screen.getByRole("group", {
+      name: "สถานะออเดอร์",
+    });
+    const shipmentStatusFilters = screen.getByRole("group", {
+      name: "สถานะจัดส่ง",
+    });
+
+    expect(
+      within(orderStatusFilters).queryByText("รอยืนยันการจัดส่ง"),
+    ).toBeNull();
+    expect(
+      within(shipmentStatusFilters).getByText("รอยืนยันการจัดส่ง"),
+    ).toBeTruthy();
+  });
+
   it("keeps Draft Orders separate from real Order IDs", () => {
     render(<DraftOrderQueue currentUser={currentUser} />);
 
@@ -49,6 +67,11 @@ describe("Order read/create foundation", () => {
     expect(screen.getAllByText("ยังไม่สร้างรอบจัดส่ง").length).toBeGreaterThan(
       0,
     );
+    expect(
+      screen.getByText(
+        "ปุ่มนี้ปิดไว้ใน foundation รอบนี้ จึงยังไม่สร้างออเดอร์จริง ไม่สร้าง JOB-O ไม่จองสต๊อก และไม่สร้างรอบจัดส่ง",
+      ),
+    ).toBeTruthy();
   });
 
   it("separates Order status from Shipment status on Order Detail", () => {

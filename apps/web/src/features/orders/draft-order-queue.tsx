@@ -46,7 +46,7 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
           ค้นหาร่างออเดอร์
         </label>
         <input
-          className="min-h-10 min-w-[min(100%,22rem)] flex-1 rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[22rem]"
           id="draft-search"
           placeholder="ค้นหาเลขร่าง ลูกค้า เบอร์ ผู้รับ หรือผู้รับผิดชอบ"
           type="search"

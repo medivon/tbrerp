@@ -225,14 +225,19 @@ export function OrderDetail({
                       <StatusChip variant="neutral">{round.status}</StatusChip>
                     </td>
                     <td className="px-3 py-4">
-                      <Button
-                        disabled
-                        size="sm"
-                        title="รายละเอียดรอบจัดส่งยังไม่เปิดในรอบงานนี้"
-                        variant="outline"
-                      >
-                        เปิดรอบจัดส่ง
-                      </Button>
+                      <div className="grid justify-items-end gap-1">
+                        <Button
+                          disabled
+                          size="sm"
+                          title="รายละเอียดรอบจัดส่งยังไม่เปิดในรอบงานนี้"
+                          variant="outline"
+                        >
+                          เปิดรอบจัดส่ง
+                        </Button>
+                        <DisabledReason>
+                          รายละเอียดรอบจัดส่งยังไม่เปิดใน Sector 3
+                        </DisabledReason>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -269,6 +274,9 @@ export function OrderDetail({
             <CreditCard aria-hidden className="mr-2 h-4 w-4" />
             เปิดติดตามการเงิน
           </Button>
+          <DisabledReason>
+            คำสั่ง Payment/COD ยังไม่เปิดใน Sector 3
+          </DisabledReason>
         </div>
       </ReadFirstSection>
 
@@ -354,6 +362,14 @@ function MenuDisabled({ children }: { children: ReactNode }) {
     <span className="min-h-10 rounded-md px-3 py-2 text-sm font-semibold leading-6 text-muted-foreground opacity-70">
       {children}
     </span>
+  );
+}
+
+function DisabledReason({ children }: { children: ReactNode }) {
+  return (
+    <p className="max-w-56 text-right text-xs font-semibold leading-5 text-muted-foreground">
+      {children}
+    </p>
   );
 }
 

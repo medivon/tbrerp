@@ -65,6 +65,9 @@ export function OrderCreate({
             ) : (
               <StatusChip variant="neutral">ยังไม่ได้บันทึกร่าง</StatusChip>
             )}
+            <StatusChip variant="neutral">
+              บันทึกร่างเป็นปุ่มตัวอย่างใน Sector 3
+            </StatusChip>
           </div>
         }
         title="สร้างออเดอร์"
@@ -249,6 +252,9 @@ export function OrderCreate({
             <Button disabled title="Sector 3 ยังไม่บันทึกร่างจริง">
               บันทึกร่าง
             </Button>
+            <p className="text-xs font-semibold leading-5 text-shell-muted">
+              ปุ่มบันทึกร่างปิดไว้ในรอบงานนี้ จึงยังไม่สร้างหรือแก้ Draft จริง
+            </p>
             <Button asChild>
               <Link href={orderHref(orderRoutes.review, currentUser)}>
                 ตรวจสอบก่อนสร้างออเดอร์

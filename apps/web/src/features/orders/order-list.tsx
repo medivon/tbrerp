@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ClipboardList, PackageCheck, Search, Truck } from "lucide-react";
 import {
   Button,
@@ -134,12 +135,12 @@ export function OrderList({
           ค้นหาออเดอร์
         </label>
         <input
-          className="min-h-10 min-w-[min(100%,22rem)] flex-1 rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[22rem]"
           id="order-search"
           placeholder="ค้นหาเลขออเดอร์ ลูกค้า เบอร์ ผู้รับ ที่อยู่ Job ID หรือสินค้า"
           type="search"
         />
-        <div className="flex flex-wrap gap-2">
+        <FilterGroup label="สถานะออเดอร์">
           {[
             "ทั้งหมด",
             "กำลังดำเนินการ",
@@ -148,7 +149,6 @@ export function OrderList({
             "ส่งบางส่วน",
             "จัดส่งครบแล้ว",
             "ยกเลิก",
-            "รอยืนยันการจัดส่ง",
           ].map((filter) => (
             <button
               className="min-h-9 cursor-pointer rounded-full border border-border bg-surface px-3 text-sm font-semibold text-muted-foreground transition hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
@@ -158,7 +158,15 @@ export function OrderList({
               {filter}
             </button>
           ))}
-        </div>
+        </FilterGroup>
+        <FilterGroup label="สถานะจัดส่ง">
+          <button
+            className="min-h-9 cursor-pointer rounded-full border border-border bg-surface px-3 text-sm font-semibold text-muted-foreground transition hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            type="button"
+          >
+            รอยืนยันการจัดส่ง
+          </button>
+        </FilterGroup>
       </ToolbarShell>
 
       {orders.length > 0 ? (
@@ -188,6 +196,27 @@ export function OrderList({
           </Button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function FilterGroup({
+  children,
+  label,
+}: {
+  children: ReactNode;
+  label: string;
+}) {
+  return (
+    <div
+      aria-label={label}
+      className="flex min-w-0 flex-wrap items-center gap-2"
+      role="group"
+    >
+      <span className="text-xs font-extrabold text-muted-foreground">
+        {label}
+      </span>
+      {children}
     </div>
   );
 }

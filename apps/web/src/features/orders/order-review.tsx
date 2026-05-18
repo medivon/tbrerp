@@ -43,6 +43,9 @@ export function OrderReview({ currentUser }: { currentUser: FixtureUser }) {
             {hasStockWarning ? (
               <StatusChip variant="warning">ต้องรับทราบคำเตือน</StatusChip>
             ) : null}
+            <StatusChip variant="neutral">
+              บันทึกร่างเป็นปุ่มตัวอย่างใน Sector 3
+            </StatusChip>
           </div>
         }
         title="ตรวจสอบก่อนสร้างออเดอร์"

@@ -132,6 +132,10 @@ export function OrderLineEdit({
               <Button disabled title="ยังไม่บันทึกการแก้ไขจริงในรอบงานนี้">
                 บันทึกการแก้ไข
               </Button>
+              <p className="basis-full text-xs font-semibold leading-5 text-muted-foreground">
+                ปุ่มบันทึกปิดไว้ในรอบงานนี้ จึงยังไม่แก้รายการ ไม่จอง/คืนสต๊อก
+                และไม่สร้าง JOB-O จริง
+              </p>
             </div>
           </SurfaceCard>
         </div>
@@ -169,6 +173,9 @@ export function OrderLineEdit({
           >
             ตรวจสอบการแก้ไข
           </Button>
+          <p className="text-xs font-semibold leading-5 text-shell-muted">
+            ปุ่มนี้เป็น foundation เท่านั้น ยังไม่เปิดการบันทึกธุรกิจจริง
+          </p>
         </SurfaceCard>
       </div>
     </div>
