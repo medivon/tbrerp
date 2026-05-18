@@ -205,7 +205,7 @@ Physical stock mobile:
 - Product Stock Receipt can be phone-friendly for warehouse receipt entry when the PO context is simple; block over-receipt inline and preserve Review before save.
 - Material Adjustment can be phone-friendly for actual counted quantities, with session evidence and confirmation before save.
 
-Material/Product purchase documents are desktop/tablet-primary. Phone fallback may review, attach evidence, or perform urgent receipt only if the full confirmation summary is readable and complete.
+Material/Product purchase documents are desktop/tablet-primary. Phone fallback may review and attach evidence. Stock-changing receipt follows the active screen's approved device target: `SUP-019` Product Stock Receipt can be phone-friendly; `SUP-016` Material Purchase Order receipt remains desktop/tablet-primary unless the active screen spec changes.
 
 ## 11. Mobile Behavior for Customer / CRM Screens
 
@@ -276,23 +276,25 @@ Desktop-primary:
 - `MGR-003` Aging Threshold Settings.
 - `SUP-011` Payment Voucher.
 - `SUP-012` Product Settings.
+- Roles / Permissions settings.
 
-Desktop/tablet-primary with phone fallback:
+For these desktop-primary screens, phone fallback is limited to safe read/review/simple capture described in the domain sections above. It must not turn PV, COD/Payment follow-up, bulk Shipment creation, Product Settings, or Roles / Permissions into phone-first workflows.
 
-- Admin Dashboard and dense admin queues.
+Other desktop/tablet-primary groups with phone fallback:
+
+- Admin Dashboard and dense admin queues except `ADM-007`.
 - Order Create/Edit, Order Review, Order Detail, All Orders, Draft Order Queue, and Order Line Edit.
 - Production Job Entry, Production Review, Draft Production Queue.
 - Ready-to-Ship Queue, Shipment Builder, Released Shipment Detail, Shipment Confirmation Queue.
-- COD/Payment Follow-up, Expense Entry, Payable Items, Payout Clearing, PV.
+- Expense Entry.
 - Product / SKU Table, Product Model Detail, SKU Variant Detail, Ready Stock, Product PO, Material Stock, Material PO.
 - Customer List, Customer Detail, CRM Notes, Service Case.
-- Settings and Roles / Permissions.
 
 Phone fallback must never add mobile-only shortcuts around confirmation, reason capture, evidence requirements, stale-state refresh, permission checks, COD final-round rules, PV finalization rules, or completed-Order immutability.
 
 ## 15. Actions to Avoid on Phone Unless Urgent
 
-Avoid these actions on phone unless the user has permission, the screen preserves the full active review/confirmation pattern, and the action is operationally urgent:
+Avoid these actions on phone unless the user has permission, the screen preserves the full active review/confirmation pattern, and the action is operationally urgent. This list does not grant phone availability by itself; it only identifies risky actions where a permitted phone fallback exists.
 
 - Creating a complex multi-line Order or custom-work-heavy Order.
 - Saving Order Line Edit with financial reconciliation.
