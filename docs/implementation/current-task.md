@@ -59,6 +59,7 @@ Implement a read-only, role-aware app shell and Admin Dashboard foundation for T
 - Dashboard is a read-only queue launcher and risk preview, not a task table or analytics report.
 - Dashboard may show finance follow-up counts and broad labels, but no money amounts or payment evidence.
 - Future module links in the approved sidebar route to non-business placeholders for this sector.
+- Follow-up UI polish pass used `ui-ux-pro-max` search output. Applied premium enterprise gateway guidance with a dark/navy shell, improved hover/focus/accessibility treatment, and Next.js responsive image guidance while keeping main ERP work surfaces readable and practical.
 
 ## Files Changed
 
@@ -74,11 +75,12 @@ Implement a read-only, role-aware app shell and Admin Dashboard foundation for T
 
 - `pnpm lint` - passed.
 - `pnpm typecheck` - passed.
-- `pnpm test` - passed, 11 web tests.
+- `pnpm test` - passed, 12 web tests.
 - `pnpm format:check` - passed.
 - `pnpm build` - passed.
 - `pnpm test:e2e` - passed, 16 Playwright checks across 375, 768, 1024, and 1440 widths.
-- Visual responsive smoke via Playwright screenshots at 375, 768, 1024, and 1440 widths - no horizontal overflow, 3 critical preview images rendered, and no baht/money text detected.
+- Visual responsive smoke via Playwright screenshots at 375, 768, 1024, and 1440 widths - dark/navy shell rendered, main work surfaces stayed readable, critical preview images rendered, and no horizontal overflow was observed.
+- Follow-up UI polish checks: `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e`, and `pnpm build` passed after visual refinement.
 
 ## Known Gaps or Blockers
 

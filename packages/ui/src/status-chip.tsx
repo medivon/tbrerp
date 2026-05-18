@@ -4,16 +4,16 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./utils";
 
 export const statusChipVariants = cva(
-  "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold leading-none",
+  "inline-flex w-fit max-w-full items-center whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-semibold leading-none",
   {
     variants: {
       variant: {
-        action: "bg-[#E0ECFF] text-[#1D4ED8]",
-        danger: "bg-[#FEE4E2] text-[#9F1239]",
-        neutral: "bg-subtle text-[#40504A]",
-        revision: "bg-[#ECE9FE] text-[#5B21B6]",
-        success: "bg-[#E6F4EA] text-[#166534]",
-        warning: "bg-[#FEF3C7] text-[#92400E]",
+        action: "border-[#B9D1FF] bg-[#E0ECFF] text-[#1D4ED8]",
+        danger: "border-[#FDB8B3] bg-[#FEE4E2] text-[#9F1239]",
+        neutral: "border-border bg-subtle text-[#40504A]",
+        revision: "border-[#D9D3FD] bg-[#ECE9FE] text-[#5B21B6]",
+        success: "border-[#BFE5C9] bg-[#E6F4EA] text-[#166534]",
+        warning: "border-[#FAD980] bg-[#FEF3C7] text-[#92400E]",
       },
     },
     defaultVariants: {
