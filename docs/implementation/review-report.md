@@ -2,7 +2,7 @@
 
 Status: approved
 Reviewed task: Sector 1 - App Shell + Access Foundation + Admin Dashboard Read-only
-Reviewed commit: `f66ad85` (`feat: add app shell and admin dashboard foundation`)
+Reviewed implementation commit: `ddb5bb3d0f90594a10e77884974d54d3813ffc61` (`feat: add dark shell and dashboard polish`)
 Reviewer: Codex reviewer
 Date: 2026-05-19
 
@@ -14,7 +14,6 @@ Date: 2026-05-19
 - `docs/implementation/reviewer-checklist.md`
 - `docs/implementation/implementer-rules.md`
 - `docs/implementation/sector-plan.md`
-- `docs/implementation/foundation-proposal.md`
 - `docs/ux-ui/design-system/visual-design-system.md`
 - `docs/ux-ui/design-system/responsive-mobile.md`
 - `docs/ux-ui/design-system/app-shell.md`
@@ -28,40 +27,38 @@ Date: 2026-05-19
 
 ## Findings
 
-- Minor, fixed: the no-access route rendered the fixture user selector, leaving an extra control on a page that should expose only the return-to-own-home action. The route now renders the no-access state without the selector.
-- Minor, fixed: the tablet/phone shell rendered a menu icon without a working navigation surface. It now opens a compact permitted navigation menu for users who have main ERP navigation.
-- Minor, fixed: one critical preview item showed `งานด่วน` before `รอวัตถุดิบ` even though the docs say material waiting should be the primary blocker when urgent work is also waiting for materials. The fixture now makes `รอวัตถุดิบ` primary.
+No Blocker, Major, or Minor findings.
 
-## Checklist Results
+## Review Notes
 
-- Scope matches `current-task.md`; fixes stayed within app shell, access state, dashboard fixtures, and tests.
-- App shell follows the light, Thai-first visual direction and now has responsive navigation behavior at small widths.
-- Sidebar labels match the approved navigation docs.
-- Role-aware landing uses fixture users only; no real auth/session provider was added.
-- Base-role users do not see main ERP navigation.
-- Missing-permission routes show the no-access state with own-home return.
-- Admin Dashboard contains only the six approved cards.
-- Admin Dashboard fixtures and tests contain no baht amounts, payment evidence, cost, profit, payout, Owner, Current Handler, Management Log, or Audit Log data.
-- Critical preview has three image-led items and follows documented priority after the fixture fix.
-- Responsive smoke checks pass at `375`, `768`, `1024`, and `1440`.
-- No database schema, migrations, seed data, API route contracts, real auth, or business mutation workflow was added.
-- No archived mockups, legacy screenshots, or image prompts are referenced by app/package code as source.
+- The dark/navy shell matches the updated visual direction: the sidebar/topbar use dark operational chrome while dashboard cards, placeholders, and preview panels remain readable light work surfaces.
+- The dashboard still reads as an ERP queue launcher, not a decorative marketing or analytics dashboard.
+- Sidebar/topbar active, hover, focus, and cursor states are clear in code and browser smoke checks.
+- Thai labels remain readable at the reviewed breakpoints. No horizontal page overflow was observed at `375`, `768`, `1024`, or `1440`.
+- Admin Dashboard still has only the six approved cards and three critical preview items.
+- No baht amounts, payment evidence, COD expected/actual values, cost, profit, payout, Rak Samuk rates, Management Log, or Audit Log content was found in dashboard fixtures or rendered smoke output.
+- Base-role users land on the Personal Dashboard placeholder and receive no main ERP navigation.
+- Missing-permission dashboard access routes to no-access with own-home return and no fixture selector on that route.
+- No real auth, database, API, Prisma schema, migrations, seed data, business mutation, or out-of-scope workflow was added.
+- No archived mockups, old screenshots, legacy files, or image prompts are referenced by app/package code as active source.
 
 ## Checks Run
 
+- `python3 /Users/tbr/Desktop/tbr/.codex/skills/ui-ux-pro-max/scripts/search.py "enterprise ERP operational dashboard dark navy dense Thai" --design-system -p "THAIBORAN ERP"` - completed for visual review context.
 - `pnpm lint` - passed.
 - `pnpm typecheck` - passed.
 - `pnpm test` - passed, 12 web tests.
 - `pnpm format:check` - passed.
 - `pnpm build` - passed.
-- `pnpm test:e2e` - passed, 16 Playwright checks across `375`, `768`, `1024`, and `1440`.
+- `pnpm test:e2e` - passed, 16 Playwright checks across the configured Sector 1 viewports.
+- Manual Playwright visual smoke at `375`, `768`, `1024`, and `1440` - passed. Confirmed dark shell, readable light work surfaces, exactly six dashboard card titles, three rendered preview images, no baht text, pointer cursor on dashboard links, no horizontal overflow, base-role personal route, and no-access own-home behavior.
 
-Note: the first `pnpm test:e2e` attempt failed because the sandbox blocked binding the local Next.js dev server to port `3000` (`listen EPERM`). The suite passed after rerunning with approved local server permission.
+Note: an initial `pnpm build` / `pnpm test:e2e` attempt was started concurrently during review and produced invalid transient failures from Next dev/build port and `.next` contention. Both checks were rerun sequentially and passed.
 
 ## Source-Doc Conflicts
 
 None found.
 
-## Follow-up Required
+## Fixes Committed
 
-None.
+None. No clear Sector 1 review issue required a code change.
