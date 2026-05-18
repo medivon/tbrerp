@@ -12,6 +12,9 @@ pnpm dev
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm build
 ```
 
 The current app is only the technical foundation placeholder. It does not implement ERP business workflows, real authentication, database schema, migrations, or business API contracts.
+
+Playwright is configured for future end-to-end checks. Browser installation can wait until a later approved slice adds real browser tests.
