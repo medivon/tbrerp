@@ -27,6 +27,8 @@ Important workflow rule:
 - This screen is for selected lines from a single Order / special case only.
 - Bulk creation does not enter this screen.
 - Bulk creation uses saved Order Recipient Detail snapshots as delivery defaults and moves directly to creating Shipment documents.
+- P0 has no persistent Draft Shipment. This screen is temporary pre-release work; Shipment exists only after pressing พร้อมจัดส่ง.
+- Shipment Builder does not edit COD. COD is shown only as a read-only final-round signal where relevant and is disabled when unfinished custom work remains.
 - It opens from Order Detail after the admin selects ready lines in `จัดการรอบจัดส่ง` and presses `สร้างรอบจัดส่งจากรายการที่เลือก`.
 - From Order Detail, it receives recipient name, address, phone, selected delivery items, each item's main image, quantity, and carrier name when already chosen.
 - Item image, product name, color / SKU ย่อย, SKU code, and dimensions come from the Order Line snapshot, not live Product Model data.
@@ -67,14 +69,13 @@ Show delivery data as editable special-case fields:
 - ที่อยู่จัดส่ง: 88/14 ถ.ราชพฤกษ์ ต.บางรักพัฒนา อ.บางบัวทอง จ.นนทบุรี 11110
 - ขนส่ง: ไปรษณีย์ไทย EMS
 - วันจัดส่ง: 24 พ.ค. 67
-- การชำระเงิน: COD
-- ยอด COD: 12,000 บาท
-- หมายเหตุ COD: เก็บปลายทางตามยอดที่เก็บเงินแล้ว
+- การชำระเงิน: COD เฉพาะรอบสุดท้ายของออเดอร์
+- ยอด COD: 12,000 บาท (อ่านอย่างเดียวเมื่อใช้ได้)
+- If unfinished custom work remains, show disabled reason: เปิด COD ได้เฉพาะรอบจัดส่งสุดท้าย
 - หมายเหตุจัดส่ง: โทรก่อนเข้าจัดส่ง / ชิ้นงานระวังกระแทก
 
 Show edit buttons:
 - แก้ไขข้อมูลจัดส่ง
-- แก้ยอด COD
 - แก้หมายเหตุ
 Note: edits here are Shipment-round snapshots only and do not update Customer or Order automatically.
 
@@ -86,7 +87,6 @@ Stock warning modal/inline state:
 
 Footer action bar:
 - Primary button: พร้อมจัดส่ง
-- Secondary button: บันทึกเป็นร่าง
 - Secondary button: ยกเลิก
 
 Visual rules:
@@ -98,7 +98,7 @@ Visual rules:
 - Do not show the Order Detail selection control “สร้างรอบจัดส่งจากรายการที่เลือก” here; by this point the selected items are already inside Shipment Builder
 - Do not show unselected items or items blocked by unfinished custom work
 - Do not show Delivery Team controls
-- Treat COD as admin/finance delivery setup: it appears on the Shipping Sheet where relevant, not in Delivery Team UI and not on Delivery Note
+- Treat COD as a final-round read-only signal in this screen: it appears on the Shipping Sheet where relevant, and Delivery Team can see COD only for Shipments they are responsible for
 - Do not imply the Shipment is already sent
 - Do not show “ส่งออกแล้ว”
 - Do not show final Order completion

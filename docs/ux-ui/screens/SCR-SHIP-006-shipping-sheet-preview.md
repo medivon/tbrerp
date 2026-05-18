@@ -13,6 +13,7 @@ Approved mockup:
 - Admin
 - Same-permission admin user
 - Higher-permission admin user
+- Responsible Delivery Team where the delivery workflow exposes the sheet
 
 ## 3. User Goals
 
@@ -26,13 +27,14 @@ Approved mockup:
 
 - Shipment Builder -> `ดูใบจัดส่ง`.
 - Released Shipment Detail.
-- Draft Shipment Detail.
+- Responsible Delivery Team delivery view where allowed.
 - Delivery Note Preview.
 
 ## 5. Exit Points
 
 - Shipment Builder.
 - Shipment Detail.
+- Delivery view.
 - Delivery Note Preview.
 - Print dialog.
 
@@ -67,7 +69,7 @@ Approved mockup:
 | Address | ที่อยู่จัดส่ง | 99/12 ถ.เจริญกรุง กรุงเทพฯ | Shipment address snapshot | Main document content. |
 | Carrier | ขนส่ง | รถร้าน | Shipment | Delivery team cannot change later. |
 | Delivery date | วันจัดส่ง | 20 พ.ค. 2569 | Shipment | If empty, delivery dashboard treats as today. |
-| COD | COD | 12,000 บาท | Shipment | Show on Shipping Sheet when the Shipment carries COD and the user has COD/payment permission. |
+| COD | COD | 12,000 บาท | Shipment | Show on Shipping Sheet when this is the final Order-closing Shipment round and the user has COD/payment permission or is the responsible Delivery Team for that Shipment. |
 | Short item summary | สรุปรายการ | ตู้โชว์ไม้สัก 1 ชิ้น | Shipment / Order Line | Summary only; full item list is Delivery Note. |
 | Delivery note | หมายเหตุจัดส่ง | โทรก่อนส่ง | Shipment | Useful for delivery team. |
 
@@ -75,18 +77,18 @@ Approved mockup:
 
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
-| Print Shipping Sheet | พิมพ์ใบจัดส่ง | Admin | Opens print for Shipping Sheet only. | No |
-| Print both documents | พิมพ์ใบส่งของและใบจัดส่ง | Admin | Opens combined print flow. | No |
-| Open Delivery Note | ดูใบส่งของ | Admin | Opens Delivery Note Preview. | No |
-| Return to Shipment | กลับไปรอบจัดส่ง | Admin | Returns to Shipment Builder or Detail. | No |
+| Print Shipping Sheet | พิมพ์ใบจัดส่ง | Admin / responsible Delivery Team where allowed | Opens print for Shipping Sheet only, with permission-aware COD visibility. | No |
+| Print both documents | พิมพ์ใบส่งของและใบจัดส่ง | Admin / responsible Delivery Team where allowed | Opens combined print flow, with permission-aware COD visibility. | No |
+| Open Delivery Note | ดูใบส่งของ | Admin / responsible Delivery Team where allowed | Opens Delivery Note Preview. | No |
+| Return to Shipment | กลับไปรอบจัดส่ง | Admin / responsible Delivery Team where allowed | Returns to Shipment Builder, Detail, or delivery view. | No |
 
 ## 10. Status / Chips
 
 | Status | Thai Label | Meaning | Visual note |
 |---|---|---|---|
-| Draft Shipment | ร่างรอบจัดส่ง | Preview from draft Shipment. | Neutral chip. |
+| Builder preview | ตัวอย่างก่อนปล่อยจัดส่ง | Preview before Shipment release; real print is after release. | Neutral chip. |
 | Released Shipment | ปล่อยให้ฝ่ายจัดส่งแล้ว | Preview from released Shipment. | Positive chip. |
-| COD | COD | Shipment carries COD amount on this document. | Document-aware chip/field. |
+| COD | COD | Final Order-closing Shipment carries COD amount on this document. | Document-aware chip/field. |
 | Address snapshot | ข้อมูลจัดส่งถูกบันทึกแล้ว | Shipment stores recipient/address snapshot. | Subtle info chip. |
 
 ## 11. Empty State
@@ -102,7 +104,8 @@ If recipient/address data is missing, show `ไม่มีข้อมูลผ
 
 ## 13. Permission Rules
 
-- Admin can preview and print.
+- Admin and responsible Delivery Team where allowed can preview and print.
+- Preview is allowed from Shipment Builder before release; real print is allowed only after release.
 - COD amount is visible/printable to users allowed to see that COD, including Delivery Team for Shipments they are responsible for.
 - Delivery Team cannot edit address, carrier, or COD.
 - Delivery Team may receive the printed/physical Shipping Sheet and see COD amount for assigned Shipments.

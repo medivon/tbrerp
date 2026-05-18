@@ -139,6 +139,22 @@ Decision:
 - Finance pays or creates PV from the approved price.
 - If the work links to a SKU/Product Model, the approver must choose whether to update the Rak Samuk Standard Rate.
 
+## Recently Resolved Interaction & Modal Behavior Questions
+
+### OQ-IM-001 - Interaction & Modal Behavior consolidation
+
+Decision:
+
+- IM-001 to IM-135 are complete enough for source-of-truth consolidation.
+- Use `docs/ux-ui/04-interaction-modal-behavior.md` as the consolidated interaction behavior source.
+- No P0 Draft Shipment exists. Shipment Builder is temporary pre-release work, and Shipment exists only after `พร้อมจัดส่ง`.
+- COD is allowed only on the final Shipment round that completes delivery for the Order; Shipment Builder does not edit COD.
+- Production photos/evidence are optional, including ready/complete, and can be attached later after Job completion.
+- Missing or wrong production detail is not a system workflow. Workers ask outside the system; there is no special note/action/log requirement and no open question remains.
+- `รายการรอจ่าย` / `ตัดรอบจ่าย` is the editable payout workspace; PV is the finalized one-payee payment document.
+- Product/SKU deactivation requires reason and Management Log; reopening requires confirmation and Management Log but no reason.
+- Cross-cutting patterns for hidden/disabled actions, no-access, stale state, validation failure, upload failure, bulk partial success, reason capture, evidence requirements, and post-action navigation are resolved.
+
 ## Recently Resolved Material Boundary Questions
 
 ### OQ-MAT-001 - Supplier/material cardinality
@@ -230,18 +246,20 @@ Decision:
 - Closing a Stock Count creates Stock Movement for every counted SKU, including zero-difference `ยืนยันสต๊อกถูกต้อง`.
 - Stock Movement is immutable; corrections happen through a new adjustment.
 
-## Material / Stock Boundary Follow-up Questions
+## Recently Resolved Material / Stock Boundary Follow-up Questions
 
 ### OQ-MAT-002 - Material purchase/payment handoff detail
 
-Open but not blocking first UX:
+Decision:
 
 - Material Purchase Order receipt creates Payment Audit Follow-up, not Expense Entry.
-- The exact finance screen behavior for recording the later payment/expense can be grilled in the finance/payment round, not inside the material stock boundary.
+- Finance later records actual payment/expense deliberately from the Payment Audit Follow-up.
+- No Draft Expense Entry, automatic Expense Entry, or Payment Voucher is created directly from Material Purchase Order receipt in the starting workflow.
 
 ### OQ-MAT-003 - Continue material boundary grilling
 
-Open by user choice:
+Decision:
 
 - The Product / SKU / Stock / Material Boundary is currently coherent enough for the starting workflow after Q189-Q243.
-- Continue only if the next session needs to stress-test deeper supplier payment, material reporting, or future multi-supplier behavior.
+- Do not continue material boundary grilling now.
+- Deeper supplier payment, material reporting, or future multi-supplier behavior remains future scope until a new session explicitly reopens it.

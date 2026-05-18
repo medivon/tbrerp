@@ -76,7 +76,7 @@ Replace the 6 main dashboard cards with these approved cards:
    Status badge: รอรับทราบ Revision
    Subtext: ไม่เข้าใจให้ติดต่อหา 1
    Button text: เปิดคิวงาน
-   Meaning: only production cases that need admin help, such as Revision acknowledgement, “ไม่เข้าใจให้ติดต่อหา”, Hold, or long material waiting. Do not make this a generic problem counter.
+   Meaning: only production cases that need admin help, such as Revision acknowledgement, “ไม่เข้าใจให้ติดต่อหา” from formal Revision, Hold, or long material waiting. Do not make this a generic problem counter.
 
 6. Card title: ติดตาม COD / Payment
    Large number: 6

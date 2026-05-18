@@ -81,7 +81,7 @@ Visual rules:
 - Do not show admin creation controls
 - Do not show “รอสร้างรอบจัดส่ง” Orders
 - Do not show product prices, sales price, profit, accounting totals, tax, ad spend, or private CRM notes
-- Do not show COD amount in Delivery Team UI; COD amount belongs on the printed ใบจัดส่ง when relevant
+- Show COD amount only for Shipments the Delivery Team is responsible for; do not allow COD editing or payment follow-up close
 - Do not show Tracking input
 - Do not let delivery team edit item list, address, carrier, Tracking, COD, or close Shipment
 - Do not show “ปิดรอบจัดส่ง”

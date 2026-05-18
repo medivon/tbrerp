@@ -77,7 +77,7 @@ Material Adjustment lets staff enter actual counted quantities for selected mate
 | Enter actual qty | ใส่จำนวนที่นับได้ | Material adjustment permission | Calculates difference. | No |
 | Attach evidence | แนบรูป | Material adjustment permission | Adds optional session evidence. | No |
 | Remove line | เอาออก | Material adjustment permission | Removes unsaved line. | No |
-| Save adjustment | บันทึกปรับยอด | Material adjustment permission | Updates stock and records movements. | Yes |
+| Save adjustment | บันทึกปรับยอด | Material adjustment permission | Opens confirmation summary, then updates stock and records movements. | Yes |
 | View summary | ดูสรุป | Allowed viewers | Opens adjustment summary by date/range. | No |
 
 ## 10. Summary Rules
@@ -88,6 +88,9 @@ Material Adjustment lets staff enter actual counted quantities for selected mate
 - Show largest differences.
 - Show recorder and save time.
 - Do not require a fixed daily-only workflow.
+- Save confirmation summarizes selected materials, before/after values, differences, reason/mode, and optional evidence.
+- After successful save, navigate to Material Adjustment summary/read-only detail for that session.
+- If an adjustment is wrong, create a new adjustment with reference to the previous session/movement; do not edit old movements.
 
 ## 11. Empty State
 

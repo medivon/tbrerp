@@ -55,7 +55,7 @@ Do not show `จองแล้ว` or `ขายได้` in the adjustment en
 
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
-| Save adjustment | บันทึกการปรับยอด | Stock permission | Creates immutable Stock Movement and updates Stock On Hand. | Yes |
+| Save adjustment | บันทึกการปรับยอด | Stock permission | Opens confirmation summary, then creates immutable Stock Movement and updates Stock On Hand. | Yes |
 | Cancel | ยกเลิก | All allowed users | Leaves without movement. | No |
 
 ## 8. Movement Rules
@@ -65,6 +65,7 @@ Do not show `จองแล้ว` or `ขายได้` in the adjustment en
 - If different, require a reason and save adjustment movement.
 - Positive adjustment movements can be linked from a Product Purchase Order line closed with reason `ปรับยอดแล้ว` when the SKU matches and the movement quantity covers the closed remaining quantity.
 - Movement entries cannot be edited. If wrong, create a new adjustment movement.
+- Save confirmation summarizes SKU, current quantity, actual quantity, difference, and reason before saving.
 - `จองแล้ว` and `ขายได้` are recalculated/visible elsewhere after save.
 
 ## 9. Standard Reasons

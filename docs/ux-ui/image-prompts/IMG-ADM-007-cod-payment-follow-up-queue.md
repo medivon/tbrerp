@@ -14,7 +14,7 @@ Visual/content anchors:
 ## High-Fidelity GPT Image 2 Prompt
 
 ```text
-Create a high-fidelity desktop ERP screen for THAIBORAN called “ติดตาม COD / Payment”. This is a finance-permission admin follow-up queue, not a full accounting ledger, tax screen, or audit screen.
+Create a high-fidelity desktop ERP screen for THAIBORAN called “ติดตาม COD / Payment”. This is an Admin/Sales-in-scope and finance-permission follow-up queue, not a full accounting ledger, tax screen, or audit screen.
 
 Use the approved THAIBORAN Admin Dashboard app shell:
 - Fixed left sidebar with THAIBORAN logo/brand
@@ -24,7 +24,7 @@ Use the approved THAIBORAN Admin Dashboard app shell:
 - Quiet operational ERP style, dense but readable layout, compact chips, white cards, subtle shadows
 
 Screen purpose:
-Admin or finance-permission user tracks COD and Payment follow-up separately from Order Completion and Shipment close. COD follow-up can exist from Shipment creation/release when the Shipment carries COD, and it stays open until a permitted admin/finance user closes it. This screen does not block delivery close. It helps answer: รายการไหนต้องตามเงิน, เกี่ยวกับ Order/รอบจัดส่งไหน, ยอดที่ต้องตามเท่าไหร่, สถานะล่าสุดคืออะไร.
+Admin/Sales users in their own work scope, Finance, Manager, or Owner track COD and Payment follow-up separately from Order Completion and Shipment close. COD follow-up can exist from Shipment creation/release when the final Order-closing Shipment carries COD, and it stays open until the related Shipment is closed and a permitted Admin/Sales, Finance, Manager, or Owner closes it. This screen does not block delivery close. It helps answer: รายการไหนต้องตามเงิน, เกี่ยวกับ Order/รอบจัดส่งไหน, ยอดที่ต้องตามเท่าไหร่, สถานะล่าสุดคืออะไร.
 
 Header:
 - Page title: ติดตาม COD / Payment

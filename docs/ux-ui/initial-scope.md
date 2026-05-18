@@ -159,7 +159,7 @@ Allowed:
 - See only assigned Rak Samuk Work
 - See Full Production Job Detail for assigned work
 - See own price only for own work
-- Submit `ขอเสนอราคา` for own work until the related PV round is closed
+- Submit `ขอเสนอราคา` for own work until the related payable item is included in a finalized PV
 
 Not allowed:
 
@@ -490,7 +490,7 @@ Editing from Order Detail:
 - If the last active line is cancelled and nothing has been shipped, confirm that the whole Order will also be cancelled and require reason/log.
 - If some lines have completed delivery and all remaining active lines are cancelled, the Order becomes `จัดส่งครบแล้ว`; cancelled lines remain history.
 - Cancelled Orders are read-only and show `ยกเลิกแล้ว` instead of normal management actions.
-- Completed Orders can still edit safe general information, but not Order items or shipment-impacting fields.
+- Completed Orders do not edit the original Order snapshot in normal workflow. Users may add notes/correction records or open Customer Detail for current customer master-data work, but completed Order items, recipient snapshots, and shipment-impacting fields remain stable.
 
 ### `ออเดอร์ทั้งหมด` Tab
 
@@ -593,13 +593,14 @@ Every department should see a consistent work card shape:
 
 ### Job Revision
 
-If Job details change after a department accepted work:
+If Job details change after a department accepted work as a formal Revision:
 
 - Notify only the affected department
 - Show revision clearly
 - Worker can choose `รับทราบ` or `ไม่เข้าใจให้ติดต่อหา`
 - Admin can explain and return it for acknowledgement
 - Keep revision history collapsed by default
+- Ordinary missing/wrong production detail is not a system workflow; workers ask outside the system and no special note/log is required.
 
 ### Hold and Waiting for Materials
 
@@ -696,7 +697,7 @@ Confirmed rules:
 - Order, Production, and Job workflow pages never show Rak Samuk price.
 - If Product Model has Rak Samuk Standard Rate, it is the starting work price.
 - If no rate exists, show `ไม่มีราคา / ให้แจ้งราคา`.
-- Worker can use `ขอเสนอราคา` for assigned work until the related PV round is closed.
+- Worker can use `ขอเสนอราคา` for assigned work until the related payable item is included in a finalized PV.
 - Worker enters the per-piece price for that specific work item, not a total job price.
 - Owner/Manager approves proposed price; Finance pays or creates PV from the approved price.
 
@@ -737,15 +738,15 @@ Confirmed behavior:
 Confirmed behavior:
 
 - Admin creates Shipment.
-- Default is to release to delivery team immediately.
-- Draft Shipment exists if admin is not ready to release.
+- P0 has no persistent Draft Shipment. Shipment Builder is temporary pre-release work.
+- A Shipment is created/released only when Admin presses `พร้อมจัดส่ง`.
 - Shipment creates Delivery Note and Shipping Sheet together.
-- User can print both or either.
+- User can preview documents before release and print both or either after release.
 - Delivery Note is item-focused and does not show COD amount.
-- Shipping Sheet is recipient/address-focused and shows COD amount when the Shipment has COD.
+- Shipping Sheet is recipient/address-focused and shows COD amount when the final Order-closing Shipment has COD.
 - Shipment Owner is the creator, but close queue is shared by role/department.
 - Ready-to-ship items should not move backward during Shipment creation. If a ready Shipment should not leave yet, hold or handle it in the shipment/send-out step instead of reverting the Order/Job/Service Case readiness.
-- COD can be corrected on Shipment before send-out by an authorized user with log. After send-out or close, avoid changing Shipment COD; handle rare mistakes through finance notes/manual handling.
+- Shipment Builder does not edit COD. COD is allowed only on the final Shipment round that completes delivery for the Order; if ready-stock ships while custom work remains unfinished, COD is disabled with a reason.
 
 ### Bulk Shipment
 
@@ -754,11 +755,11 @@ Bulk create Shipment is allowed only for simple work.
 Rules:
 
 - One Order creates one Shipment.
-- Bulk cannot include Orders with Jobs.
+- Bulk can include only Orders with no custom-work line at all; practically, ready-stock-only Orders.
 - Service Case may be bulked if details are already complete.
-- COD does not block bulk; show badge.
+- COD can appear only when the Shipment is the final Order-closing round.
 - Show minimal summary before confirm.
-- Bulk releases to `รอจัดส่ง` immediately.
+- Bulk releases to Delivery Team immediately.
 
 ### Delivery Team Dashboard
 
@@ -786,6 +787,7 @@ Rules:
 
 - Delivery team marks `ส่งออกแล้ว`.
 - Delivery team can mark one row `ส่งออกแล้ว`, or bulk-select today's/no-date Shipments and confirm `บันทึกว่าส่งออกแล้ว`.
+- Single `ส่งออกแล้ว` uses a short confirmation only; bulk send-out confirms count and selected Shipments.
 - `ส่งออกแล้ว` does not require Tracking or delivery evidence.
 - Delivery Team cannot add or edit Tracking in the system.
 - Delivery Team may attach optional `รูปหลักฐานจัดส่ง` on an individual Shipment.
@@ -793,9 +795,10 @@ Rules:
 - Delivery reports use the date/time of `ส่งออกแล้ว`, not the later admin close date.
 - If a released Shipment should not leave yet, keep it held/pending in the send-out step rather than rolling upstream status backward.
 - Delivery Team has only a simple `ส่งออกแล้ววันนี้` history view in P0.
+- Delivery Team can add photo/note later from `ส่งออกแล้ววันนี้` until Admin closes the Shipment.
 - The starting workflow does not use carrier-specific evidence settings.
 - Admin records or corrects Tracking/evidence in `ยืนยันการจัดส่ง`.
-- Admin closes Shipment after tracking/evidence review, and close requires tracking or at least one delivery evidence photo.
+- Admin closes Shipment after tracking/evidence review, and close requires tracking or at least one delivery evidence photo. Once evidence exists, no extra close confirmation modal is needed.
 - Order Completion happens when all required Order Shipments are closed.
 - Financial Follow-up is separate.
 
@@ -1156,13 +1159,13 @@ Financial Follow-up is operational money follow-up, not full accounting approval
 
 Confirmed behavior:
 
-- A finance-permission user can close a follow-up item when required payment evidence or explanatory note is enough for the operational audit trail.
+- A permitted Admin/Sales user can close follow-up items in their own Order/Shipment scope when required payment evidence or explanatory note is enough for the operational audit trail. Finance, Manager, and Owner can close broader follow-up items by permission.
 - Closing Financial Follow-up is separate from Order Completion, Shipment close, and full accounting approval.
 - Financial Follow-up is the primary finance work object for the starting workflow.
-- COD follow-up is created automatically when a Shipment carries COD, but cannot be closed before the related Shipment is closed.
+- COD follow-up is created automatically when a final Order-closing Shipment carries COD, but cannot be closed before the related Shipment is closed.
 - If actual COD is lower than expected, record the actual amount and reason, such as carrier fee deduction; do not change the Order total.
 - COD should not normally exceed the expected amount. If it happens, treat it as an abnormal note/correction case rather than automatic extra income.
-- COD belongs to its Shipment round. Do not add a flow where one round collects COD intended for another round.
+- COD belongs only to the final Order-closing Shipment round in the starting workflow. Do not add a flow where an early/partial Shipment collects COD while unfinished custom work remains.
 - If a closed follow-up depended on a Payment Record amount that is later corrected, finance should re-check the follow-up.
 
 Payment Record behavior:
@@ -1224,14 +1227,23 @@ Payment Voucher (ใบสำคัญจ่าย / PV) uses the existing A4 fo
 
 Confirmed behavior:
 
+- The editable payout workspace is `รายการรอจ่าย` / `ตัดรอบจ่าย`, not the PV document.
+- Payable/income records are item-first and grouped by payee/worker.
+- Rak Samuk payable items are created when work is received back / accepted into coloring, not when assigned. Items without price remain `ยังไม่มีราคา` and cannot enter PV.
+- One PV pays one payee/worker only. Multiple payable sources for the same payee, such as Rak Samuk and custom income, can be combined into one PV as separate lines.
+- Finance can select only ready/priced items for one payee; unselected or unpriced items remain pending.
+- Owner/Manager can edit/check/approve Rak Samuk prices in the payout area. Price edits require reason and Management Log, and linked SKU/Product Model items ask whether to update Rak Samuk Standard Rate.
 - PV number is issued only after payment is confirmed.
 - PV number runs by Buddhist year and month, such as `PV-2568-03-004`.
 - Payment Voucher is a central document type, but first automated flow supports Rak Samuk payout.
-- One PV can include multiple Rak Samuk works for one worker/payment round.
+- PV evidence/slip at finalize is optional. Do not add a separate P0 PV `รอจ่ายเงิน` status.
+- Manual PV can include custom text lines and manually entered amounts with Review before finalize.
 - Signature roles: ผู้จัดทำ, ผู้อนุมัติ, ผู้จ่ายเงิน, ผู้รับเงิน.
 - ผู้จัดทำ/ผู้อนุมัติ/ผู้จ่ายเงิน can be handled digitally in system.
 - ผู้รับเงิน signs printed document.
 - Same person can hold multiple internal roles in first scope.
+- Finalized PV can be printed/reprinted from PV detail/history and payee/worker history.
+- Voiding a finalized PV is Owner/Manager only, requires reason, writes Management Log, and returns included items to `รายการรอจ่าย` with trace to the voided PV.
 
 Open detail:
 

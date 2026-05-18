@@ -55,16 +55,19 @@ It is not Material Stock Receipt and it is not Stock Adjustment.
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
 | Mark full line | รับเต็มบรรทัด | Stock permission | Fills received quantity with remaining quantity. | No |
-| Save receipt | บันทึกรับเข้า | Stock permission | Creates immutable receipt round, increases Ready Stock, records Stock Movement. | Yes |
+| Save receipt | บันทึกรับเข้า | Stock permission | Opens receipt review modal, then creates immutable receipt round, increases Ready Stock, records Stock Movement. | Yes |
 | Cancel | ยกเลิก | All allowed users | Leaves without receipt. | No |
 
 ## 8. Rules
 
 - At least one line must have received quantity greater than zero.
 - Received quantity cannot exceed remaining ordered quantity.
+- Over-receipt is blocked inline and explains that excess goods require a new Product Purchase Order.
 - Received quantity can be less than remaining ordered quantity.
 - Optional evidence can be attached but is not required.
 - Saved Product Stock Receipt rounds are immutable. If the receiver saved the wrong quantity, correct stock through `ปรับยอดสต๊อกสินค้า` / Stock Movement instead of editing this receipt.
+- The receipt review modal summarizes SKU, received quantity, stock increase, and whether Payment Audit Follow-up will be created.
+- After successful save, return to Product Purchase Order detail with the new receipt round and updated status.
 - If missing goods later arrive because a previous receipt was over-recorded, do not receive them again on the old document.
 - Saving receipt updates Product Purchase Order status:
   - all lines fully received -> `รับเข้าสต๊อกแล้ว`

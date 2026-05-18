@@ -41,7 +41,7 @@ Summary strip:
 Search and filters:
 - Search placeholder: ค้นหา Job ID / Order ID / ลูกค้า / ชื่องาน / แผนก
 - Filter button: ตัวกรอง
-- Filter chips: ทั้งหมด, Revision, ไม่เข้าใจให้ติดต่อหา, รอวัตถุดิบ, งานค้างนาน, งานด่วน
+- Filter chips: ทั้งหมด, Revision, ไม่เข้าใจให้ติดต่อหา (จาก Revision), รอวัตถุดิบ, งานค้างนาน, งานด่วน
 
 Main content:
 Create a dense follow-up table/list. Each row should show:
@@ -70,7 +70,7 @@ Show selected follow-up case:
 - Customer: คุณศิริพร
 - Work image: ornate Thai wooden cabinet
 - Current department: ช่างไม้
-- Follow-up reason: ไม่เข้าใจให้ติดต่อหา
+- Follow-up reason: ไม่เข้าใจให้ติดต่อหา (จาก Revision)
 - Status chips: งานด่วน, ค้าง 18 วัน, อยู่คิวช่างไม้
 - Work summary: ตู้โชว์ไม้สักแกะลาย จำนวน 1 ชิ้น
 - Latest message: “ไม่เข้าใจรายละเอียดลวดลายด้านข้าง”

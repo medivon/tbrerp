@@ -8,7 +8,9 @@ Approved mockup:
 
 Production Follow-up Queue is the desktop/tablet admin screen `งานผลิตต้องติดตาม`. It shows only production cases that need admin communication, clarification, or decision. It is not a full unfinished-work report and not a worker queue.
 
-This screen helps Admin quickly see production issues such as Revision acknowledgement, `ไม่เข้าใจให้ติดต่อหา`, `Hold`, waiting material, or old/urgent work that needs a human follow-up.
+This screen helps Admin quickly see production issues such as Revision acknowledgement, `ไม่เข้าใจให้ติดต่อหา` from a formal Revision, `Hold`, waiting material, or old/urgent work that needs a human follow-up.
+
+Missing or wrong production detail outside a formal Revision is not a system workflow in the starting workflow. Workers ask outside the system; do not add a special note/action/log for that case.
 
 ## 2. Primary Users
 
@@ -29,7 +31,7 @@ This screen helps Admin quickly see production issues such as Revision acknowled
 - `แดชบอร์ด` -> `งานผลิตต้องติดตาม`.
 - Sidebar `งานสั่งทำ / ผลิต` -> `งานผลิตต้องติดตาม`.
 - Active Jobs overview row with abnormal state.
-- Job Detail after a worker selects `ไม่เข้าใจให้ติดต่อหา`, `รอวัตถุดิบ`, or a Revision acknowledgement is pending.
+- Job Detail after a worker selects `ไม่เข้าใจให้ติดต่อหา` from a formal Revision, `รอวัตถุดิบ`, or a Revision acknowledgement is pending.
 
 ## 5. Exit Points
 
@@ -75,7 +77,7 @@ This screen helps Admin quickly see production issues such as Revision acknowled
 | Customer | ลูกค้า | คุณศิริพร | Order / Customer | Hide private CRM notes. |
 | Work name | ชื่องาน | ตู้โชว์ไม้สักแกะลาย | Job | Main work identity. |
 | Current department | แผนกปัจจุบัน | ช่างไม้ | Job workflow | Core follow-up context. |
-| Follow-up reason | เหตุผลที่ต้องติดตาม | ไม่เข้าใจให้ติดต่อหา | Job status / Revision | Main queue driver. |
+| Follow-up reason | เหตุผลที่ต้องติดตาม | ไม่เข้าใจให้ติดต่อหา | Formal Job Revision | Main queue driver. |
 | Age | อายุงาน | ค้าง 18 วัน | Job / department age | Configurable threshold later. |
 | Urgent | งานด่วน | งานด่วน | Urgent Label | Visual priority. |
 | Last activity | อัปเดตล่าสุด | ช่างไม้แจ้งเมื่อ 10:30 | Activity Log | Helps admin know what happened. |
@@ -94,7 +96,7 @@ This screen helps Admin quickly see production issues such as Revision acknowled
 | Status | Thai Label | Meaning | Visual note |
 |---|---|---|---|
 | Revision pending | รอรับทราบ Revision | Department has not acknowledged changed Job details. | Purple/warning chip. |
-| Needs contact | ไม่เข้าใจให้ติดต่อหา | Worker needs admin clarification. | Strong warning chip. |
+| Needs contact | ไม่เข้าใจให้ติดต่อหา | Worker needs admin clarification for a formal Revision. | Strong warning chip. |
 | Waiting material | รอวัตถุดิบ | Department marked material wait. | Orange chip. |
 | Old work | งานค้างนาน | Job or department age exceeds threshold. | Red/orange age chip. |
 | Urgent | งานด่วน | Authorized urgency label. | High-priority chip. |

@@ -20,11 +20,11 @@ Approved mockup:
 
 - Review selected ready-to-ship lines from one Order before creating a Shipment.
 - Handle special delivery cases that need manual edits.
-- Confirm or edit recipient, phone, address, carrier, delivery date, COD, and delivery-facing notes.
+- Confirm or edit recipient, phone, address, carrier, delivery date, and delivery-facing notes.
 - When the Shipment address is not the same or not close to existing Customer addresses, decide whether to save it as a secondary Customer Address Entry.
 - Acknowledge stock-negative warnings when selected ready-stock lines were allowed to proceed despite stock shortage.
-- Preview Delivery Note and Shipping Sheet; COD amount appears on Shipping Sheet where relevant, not on Delivery Note.
-- Release the Shipment to delivery team or save it as Draft Shipment.
+- Preview Delivery Note and Shipping Sheet; COD amount appears on Shipping Sheet only where the Shipment is the final Order-closing round.
+- Press `พร้อมจัดส่ง` to create/release the Shipment to delivery team.
 - Avoid using this detailed editor for high-volume bulk creation.
 
 ## 4. Entry Points
@@ -32,7 +32,7 @@ Approved mockup:
 - `รอสร้างรอบจัดส่ง` -> row action `สร้างรอบจัดส่ง` for one Order.
 - `รอสร้างรอบจัดส่ง` -> right drawer action `สร้างรอบจัดส่ง`.
 - Order Detail -> `จัดการรอบจัดส่ง` -> `สร้างรอบจัดส่งจากรายการที่เลือก`, with selected shippable Order lines and their default delivery context.
-- Draft Shipment Detail when continuing a draft.
+- There is no Draft Shipment continuation in P0.
 
 Not an entry point:
 
@@ -41,7 +41,6 @@ Not an entry point:
 ## 5. Exit Points
 
 - Released Shipment Detail.
-- Draft Shipment Detail.
 - Delivery Note Preview.
 - Shipping Sheet Preview.
 - Ready-to-Ship Queue if cancelled before create.
@@ -55,7 +54,7 @@ Bulk exit:
 - Header: `สร้างรอบจัดส่ง`, source Order ID, status chip `กำลังสร้างรอบจัดส่ง`.
 - Left panel: `รายการพร้อมส่ง` for the selected lines from one Order.
 - Right panel: `ข้อมูลจัดส่ง` with editable special-case controls.
-- Footer action bar: `พร้อมจัดส่ง`, `บันทึกเป็นร่าง`, `ยกเลิก`.
+- Footer action bar: `พร้อมจัดส่ง`, `ยกเลิก`.
 - Document preview buttons: `ดูใบส่งของ`, `ดูใบจัดส่ง`.
 
 ## 7. Main Components
@@ -71,19 +70,17 @@ Bulk exit:
 - Recipient/address snapshot panel
 - Carrier selector
 - Delivery date field
-- COD field/chip
+- COD chip/read-only final-round signal where relevant
 - Delivery note field
 - Edit delivery info action
-- Edit COD action
 - Edit note action
 - Release action
-- Save Draft action
 
 ## 8. Data Shown
 
 | Field | Thai Label | Example | Source object | Notes |
 |---|---|---|---|---|
-| Shipment status | สถานะรอบจัดส่ง | กำลังสร้างรอบจัดส่ง | Shipment draft state | Before release. |
+| Shipment status | สถานะรอบจัดส่ง | กำลังสร้างรอบจัดส่ง | Temporary builder state | Before release. |
 | Order ID | เลขออเดอร์ | ORD-240520-014 | Order | Single Order context. |
 | Item list | รายการพร้อมส่ง | โต๊ะกลางลงรักสมุก สีโอ๊ค | Selected Order Line / Job / Service Case | Use Order Line snapshot for ready-stock lines; no price shown. |
 | Source | สถานะงาน | งานสั่งทำเสร็จแล้ว | Order Line / Job / Service Case | Stock/custom/service badge. |
@@ -98,8 +95,8 @@ Bulk exit:
 | Save address to Customer | บันทึกเป็นที่อยู่จัดส่งรอง | เลือกไว้ | Customer Address Entry | Ask only when this Shipment address is not close to existing Customer addresses and the Customer has fewer than 3 saved addresses. |
 | Carrier | ขนส่ง | ไปรษณีย์ไทย EMS | Shipment | Delivery team cannot change later. |
 | Delivery date | วันจัดส่ง | 24 พ.ค. 67 | Shipment | No-date goes to today's delivery tab after release. |
-| COD | COD | 12,000 บาท | Shipment / Payment Term | Admin confirms/edits; permission-aware. |
-| COD note | หมายเหตุ COD | เก็บปลายทางตามยอดที่เก็บเงินแล้ว | Shipment COD note | Required if override needs explanation. |
+| COD | COD | 12,000 บาท | Shipment / Payment Term | Read-only final-round signal where relevant; Shipment Builder does not edit COD. |
+| COD disabled reason | เหตุผลไม่เปิด COD | งานสั่งทำยังไม่เสร็จ เปิด COD ได้เฉพาะรอบสุดท้าย | Order shipment state | Show when ready-stock can ship but unfinished custom work remains. |
 | Stock warning | แจ้งเตือนสต๊อก | สต๊อกติดลบ 1 รายการ | Ready Stock / Order Line | Acknowledgement only; does not block Shipment creation after user accepts. |
 | Notes | หมายเหตุจัดส่ง | โทรก่อนเข้าจัดส่ง / ชิ้นงานระวังกระแทก | Shipment | Delivery-facing note. |
 
@@ -108,13 +105,11 @@ Bulk exit:
 | Action | Thai Label | Who can do it | Result | Confirmation needed? |
 |---|---|---|---|---|
 | Release as ready | พร้อมจัดส่ง | Admin and same/higher permission | Creates/release Shipment visible to Delivery Team. | Yes |
-| Save draft | บันทึกเป็นร่าง | Admin and same/higher permission | Creates Draft Shipment; items marked as being prepared. | Yes |
 | Cancel builder | ยกเลิก | Admin | Returns to Ready-to-Ship Queue before create. | No |
 | Preview Delivery Note | ดูใบส่งของ | Admin | Opens Delivery Note Preview. | No |
 | Preview Shipping Sheet | ดูใบจัดส่ง | Admin | Opens Shipping Sheet Preview. | No |
 | Edit delivery info | แก้ไขข้อมูลจัดส่ง | Admin and same/higher permission | Edits recipient/address/carrier/date before release. | No |
 | Save as secondary customer address | บันทึกเป็นที่อยู่จัดส่งรอง | Admin and same/higher permission | Adds the Shipment recipient/address as a secondary Address Entry for the Customer without changing the default address. | No |
-| Edit COD | แก้ยอด COD | Admin with permission | Updates Shipment COD before release. | Yes if override/over expected amount |
 | Edit delivery note | แก้หมายเหตุ | Admin and same/higher permission | Updates delivery-facing note. | No |
 | Acknowledge stock warning | รับทราบสต๊อกติดลบ | Admin and same/higher permission | Logs acknowledgement and continues Shipment creation. | Yes, acknowledgement only |
 
@@ -123,12 +118,11 @@ Bulk exit:
 | Status | Thai Label | Meaning | Visual note |
 |---|---|---|---|
 | Creating | กำลังสร้างรอบจัดส่ง | Admin is reviewing before release. | Orange/neutral chip. |
-| Draft Shipment | ร่างรอบจัดส่ง | Shipment being prepared, not released. | Neutral draft chip. |
 | Released | พร้อมจัดส่ง / ปล่อยให้ฝ่ายจัดส่งแล้ว | Shipment visible to Delivery Team. | Positive status chip. |
 | Ready item | พร้อมส่ง | Selected item is eligible for Shipment. | Positive chip. |
 | Completed custom | งานสั่งทำเสร็จแล้ว | Completed `JOB-O`. | Purple/neutral chip. |
-| COD | COD | Shipment carries COD amount. | Permission-aware chip. |
-| COD warning | COD เกินยอดที่คาดไว้ | COD exceeds suggested remaining amount. | Warning chip requiring note. |
+| COD | COD | Final Order-closing Shipment carries COD amount. | Permission-aware chip. |
+| COD disabled | เปิด COD ไม่ได้ | This is not the final Order-closing Shipment round. | Warning/info chip with reason. |
 
 ## 11. Empty State
 
@@ -140,10 +134,10 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Permission fails: `ไม่มีสิทธิ์สร้างรอบจัดส่ง`.
 - Create fails: `สร้างรอบจัดส่งไม่สำเร็จ`.
 - Release fails: `ปล่อยให้ฝ่ายจัดส่งไม่สำเร็จ`.
-- Selected item already in another Draft Shipment: show `รายการนี้กำลังถูกเตรียมรอบจัดส่งแล้ว`.
+- Selected item is already being created/released by another admin: show `รายการนี้กำลังถูกสร้างรอบจัดส่งอยู่`.
 - Selected item is no longer valid because it is already in another Shipment/cancelled: show `รายการนี้ไม่สามารถสร้างรอบจัดส่งได้` and return to the source queue/detail.
 - Stock-negative ready-stock line: show acknowledgement modal with `รับทราบและสร้างรอบจัดส่งต่อ` and `กลับไปตรวจสต๊อก`; do not require reason or Manager approval.
-- COD warning without note: show `กรุณาระบุหมายเหตุ COD`.
+- COD is requested on a non-final Shipment: disable COD and show that COD opens only on the final Order-closing Shipment round.
 
 ## 13. Permission Rules
 
@@ -152,10 +146,10 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Shipment Owner is the creator, but close queue is shared later.
 - Finance-sensitive COD/payment detail is permission-aware.
 - Service Case sources create Service Shipments only and do not update any referenced Order status, total, or completion state.
-- Address/carrier/COD changes happen before release by authorized admin; delivery team cannot change them, but can see COD amount for Shipments they are responsible for.
-- COD belongs to this Shipment round. Do not add a flow where this round collects COD intended for another Shipment round.
+- Address/carrier changes happen before release by authorized admin; delivery team cannot change them, but can see COD amount for Shipments they are responsible for.
+- COD is allowed only on the final Shipment round that completes delivery for the Order. Do not add a flow where an early/partial Shipment collects COD while unfinished custom work remains.
 - After release/send-out, avoid changing Shipment COD; rare mistakes are handled through finance notes/manual handling rather than changing this closed/send-out document path.
-- Draft Shipment items are not shipped and Order is not complete.
+- P0 has no persistent Draft Shipment.
 - Bulk users do not enter this screen for default/simple creation.
 - Shipment Builder must only receive selected items that are shippable under current Order Detail selection rules.
 - Ready-to-ship work should not be rolled backward while building a Shipment. If the Shipment should not leave yet, hold or handle it in the shipment/send-out step.
@@ -170,12 +164,12 @@ This screen should not open without one selected ready-to-ship Order. If no vali
 - Make this screen feel like a single/special-case review editor.
 - Do not make it a bulk builder.
 - Keep item list and address snapshot visible at the same time.
-- Emphasize editable special-case controls: delivery info, COD, notes.
+- Emphasize editable special-case controls: delivery info and notes.
 - Keep the save-to-Customer address prompt lightweight; it should not block releasing the Shipment.
 - Delivery Note and Shipping Sheet are separate print previews, created from the same Shipment.
 - Delivery Note shows item detail and no COD amount; Shipping Sheet shows recipient/address and COD amount where relevant.
 - Do not show product prices on delivery documents.
-- Make COD warning visible but do not turn the screen into finance/audit work.
+- Make COD final-round gating visible but do not turn the screen into finance/audit work.
 - For bulk flows, use saved Order Recipient Detail snapshots as delivery defaults and bypass this screen.
 
 ## 15. Image Generation Prompt
@@ -184,4 +178,4 @@ Use `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`.
 
 ## 16. Open UX Questions
 
-- Which exact bulk cases are safe enough to bypass this screen?
+- None blocking. Bulk creation is limited to ready-stock-only Orders with no custom-work line.

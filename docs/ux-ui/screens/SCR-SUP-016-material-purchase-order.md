@@ -89,7 +89,7 @@ It is not an Expense Entry and does not create accounting records automatically.
 | Edit waiting doc | แก้ไข | Material purchase permission | Edits lines/quantities before receipt. | No |
 | Attach evidence | แนบรูป/เอกสาร | Allowed by permission | Adds attachment in any status. | No |
 | Accept whole document | รับเข้าสต๊อกวัสดุ | Material receipt permission | Increases stock for all lines, releases linked waiting Jobs, and creates Payment Audit Follow-up. | Yes |
-| Cancel | ยกเลิกใบสั่งซื้อ | Material purchase permission | Status becomes `ยกเลิก`. | Yes |
+| Cancel | ยกเลิกใบสั่งซื้อ | Material purchase permission | Status becomes `ยกเลิก` before receipt and writes Activity Log. | Yes, no reason |
 
 ## 10. Status Rules
 
@@ -107,7 +107,8 @@ It is not an Expense Entry and does not create accounting records automatically.
 - After receipt, lines and quantities are not edited.
 - Errors after receipt are corrected through `ปรับยอดวัสดุ`.
 - Receipt creates Payment Audit Follow-up, not Expense Entry.
-- If the document is linked to Jobs waiting for materials, receipt shows a confirmation modal before saving.
+- Receipt shows a confirmation modal before saving.
+- The confirmation modal lists all material lines, linked Jobs that will leave `รอวัตถุดิบ`, and the Payment Audit Follow-up that will be created.
 - The confirmation modal lists Job ID, work/product name, department queue the Job returns to, and related material.
 - Receiving releases linked Jobs that are still in `รอวัตถุดิบ`.
 - Released Jobs return to their previous department queue without a special badge or separate notification.

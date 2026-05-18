@@ -200,6 +200,7 @@ Purpose:
 Expected subcategories:
 
 - Expense Entry
+- `รายการรอจ่าย` / `ตัดรอบจ่าย`
 - Payment Voucher
 - Financial Follow-up where permission allows
 - Expense reports / export where permission allows
@@ -208,6 +209,7 @@ Rules:
 
 - Dashboard may show `ติดตาม COD / Payment`, but detailed finance-sensitive information remains permission-aware.
 - Admin/Sales may create Expense and see Expense records created by their group; full Expense/PV visibility remains Owner/Manager/Finance.
+- `รายการรอจ่าย` / `ตัดรอบจ่าย` is the editable payout workspace for Rak Samuk/custom income by payee; PV is the finalized payment document.
 - Expense export CSV/XLSX is allowed from the expense area; general report export is not part of the starting report scope.
 
 ### ตั้งค่า

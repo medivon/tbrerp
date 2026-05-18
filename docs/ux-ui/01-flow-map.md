@@ -352,7 +352,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 **Blocking Open UX Questions**
 
-- Job work-card layout is a blocking question for future screen specs.
+- None for the flow map.
 
 ## F05 - Job to Rak Samuk Outsource to Internal Workflow
 
@@ -392,7 +392,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 4. Rak Samuk Worker reviews assigned Full Production Job Detail and needed instruction images.
 5. If a SKU/Product Model standard rate exists, it is used as the starting work price, but not shown on Order/Production/Job workflow pages.
 6. If no rate exists, Rak Samuk Worker sees `ไม่มีราคา / ให้แจ้งราคา`.
-7. Rak Samuk Worker may submit `ขอเสนอราคา` for that work until the related PV round is closed.
+7. Rak Samuk Worker may submit `ขอเสนอราคา` for that work until the related payable item is included in a finalized PV.
 8. Owner/Manager approves proposed price when required.
 9. Internal staff receives the work back.
 10. Work enters `รอรับเข้าโรงงานสี`.
@@ -405,7 +405,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Shows Rak Samuk Worker only their own assigned work.
 - Shows assigned Rak Samuk Worker Full Production Job Detail, but hides Customer data, Order ID, sales price, payment, cost, other workers' work, Management Log, and Audit Log.
 - Shows own price only for own work.
-- Allows `ขอเสนอราคา` until the related PV round is closed.
+- Allows `ขอเสนอราคา` until the related payable item is included in a finalized PV.
 - Keeps workflow status control with internal staff, not Rak Samuk Worker.
 - Allows changing Rak Samuk Worker before `รับเข้าโรงงานสี` without required reason, recorded in Activity Log / Rak Samuk work history.
 - Routes received-back Rak Samuk Work to `รอรับเข้าโรงงานสี` with no P0 destination picker.
@@ -446,7 +446,7 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 **Blocking Open UX Questions**
 
-- Rak Samuk worker view layout is a blocking question for future screen specs.
+- None for the Rak Samuk worker view and receive-back boundary.
 
 ## F06 - Ready-to-Ship Queue to Shipment Creation
 
@@ -467,7 +467,6 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 
 - `รอสร้างรอบจัดส่ง`
 - Shipment creation
-- Draft Shipment detail
 - Released Shipment detail
 - Delivery Note preview
 - Shipping Sheet preview
@@ -482,9 +481,9 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
    - Bulk path: selects eligible Orders and bulk-creates Shipments directly.
 5. From Order Detail, Admin may select ready lines in `จัดการรอบจัดส่ง` and open `สร้างรอบจัดส่ง` with those selected lines.
 6. In the single/special path, Admin reviews item list, shipment plan, recipient/address, carrier, delivery date, notes, and COD if relevant.
-7. In the single/special path, Admin creates Shipment, releases it to delivery team, or keeps it as Draft Shipment if not ready.
-8. In the bulk path, system uses each Order's saved Order Recipient Detail snapshot as the delivery default, using the first eligible Order only as a document grouping reference where needed, and creates Shipments/documents without opening `สร้างรอบจัดส่ง`.
-9. Admin prints Delivery Note, Shipping Sheet, or both when needed.
+7. In the single/special path, Admin presses `พร้อมจัดส่ง` to create/release the Shipment to the delivery team. There is no persistent Draft Shipment in P0.
+8. In the bulk path, system uses each Order's saved Order Recipient Detail snapshot as the delivery default, using the first eligible Order only as a document grouping reference where needed, and creates/release Shipments/documents without opening `สร้างรอบจัดส่ง`.
+9. Admin may preview Delivery Note / Shipping Sheet before release and print after release.
 
 **System Actions**
 
@@ -497,22 +496,20 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 - Shows acknowledgement modal for stock-negative selected ready-stock lines; this warning does not block Shipment creation after acknowledgement.
 - Routes one Order / special cases / Order Detail selected lines into `สร้างรอบจัดส่ง`.
 - Passes recipient name, address, phone, selected delivery items, each item's main image, quantity, and carrier name when already chosen into Shipment Builder.
-- Routes bulk eligible Orders around `สร้างรอบจัดส่ง` and directly to Shipment/document creation using saved Order Recipient Detail snapshots as the delivery default.
+- Routes bulk eligible ready-stock-only Orders around `สร้างรอบจัดส่ง` and directly to Shipment/document creation using saved Order Recipient Detail snapshots as the delivery default.
+- Allows COD only on the final Shipment round that completes delivery for the Order; Shipment Builder does not edit COD.
 - Stores recipient/address snapshot on Shipment.
 - Creates Delivery Note and Shipping Sheet together.
-- Defaults to release to delivery team after creation unless admin keeps Draft Shipment.
-- Marks Draft Shipment items as being prepared to avoid duplicate Shipment.
+- Creates/release Shipment only when Admin presses `พร้อมจัดส่ง`.
 
 **Status Changes**
 
-- Ready-to-ship item -> Draft Shipment, when saved as draft.
 - Ready-to-ship item -> released Shipment, when released.
-- Draft Shipment cancellation -> item returns to not-shipped state.
 - Released Shipment -> visible to delivery team.
 
 **Exit Condition**
 
-- Shipment exists as Draft Shipment or released Shipment.
+- Shipment exists as released Shipment.
 
 **Key Data Shown**
 
@@ -534,9 +531,8 @@ It maps the confirmed starting scope: งานสั่งทำ / Job operatio
 **UX Risks**
 
 - Ready-to-ship queue becomes loose item chaos instead of Order-based work.
-- Draft Shipment items can be accidentally shipped twice.
 - Delivery Note and Shipping Sheet are visually confused.
-- COD edit/warning is unclear.
+- COD final-round gating is unclear.
 - Custom Job appears here before production is complete.
 - Shipment intent is treated as a rigid workflow switch instead of using selected ready lines as the practical split/combined control.
 

@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The Rak Samuk Missing Price screen lets a Rak Samuk Worker submit `ขอเสนอราคา` for assigned work until the related PV round is closed. It is a narrow worker-facing form, not an approval screen.
+The Rak Samuk Missing Price screen lets a Rak Samuk Worker submit `ขอเสนอราคา` for assigned work until the related payable item is included in a finalized PV. It is a narrow worker-facing form, not an approval screen.
 
 ## 2. Primary Users
 
@@ -94,7 +94,7 @@ This screen should not open without a specific missing-price work item. If opene
 ## 13. Permission Rules
 
 - Only the assigned Rak Samuk Worker can submit proposed price for their own work.
-- Worker can submit or revise proposed price until the related PV round is closed.
+- Worker can submit or revise proposed price until the related payable item is included in a finalized PV.
 - Worker sees own work price/proposed price only, not sales price.
 - Customer data, Order ID, Customer phone/address, CRM notes, other workers' work, and internal approval controls are hidden.
 - Owner/Manager approval happens outside this worker screen.

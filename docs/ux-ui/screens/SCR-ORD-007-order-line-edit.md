@@ -86,7 +86,7 @@ Existing `JOB-O` lines:
 
 Shipment-linked ready-stock lines:
 
-- If a line is already in any Shipment round, including Draft or Released Shipment, require the user to remove it from that Shipment round or cancel the Shipment round before editing/removing it here.
+- If a line is already in Shipment Builder temporary work or an existing released Shipment, require the user to leave/cancel that shipment work before editing/removing it here.
 - If a line has been sent out or completed, do not allow normal edit/remove from this screen.
 
 Sent/completed lines:

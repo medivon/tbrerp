@@ -48,7 +48,7 @@ Order Completion happens only when all required shipment rounds for the Order ar
 - Filter chips: `ทั้งหมด`, `รอเลขพัสดุ`, `หลักฐานครบ`, `หลักฐานไม่ครบ`, `COD`.
 - Main content: dense shipment-round table/list.
 - Right detail drawer: selected shipment evidence/tracking review.
-- Close confirmation: reinforces that this is operational close and Financial Follow-up is separate.
+- Evidence review drawer/panel: reinforces that this is operational close and Financial Follow-up is separate.
 
 ## 7. Main Components
 
@@ -91,7 +91,7 @@ Order Completion happens only when all required shipment rounds for the Order ar
 | Review evidence | ตรวจหลักฐาน | Admin and same/higher permission | Opens evidence/tracking drawer. | No |
 | Add/correct tracking | เพิ่ม/แก้เลขพัสดุ | Admin and same/higher permission | Adds or corrects tracking before close. | No |
 | Add/correct evidence | เพิ่ม/แก้รูปหลักฐานจัดส่ง | Admin and same/higher permission | Adds or corrects delivery evidence photos before close. | No |
-| Close shipment round | ยืนยันและปิดรอบจัดส่ง | Admin and same/higher permission | Shipment becomes closed. | Yes |
+| Close shipment round | ยืนยันและปิดรอบจัดส่ง | Admin and same/higher permission | Shipment becomes closed when Tracking or evidence exists. | No extra modal after evidence review |
 | Open Order | เปิดออเดอร์ | Admin and same/higher permission | Opens related Order Detail. | No |
 | Open financial follow-up | เปิดติดตามการเงิน | Permissioned admin/finance user | Opens COD/payment follow-up. | No |
 
@@ -127,7 +127,7 @@ Show `ไม่มีรอบจัดส่งรอยืนยัน` with a
 - This is a shared admin queue; Shipment Owner does not block same-permission close.
 - Closing a Shipment requires tracking or at least one delivery evidence photo.
 - Admin can add or correct tracking/evidence before close. Changes after `ส่งออกแล้ว` are recorded in Management Log.
-- After Shipment close, tracking/evidence correction requires manager/higher permission and is recorded in Management Log.
+- After Shipment close, Admin/Sales can correct tracking/evidence by correction modal/drawer with old/new values, reason, and Management Log. Post-close address/carrier/COD/item changes require Manager/Owner.
 - Order Completion means all required Order shipment rounds are closed.
 - Financial Follow-up stays separate and can remain open after operational close.
 - Finance-sensitive amounts are permission-aware.
@@ -138,7 +138,7 @@ Show `ไม่มีรอบจัดส่งรอยืนยัน` with a
 - Make `ส่งออกแล้ว` and `ปิดรอบจัดส่งแล้ว` visually distinct.
 - Evidence thumbnails/tracking should be visible before close.
 - A closed Shipment without tracking is valid when it has `รูปหลักฐานจัดส่ง`.
-- The close confirmation should remind admin that financial follow-up is separate.
+- Evidence review before pressing close should remind admin that financial follow-up is separate; do not add another close-confirmation modal once required evidence exists.
 - Do not require payment audit to close operational delivery.
 - Show Order completion indicator only after close logic, not before.
 - Keep queue dense enough for repeated admin review work.

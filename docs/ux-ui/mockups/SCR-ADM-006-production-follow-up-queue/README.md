@@ -26,7 +26,7 @@ It confirms:
 ## Key Decisions Captured By This Mockup
 
 - `งานผลิตต้องติดตาม` is separate from `งานกำลังผลิต`.
-- `Hold`, `รอวัตถุดิบ`, `Revision`, `ไม่เข้าใจให้ติดต่อหา`, `งานค้างนาน`, and `งานด่วน` are follow-up signals.
+- `Hold`, `รอวัตถุดิบ`, `Revision`, `ไม่เข้าใจให้ติดต่อหา` from formal Revision, `งานค้างนาน`, and `งานด่วน` are follow-up signals.
 - The screen shows `JOB-O` and `JOB-P` context without exposing financial details.
 - No worker actions such as `รับงาน`, `ส่งไปสี`, or `งานเสร็จ` appear.
 - No product price, sales price, profit, accounting totals, tax, ad spend, or private CRM note appears.

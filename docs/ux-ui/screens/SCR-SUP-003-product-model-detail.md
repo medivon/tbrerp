@@ -114,7 +114,7 @@ Show both enabled and disabled colors. Disabled rows remain visible for manageme
 | Manage Images | จัดการรูปสินค้า | Product permission | Opens SKU Image Groups. | No |
 | Add / enable color | เพิ่มสีให้สินค้า | Product permission | Enables a `รายการสี` value for this Product Model and creates/reuses the SKU Variant. | No |
 | Disable color | ปิดสีนี้ | Product permission / manager | Hides this color from new selection if no stock or unfinished work exists. | Yes if allowed |
-| Re-enable color | เปิดใช้สีนี้ | Product permission | Reopens the existing SKU Variant and code. | No |
+| Re-enable color | เปิดใช้สีนี้ | Product permission | Reopens the existing SKU Variant and code. | Yes |
 | Open SKU Variant | เปิด SKU ย่อย | Product/stock permission | Opens SKU Variant Detail where needed. | No |
 | Stock adjustment | ปรับยอดสต๊อกสินค้า | Stock permission / manager | Opens Stock Adjustment with the color/SKU Variant preselected. | No |
 | Create production | ผลิตเข้าสต๊อก / ผลิตสินค้าชิ้นนี้ | Product/production permission | Opens Production Job Entry in `ผลิตจาก SKU` mode with the selected SKU Variant prefilled. | No |
@@ -149,6 +149,8 @@ If no colors exist, show `ยังไม่มีสีของสินค้
 - Permission fails: `ไม่มีสิทธิ์ดูรายละเอียด SKU หลัก`.
 - Disable color blocked by stock: modal says `ยังมีสินค้าในร้าน` and links to stock detail/adjustment.
 - Disable color blocked by unfinished work: modal says `ยังมีงานที่เกี่ยวข้องยังไม่จบ` and links to Order, Job, or Production records.
+- Allowed color/Product deactivation: confirmation modal requires reason and writes Management Log.
+- Re-enable color/Product: confirmation modal writes Management Log but does not require a reason.
 - Duplicate color: modal says this Product Model already has that color and links to the existing SKU Variant.
 - Deactivate Product Model blocked: `ต้องตรวจสอบสี สต๊อก และงานค้างก่อนปิดใช้งาน`.
 

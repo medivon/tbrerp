@@ -124,7 +124,7 @@ Design status:
 - Design status: ready
 - Main data objects: Job, Job Revision, Activity Log
 - Main actions: Open follow-up case, review acknowledgement state, follow up with department.
-- Related source docs: `docs/ux-ui/screens/SCR-RS-004-rak-samuk-price-approval.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/image-prompts/IMG-ADM-006-production-follow-up-queue.md`; `docs/ux-ui/mockups/SCR-ADM-006-production-follow-up-queue/SCR-ADM-006-approved.png`; `docs/ux-ui/01-flow-map.md` F01/F04; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### ADM-007 - COD/Payment Follow-up Queue
 
@@ -343,7 +343,7 @@ Note:
 - Device target: desktop / tablet / mobile
 - Design status: ready
 - Main data objects: Job, Job Revision, Department, Activity Log
-- Main actions: Review change, choose `รับทราบ`, choose `ไม่เข้าใจให้ติดต่อหา`, admin follow-up.
+- Main actions: Review formal Revision change, choose `รับทราบ`, choose `ไม่เข้าใจให้ติดต่อหา`, admin follow-up.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F01/F04; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### JOB-004 - Production Job Entry
@@ -537,7 +537,7 @@ Note:
 - Design status: ready
 - Main data objects: Job, Rak Samuk Work, Rak Samuk Worker
 - Main actions: Review work, choose worker, confirm send.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Related source docs: `docs/ux-ui/screens/SCR-RS-001-rak-samuk-assignment-queue.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-002 - Rak Samuk Worker Assignment
 
@@ -569,9 +569,9 @@ Note:
 - Priority: `P0`
 - Device target: mobile / tablet
 - Design status: ready
-- Main data objects: Rak Samuk Work, Job, Department Instruction Images, Rak Samuk Standard Rate
-- Main actions: Open assigned work, view own price on card/detail where allowed, submit `ขอเสนอราคา` until the related PV round is closed.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Main data objects: Rak Samuk Work, Job, Department Instruction Images, Rak Samuk Work Price, Rak Samuk Proposed Price
+- Main actions: Open assigned work, view own price on card/detail where allowed, submit `ขอเสนอราคา` until the related payable item is included in a finalized PV.
+- Related source docs: `docs/ux-ui/screens/SCR-RS-002-rak-samuk-worker-work-list.md`; `docs/ux-ui/image-prompts/IMG-RS-002-rak-samuk-worker-work-list.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### RSK-004 - Price Proposal
 
@@ -579,14 +579,14 @@ Note:
 - Screen name: Price Proposal
 - Thai UI label: `ไม่มีราคา / ให้แจ้งราคา`
 - Primary actor: Rak Samuk Worker
-- Purpose: Let worker submit `ขอเสนอราคา` for assigned work until the related PV round is closed.
+- Purpose: Let worker submit `ขอเสนอราคา` for assigned work until the related payable item is included in a finalized PV.
 - Entry point: Rak Samuk Worker Work List / Work Detail.
 - Exit point: Proposed price approval.
 - Related flow IDs: `F05`
 - Priority: `P1`
 - Device target: mobile / tablet
 - Design status: ready
-- Main data objects: Rak Samuk Work, Proposed Price, Rak Samuk Standard Rate, Product Model
+- Main data objects: Rak Samuk Work, Proposed Price, Rak Samuk Work Price
 - Main actions: Submit proposed per-piece price for the assigned work item.
 - Related source docs: `docs/ux-ui/screens/SCR-RS-003-rak-samuk-missing-price.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
@@ -604,7 +604,7 @@ Note:
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Proposed Price, Rak Samuk Work, Product Model, Rak Samuk Standard Rate
-- Main actions: Review proposed per-piece price, approve price with finance/payment permission.
+- Main actions: Review proposed per-piece price, approve price as Owner/Manager, and decide whether to update Product Model standard rate where applicable.
 - Related source docs: `docs/ux-ui/screens/SCR-RS-004-rak-samuk-price-approval.md`; `docs/ux-ui/01-flow-map.md` F05; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### RSK-006 - Receive Rak Samuk Work Back
@@ -668,31 +668,14 @@ Note:
 - Primary actor: Admin
 - Purpose: Create Shipment from selected ready-to-ship items.
 - Entry point: Ready-to-Ship Queue row action for one Order or special-case review; Order Detail -> `จัดการรอบจัดส่ง` selected lines.
-- Exit point: Draft Shipment detail or released Shipment detail.
+- Exit point: Released Shipment detail / admin Shipment list after `พร้อมจัดส่ง`; Ready-to-Ship Queue if cancelled before creation.
 - Related flow IDs: `F06`
 - Priority: `P0`
 - Device target: desktop / tablet
 - Design status: ready
 - Main data objects: Shipment, Order, Order Line, Job, Address Snapshot, Delivery Note, Shipping Sheet
-- Main actions: Review selected ready lines, edit delivery info/COD/note where needed, preview documents, release or save draft.
+- Main actions: Review selected ready lines, edit delivery info/note where needed, preview documents, confirm `พร้อมจัดส่ง`. Shipment Builder does not edit COD and does not save Draft Shipment in P0.
 - Related source docs: `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`; `docs/ux-ui/image-prompts/IMG-SHIP-002-shipment-builder.md`; `docs/ux-ui/mockups/SCR-SHIP-002-shipment-builder/SCR-SHIP-002-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
-
-### SHP-003 - Draft Shipment Detail
-
-- Screen ID: `SHP-003`
-- Screen name: Draft Shipment Detail
-- Thai UI label: `ร่างรอบจัดส่ง`
-- Primary actor: Admin
-- Purpose: Hold Shipment being prepared before release.
-- Entry point: Shipment creation saved as draft.
-- Exit point: Released Shipment detail or ready-to-ship queue if cancelled.
-- Related flow IDs: `F06`
-- Priority: `P1`
-- Device target: desktop / tablet
-- Design status: ready
-- Main data objects: Draft Shipment, Order, Address Snapshot, Delivery Note, Shipping Sheet
-- Main actions: Review draft, release to delivery, cancel draft.
-- Related source docs: `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### SHP-004 - Released Shipment Detail
 
@@ -716,34 +699,34 @@ Note:
 - Screen ID: `SHP-005`
 - Screen name: Delivery Note Preview
 - Thai UI label: `ใบส่งของ`
-- Primary actor: Admin
+- Primary actor: Admin / responsible Delivery Team where allowed
 - Purpose: Preview/print item list for Shipment, without price or COD amount.
-- Entry point: Shipment creation or Shipment detail.
-- Exit point: Shipment detail.
-- Related flow IDs: `F06`
+- Entry point: Shipment creation, Shipment detail, or responsible delivery view where allowed.
+- Exit point: Shipment detail, Shipping Sheet preview, or delivery view.
+- Related flow IDs: `F06`, `F07`
 - Priority: `P1`
 - Device target: desktop
 - Design status: ready
 - Main data objects: Delivery Note, Shipment, Order Line, product image
-- Main actions: Preview, print.
-- Related source docs: `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-005-delivery-note-preview/SCR-SHIP-005-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Main actions: Preview, print, without price or COD amount.
+- Related source docs: `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-005-delivery-note-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-005-delivery-note-preview/SCR-SHIP-005-approved.png`; `docs/ux-ui/01-flow-map.md` F06/F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### SHP-006 - Shipping Sheet Preview
 
 - Screen ID: `SHP-006`
 - Screen name: Shipping Sheet Preview
 - Thai UI label: `ใบจัดส่ง`
-- Primary actor: Admin
+- Primary actor: Admin / responsible Delivery Team where allowed
 - Purpose: Preview/print recipient and address sheet for Shipment, including COD amount where relevant.
-- Entry point: Shipment creation or Shipment detail.
-- Exit point: Shipment detail.
-- Related flow IDs: `F06`
+- Entry point: Shipment creation, Shipment detail, or responsible delivery view where allowed.
+- Exit point: Shipment detail or delivery view.
+- Related flow IDs: `F06`, `F07`
 - Priority: `P1`
 - Device target: desktop
 - Design status: ready
 - Main data objects: Shipping Sheet, Shipment, Recipient, Address Snapshot, carrier, COD
-- Main actions: Preview, print.
-- Related source docs: `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`; `docs/ux-ui/01-flow-map.md` F06; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
+- Main actions: Preview, print, with COD visibility limited to users allowed to see that Shipment COD.
+- Related source docs: `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/image-prompts/IMG-SHIP-006-shipping-sheet-preview.md`; `docs/ux-ui/mockups/SCR-SHIP-006-shipping-sheet-preview/SCR-SHIP-006-approved.png`; `docs/ux-ui/01-flow-map.md` F06/F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ### SHP-007 - Bulk Shipment Creation
 
@@ -751,7 +734,7 @@ Note:
 - Screen name: Bulk Shipment Creation
 - Thai UI label: `สร้างรอบจัดส่งหลายรายการ`
 - Primary actor: Admin
-- Purpose: Bulk-create simple Shipments only where confirmed rules allow.
+- Purpose: Bulk-create simple Shipments only for eligible ready-stock-only Orders where confirmed rules allow.
 - Entry point: Ready-to-Ship Queue.
 - Exit point: Released Shipments.
 - Related flow IDs: `F06`
@@ -759,7 +742,7 @@ Note:
 - Device target: desktop
 - Design status: ready
 - Main data objects: Order, Shipment, Service Case, COD
-- Main actions: Select eligible Orders, use saved Order Recipient Detail snapshots as delivery defaults, create Shipments/documents without opening `SHP-002`.
+- Main actions: Select eligible ready-stock-only Orders, use saved Order Recipient Detail snapshots as delivery defaults, create/release Shipments/documents without opening `SHP-002`.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F06; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
 ## 8. Delivery
@@ -777,7 +760,7 @@ Note:
 - Priority: `P0`
 - Device target: tablet / mobile
 - Design status: ready
-- Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date
+- Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date, COD
 - Main actions: Open today list, open waiting-date list, open same-day sent-out history, mark one Shipment sent out, bulk-mark today's/no-date Shipments sent out.
 - Related source docs: `docs/ux-ui/screens/SCR-DEL-001-delivery-dashboard.md`; `docs/ux-ui/image-prompts/IMG-DEL-001-delivery-dashboard.md`; `docs/ux-ui/01-flow-map.md` F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
@@ -798,7 +781,7 @@ Note:
 - Priority: `P0`
 - Device target: tablet / mobile
 - Design status: ready
-- Main data objects: Shipment, Recipient, Address Snapshot, Carrier
+- Main data objects: Shipment, Recipient, Address Snapshot, Carrier, COD
 - Main actions: Review short row/card summary, open Shipment detail, mark one row sent out, select rows for bulk `บันทึกว่าส่งออกแล้ว`.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
@@ -815,7 +798,7 @@ Note:
 - Priority: `P0`
 - Device target: tablet / mobile
 - Design status: ready
-- Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date
+- Main data objects: Shipment, Recipient, Address Snapshot, Delivery Date, COD
 - Main actions: Review future-date Shipments and open Shipment detail; bulk send-out is not available here.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`
 
@@ -832,7 +815,7 @@ Note:
 - Priority: `P0`
 - Device target: tablet / mobile
 - Design status: ready
-- Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, optional Shipment Evidence
+- Main data objects: Shipment, Order Line, Recipient, Address Snapshot, Carrier, COD, optional Shipment Evidence
 - Main actions: Review delivery data, add optional `รูปหลักฐานจัดส่ง`, add note, mark `ส่งออกแล้ว`; Tracking is not shown in Delivery Team UI.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07/F08; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
@@ -849,7 +832,7 @@ Note:
 - Priority: `P0`
 - Device target: tablet / mobile
 - Design status: ready
-- Main data objects: Shipment, Activity Log, Recipient, Carrier
+- Main data objects: Shipment, Activity Log, Recipient, Carrier, COD
 - Main actions: Review same-day sent-out Shipments; no full search/history in P0.
 - Related source docs: `docs/ux-ui/01-flow-map.md` F07; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
@@ -1200,19 +1183,19 @@ Note:
 ### SUP-011 - Payment Voucher
 
 - Screen ID: `SUP-011`
-- Screen name: Payment Voucher
-- Thai UI label: `ใบสำคัญจ่าย / PV`
+- Screen name: Payable Items / Payment Voucher
+- Thai UI label: `รายการรอจ่าย / ใบสำคัญจ่าย`
 - Primary actor: Finance, with Owner/Manager approval/override visibility
-- Purpose: Support Rak Samuk payout after payment is confirmed.
-- Entry point: Rak Samuk payout preparation.
-- Exit point: PV print/signature flow.
+- Purpose: Review item-first payable records by payee, clear ready items into one-payee PV, and print/finalize the PV after payment is confirmed.
+- Entry point: `รายจ่าย` -> `รายการรอจ่าย` / Rak Samuk payout preparation.
+- Exit point: PV detail/history, payee payout history, PV print/signature flow.
 - Related flow IDs: `F05`
 - Priority: `P2`
 - Device target: desktop
 - Design status: later
-- Main data objects: Payment Voucher, Rak Samuk Work, Rak Samuk Worker, PV number
-- Main actions: Prepare PV, confirm payment, print PV.
-- Related source docs: `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
+- Main data objects: Payable Item, Rak Samuk Work, custom income, Rak Samuk Worker/payee, Payment Voucher, PV number
+- Main actions: Review one payee's pending items, resolve missing prices outside PV, add custom income, select ready/priced items, review/finalize one-payee PV with optional evidence, print/reprint finalized PV, void finalized PV by Owner/Manager.
+- Related source docs: `docs/ux-ui/04-interaction-modal-behavior.md`; `CONTEXT.md`; `docs/decision-log.md`; `docs/ux-ui/initial-scope.md`; `docs/qa-summary.md` supporting
 
 ### SUP-012 - Product Settings
 

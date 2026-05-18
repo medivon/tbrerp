@@ -1,6 +1,6 @@
 # Rak Samuk Pricing Is Owner/Manager Approved
 
-Rak Samuk prices are deliberately kept out of Order, Production, and Job workflow pages. Rak Samuk Standard Rate is visible only to Owner, Manager, and Finance, while the assigned Rak Samuk Worker sees only their own work price and may use `ขอเสนอราคา` until the related PV round is closed. Owner/Manager approve proposed prices; Finance pays or creates PV from the approved price.
+Rak Samuk prices are deliberately kept out of Order, Production, and Job workflow pages. Rak Samuk Standard Rate is visible only to Owner, Manager, and Finance, while the assigned Rak Samuk Worker sees only their own work price and may use `ขอเสนอราคา` until the related payable item is included in a finalized PV. Owner/Manager approve proposed prices; Finance pays or creates PV from the approved price.
 
 ## Considered Options
 

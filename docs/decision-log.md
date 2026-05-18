@@ -9,6 +9,7 @@ This file works with the normal `grill-with-docs` structure:
 - `docs/decision-log.md` keeps the confirmed Q&A decision set in grouped form as a supporting log.
 - `docs/qa-summary.md` restates the same discovery as handoff notes so future sessions do not restart from zero.
 - `docs/ux-ui/initial-scope.md` is a supporting working note for the chosen UX/UI starting scope, not the main project structure.
+- `docs/ux-ui/04-interaction-modal-behavior.md` captures confirmed modal/drawer/confirmation/reason/evidence/navigation behavior for P0/P1 actions.
 
 Legacy material has been moved to `docs/archive/` and is not part of the active source of truth.
 
@@ -181,7 +182,7 @@ If documents conflict, use this order:
 - Delivery Team performs field delivery work only: view released work, see COD for own work, add delivery note/evidence, and mark `ส่งออกแล้ว`. Delivery Team cannot edit address, carrier, items, tracking, close Shipment, or close finance follow-up.
 - After Shipment close, Manager/Owner can edit Shipment data where needed; Admin/Sales can correct tracking/evidence when operationally necessary. Corrections write Management Log and finance reviews if money/COD is affected.
 - Product/Stock, Manager, Owner can create/edit Product Model, SKU Variant, Product Settings, Stock Count, Stock Adjustment, Material Stock, Material Purchase Order, and Material Receipt where applicable.
-- Deactivating/reopening Product Model or SKU Variant requires a reason and writes Management Log.
+- Deactivating Product Model or SKU Variant requires a reason and writes Management Log. Reopening uses confirmation and Management Log but does not require a reason.
 - Stock Adjustment requires a reason and writes Management Log.
 - Admin/Sales sees only Job-level material blocker status such as `รอวัตถุดิบ` / `ปลดรอวัตถุดิบแล้ว`; Admin/Sales does not see Material Stock detail, purchase detail, supplier, or cost.
 - Owner, Manager, Admin/Sales can edit Customer/CRM master data. Finance sees full CRM but cannot edit customer master data.
@@ -192,7 +193,7 @@ If documents conflict, use this order:
 - After payment follow-up is closed, evidence/note correction writes Management Log, while amount correction writes Audit Log.
 - Admin/Sales can create Expense and see Expense records created by themselves or their Admin/Sales group. They cannot approve/pay Expense or create PV without Finance permission.
 - Admin/Sales in the same group can edit/cancel unpaid/unclosed Expense records created by the group; edit/cancel writes Management Log.
-- Finance creates, groups, and closes PV payment rounds. Owner/Manager can view, approve, override, and edit closed PV. Closed PV edits do not require a reason but write Management Log with old/new value.
+- Finance prepares `รายการรอจ่าย` / `ตัดรอบจ่าย` before PV. PV is the final payment document, not the editable payout workbench. Owner/Manager can review/edit Rak Samuk prices in the payout layer and void finalized PVs by permission/reason/log.
 - Salary, daily wage, and commission are visibility-only in this phase; payroll action/payment flow is deferred.
 
 ### Rak Samuk Access and Price Rules
@@ -205,7 +206,7 @@ If documents conflict, use this order:
 - Rak Samuk Standard Rate is tied to Product Model / SKU หลัก.
 - Order, Production, and Job workflow pages never show Rak Samuk prices.
 - Rak Samuk Worker sees their own assigned work price. If no price exists, they see `ไม่มีราคา / ให้แจ้งราคา`.
-- Rak Samuk Worker can submit `ขอเสนอราคา` for assigned work until the related PV round is closed.
+- Rak Samuk Worker can submit `ขอเสนอราคา` for assigned work until the related payable item is included in a finalized PV.
 - UI should use `ขอเสนอราคา`; do not use `ตีโต้` in staff-facing UI.
 - Owner/Manager approve Rak Samuk proposed prices. Finance pays/creates PV from the approved price.
 - If the work is linked to a SKU/Product Model, the approver must always be asked whether to update the SKU Rak Samuk Standard Rate. Updating the standard rate writes Management Log with old/new price and approver.
@@ -236,6 +237,18 @@ If documents conflict, use this order:
 - Owner override writes Audit Log only when it touches Role/Permission, User Type, sensitive finance after close/pay, Audit/system settings, or severely bypasses normal rules.
 - Manager override covers most operational/business corrections according to permission, but excludes Role/Permission, Audit Log, and Owner-level authority.
 - Manager override requires a reason only for actions already defined as reason-required.
+
+## Interaction and Modal Behavior
+
+- The consolidated interaction behavior source is `docs/ux-ui/04-interaction-modal-behavior.md`.
+- Missing-permission actions are hidden; state-blocked actions remain visible but disabled with a reason.
+- Reason capture follows action risk, not UI location. When a save batch includes any reason-required change, one reason field covers the batch.
+- Evidence is required only where the business rule requires it: Payment Record evidence is required, Shipment close requires tracking or at least one delivery evidence photo, and production/Expense/PV/stock evidence is optional unless a specific action says otherwise.
+- Review-before-save is required for Order Review, Order Line Edit Review Changes, Product Stock Count close, Product Stock Receipt save, Material Adjustment save, manual PV, and payout/PV finalize where item totals are confirmed.
+- Warning acknowledgement is used for stock-insufficient Order/Shipment behavior. It writes Activity Log and does not require Manager approval or a reason.
+- Successful queue actions normally stay in the queue, refresh/remove the item, focus the next item, and show a short toast/banner unless the flow defines a specific destination.
+- Server/network failures, validation failures, upload failures, stale shared-queue state, and bulk partial success follow the reusable patterns in the interaction behavior doc.
+- Missing or wrong production detail is not a system workflow in the starting workflow. Workers ask outside the system; there is no special note, action, or log requirement for that case.
 
 ## Admin Dashboard
 
@@ -425,7 +438,7 @@ Rules:
 - History section shows a short timeline of important events only, such as Order created, Order edited, Shipment created, sent out, Shipment closed, or cancelled.
 - The short history may show the latest edit reason in a compact entry such as `แก้ไขรายการออเดอร์ - เหตุผล: ลูกค้าเปลี่ยนจำนวน`; full audit detail stays outside Order Detail.
 - A cancelled Order Detail is read-only. Actions that create downstream work are hidden/disabled, and the header action becomes a status label such as `ยกเลิกแล้ว`.
-- A completed Order can still edit light general information such as notes or customer/contact detail where allowed, but cannot normally edit Order items or shipment-impacting fields.
+- A completed Order does not edit the original Order snapshot in normal workflow. Users may add notes/correction records or open Customer Detail for current master-data work, but completed Order items, recipient snapshots, and shipment-impacting fields remain stable.
 - `แก้ไขรายการสินค้า` and `แก้ไขงานสั่งทำ` open `แก้ไขรายการออเดอร์`, a guarded edit mode/sub-flow from Order Detail. It may use a full-page layout for clarity, but it is not a standalone module or Draft Order.
 - `แก้ไขรายการออเดอร์` supports adding, removing, or changing ready-stock lines and adding/removing custom-work lines, with guards based on downstream state.
 - Added ready-stock lines reserve stock when saved from Review Changes. Removed safe ready-stock lines release reserved stock when saved. Quantity changes adjust the reserved amount by the difference when saved.
@@ -473,17 +486,16 @@ Rules:
 - Refund from Service Case is recorded as Expense Entry only, with the Service Case carrying the reference/context. It does not change the original Order or Customer Sales Summary in the starting workflow.
 - Whole-Order cancellation is not blocked by existing Payment Records. If money may need refund/credit later, Order Detail shows a financial note/follow-up placeholder instead of changing or hiding the Payment Record.
 - Payment Terms live mainly on Order.
-- Shipment can carry COD amount for that delivery round.
-- COD is separated by Shipment round. Do not design a case where one Shipment round's COD collects the full amount intended for other rounds.
-- System may suggest COD remaining balance, but admin confirms/edits.
-- COD can be corrected on the Shipment before send-out by an authorized user with log.
+- COD can be carried only by the final Shipment round that completes delivery for the Order in the starting workflow.
+- Do not use one early/partial Shipment round to collect COD for unfinished custom work or a later Shipment round.
+- Shipment Builder does not edit COD. If ready-stock goods can ship while custom work remains unfinished, COD is disabled with a clear reason that COD opens only on the final Order-closing Shipment round.
 - Do not add a special post-send-out COD edit flow for rare mistakes. After send-out or Shipment close, avoid changing the Shipment; handle exceptions through finance notes/manual handling.
-- COD follow-up is created automatically when a Shipment carries COD.
+- COD follow-up is created automatically when the final Order-closing Shipment carries COD.
 - COD follow-up cannot be closed before the related Shipment is closed, even if the money is already confirmed.
 - If actual COD is lower than expected, record the actual amount and reason, such as carrier fee deduction; this does not change the Order total.
 - COD should not normally exceed the expected amount. If it happens, treat it as an abnormal note/correction case rather than a heavy approval workflow or automatic extra income.
 - Financial Follow-up is separate from operational Order Completion.
-- A finance-permission user can close a Financial Follow-up item when required payment evidence or an explanatory note is enough for the operational audit trail. This is not a full accounting approval flow in the starting workflow.
+- A permitted Admin/Sales user can close Financial Follow-up items in their own work scope when required payment evidence or an explanatory note is enough for the operational audit trail. Finance, Manager, and Owner can close broader follow-up items by permission. This is not a full accounting approval flow in the starting workflow.
 - Cancellation with money keeps Payment Records visible and may create a financial follow-up note for later refund/credit handling.
 - Financial Reconciliation examples during Order edits: added Payment Record evidence, COD to collect, refund/credit note, retained deposit note, customer credit note, pending decision note where allowed.
 
@@ -495,6 +507,7 @@ Rules:
 - Product Purchase Order creates Payment Audit Follow-up only when the purchase document is fully received.
 - Material Purchase Order creates Payment Audit Follow-up when the whole material purchase document is received into stock.
 - Payment Audit Follow-up does not create Expense Entry automatically; finance records payment/expense deliberately.
+- Material Purchase Order receipt does not create Draft Expense Entry or Payment Voucher automatically.
 - Purchase-payment mistakes are corrected by finance notes/follow-up corrections with old and new evidence kept visible; do not silently edit old payment or recreate purchase documents.
 - Expense Entry does not affect stock automatically, and stock-in does not create Expense Entry automatically.
 - Expense Entry has no approval flow in the starting workflow.
@@ -503,9 +516,10 @@ Rules:
 - Expense Category can be corrected with log when the wrong category was selected.
 - Expense reports use actual payment date, not record creation date.
 - Expense Entry can be cancelled but not physically deleted.
-- Payment Voucher is the first automated payout document flow for Rak Samuk payout.
-- PV number is issued only after payment is confirmed.
-- One PV can include multiple Rak Samuk works for one worker/payment round.
+- Payment Voucher is the first automated final payout document for Rak Samuk payout, after items have been checked in `รายการรอจ่าย` / `ตัดรอบจ่าย`.
+- Payable items are item-first and grouped by payee before PV; the PV itself is not the editable payout list.
+- PV number is issued only after payment is confirmed/finalized.
+- One PV can include multiple payable lines for one worker/payee, including Rak Samuk work and custom income lines.
 - PV internal roles can be recorded digitally in the system, while the payee signs the printed document.
 - Finance reports may include a rough profit view: sales minus expenses.
 - Refund Expense Entries count into rough profit.
@@ -540,11 +554,12 @@ Rules:
 - `JOB-P` custom/prototype can simply become Done and not enter stock.
 - Job details must be complete enough before the Job enters production.
 - If details change after a department accepts work, affected department must be notified.
-- Revision acknowledgement flow:
+- Formal Revision acknowledgement flow:
   - Worker sees change
   - Worker chooses `รับทราบ` or `ไม่เข้าใจให้ติดต่อหา`
   - Admin explains if needed
   - Admin can close/confirm after real conversation if needed
+- This formal Revision flow is separate from ordinary missing/wrong production detail. Ordinary missing/wrong production detail has no system workflow, no special note action, and no log requirement.
 - Revision history should be collapsed by default.
 - Job Note is separate from Order internal note.
 - Job changes that affect production must be visible to affected departments.
@@ -663,7 +678,7 @@ Rules:
 - Rak Samuk Worker can see own price for own work.
 - If standard rate exists, it is the starting work price when the Job references that SKU/Product Model.
 - If no rate exists, item shows `ไม่มีราคา / ให้แจ้งราคา`.
-- Rak Samuk Worker can use `ขอเสนอราคา` until the related PV round is closed.
+- Rak Samuk Worker can use `ขอเสนอราคา` until the related payable item is included in a finalized PV.
 - Proposed price is the per-piece price for that specific work item, not the total price for all assigned work.
 - Owner/Manager approves proposed Rak Samuk prices; Finance pays or creates PV from the approved price.
 - Standard rate lives on Product Model / SKU หลัก, not variant.
@@ -747,7 +762,8 @@ Rules:
 - Enabling a color on a Product Model creates/reuses the SKU Variant and opens it for new sale/production selection.
 - Disabling a color means that color is not a real option for that Product Model; it hides the SKU Variant from new Order selection, `ผลิตจาก SKU`, normal product list expansion, and normal stock selection, while history remains readable.
 - A color cannot be disabled while it has stock, unfinished Orders, unfinished Jobs, or unfinished Production. The block modal must show the reason and links to the records to resolve.
-- Re-enabling a disabled color uses the same SKU Variant and code; it does not create a new duplicate SKU.
+- If Product Model / color deactivation is allowed, require confirmation modal, reason, and Management Log.
+- Re-enabling a disabled color uses the same SKU Variant and code; it does not create a new duplicate SKU. Reopening uses confirmation and Management Log but no reason.
 - Non-color differences such as size, pattern, carving, crystal, or Rak Samuk detail become a new Product Model when they should be sold or stocked repeatedly.
 - If the non-color difference is one-off customer work, use custom Order work instead. If it later becomes repeatable, create a new Product Model with optional Job reference.
 - Job reference lives on Product Model, not SKU Variant.
@@ -1050,17 +1066,14 @@ Not in first scope:
 
 - Admin creates Shipment.
 - Delivery team does not create or split Shipment.
-- Shipment can be Draft or released.
-- Default after creation can be release to delivery team.
-- Draft Shipment exists if admin is not ready.
-- Items in Draft Shipment are not shipped and Order is not complete.
-- Items in Draft Shipment show as already being prepared to avoid duplicate Shipment.
-- If Draft Shipment is cancelled, items return to not-shipped state.
+- P0 has no persistent Draft Shipment. Shipment Builder is a temporary working screen, and a Shipment exists only when Admin presses `พร้อมจัดส่ง`.
+- Exiting Shipment Builder before release discards the temporary work after warning; no draft record is created.
+- Pressing `พร้อมจัดส่ง` creates/releases the Shipment to the delivery team.
 - Shipment creates Delivery Note and Shipping Sheet together.
 - User can print both, Delivery Note only, or Shipping Sheet only.
 - Delivery Note has item list, quantity, small image if available, and notes; no price and no COD amount.
 - Shipping Sheet focuses on recipient, address, phone, carrier, short item summary, and COD amount where relevant.
-- Admin prepares/prints the Shipping Sheet and Delivery Note when creating or releasing Shipment. The packing/delivery team uses those documents physically; there is no extra document-ready blocker in the delivery screen.
+- Admin may preview the Shipping Sheet and Delivery Note before release; real print is allowed only after release. The packing/delivery team uses those documents physically; there is no extra document-ready blocker in the delivery screen.
 - First scope uses A4 print.
 - Barcode/QR/label printer deferred.
 - Ready-stock and completed Jobs appear in admin ready-to-ship queue.
@@ -1069,9 +1082,9 @@ Not in first scope:
 - No Hold status in ready-to-ship queue. Items that are not ready should not enter the queue; if a ready item should not leave after Shipment work begins, hold/handle it in the shipment/send-out step.
 - Bulk Shipment:
   - One Order creates one Shipment.
-  - Cannot include Orders with Jobs.
+  - Allowed only for Orders with no custom-work line at all; practically, ready-stock-only Orders.
   - Service Case can be included if complete.
-  - COD does not block; show badge.
+  - COD can appear only when the Shipment is the final Order-closing round.
   - Minimal summary before confirm.
   - Releases to delivery immediately.
 - Delivery team tabs:
@@ -1098,22 +1111,26 @@ Not in first scope:
   - Close Shipment
   - Close COD/payment follow-up
 - Delivery team marks `ส่งออกแล้ว` once for the whole Shipment round, not per item.
+- Single `ส่งออกแล้ว` uses a short confirmation modal only; no detailed re-summary and no evidence/note requirement.
+- Bulk `บันทึกว่าส่งออกแล้ว` uses a modal summarizing count and selected Shipments.
 - Delivery send-out does not require tracking or delivery evidence.
 - After row send-out or bulk send-out, the Shipment leaves the Delivery Team's active today list and enters admin `ยืนยันการจัดส่ง`.
 - Delivery history in P0 is a simple `ส่งออกแล้ววันนี้` view only; full delivery history/search is not included.
+- Delivery Team can add photo/note later from `ส่งออกแล้ววันนี้` until Admin closes the Shipment.
 - Bulk `บันทึกว่าส่งออกแล้ว` applies only to `รายการต้องจัดส่งวันนี้`, including no-date Shipments.
 - If a shipment cannot be sent, the packing/delivery team contacts admin outside the system in the starting workflow; there is no `ส่งไม่ได้` action or issue queue.
 - If a released Shipment is not marked `ส่งออกแล้ว`, it remains in the delivery list by delivery date until admin handles it.
 - Admin closes Shipment after evidence/tracking review.
 - Before admin close, admin must add or correct tracking and delivery evidence in `ยืนยันการจัดส่ง` when missing.
 - Closing a Shipment requires at least tracking or one delivery evidence photo.
-- After Shipment close, Manager/Owner can edit where needed; Admin/Sales can correct tracking/evidence when operationally necessary. Corrections are recorded in Management Log.
+- Once tracking or evidence exists, Admin can press `ยืนยันและปิดรอบจัดส่ง` without an extra confirmation modal.
+- After Shipment close, Admin/Sales can correct tracking/evidence. Post-close address/carrier/COD/item changes require Manager/Owner. Corrections are recorded in Management Log.
 - Evidence types:
   - Tracking
   - `รูปหลักฐานจัดส่ง` as one multi-photo field
   - Note
 - The starting workflow does not use carrier-specific evidence settings or required checklists. Carrier/delivery method can stay free-text while Shipment close remains the simple tracking-or-photo rule owned by admin.
-- When a Shipment has COD, its COD follow-up item exists from Shipment creation/release and remains in `ติดตาม COD / Payment` until a permitted admin/finance user closes the follow-up.
+- When a final Order-closing Shipment has COD, its COD follow-up item exists from Shipment creation/release and remains in `ติดตาม COD / Payment` until a permitted admin/finance user closes the follow-up.
 - COD/payment follow-up is owned by admin/audit/finance, not the packing/delivery team.
 
 ## Delivery Date
@@ -1332,17 +1349,21 @@ Not in first scope:
 - Product Purchase Order line statuses mirror receipt progress per SKU line; one document can have fully received lines and incomplete lines.
 - Product Purchase Order supports partial receipt per line. Users can receive a full line quickly or enter actual received quantity per line.
 - Each Product Stock Receipt records receiver, receipt date, received quantities per SKU line, and optional attachments/evidence.
+- Saving Product Stock Receipt uses a review modal summarizing SKU, received quantity, stock increase, and whether Payment Audit Follow-up will be created.
+- After Product Stock Receipt succeeds, return to Product Purchase Order detail with the new receipt round and updated status.
 - Product Stock Receipt rounds are immutable after save. If the receiver recorded the wrong quantity, fix stock through `ปรับยอดสต๊อกสินค้า`; do not edit the old receipt round.
 - Receipt quantity cannot exceed the remaining quantity on the Product Purchase Order line.
+- If receipt quantity exceeds remaining quantity, block inline and explain that excess goods require a new Product Purchase Order.
 - If goods arrive over the ordered quantity, the existing document can receive only up to the remaining quantity. Any extra quantity is handled by the user creating a new Product Purchase Order; the system does not create or store a pending over-delivery record automatically.
 - While the document is `รอรับเข้า`, lines and quantities can be edited.
 - After partial receipt, only unreceived remaining quantities can be edited; ordered quantity cannot be reduced below already received quantity.
 - If goods arrive incomplete and the team will not wait for the rest, use action `ปิดยอดที่เหลือ` on the affected SKU line with a required reason.
+- `ปิดยอดที่เหลือ` uses a modal/page summarizing selected lines, remaining quantity, reason, and linked Stock Movement when reason is `ปรับยอดแล้ว`, then confirmation.
 - Standard `ปิดยอดที่เหลือ` reasons are `สินค้าเสียหาย`, `ผู้ขายส่งไม่ครบ`, `ยกเลิกจำนวนที่เหลือ`, `ปรับยอดแล้ว`, and `อื่น ๆ`; note is optional unless the business needs explanation.
-- If reason `ปรับยอดแล้ว` is used, the user must link to Stock Count / Stock Adjustment movement for the same SKU, and the linked positive quantity must be at least the remaining quantity being closed.
+- If reason `ปรับยอดแล้ว` is used, the user must link to Stock Count / Stock Adjustment movement for the same SKU, and the linked positive quantity must be at least the remaining quantity being closed. Missing or invalid linked movement blocks confirmation and should provide a path to create/select the correct movement.
 - A line closed with `ปิดยอดที่เหลือ` becomes terminal `รับเข้าสต๊อกยังไม่ครบ`; if any line is `รับเข้าสต๊อกยังไม่ครบ`, the document status is `รับเข้าสต๊อกยังไม่ครบ`.
 - If a receipt was under-recorded and the document remains open, user may receive the additional quantity in the same Product Purchase Order. If the difference was already handled by stock adjustment/internal process, close the remaining line with reason `ปรับยอดแล้ว`.
-- If no receipt has happened, `ยกเลิก` is allowed without requiring a reason and is terminal.
+- If no receipt has happened, `ยกเลิก` is allowed without requiring a reason, uses confirmation modal and Activity Log, and is terminal.
 - Product Purchase Order can be printed/exported in every status, with the status clearly marked on the document.
 - Payment Audit Follow-up is created only when the Product Purchase Order is fully received as `รับเข้าสต๊อกแล้ว`.
 - Before creating Payment Audit Follow-up, validate every line has `รับเข้าแล้ว = จำนวนสั่งซื้อ` and no line is `รับเข้าสต๊อกยังไม่ครบ`.
@@ -1361,11 +1382,15 @@ Not in first scope:
 - Stock counters should see `มีอยู่ในร้าน` and `นับจริง`; hide `จองแล้ว` and `ขายได้` in count/adjustment entry so counters do not reason about sales reservations.
 - `จองแล้ว` and `ขายได้` are sales/admin visibility. If counted Stock On Hand becomes lower than Reserved Stock, `ขายได้` can become negative as a sales warning after save.
 - When closing a Stock Count, create Stock Movement entries for every counted SKU.
+- Closing a Stock Count uses a separate Review page, not a small modal, and is blocked until every selected SKU has `นับจริง`.
+- Cancelling a Stock Count before movement creation uses a confirmation modal and Activity Log; no reason is required.
+- After closing Stock Count, navigate to the closed Stock Count detail / read-only summary.
 - If counted quantity matches the system, create a zero-difference movement with status/reason `ยืนยันสต๊อกถูกต้อง`.
 - If counted quantity differs, create an adjustment movement with reason. Standard reasons are `นับสต๊อกจริง`, `สินค้าเสียหาย`, `สูญหาย`, `พบสินค้าเพิ่ม`, and `อื่น ๆ`.
 - Reasons are required only when the count creates a non-zero adjustment; note is optional.
 - Evidence attachments are optional.
 - Stock-permission users can create Product Stock Counts and adjustments. Manager/higher permission can view history; movement entries are not edited after creation.
+- One-off Product Stock Adjustment uses a confirmation modal summarizing SKU, current quantity, actual quantity, difference, and reason before saving.
 - If a stock movement is wrong, correct it by creating a new adjustment movement rather than editing the old one.
 - Product Stock Movement types in the first workflow include `รับเข้าจากใบสั่งซื้อ`, `ผลิตเข้าสต๊อก`, `ปรับยอด`, `จองจากออเดอร์`, `ยกเลิก/คืนจอง`, and `ยืนยันสต๊อกถูกต้อง`.
 
@@ -1400,7 +1425,7 @@ Not in first scope:
 - Manual Material Purchase Orders cannot link Jobs after creation.
 - A Material Purchase Order created from waiting-material notes cannot add new Job links later; if more waiting Jobs need purchase, they should be summarized into a new purchase flow.
 - A linked Material Purchase Order may add normal material lines that are not linked to Jobs.
-- When receiving a Material Purchase Order that is linked to waiting Jobs, show a confirmation modal listing the Jobs that will leave `รอวัตถุดิบ`.
+- When receiving a Material Purchase Order, show a confirmation modal listing all material lines, linked Jobs that will leave `รอวัตถุดิบ`, and the Payment Audit Follow-up that will be created.
 - The confirmation list shows Job ID, work/product name, department queue the Job returns to, and related material.
 - Receiving a linked Material Purchase Order releases only linked Jobs that are still in `รอวัตถุดิบ` and returns them to their previous department queue.
 - If a linked Job already left `รอวัตถุดิบ` before receipt, do not block receipt and do not release it again; show it as already released in the confirmation context when relevant.
@@ -1409,6 +1434,7 @@ Not in first scope:
 - Department aging restarts from the time the Job is released from `รอวัตถุดิบ`.
 - No separate department notification or `รับวัตถุดิบแล้ว` badge is shown after release.
 - If the workshop still cannot continue after release, the department sets a new appropriate status manually.
+- Cancelling a Material Purchase Order before receipt uses a confirmation modal and Activity Log; no reason is required.
 
 ## Material Adjustment
 
@@ -1416,6 +1442,9 @@ Not in first scope:
 - Do not split user-facing flows into separate `กระทบยอดวัสดุ` and `ปรับยอดวัสดุ`; use reason/mode such as `กระทบยอด` inside the same screen where needed.
 - In `ปรับยอดวัสดุ`, staff enter actual counted quantity and the system calculates the difference.
 - Staff can adjust multiple material items in one adjustment session.
+- Saving Material Adjustment uses a modal summarizing selected materials, before/after values, differences, reason/mode, and optional evidence before confirmation.
+- After Material Adjustment succeeds, navigate to a Material Adjustment summary/read-only detail for that session.
+- If Material Adjustment is wrong, create a new adjustment with reference to the previous session/movement; do not edit old movements.
 - Image/evidence attachment is optional and attached when saving the adjustment session, not required per material line.
 - The screen has flexible date/range summaries such as today, last 7 days, or custom date range.
 - Summary shows count of adjusted items, count of lines with differences, largest differences, and recorder.
@@ -1442,9 +1471,18 @@ Not in first scope:
 
 - Payment Voucher (PV) is a general payment document type.
 - First automated PV flow supports Rak Samuk payout.
+- The editable payout workspace is `รายการรอจ่าย` / `ตัดรอบจ่าย`, not the PV document.
+- Payable/income records are item-first, grouped by payee/worker in the pending payout list.
+- Rak Samuk payable items are created when work is received back / accepted into coloring, not when assigned. Items without price appear as `ยังไม่มีราคา` and cannot be included in PV.
+- Custom income can be added for one payee with item text, amount, optional note, and optional evidence; creation writes Activity Log and does not require reason.
+- One PV pays one payee/worker only. Multiple payable sources for the same payee, such as Rak Samuk and custom income, can be combined into one PV as separate lines.
+- Finance can select only some ready/priced payable items for a payee; unselected or unpriced items remain pending.
+- Owner/Manager can review, edit, and approve Rak Samuk prices in the payout area. Price edits require reason and Management Log, and SKU/Product Model-linked items ask whether to update Rak Samuk Standard Rate.
 - PV number is issued only after payment is confirmed.
 - PV number runs by Buddhist year and month, e.g. `PV-2568-03-004`.
 - PV form should be similar to the existing A4 sample.
+- Slip/evidence at PV finalize is optional. There is no separate P0 PV `รอจ่ายเงิน` status because `รายการรอจ่าย` covers preparation.
+- Manual PV can include custom text lines and manually entered amounts, with Review before save/finalize.
 - PV roles:
   - ผู้จัดทำ
   - ผู้อนุมัติ
@@ -1453,9 +1491,11 @@ Not in first scope:
 - ผู้จัดทำ/ผู้อนุมัติ/ผู้จ่ายเงิน can be digital inside system.
 - ผู้รับเงิน signs printed document.
 - One person can hold multiple internal PV roles in first scope.
-- Finance creates, groups, and closes PV payment rounds.
-- Owner/Manager can approve, override, and edit closed PV.
-- Owner/Manager edits to closed PV do not require a reason, but write Management Log with old/new value.
+- Finalized PV can be printed/reprinted from PV detail/history and from payee/worker history where referenced.
+- If a finalized PV is cancelled/voided, included payable items return to `รายการรอจ่าย` with trace to the voided PV and prior price.
+- Cancelling/voiding a finalized PV is Owner/Manager only, requires a reason, and writes Management Log.
+- A deactivated worker/payee can still be paid for pending payable items with a `ปิดใช้งาน` badge; reactivation is not required.
+- P0 person-level payout history shows pending payable items plus created/voided PVs with links. Do not build a full payroll ledger in P0.
 - Exact printed detail table for Rak Samuk PV is deferred.
 
 ## Reports
@@ -1499,8 +1539,9 @@ First-scope printable documents:
 Rules:
 
 - Delivery Note does not show prices.
-- Shipping Sheet shows COD when the Shipment has COD.
+- Shipping Sheet shows COD when the final Order-closing Shipment has COD.
 - Printable documents use snapshots.
+- Delivery Note and Shipping Sheet may be previewed before Shipment release, but real print is allowed only after release.
 - Documents can be regenerated from the current snapshot/status.
 - Routine reprint does not need a print log in the starting workflow.
 - If Shipment is already closed, reprinting Delivery Note uses the closed Shipment snapshot.

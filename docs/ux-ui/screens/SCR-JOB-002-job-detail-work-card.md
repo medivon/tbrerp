@@ -114,7 +114,9 @@ The Job Detail screen is the shared view for one `Job / งานสั่งท
 | Mark special production done | งานเสร็จ | Allowed production department / admin | Completes unlinked/special `JOB-P` without stock change. | Yes |
 | Set urgent | ตั้งงานด่วน | Authorized admin/manager | Adds Urgent Label. | No |
 | Acknowledge revision | รับทราบ | Affected department user | Marks revision acknowledged. | No |
-| Ask for clarification | ไม่เข้าใจให้ติดต่อหา | Affected department user | Sends clarification follow-up to admin. | No |
+| Ask for clarification on Revision | ไม่เข้าใจให้ติดต่อหา | Affected department user | Sends clarification follow-up only for a formal Job Revision acknowledgement. | No |
+
+Missing or wrong production detail outside a formal Revision is not a system workflow in the starting workflow. Workers ask outside the system; do not add a special note/action/log for that case.
 
 ## 10. Status / Chips
 

@@ -68,8 +68,8 @@ It is separate from `ใบสั่งซื้อวัสดุ`. Product pur
 | Create document | สร้างใบสั่งซื้อสินค้า | Product purchase/stock permission | Creates document as `รอรับเข้า`. | No |
 | Edit waiting lines | แก้ไขรายการ | Product purchase/stock permission | Edits unreceived quantities and optional price. | No |
 | Receive stock | รับเข้าสินค้า | Stock permission | Opens Product Stock Receipt. | Yes |
-| Close remaining | ปิดยอดที่เหลือ | Stock permission / manager | Closes remaining unreceived quantity on selected SKU line(s) with reason. | Yes |
-| Cancel document | ยกเลิก | Product purchase/stock permission | Cancels document only if no receipt happened. | Yes |
+| Close remaining | ปิดยอดที่เหลือ | Stock permission / manager | Opens modal/page summarizing selected lines, remaining quantity, reason, linked Stock Movement when needed, then closes remaining unreceived quantity. | Yes |
+| Cancel document | ยกเลิก | Product purchase/stock permission | Cancels document only if no receipt happened; writes Activity Log. | Yes, no reason |
 | Print/export | พิมพ์ / ส่งออก | Product purchase/stock permission | Outputs document with status marker. | No |
 | Attach evidence | แนบหลักฐาน | Product purchase/stock permission | Adds files/images. | No |
 
@@ -94,6 +94,7 @@ It is separate from `ใบสั่งซื้อวัสดุ`. Product pur
 - `ปิดยอดที่เหลือ` closes remaining unreceived quantity on selected SKU line(s) and requires a reason.
 - Standard `ปิดยอดที่เหลือ` reasons: `สินค้าเสียหาย`, `ผู้ขายส่งไม่ครบ`, `ยกเลิกจำนวนที่เหลือ`, `ปรับยอดแล้ว`, `อื่น ๆ`.
 - If reason `ปรับยอดแล้ว` is selected, user must link to Stock Count / Stock Adjustment movement for the same SKU; linked positive movement quantity must be at least the remaining quantity being closed.
+- If reason `ปรับยอดแล้ว` has no valid linked same-SKU movement with enough positive quantity, block confirmation and provide a path to create or select the correct movement.
 - If a receipt was under-recorded and the Product Purchase Order remains open, user may receive additional quantity in the same document.
 - If stock was already corrected by adjustment/internal communication, close the remaining line with reason `ปรับยอดแล้ว`.
 - Product Stock Receipt rounds are immutable; wrong receipt quantities are corrected through `ปรับยอดสต๊อกสินค้า` / Stock Movement, not by editing old receipt rounds.

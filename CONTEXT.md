@@ -149,7 +149,7 @@ An accepted payment entry such as transfer, cash, card, or COD amount recorded a
 _Avoid_: Payment term, audit confirmation, Job approval
 
 **Financial Follow-up (ติดตามการเงิน)**:
-The separate management view for COD, payment audit, outstanding payments, deposits retained, or customer credit. A permitted finance user can resolve a follow-up item by closing it with required payment evidence or explanatory note for audit trail; this is not full accounting approval in the starting workflow.
+The separate management view for COD, payment audit, outstanding payments, deposits retained, or customer credit. A permitted Admin/Sales user can resolve follow-up items in their own work scope, while Finance, Manager, and Owner can resolve broader follow-up items, by closing them with required payment evidence or explanatory note for audit trail; this is not full accounting approval in the starting workflow.
 _Avoid_: Order completion, accounting close
 
 **Payment Audit Follow-up (รายการรอตรวจจ่าย)**:
@@ -395,16 +395,24 @@ The standard per-piece rate stored on the Product Model and visible only to Owne
 _Avoid_: Sales price, SKU Variant price
 
 **Rak Samuk Proposed Price (ขอเสนอราคา)**:
-The per-piece price a Rak Samuk Worker proposes for their assigned work before the related PV round is closed.
+The per-piece price a Rak Samuk Worker proposes for their assigned work before the related payable item is included in a finalized PV.
 _Avoid_: Total job price, sales price, worker payout round
 
 **Rak Samuk Work Price (ราคางานรักสมุก)**:
 The approved per-piece price for one Rak Samuk Work item, visible to the assigned worker, Owner, Manager, Finance, and PV/payment views only.
 _Avoid_: Order price, Job workflow field, Product profit
 
+**Payable Item (รายการรอจ่าย)**:
+An item-first payable or income record for one payee, created from returned Rak Samuk work, custom income, or a later payroll-like source. It is grouped by payee for payout clearing before PV creation.
+_Avoid_: Payment Voucher, payroll ledger, payee container
+
+**Payout Clearing (ตัดรอบจ่าย)**:
+The pre-PV work area where permitted users review one payee's payable items, resolve missing prices, select ready items, and create a PV.
+_Avoid_: Final PV document, full payroll module
+
 **Payment Voucher (ใบสำคัญจ่าย / PV)**:
-A payment document issued after payment is confirmed, using monthly running numbers.
-_Avoid_: Draft payout, invoice
+A finalized payment document issued after payment is confirmed, using monthly running numbers. One PV pays one payee and may include selected payable items plus manual text lines.
+_Avoid_: Payable workbench, draft payout, invoice, payroll ledger
 
 ### Fulfillment
 
@@ -412,9 +420,9 @@ _Avoid_: Draft payout, invoice
 A dispatch round created by admin from ready-to-ship Order Lines or Service Cases.
 _Avoid_: Order, Delivery Note
 
-**Draft Shipment (ร่างรอบจัดส่ง)**:
-A Shipment being prepared by admin before release to the delivery team.
-_Avoid_: Waiting for delivery
+**Shipment Builder (สร้างรอบจัดส่ง)**:
+A temporary pre-release review screen for selected ready-to-ship items. In the starting workflow it is not a persistent Draft Shipment; a Shipment exists only after Admin presses `พร้อมจัดส่ง`.
+_Avoid_: Draft Shipment, saved holding state, delivery team work
 
 **Delivery Note (ใบส่งของ)**:
 The printable item list for a Shipment, focused on product identification, quantity, image, and notes.
@@ -542,15 +550,15 @@ _Avoid_: Accounting journal
 - A **Payment Record** may be captured during Order entry or later Financial Follow-up, but missing Payment Records do not block **Order Job** creation.
 - A **Payment Record** can be corrected later only with clear old/new value, reason, editor, and follow-up visibility; corrections do not silently rewrite received-money history. If a closed follow-up depended on the corrected amount, finance should re-check that follow-up.
 - Payment Method mistakes do not require a new follow-up when the amount is correct.
-- A **Financial Follow-up** item is resolved when a permitted finance user closes it with required payment evidence or explanatory note; operational Order and Shipment completion remain separate.
-- COD belongs to the Shipment round that carries it. A Shipment COD amount can be corrected before send-out by an authorized user with log; after send-out or close, avoid changing the Shipment and handle rare mistakes through finance notes/manual handling.
+- A **Financial Follow-up** item is resolved when a permitted Admin/Sales user in scope or a Finance/Manager/Owner user closes it with required payment evidence or explanatory note; operational Order and Shipment completion remain separate.
+- COD belongs only to the final Shipment round that completes delivery for the Order in the starting workflow. Shipment Builder does not edit COD; if a ready-stock shipment is not the final Order-closing round because custom work remains, COD is disabled with a reason.
 - **Financial Reconciliation** can block saving an Order total edit when the new sales total does not line up with financial records or adjustment notes; this is separate from normal Order operation.
 - A **Job** has exactly one **Job Source Type**: Order or Production.
 - An **Order Job** belongs to an Order Line and becomes ready for **Shipment** only after production is complete.
 - A **Draft Production Job** may become one **Production Job** after production review; after conversion it is archived/read-only and hidden from active draft production work.
 - A **Production Batch** has many **Production Lots**; a Production Lot may create one or more **Production Jobs** depending on how production is split.
 - A **Production Job** tied to an SKU Variant increases **Ready Stock** by its production quantity when completed; a custom/prototype Production Job may end as Done without entering stock.
-- A **Shipment** creates one **Delivery Note** and one **Shipping Sheet**; users may print either or both.
+- A **Shipment** creates one **Delivery Note** and one **Shipping Sheet**; users may preview before release and print after release.
 - A **Shipment** may be marked **Delivery Send-out** by the **Delivery Team** without **Shipment Evidence**; it can be closed only by admin after at least tracking or one delivery evidence photo is recorded. Delivery reporting uses the **Delivery Send-out** date, while Order Completion still waits for Shipment close.
 - Ready-to-ship work should not move backward during Shipment creation. If a ready Shipment should not leave yet, use **Shipment Send-out Hold** or manual shipment-step handling instead of reverting the upstream Order Line, Job, or Service Case.
 - **Order Completion** happens when all required Order Shipments are closed; **Financial Follow-up** is separate.
@@ -561,10 +569,10 @@ _Avoid_: Accounting journal
 - **Rak Samuk Work** is assigned to exactly one **Rak Samuk Worker** at send time; if the worker is not known, the work cannot be sent to Rak Samuk.
 - A **Rak Samuk Worker** can see only assigned work, **Full Production Job Detail** for that work, and their own **Rak Samuk Work Price**.
 - **Rak Samuk Standard Rate** lives on the **Product Model**. If assigned work references a Product Model, that rate is the starting work price; work without a reference starts missing/zero and can use **Rak Samuk Proposed Price**.
-- A **Rak Samuk Proposed Price** can be submitted until the related **Payment Voucher** round is closed and must be approved by Owner/Manager before it becomes the approved **Rak Samuk Work Price**.
+- A **Rak Samuk Proposed Price** can be submitted until the related **Payable Item** is included in a finalized **Payment Voucher** and must be approved by Owner/Manager before it becomes the approved **Rak Samuk Work Price**.
 - When an approved proposed price is linked to a Product Model, the approver must choose whether to update the **Rak Samuk Standard Rate**; updates write **Management Log** and are not automatic.
-- **Rak Samuk Return** always sends the Job to **Waiting for Coloring Intake** in the starting workflow.
-- A **Payment Voucher** is issued only after payment is confirmed and receives a monthly running PV number; closed PVs remain editable by Owner/Manager with old/new value in **Management Log**.
+- **Rak Samuk Return** always sends the Job to **Waiting for Coloring Intake** in the starting workflow and creates a **Payable Item** for the assigned Rak Samuk Worker; the item may be blocked as `ยังไม่มีราคา` until a price exists.
+- **Payable Items** are item-first and grouped by payee in **Payout Clearing**. A finalized **Payment Voucher** pays one payee, receives a monthly running PV number only after payment is confirmed, and is not the editable payout workbench.
 - A **Review Album** can link to zero or many SKU Variants and optionally to one Customer or Order.
 - **Product Settings** contains controlled product lists for categories, tags, colors, patterns, and decoration values.
 - A **Product Category** can have many **Product Subcategories** and many **Product Models**.
@@ -613,7 +621,7 @@ Included in the starting scope:
 - Admin order creation flow: Order Entry Session, optional saved Draft Order, Order Review, Order, Order Line, payment term, optional payment record, and immediate `JOB-O` creation for complete custom work.
 - Department dashboards: Woodwork Queue, Coloring Queue, Waiting for Coloring Intake, and simple history views.
 - Rak Samuk outsource flow: send work, worker view, missing-price label, proposed price approval, receive back, and payment preparation.
-- Shipment flow: admin ready-to-ship queue, Draft Shipment, release to delivery, delivery team send-out, admin close Shipment.
+- Shipment flow: admin ready-to-ship queue, temporary Shipment Builder, release to delivery, delivery team send-out, admin close Shipment.
 - Management overview: unfinished Jobs, department location, urgency, age, and timeline.
 - Product/SKU and stock support required for the flow: Product Model, SKU Variant, Ready Stock, Product Purchase Order, Product Stock Receipt, Stock Count, Stock Adjustment, Light Material Stock, Material Purchase Order, Product Settings, department instruction images, and review albums.
 - Simple Expense Entry and Payment Voucher concepts only where they support operating visibility and outsource payment.

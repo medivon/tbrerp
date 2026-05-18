@@ -316,9 +316,10 @@ Guard rules:
 | Edit ready-stock items | แก้ไขรายการสินค้า | Admin and allowed users | Opens `แก้ไขรายการออเดอร์`. | Review Changes before save |
 | Edit custom-work items | แก้ไขงานสั่งทำ | Admin and allowed users | Opens `แก้ไขรายการออเดอร์` for new/safe custom lines or routes existing `JOB-O` changes/cancellation to Job. | Review Changes / Job Revision / Job cancellation |
 | Create Shipment from selected lines | สร้างรอบจัดส่งจากรายการที่เลือก | Admin and allowed users | Opens Shipment Builder with selected lines. | No |
+| Create special shipment | รอบจัดส่งพิเศษ | Owner / Manager only after Order completion | Creates an exceptional Shipment record without affecting stock, sales totals, or Order completion. | Yes, with reason |
 | Open Shipment | เปิดรอบจัดส่ง | Admin and allowed users | Opens Shipment Detail. | No |
 | Open Job | เปิด Job | Admin and allowed users | Opens related `JOB-O`. | No |
-| Open Payment Follow-up | เปิดติดตามการเงิน | Finance-permission user | Opens COD/Payment follow-up. | No |
+| Open Payment Follow-up | เปิดติดตามการเงิน | Admin/Sales in scope, Finance, Manager, Owner | Opens COD/Payment follow-up. | No |
 | Open Customer | เปิดลูกค้า | Admin and allowed users | Opens Customer Detail/Profile for master customer/address changes. | No |
 | Cancel Order | ยกเลิกออเดอร์ | Authorized users / higher permission where needed | Starts cancellation flow only when whole-Order cancellation is allowed; otherwise disabled with reason. | Yes, with reason |
 
@@ -349,8 +350,11 @@ Cancelled Order:
 
 Completed Order:
 
-- Safe general edits may remain available where permission allows.
-- Do not allow normal Order item edits or shipment-impacting edits.
+- Do not edit the original Order snapshot in normal workflow.
+- Allow adding notes/correction records where permission allows.
+- Owner/Manager may create `รอบจัดส่งพิเศษ` with a required reason; it does not affect stock, sales totals, or Order completion.
+- Admin/Sales handles post-completion customer problems through Service Case rather than the special shipment button.
+- Do not allow normal Order item edits, recipient snapshot edits, or shipment-impacting edits.
 
 ## 18. Error / Disabled State
 

@@ -93,6 +93,8 @@ Show `ไม่มีรายการรออนุมัติราคา`.
 ## 13. Permission Rules
 
 - Only Owner/Manager can approve proposed Rak Samuk prices.
+- Owner/Manager edits to Rak Samuk payable/work price in the payout area require a reason and write Management Log.
+- If the work is linked to Product Model/SKU, ask whether to update Rak Samuk Standard Rate; do not update automatically.
 - Finance pays or creates PV from approved prices; Finance does not approve proposed prices in this flow.
 - Rak Samuk Worker cannot approve their own proposed price.
 - Internal staff without Owner/Manager/Finance visibility should not see Rak Samuk rates.

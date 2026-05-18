@@ -63,8 +63,8 @@ The Rak Samuk Worker Work List shows an outsource worker only their assigned Rak
 | Rak Samuk instruction | รายละเอียดรักสมุก | ลายดอกพิกุลหน้าบาน | Department Instruction Images | Main instruction content. |
 | Quantity | จำนวน | 1 ชิ้น | Rak Samuk Work | Assigned quantity. |
 | Urgent Label | งานด่วน | งานด่วน | Urgent Label | Can appear if set. |
-| Own price | ราคางานของฉัน | 450 บาท/ชิ้น | Rak Samuk Work / Standard Rate | Own work price only; not sales price. |
-| Missing price | ไม่มีราคา / ให้แจ้งราคา | ไม่มีราคา | Rak Samuk Standard Rate | Worker can propose price only in this state. |
+| Own price | ราคางานของฉัน | 450 บาท/ชิ้น | Rak Samuk Work Price | Own approved/proposed work price only; not standard rate or sales price. |
+| Missing price | ไม่มีราคา / ให้แจ้งราคา | ไม่มีราคา | Rak Samuk Work Price | Worker can propose price only in this state. |
 | Work state | สถานะงาน | กำลังทำ | Rak Samuk Work | Worker-facing state only, not internal workflow controls. |
 
 ## 9. Actions
@@ -103,7 +103,7 @@ Show `ยังไม่มีงานที่ต้องทำ` with a secon
 - Rak Samuk Worker sees only their own assigned work.
 - Rak Samuk Worker can see Full Production Job Detail for assigned work, but must not see Customer data, Order ID, Customer phone/address, CRM notes, sales price, payment, cost, other workers' work, Management Log, Audit Log, or internal workflow status controls.
 - Rak Samuk Worker can see own price only for own work.
-- Rak Samuk Worker can use `ขอเสนอราคา` until the related PV round is closed.
+- Rak Samuk Worker can use `ขอเสนอราคา` until the related payable item is included in a finalized PV.
 - Rak Samuk Worker cannot mark work complete and cannot move workflow status.
 - Worker cannot print/download payout in first scope.
 

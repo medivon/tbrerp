@@ -24,7 +24,8 @@ It confirms:
 - Admin can review and edit delivery-facing details before releasing the Shipment.
 - This screen is not used for bulk shipment creation.
 - Bulk creation bypasses this screen and uses default customer/order delivery data.
-- Delivery Note and Shipping Sheet are created from the Shipment after creation.
+- P0 has no persistent Draft Shipment; this screen is temporary pre-release work.
+- Delivery Note and Shipping Sheet can be previewed before release and printed after Shipment release.
 
 ## Approved Content Pattern
 
@@ -33,16 +34,17 @@ It confirms:
 - Left panel: `รายการพร้อมส่ง`
 - Item rows use the Order Line snapshot for image, SKU หลัก name, color / SKU ย่อย, SKU code, and quantity.
 - Right panel: `ข้อมูลจัดส่ง`
-- Editable/special-case actions: `แก้ไขข้อมูลจัดส่ง`, `แก้ยอด COD`, `แก้หมายเหตุ`
+- Editable/special-case actions: `แก้ไขข้อมูลจัดส่ง`, `แก้หมายเหตุ`
+- COD is read-only/final-round gated here; Shipment Builder does not edit COD.
 - Document preview buttons: `ดูใบส่งของ`, `ดูใบจัดส่ง`
-- Footer actions: `พร้อมจัดส่ง`, `บันทึกเป็นร่าง`, `ยกเลิก`
+- Footer actions: `พร้อมจัดส่ง`, `ยกเลิก`
 
 ## Key Decisions Captured By This Mockup
 
 - `SHP-002` is a special/single review editor, not the bulk path.
 - Bulk-created Shipments should not require this detailed editor screen.
 - For bulk flow, the system should use the Customer/Order delivery data, using the first Order as the reference where needed for default address/recipient behavior.
-- This screen can change carrier, delivery date, COD, and delivery note before release, according to permission.
+- This screen can change carrier, delivery date, and delivery note before release, according to permission. It does not edit COD.
 
 ## Regeneration Rule
 
