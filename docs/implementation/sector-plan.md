@@ -7,10 +7,11 @@ One Codex implementation task should cover one coherent sector or a clearly name
 Each sector should use this workflow:
 
 1. Create a task in `docs/implementation/current-task.md`.
-2. Implement only that sector scope.
-3. Record files changed, checks run, gaps, and reviewer focus in `current-task.md`.
-4. Start a separate reviewer Codex task.
-5. Record review findings in `docs/implementation/review-report.md`.
+2. For frontend/UI sectors, create a short Visual Intent before coding.
+3. Implement only that sector scope.
+4. Record files changed, checks run, gaps, and reviewer focus in `current-task.md`.
+5. Start a separate reviewer Codex task.
+6. Record review findings in `docs/implementation/review-report.md`.
 
 ## Source-Truth Rules
 
@@ -25,6 +26,16 @@ Use active docs as the source of truth:
 Implementation docs organize execution. They do not override source docs.
 
 Archived mockups, legacy files, old screenshots, and generated image prompts are not source of truth.
+
+## Frontend/UI Visual Quality Gate
+
+Frontend/UI sectors must use UI UX Pro Max visual guidance together with the current THAIBORAN visual design system. Implementers must create a short Visual Intent in `current-task.md` before coding, covering visual mood, density, shell/palette direction, component polish goals, responsive behavior, and what not to do.
+
+Use UI UX Pro Max to improve visual hierarchy, spacing, hover/focus/cursor states, responsive behavior, accessibility, and image handling. It must not change business rules, workflow, permissions, sensitive-data visibility, API contracts, database schema, or source-of-truth decisions.
+
+Current visual direction allows premium operational ERP styling, including dark/navy shell treatment where it improves hierarchy and readability. Main work surfaces must stay readable and practical for dense ERP work.
+
+Reviewers must reject frontend work that is generic plain UI, decorative marketing UI, over-animated UI, or low-contrast dark content surfaces.
 
 ## Sector 0: Codebase Foundation
 

@@ -12,6 +12,7 @@ Read before reviewing:
 - `docs/implementation/implementer-rules.md`
 - the source docs named in the current task
 - the implementation diff
+- for frontend/UI work, the Visual Intent recorded in `current-task.md`
 
 If the implementation scope cannot be traced to the current task and source docs, mark the review blocked.
 
@@ -42,6 +43,12 @@ If the implementation scope cannot be traced to the current task and source docs
 ### UX and Accessibility
 
 - Does the implementation follow relevant UX/UI screen specs and design-system docs?
+- For frontend/UI work, did the implementer create a short Visual Intent before coding, including visual mood, density, shell/palette direction, component polish goals, responsive behavior, and what not to do?
+- Did the implementation actively apply UI UX Pro Max visual guidance together with the current THAIBORAN visual design system, rather than only reading visual docs passively?
+- Does the frontend look intentionally designed, not merely functional?
+- Does it avoid generic plain UI, decorative marketing UI, over-animated UI, and low-contrast dark content surfaces?
+- If using a dark/navy shell, do main work surfaces remain readable and practical for dense ERP work?
+- Are visual hierarchy, spacing, hover/focus/cursor states, responsive behavior, accessibility, and image handling polished without changing business rules, workflow, permissions, sensitive-data visibility, or source-of-truth decisions?
 - Does Thai-first text fit and wrap cleanly at required breakpoints?
 - Are disabled, loading, empty, stale, and no-access states handled where relevant?
 - Are role-aware routes, lists, and detail pages consistent with source docs?

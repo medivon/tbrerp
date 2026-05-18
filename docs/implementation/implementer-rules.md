@@ -11,8 +11,28 @@ Before editing files:
 - Read the matching sector in `docs/implementation/sector-plan.md`.
 - Read the relevant source docs listed in the current task.
 - Check whether `docs/implementation/review-report.md` contains unresolved findings for the same scope.
+- For frontend/UI work, use UI UX Pro Max visual guidance together with the current THAIBORAN visual design system before coding.
 
 If the current task is empty, unclear, or conflicts with source docs, stop and record the blocker in `current-task.md`.
+
+## Frontend/UI Visual Gate
+
+Implementers must actively apply visual guidance, not only list visual docs as read.
+
+Before coding frontend/UI work, write a short Visual Intent in `docs/implementation/current-task.md` that includes:
+
+- visual mood
+- density
+- shell/palette direction
+- component polish goals
+- responsive behavior
+- what not to do
+
+Use UI UX Pro Max to improve visual hierarchy, spacing, hover/focus/cursor states, responsive behavior, accessibility, and image handling where useful. Use the current THAIBORAN visual design system as the project visual baseline.
+
+Current visual direction allows premium operational ERP styling, including dark/navy shell treatment where it improves hierarchy and readability. Main work surfaces must stay readable and practical for dense ERP work.
+
+UI UX Pro Max must not change business rules, workflow, permissions, sensitive-data visibility, API contracts, database schema, or source-of-truth decisions.
 
 ## Implementation Boundaries
 
