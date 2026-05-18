@@ -22,7 +22,7 @@ Do not create new requirement summaries in this folder. If a requirement, term, 
 - `02-screen-inventory.md`: lists screens needed for the confirmed starting scope and tracks which ones still need detailed specs.
 - `03-navigation-map.md`: defines how users move through the Stage 1 screens and role-based navigation.
 - `04-interaction-modal-behavior.md`: consolidates confirmed modal/drawer/confirmation/reason/evidence/navigation behavior for starting-workflow actions.
-- `design-system/`: shared shell and reusable UI behavior such as table pagination.
+- `design-system/`: shared visual design system, page-level visual guidance, app shell, and reusable UI behavior such as table pagination. Start visual implementation references with `design-system/visual-design-system.md`, then use the matching file under `design-system/pages/` when designing a specific domain area.
 - `open-questions.md`: captures narrow UX/UI questions that block design details only; do not use it to restart discovery.
 - `screens/`: future per-screen UX specs.
 - `image-prompts/`: future prompts or references for design images or visual asset generation.
