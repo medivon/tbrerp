@@ -13,7 +13,7 @@ Recommended foundation:
 - Web app: Next.js App Router with React.
 - Styling: Tailwind CSS with shadcn/ui and Radix UI primitives.
 - Database direction: PostgreSQL.
-- ORM direction: Prisma.
+- ORM direction: Prisma for future PostgreSQL-backed persistence work.
 - Testing: Vitest, React Testing Library, and Playwright.
 - Package manager: pnpm workspace.
 
@@ -23,9 +23,9 @@ Why this stack fits THAIBORAN ERP:
 - Next.js App Router supports a single Thai-first app shell, server-rendered read-only placeholders, and later backend endpoints without starting with multiple deployable services.
 - TypeScript helps future agents preserve domain language and permission-sensitive UI contracts in one codebase.
 - PostgreSQL is a good fit for operational records, immutable history, logs, permissions, documents, and queue-style read models.
-- Prisma is the approved ORM direction for future PostgreSQL-backed persistence work.
+- Prisma is the approved ORM direction for future PostgreSQL-backed persistence work. This proposal does not approve ERP domain schema design.
 
-Do not choose this stack as permission to create Prisma ERP domain schema, migrations, database tables, API contracts, real authentication, real permission management, or business workflow code before the relevant implementation work is approved.
+Do not choose this stack as permission to create Prisma ERP domain schema, migrations, database tables, API contracts, real authentication, real permission management, seed data, or business workflow code before the relevant implementation work is approved.
 
 ## 2. Repository Structure
 
@@ -54,7 +54,7 @@ Intended ownership:
 
 - `apps/web`: the Next.js application, routing, layouts, app shell, pages, and screen composition.
 - `apps/web/src/shared`: cross-feature app helpers, route guards, formatting, shell composition, and non-domain utilities.
-- `packages/ui`: reusable THAIBORAN ERP visual components that wrap shadcn/ui and Radix UI primitives where practical and implement `visual-design-system.md` and `responsive-mobile.md`.
+- `packages/ui`: reusable THAIBORAN ERP visual components that wrap shadcn/ui conventions and Radix UI primitives where practical. The primitives live below the ERP component layer; they are not themselves the domain UI contract.
 - `packages/domain`: canonical domain terms, permission names, status display helpers, and pure business-safe UI/domain helpers. Keep persistence and UI framework code out of this package.
 - `packages/data-access`: database and query adapters when persistence is approved. Do not add Prisma schema, migrations, or database tables from this proposal alone.
 - `packages/config`: shared TypeScript, lint, test, and formatting configuration.
@@ -91,7 +91,7 @@ Routing should mirror UX areas rather than database tables when those areas are 
 
 ## 5. Styling and Component Strategy
 
-Use Tailwind CSS for tokens, layout, density, and responsive behavior. Use shadcn/ui and Radix UI as implementation primitives in the web app, and wrap reusable THAIBORAN ERP components in `packages/ui` where practical.
+Use Tailwind CSS for tokens, layout, density, and responsive behavior. Use shadcn/ui conventions and Radix UI as implementation primitives in the web app, and wrap reusable THAIBORAN ERP components in `packages/ui` where practical.
 
 Recommended component direction:
 
@@ -122,13 +122,15 @@ Recommended direction:
 - Keep shared queue behavior explicit: same-permission users can continue work, owner is traceability, and stale-state refresh protects shared work.
 - Use internal server actions or route handlers only when implementation needs them.
 
-Do not define public API contracts from this proposal. API shapes should be created later from approved screen/use-case work, with the active docs open beside the implementation.
+Do not define public or internal business API contracts from this proposal. API shapes should be created later from approved screen/use-case work, with the active docs open beside the implementation.
 
-For the first functional slice after this foundation pass, use fixture users and a mock role selector only. Do not implement real login, sessions, auth providers, or persistent permission management yet.
+For the first functional slice after this foundation pass, use fixture users and a mock role selector only. That fixture selector is a temporary development surface for the first slice, not real authentication. Do not implement real login, sessions, auth providers, or persistent permission management yet.
 
 ## 7. Database / ORM Direction
 
-Use PostgreSQL as the system-of-record direction and Prisma as the approved ORM direction for future schema/migration work.
+Use PostgreSQL as the system-of-record direction and Prisma as the approved ORM direction for future persistence work.
+
+No ERP domain schema, migrations, seed data, enum sets, database tables, or generated Prisma client should be added during the foundation setup. Add database artifacts only after a future approved domain implementation task defines the relevant data model from source docs.
 
 Database principles to preserve later:
 
