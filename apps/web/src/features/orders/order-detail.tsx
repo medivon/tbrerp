@@ -253,7 +253,7 @@ export function OrderDetail({
                           เปิดรอบจัดส่ง
                         </Button>
                         <DisabledReason>
-                          รายละเอียดรอบจัดส่งยังไม่เปิดใน Sector 3
+                          รายละเอียดรอบจัดส่งยังไม่เปิดในรอบงานนี้
                         </DisabledReason>
                       </div>
                     </td>
@@ -293,7 +293,7 @@ export function OrderDetail({
             เปิดติดตามการเงิน
           </Button>
           <DisabledReason>
-            คำสั่ง Payment/COD ยังไม่เปิดใน Sector 3
+            คำสั่ง Payment/COD ยังไม่เปิดในรอบงานนี้
           </DisabledReason>
         </div>
       </ReadFirstSection>

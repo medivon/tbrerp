@@ -46,7 +46,7 @@ export function OrderCreate({
       <PageHeader
         actions={
           <>
-            <Button disabled title="Sector 3 แสดงปุ่มบันทึกร่างเท่านั้น">
+            <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
               บันทึกร่าง
             </Button>
             <Button asChild>
@@ -66,7 +66,7 @@ export function OrderCreate({
               <StatusChip variant="neutral">ยังไม่ได้บันทึกร่าง</StatusChip>
             )}
             <StatusChip variant="neutral">
-              บันทึกร่างเป็นปุ่มตัวอย่างใน Sector 3
+              บันทึกร่างเป็นปุ่มตัวอย่างในรอบงานนี้
             </StatusChip>
           </div>
         }
@@ -249,7 +249,7 @@ export function OrderCreate({
             </p>
           </div>
           <div className="grid gap-2">
-            <Button disabled title="Sector 3 ยังไม่บันทึกร่างจริง">
+            <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
               บันทึกร่าง
             </Button>
             <p className="text-xs font-semibold leading-5 text-shell-muted">

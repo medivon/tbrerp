@@ -135,6 +135,39 @@ describe("Order read/create foundation", () => {
     ).toBe(true);
   });
 
+  it("renders incomplete custom-work Review data as incomplete", () => {
+    render(
+      <OrderReview
+        currentUser={currentUser}
+        scenarioId="incomplete-custom-detail"
+      />,
+    );
+
+    expect(
+      screen.getByText(
+        "ตู้โชว์ไม้สักแกะลายสั่งทำ: รายละเอียดงานสั่งทำยังไม่ครบ (รายละเอียดผลิต, ขนาด)",
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getAllByText("รายละเอียดงานสั่งทำยังไม่ครบ").length,
+    ).toBeGreaterThan(0);
+    expect(screen.queryByText(/ลายแกะดอกพิกุล มีไฟในตู้/)).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+      }),
+    );
+
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "ยืนยันสร้างออเดอร์",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+  });
+
   it("separates Order status from Shipment status on Order Detail", () => {
     render(<OrderDetail currentUser={currentUser} orderId="ORD-240602-009" />);
 

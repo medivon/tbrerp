@@ -11,7 +11,11 @@ import {
   PackageCheck,
   Wrench,
 } from "lucide-react";
-import { confirmOrderFromReview } from "@thaiboran/domain";
+import {
+  confirmOrderFromReview,
+  type CustomWorkReviewLine,
+  type ReadyStockReviewLine,
+} from "@thaiboran/domain";
 import { Button, PageHeader, StatusChip, SurfaceCard } from "@thaiboran/ui";
 
 import { OrderLineCard } from "@/features/orders/components/order-line-card";
@@ -20,8 +24,8 @@ import { ReviewImpactPanel } from "@/features/orders/components/review-impact-pa
 import {
   formatBaht,
   getOrderConfirmationInput,
-  orderEntryFixture,
   type OrderConfirmationFixtureResult,
+  type OrderLineFixture,
   type OrderReviewScenarioId,
 } from "@/features/orders/fixtures/orders";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
@@ -59,9 +63,17 @@ export function OrderReview({
     [confirmationInput],
   );
   const totalBaht = [
-    ...orderEntryFixture.readyStockLines,
-    ...orderEntryFixture.customLines,
+    ...confirmationInput.readyStockLines,
+    ...confirmationInput.customWorkLines,
   ].reduce((total, line) => total + line.lineTotalBaht, 0);
+  const reviewReadyStockLines = useMemo(
+    () => confirmationInput.readyStockLines.map(toReadyStockReviewLineCard),
+    [confirmationInput.readyStockLines],
+  );
+  const reviewCustomWorkLines = useMemo(
+    () => confirmationInput.customWorkLines.map(toCustomWorkReviewLineCard),
+    [confirmationInput.customWorkLines],
+  );
   const hasStockWarning = confirmationInput.warnings.some(
     (warning) => warning.type === "stock-insufficient",
   );
@@ -203,20 +215,20 @@ export function OrderReview({
             </dl>
           </ReadFirstSection>
 
-          {orderEntryFixture.readyStockLines.length > 0 ? (
+          {reviewReadyStockLines.length > 0 ? (
             <ReadFirstSection
               title="สินค้าพร้อมส่ง"
               titleId="review-ready-stock"
             >
-              {orderEntryFixture.readyStockLines.map((line) => (
+              {reviewReadyStockLines.map((line) => (
                 <OrderLineCard key={line.id} line={line} />
               ))}
             </ReadFirstSection>
           ) : null}
 
-          {orderEntryFixture.customLines.length > 0 ? (
+          {reviewCustomWorkLines.length > 0 ? (
             <ReadFirstSection title="งานสั่งทำ" titleId="review-custom-work">
-              {orderEntryFixture.customLines.map((line) => (
+              {reviewCustomWorkLines.map((line) => (
                 <OrderLineCard key={line.id} line={line} />
               ))}
             </ReadFirstSection>
@@ -234,16 +246,16 @@ export function OrderReview({
               <ReviewFact
                 label="รายการรับเงิน"
                 value={
-                  orderEntryFixture.optionalPaymentRecord
-                    ? `${orderEntryFixture.optionalPaymentRecord.method} ${formatBaht(
-                        orderEntryFixture.optionalPaymentRecord.amountBaht,
+                  confirmationInput.optionalPaymentRecord
+                    ? `${confirmationInput.optionalPaymentRecord.method} ${formatBaht(
+                        confirmationInput.optionalPaymentRecord.amountBaht,
                       )}`
                     : "ยังไม่มีรายการรับเงิน"
                 }
               />
               <ReviewFact
                 label="แผนจัดส่ง"
-                value={orderEntryFixture.shipmentIntent ?? "ไม่มีแผนจัดส่งแยก"}
+                value={confirmationInput.shipmentIntent ?? "ไม่มีแผนจัดส่งแยก"}
               />
             </dl>
           </ReadFirstSection>
@@ -259,6 +271,80 @@ export function OrderReview({
       </div>
     </div>
   );
+}
+
+function toReadyStockReviewLineCard(
+  line: ReadyStockReviewLine,
+): OrderLineFixture {
+  const hasShortage = line.quantity > line.sellableStockBefore;
+
+  return {
+    color: line.color,
+    dimensions: line.dimensions,
+    editable: true,
+    id: line.id,
+    imageAlt: line.imageAlt,
+    imageSrc: line.imageSrc,
+    lineTotalBaht: line.lineTotalBaht,
+    quantity: line.quantity,
+    readyForShipment: false,
+    sellableStockBefore: line.sellableStockBefore,
+    shipmentState: "ยังไม่สร้างรอบจัดส่ง",
+    skuCode: line.skuCode,
+    skuName: line.skuName,
+    stockWarning: hasShortage
+      ? `จำนวนเกินที่ขายได้: ขายได้ ${line.sellableStockBefore} ชิ้น`
+      : undefined,
+    title: line.title,
+    type: "ready-stock",
+  };
+}
+
+function toCustomWorkReviewLineCard(
+  line: CustomWorkReviewLine,
+): OrderLineFixture {
+  const detail = line.customWorkDetail;
+  const detailText = [
+    detail.productionDetail,
+    detail.sizeDetail ? `ขนาด ${detail.sizeDetail}` : undefined,
+    detail.materialDetail ? `วัสดุ ${detail.materialDetail}` : undefined,
+    detail.colorDetail ? `สี ${detail.colorDetail}` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" / ");
+  const hasIncompleteDetail =
+    isBlank(detail.workName) ||
+    isBlank(detail.productionDetail) ||
+    isBlank(detail.sizeDetail) ||
+    isBlank(detail.materialDetail) ||
+    isBlank(detail.colorDetail) ||
+    line.quantity <= 0 ||
+    line.lineTotalBaht <= 0 ||
+    (detail.deliveryDateRequired !== false &&
+      isBlank(line.deliveryDate ?? detail.deliveryDate));
+
+  return {
+    customDetail: detailText
+      ? `รายละเอียดงานสั่งทำ: ${detailText}`
+      : "รายละเอียดงานสั่งทำยังไม่ครบ",
+    deliveryDate: line.deliveryDate ?? detail.deliveryDate,
+    editable: true,
+    id: line.id,
+    imageAlt: line.imageAlt,
+    imageSrc: line.imageSrc,
+    lineTotalBaht: line.lineTotalBaht,
+    quantity: line.quantity,
+    readyForShipment: false,
+    shipmentState: hasIncompleteDetail
+      ? "รายละเอียดงานสั่งทำยังไม่ครบ"
+      : "ยังไม่สร้างรอบจัดส่ง",
+    title: line.title,
+    type: "custom-work",
+  };
+}
+
+function isBlank(value: string | undefined): boolean {
+  return value === undefined || value.trim().length === 0;
 }
 
 function StockWarningBlock({
