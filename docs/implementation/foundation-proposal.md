@@ -10,22 +10,22 @@ Recommended foundation:
 
 - Language: TypeScript.
 - Runtime: Node.js.
-- Web app: Next.js with React.
-- Styling: Tailwind CSS with a small internal component system.
+- Web app: Next.js App Router with React.
+- Styling: Tailwind CSS with shadcn/ui and Radix UI primitives.
 - Database direction: PostgreSQL.
-- ORM direction: Drizzle ORM.
+- ORM direction: Prisma.
 - Testing: Vitest, React Testing Library, and Playwright.
-- Package manager: pnpm.
+- Package manager: pnpm workspace.
 
 Why this stack fits THAIBORAN ERP:
 
 - The ERP needs a single Thai-first responsive web app for dense admin work and mobile/tablet worker screens.
-- Next.js supports authenticated app routes, role-aware first-screen routing, server-rendered read-only dashboards, and later backend endpoints without starting with multiple deployable services.
+- Next.js App Router supports a single Thai-first app shell, server-rendered read-only placeholders, and later backend endpoints without starting with multiple deployable services.
 - TypeScript helps future agents preserve domain language and permission-sensitive UI contracts in one codebase.
 - PostgreSQL is a good fit for operational records, immutable history, logs, permissions, documents, and queue-style read models.
-- Drizzle keeps persistence explicit and SQL-aligned, which is useful for an ERP with careful history and permission boundaries.
+- Prisma is the approved ORM direction for future PostgreSQL-backed persistence work.
 
-Do not choose this stack as permission to create database schema, API contracts, or business workflow code before the relevant implementation work is approved.
+Do not choose this stack as permission to create Prisma ERP domain schema, migrations, database tables, API contracts, real authentication, real permission management, or business workflow code before the relevant implementation work is approved.
 
 ## 2. Repository Structure
 
@@ -36,7 +36,6 @@ apps/
   web/
     src/
       app/
-      features/
       shared/
       styles/
       test/
@@ -54,11 +53,10 @@ docs/
 Intended ownership:
 
 - `apps/web`: the Next.js application, routing, layouts, app shell, pages, and screen composition.
-- `apps/web/src/features`: feature folders grouped by business area, such as admin dashboard, identity, order, job, shipment, stock, finance, customer, and settings when those areas are approved for implementation.
 - `apps/web/src/shared`: cross-feature app helpers, route guards, formatting, shell composition, and non-domain utilities.
-- `packages/ui`: reusable visual components that implement `visual-design-system.md` and `responsive-mobile.md`.
+- `packages/ui`: reusable THAIBORAN ERP visual components that wrap shadcn/ui and Radix UI primitives where practical and implement `visual-design-system.md` and `responsive-mobile.md`.
 - `packages/domain`: canonical domain terms, permission names, status display helpers, and pure business-safe UI/domain helpers. Keep persistence and UI framework code out of this package.
-- `packages/data-access`: database and query adapters when persistence is approved. Do not add schema from this proposal alone.
+- `packages/data-access`: database and query adapters when persistence is approved. Do not add Prisma schema, migrations, or database tables from this proposal alone.
 - `packages/config`: shared TypeScript, lint, test, and formatting configuration.
 - `docs/implementation`: implementation proposals and later technical notes. These remain subordinate to business/UX source docs.
 
@@ -89,15 +87,16 @@ Frontend requirements from the docs:
 - No-access route state with `ไม่มีสิทธิ์เข้าถึงหน้านี้` and only return-to-own-home action.
 - Read-first detail pages and guarded edit/review flows when those screens are later implemented.
 
-Routing should mirror UX areas rather than database tables. Use staff-facing module language such as dashboard, orders, jobs/production, shipments, product-stock, customer-crm, finance, and settings.
+Routing should mirror UX areas rather than database tables when those areas are approved for implementation. The foundation pass should only create a minimal placeholder page and must not implement Admin Dashboard, login, role selector, no-access, business navigation, or business fixtures.
 
 ## 5. Styling and Component Strategy
 
-Use Tailwind CSS for tokens, layout, density, and responsive behavior. Build a small internal component library in `packages/ui`.
+Use Tailwind CSS for tokens, layout, density, and responsive behavior. Use shadcn/ui and Radix UI as implementation primitives in the web app, and wrap reusable THAIBORAN ERP components in `packages/ui` where practical.
 
 Recommended component direction:
 
 - Use Radix UI primitives where accessible behavior matters, such as dialog, drawer/sheet, popover, menu, tabs, tooltip, select, checkbox, and radio.
+- Use shadcn/ui conventions for baseline component composition, styling, and local component ownership.
 - Use lucide icons for operational icons.
 - Use `Noto Sans Thai` as the primary UI typeface with a neutral Latin fallback.
 - Encode visual tokens from `visual-design-system.md`: colors, spacing, chips, table density, cards, drawers, modals, evidence upload, no-access, stale state, and print preview rules.
@@ -125,11 +124,11 @@ Recommended direction:
 
 Do not define public API contracts from this proposal. API shapes should be created later from approved screen/use-case work, with the active docs open beside the implementation.
 
-For the first slice, prefer a read-only dashboard data adapter that can be backed by fixture data until persistence is approved. The adapter exists to prove app boundaries, not to define final API behavior.
+For the first functional slice after this foundation pass, use fixture users and a mock role selector only. Do not implement real login, sessions, auth providers, or persistent permission management yet.
 
 ## 7. Database / ORM Direction
 
-Use PostgreSQL as the system-of-record direction and Drizzle ORM for future schema/migration work.
+Use PostgreSQL as the system-of-record direction and Prisma as the approved ORM direction for future schema/migration work.
 
 Database principles to preserve later:
 
@@ -139,7 +138,7 @@ Database principles to preserve later:
 - Draft Order, Order, Job, Shipment, Payment Record, Financial Follow-up, PV, Product/SKU, Stock, Material, Customer/CRM, and Service Case have distinct domain meanings.
 - Old generated mockups must not drive schema or data model choices.
 
-Do not create database tables, migrations, seed data, enum sets, or ORM schema from this proposal. Database design should happen only when the corresponding domain implementation work is approved.
+Do not create database tables, migrations, seed data, enum sets, or Prisma ERP domain schema from this proposal. Database design should happen only when the corresponding domain implementation work is approved.
 
 ## 8. Environment File Plan
 
@@ -171,14 +170,7 @@ Baseline quality gates:
 - React Testing Library for component states such as no-access, hidden nav, dashboard cards, empty/loading/stale states, and responsive component variants.
 - Playwright for first-slice browser checks at `375`, `768`, `1024`, and `1440` widths.
 
-First-slice smoke checks should cover:
-
-- Login landing chooses the correct first screen by role priority.
-- Base-role users land on Personal Dashboard/profile placeholder, not Admin Dashboard.
-- Admin/Sales sees the Admin Dashboard route and Thai sidebar labels.
-- Missing-permission routes show `ไม่มีสิทธิ์เข้าถึงหน้านี้`.
-- Admin Dashboard shows the six approved cards and does not show finance amounts.
-- Mobile width removes desktop sidebar and preserves readable content.
+The foundation pass should add only lightweight test tooling. Slice-specific tests should be introduced with the approved slice that owns the behavior.
 
 ## 10. Documentation Source-of-truth Rules for Implementation
 
@@ -221,50 +213,8 @@ Future AI agents working in this repo should follow these rules:
 - Before committing UI work, verify responsive behavior at the documented breakpoints and check that Thai text wraps cleanly.
 - When implementation reveals a source-doc conflict, stop and update the proper doc instead of burying the decision in code.
 
-## 12. Recommended First Implementation Slice
+## 12. Foundation Setup Boundary
 
-Recommended first slice: App shell + role-aware login landing + Admin Dashboard read-only.
+The first code pass should initialize the pnpm workspace, Next.js App Router app, Tailwind baseline, shadcn/ui and Radix UI baseline, package boundaries, environment example, and lightweight quality tooling.
 
-Purpose:
-
-- Prove the technical foundation without implementing business mutations.
-- Establish Thai-first visual language, routing, role-aware shell behavior, permission-aware navigation removal, no-access state, and responsive layout.
-- Create a safe base for later screen implementations without committing to API contracts or database schema.
-
-Included scope:
-
-- One login landing flow that routes active users by documented role priority.
-- Personal Dashboard/profile placeholder for base-role-only users.
-- Desktop admin app shell with Thai sidebar labels from `app-shell.md` and `visual-design-system.md`.
-- Admin Dashboard read-only page using the six approved queue-launch cards:
-  - `ออเดอร์ที่ต้องติดตาม`
-  - `งานกำลังผลิต`
-  - `รอสร้างรอบจัดส่ง`
-  - `ยืนยันการจัดส่ง`
-  - `งานผลิตต้องติดตาม`
-  - `ติดตาม COD / Payment`
-- Compact `งานที่ต้องรีบดู` read-only preview.
-- Permission-aware nav removal and no-access page.
-- Fixture-backed read-only dashboard adapter until real persistence is approved.
-- Responsive behavior for desktop, tablet, and phone fallback according to `responsive-mobile.md`.
-
-Explicit exclusions:
-
-- No Order creation.
-- No Job actions.
-- No Shipment creation, send-out, or close.
-- No Payment Record, COD close, Expense, payout, or PV actions.
-- No Product/SKU, stock, material, customer, settings, or role-management mutations.
-- No API contract.
-- No database schema or migrations.
-- No implementation of business queues beyond read-only dashboard display.
-
-Acceptance direction for the slice:
-
-- The UI looks like THAIBORAN ERP, not a generic SaaS dashboard.
-- Admin Dashboard is a queue launcher, not a full task table.
-- Dashboard does not show baht amounts, payment evidence, COD expected/actual values, cost, profit, payout, Rak Samuk rates, Management Log, or Audit Log.
-- Role-aware first-screen routing follows the documented priority.
-- Base roles do not see main ERP module navigation.
-- Direct restricted routes show the standard no-access state.
-- Responsive behavior is verified at `375`, `768`, `1024`, and `1440` widths.
+It must not implement Admin Dashboard, login, role selector, no-access page, business navigation, business fixtures, Order, Job, Shipment, Payment, Stock, CRM, Finance, Settings, real permission management, real authentication, sessions, business API routes, Prisma ERP domain schema, migrations, or seed data.
