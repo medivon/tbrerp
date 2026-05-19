@@ -51,9 +51,9 @@ export function ProductSelectModal({
       size="wide"
       title="เลือกสินค้าพร้อมส่ง"
     >
-      <div className="grid gap-4">
+      <div className="grid min-w-0 gap-4">
         <label
-          className="grid gap-1 text-sm font-bold text-foreground"
+          className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
           htmlFor="order-entry-product-search"
         >
           ค้นหาสินค้าพร้อมส่ง
@@ -80,10 +80,10 @@ export function ProductSelectModal({
 
             return (
               <article
-                className="grid gap-3 rounded-md border border-border bg-surface p-3 md:grid-cols-[88px_minmax(0,1fr)_180px] md:items-start"
+                className="grid min-w-0 gap-3 rounded-md border border-border bg-surface p-3 sm:grid-cols-[88px_minmax(0,1fr)] sm:items-start lg:grid-cols-[88px_minmax(0,1fr)_180px]"
                 key={option.id}
               >
-                <div className="relative h-24 w-24 overflow-hidden rounded-md border border-border bg-subtle md:h-[88px] md:w-[88px]">
+                <div className="relative h-20 w-20 overflow-hidden rounded-md border border-border bg-subtle sm:h-[88px] sm:w-[88px]">
                   <Image
                     alt={option.imageAlt}
                     className="object-cover"
@@ -101,10 +101,10 @@ export function ProductSelectModal({
                     </StatusChip>
                   </div>
                   <div>
-                    <h3 className="text-base font-extrabold leading-7 text-foreground">
+                    <h3 className="break-words text-base font-extrabold leading-7 text-foreground">
                       {option.productModelName}
                     </h3>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
+                    <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground">
                       {option.color} • {option.dimensions} • {option.skuCode}
                     </p>
                   </div>
@@ -119,14 +119,15 @@ export function ProductSelectModal({
                   ) : null}
                 </div>
 
-                <div className="grid gap-2 md:justify-items-end">
+                <div className="grid min-w-0 gap-2 sm:col-span-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:col-span-1 lg:grid-cols-1 lg:justify-items-end">
                   <label
-                    className="grid w-full gap-1 text-sm font-bold text-foreground md:w-36"
+                    className="grid w-full min-w-0 gap-1 text-sm font-bold text-foreground lg:w-36"
                     htmlFor={quantityId}
                   >
-                    จำนวน {option.productModelName}
+                    จำนวน
                     <input
-                      className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      aria-label={`จำนวน ${option.productModelName} ${option.skuCode}`}
+                      className="min-h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                       id={quantityId}
                       inputMode="numeric"
                       min={1}
@@ -142,6 +143,7 @@ export function ProductSelectModal({
                   </label>
                   <Button
                     aria-label={`เพิ่มรายการ ${option.productModelName} ${option.skuCode}`}
+                    className="w-full sm:w-auto lg:w-full"
                     disabled={soldOut}
                     onClick={() =>
                       onAdd({

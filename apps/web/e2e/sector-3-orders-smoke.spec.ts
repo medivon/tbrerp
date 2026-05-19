@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 const viewports = [
   { height: 720, name: "phone", width: 375 },
@@ -42,6 +43,10 @@ const routes = [
   },
 ];
 
+function visibleText(page: Page, text: string) {
+  return page.getByText(text).filter({ visible: true });
+}
+
 for (const viewport of viewports) {
   test.describe(`Sector 3 orders smoke ${viewport.name}`, () => {
     test.use({ viewport });
@@ -71,6 +76,29 @@ for (const viewport of viewports) {
       await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
     });
 
+    test("filters Order and Draft queues with local fixture state", async ({
+      page,
+    }) => {
+      await page.goto("/modules/orders/all?user=admin-sales");
+
+      await page.getByLabel("ค้นหาออเดอร์").fill("อรุณ");
+      await expect(visibleText(page, "ORD-240602-009").first()).toBeVisible();
+      await expect(page.getByText("ORD-240522-018")).toHaveCount(0);
+
+      await page.getByRole("button", { name: "ล้างตัวกรอง" }).click();
+      await expect(visibleText(page, "ORD-240522-018").first()).toBeVisible();
+
+      await page.goto("/modules/orders/drafts?user=admin-sales");
+
+      await page.getByLabel("ค้นหาร่างออเดอร์").fill("ปริญญา");
+      await expect(visibleText(page, "DRAFT-00035").first()).toBeVisible();
+      await expect(page.getByText("DRAFT-00034")).toHaveCount(0);
+      await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
+
+      await page.getByRole("button", { name: "ล้างตัวกรอง" }).click();
+      await expect(visibleText(page, "DRAFT-00034").first()).toBeVisible();
+    });
+
     test("updates Order Create in-memory lines and carries them to Review", async ({
       page,
     }) => {
@@ -82,7 +110,13 @@ for (const viewport of viewports) {
         name: "เลือกสินค้าพร้อมส่ง",
       });
       await expect(productDialog).toBeVisible();
-      await productDialog.getByLabel(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง/).fill("3");
+      const productModalHasHorizontalOverflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > window.innerWidth,
+      );
+      expect(productModalHasHorizontalOverflow).toBe(false);
+      await productDialog
+        .getByLabel(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/)
+        .fill("3");
       await productDialog
         .getByRole("button", {
           name: /เพิ่มรายการ โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/,
@@ -96,6 +130,16 @@ for (const viewport of viewports) {
         name: "รายละเอียดงานสั่งทำ",
       });
       await expect(customDialog.getByLabel("รายละเอียดช่างไม้")).toBeVisible();
+      await expect(customDialog.getByText("รูปอ้างอิงงานสั่งทำ")).toBeVisible();
+      await expect(
+        customDialog.getByRole("button", {
+          name: "เพิ่มรูปอ้างอิง รูปหลัก",
+        }),
+      ).toBeVisible();
+      const customModalHasHorizontalOverflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > window.innerWidth,
+      );
+      expect(customModalHasHorizontalOverflow).toBe(false);
       await customDialog
         .getByLabel("ชื่องาน / รายการ")
         .fill("ตู้เตี้ยไม้สักสั่งทำ");

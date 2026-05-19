@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
-import { AlertTriangle, ClipboardList, ImageIcon } from "lucide-react";
+import { AlertTriangle, ClipboardList, ImageIcon, Plus } from "lucide-react";
 import { Button, StatusChip } from "@thaiboran/ui";
 
 import { OrderEntryModalShell } from "@/features/orders/components/order-entry-modal-shell";
@@ -12,6 +12,33 @@ import {
   getCustomWorkDraftMissingFields,
   type CustomWorkLineDraft,
 } from "@/features/orders/order-entry-state";
+
+const customWorkImageSlots = [
+  {
+    description: "ภาพรวมรายการที่ลูกค้าใช้อ้างอิง",
+    id: "main",
+    label: "รูปหลัก",
+    previewAlt: "ภาพหลัก fixture สำหรับงานสั่งทำ",
+    previewSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
+  },
+  {
+    description: "มุมโครงสร้าง ขนาด จุดประกอบ และรายละเอียดช่างไม้",
+    id: "woodwork",
+    label: "รูปสำหรับช่างไม้",
+  },
+  {
+    description: "โทนสี ผิว เคลือบ และงานตกแต่งที่ต้องเทียบ",
+    id: "coloring",
+    label: "รูปสำหรับฝ่ายสี/ตกแต่ง",
+  },
+  {
+    description: "ลายรักสมุก จุดลงทอง หรือตัวอย่างลายเฉพาะ",
+    id: "rak-samuk",
+    label: "รูปสำหรับรักสมุก",
+  },
+] as const;
+
+type CustomWorkImageSlotId = (typeof customWorkImageSlots)[number]["id"];
 
 export function CustomWorkEntryModal({
   initialDraft,
@@ -30,6 +57,9 @@ export function CustomWorkEntryModal({
   const [draft, setDraft] = useState<CustomWorkLineDraft>(
     () => initialDraft ?? createBlankCustomWorkLineDraft(),
   );
+  const [selectedImageSlots, setSelectedImageSlots] = useState<
+    Partial<Record<CustomWorkImageSlotId, boolean>>
+  >({});
   const missingFields = useMemo(
     () => getCustomWorkDraftMissingFields(draft),
     [draft],
@@ -38,6 +68,7 @@ export function CustomWorkEntryModal({
   useEffect(() => {
     if (open) {
       setDraft(initialDraft ?? createBlankCustomWorkLineDraft());
+      setSelectedImageSlots({});
     }
   }, [initialDraft, open]);
 
@@ -49,6 +80,24 @@ export function CustomWorkEntryModal({
       ...current,
       [field]: value,
     }));
+  }
+
+  function markReferenceImageSlot(slot: (typeof customWorkImageSlots)[number]) {
+    setSelectedImageSlots((current) => ({
+      ...current,
+      [slot.id]: true,
+    }));
+
+    setDraft((current) => {
+      if (current.referenceImageNote.trim().length > 0) {
+        return current;
+      }
+
+      return {
+        ...current,
+        referenceImageNote: `เลือก ${slot.label} จาก fixture ใน modal นี้ ยังไม่มีการ upload หรือบันทึกรูปจริง`,
+      };
+    });
   }
 
   const isComplete = missingFields.length === 0;
@@ -89,8 +138,8 @@ export function CustomWorkEntryModal({
           </div>
         )}
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
-          <div className="grid gap-4">
+        <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
+          <div className="grid min-w-0 gap-4">
             <div className="grid gap-3 md:grid-cols-2">
               <TextInput
                 id="custom-work-name"
@@ -176,6 +225,38 @@ export function CustomWorkEntryModal({
                 value={draft.internalNote}
               />
             </div>
+
+            <section
+              aria-label="ตำแหน่งเพิ่มภาพงานสั่งทำ"
+              className="grid min-w-0 gap-3 rounded-md border border-border bg-subtle p-3"
+            >
+              <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3
+                    className="text-sm font-extrabold leading-6 text-foreground"
+                    id="custom-work-reference-images-heading"
+                  >
+                    รูปอ้างอิงงานสั่งทำ
+                  </h3>
+                  <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground">
+                    เพิ่มได้เฉพาะตำแหน่งภาพอ้างอิงใน UI นี้ ยังไม่มีการ upload
+                    หรือบันทึกรูปจริงใน Sector 3
+                  </p>
+                </div>
+                <StatusChip variant="neutral">fixture-only</StatusChip>
+              </div>
+
+              <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+                {customWorkImageSlots.map((slot) => (
+                  <ReferenceImageTile
+                    added={Boolean(selectedImageSlots[slot.id])}
+                    key={slot.id}
+                    onAdd={() => markReferenceImageSlot(slot)}
+                    slot={slot}
+                  />
+                ))}
+              </div>
+            </section>
           </div>
 
           <aside className="grid gap-3 rounded-md border border-border bg-subtle p-3">
@@ -225,6 +306,57 @@ export function CustomWorkEntryModal({
   );
 }
 
+function ReferenceImageTile({
+  added,
+  onAdd,
+  slot,
+}: {
+  added: boolean;
+  onAdd: () => void;
+  slot: (typeof customWorkImageSlots)[number];
+}) {
+  return (
+    <div
+      className={`grid min-w-0 gap-2 rounded-md border bg-surface p-2 transition-colors ${
+        added ? "border-primary/60" : "border-border"
+      }`}
+    >
+      <div className="relative grid min-h-24 place-items-center overflow-hidden rounded-md border border-dashed border-border bg-subtle">
+        {"previewSrc" in slot ? (
+          <Image
+            alt={slot.previewAlt}
+            className="object-cover"
+            fill
+            sizes="240px"
+            src={slot.previewSrc}
+          />
+        ) : (
+          <ImageIcon aria-hidden className="h-7 w-7 text-muted-foreground" />
+        )}
+      </div>
+      <div className="min-w-0">
+        <p className="break-words text-sm font-extrabold leading-6 text-foreground">
+          {slot.label}
+        </p>
+        <p className="mt-1 break-words text-xs font-semibold leading-5 text-muted-foreground">
+          {slot.description}
+        </p>
+      </div>
+      <Button
+        aria-pressed={added}
+        className="w-full"
+        onClick={onAdd}
+        size="sm"
+        type="button"
+        variant={added ? "outline" : "default"}
+      >
+        <Plus aria-hidden className="mr-2 h-4 w-4" />
+        {added ? "เพิ่มแล้วใน modal นี้" : `เพิ่มรูปอ้างอิง ${slot.label}`}
+      </Button>
+    </div>
+  );
+}
+
 function TextInput({
   id,
   inputRef,
@@ -242,12 +374,12 @@ function TextInput({
 }) {
   return (
     <label
-      className="grid gap-1 text-sm font-bold text-foreground"
+      className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
       htmlFor={id}
     >
       {label}
       <input
-        className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="min-h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         id={id}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -272,12 +404,12 @@ function NumberInput({
 }) {
   return (
     <label
-      className="grid gap-1 text-sm font-bold text-foreground"
+      className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
       htmlFor={id}
     >
       {label}
       <input
-        className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="min-h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         id={id}
         inputMode="numeric"
         min={1}
@@ -304,12 +436,12 @@ function TextArea({
 }) {
   return (
     <label
-      className="grid gap-1 text-sm font-bold text-foreground"
+      className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
       htmlFor={id}
     >
       {label}
       <textarea
-        className="min-h-28 rounded-md border border-border bg-surface px-3 py-2 text-sm font-semibold leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+        className="min-h-28 w-full min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-sm font-semibold leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         id={id}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}

@@ -118,10 +118,15 @@ export function OrderReview({
                 กลับ
               </Link>
             </Button>
-            <Button disabled title="ยังไม่บันทึกร่างจริงใน Sector 4">
-              <FilePenLine aria-hidden className="mr-2 h-4 w-4" />
-              บันทึกร่าง
-            </Button>
+            <div className="grid justify-items-start gap-1 sm:justify-items-end">
+              <Button disabled title="ยังไม่บันทึกร่างจริงใน Sector 3">
+                <FilePenLine aria-hidden className="mr-2 h-4 w-4" />
+                บันทึกร่าง
+              </Button>
+              <p className="max-w-56 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
+                ปิดไว้ใน Sector 3 จึงไม่บันทึก Draft จริง
+              </p>
+            </div>
           </>
         }
         description="ตรวจสอบข้อมูลจากหน่วยความจำของหน้า Create หรือ fixture โดยยังไม่เขียนฐานข้อมูลจริง"

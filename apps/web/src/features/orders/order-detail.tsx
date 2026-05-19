@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ChevronDown, CreditCard, ExternalLink, Truck } from "lucide-react";
 import {
   Button,
@@ -34,6 +36,20 @@ export function OrderDetail({
   orderId: string;
 }) {
   const order = getOrderById(orderId);
+  const initialSelectedShipmentLineIds = useMemo(
+    () =>
+      order?.lines
+        .filter((line) => !line.cancelledReason && line.readyForShipment)
+        .map((line) => line.id) ?? [],
+    [order],
+  );
+  const [selectedShipmentLineIds, setSelectedShipmentLineIds] = useState(
+    initialSelectedShipmentLineIds,
+  );
+
+  useEffect(() => {
+    setSelectedShipmentLineIds(initialSelectedShipmentLineIds);
+  }, [initialSelectedShipmentLineIds]);
 
   if (!order) {
     return (
@@ -55,8 +71,19 @@ export function OrderDetail({
   const hasReadyShipmentLines = activeLines.some(
     (line) => line.readyForShipment,
   );
+  const selectedShipmentLineCount = selectedShipmentLineIds.length;
   const isCompleted = order.orderStatus === "จัดส่งครบแล้ว";
   const isCancelled = order.orderStatus === "ยกเลิก";
+
+  function updateShipmentLineSelection(lineId: string, selected: boolean) {
+    setSelectedShipmentLineIds((current) => {
+      if (selected) {
+        return current.includes(lineId) ? current : [...current, lineId];
+      }
+
+      return current.filter((candidate) => candidate !== lineId);
+    });
+  }
 
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
@@ -145,14 +172,23 @@ export function OrderDetail({
       <ReadFirstSection
         action={
           isCompleted || isCancelled ? (
-            <Button
-              disabled
-              size="sm"
-              title={isCompleted ? "ออเดอร์จัดส่งครบแล้ว" : "ออเดอร์ยกเลิกแล้ว"}
-              variant="outline"
-            >
-              แก้ไขรายการออเดอร์
-            </Button>
+            <div className="grid justify-items-start gap-1 sm:justify-items-end">
+              <Button
+                disabled
+                size="sm"
+                title={
+                  isCompleted ? "ออเดอร์จัดส่งครบแล้ว" : "ออเดอร์ยกเลิกแล้ว"
+                }
+                variant="outline"
+              >
+                แก้ไขรายการออเดอร์
+              </Button>
+              <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
+                {isCompleted
+                  ? "ออเดอร์จัดส่งครบแล้ว จึงอ่านอย่างเดียวใน workflow ปกติ"
+                  : "ออเดอร์ยกเลิกแล้ว จึงไม่เปิดการแก้รายการ"}
+              </p>
+            </div>
           ) : (
             <Button asChild size="sm" variant="outline">
               <Link
@@ -196,11 +232,18 @@ export function OrderDetail({
       >
         <div className="grid">
           {activeLines.map((line) => (
-            <ShipmentSelectionRow key={line.id} line={line} />
+            <ShipmentSelectionRow
+              key={line.id}
+              line={line}
+              onSelectedChange={(selected) =>
+                updateShipmentLineSelection(line.id, selected)
+              }
+              selected={selectedShipmentLineIds.includes(line.id)}
+            />
           ))}
         </div>
         <div className="border-t border-border p-4">
-          {hasReadyShipmentLines ? (
+          {hasReadyShipmentLines && selectedShipmentLineCount > 0 ? (
             <Button asChild>
               <Link
                 href={shipmentHref(
@@ -213,14 +256,22 @@ export function OrderDetail({
               </Link>
             </Button>
           ) : (
-            <Button disabled title="ไม่มีรายการพร้อมส่งในออเดอร์นี้">
+            <Button
+              disabled
+              title={
+                hasReadyShipmentLines
+                  ? "เลือกอย่างน้อย 1 รายการพร้อมส่งก่อนสร้างรอบจัดส่ง"
+                  : "ไม่มีรายการพร้อมส่งในออเดอร์นี้"
+              }
+            >
               <Truck aria-hidden className="mr-2 h-4 w-4" />
               สร้างรอบจัดส่งจากรายการที่เลือก
             </Button>
           )}
           <p className="mt-2 text-sm font-semibold text-muted-foreground">
-            เปิด Shipment Builder ด้วยรายการพร้อมส่งจากออเดอร์นี้ โดยยังไม่มี
-            persistence จริง
+            {hasReadyShipmentLines
+              ? `เลือก ${selectedShipmentLineCount} รายการพร้อมส่งในหน้านี้เท่านั้น ยังไม่บันทึกหรือสร้างรอบจัดส่งจริง`
+              : "ไม่มีรายการพร้อมส่งที่เลือกได้ในออเดอร์นี้"}
           </p>
         </div>
       </ReadFirstSection>
@@ -450,19 +501,31 @@ function LineGroup({
   );
 }
 
-function ShipmentSelectionRow({ line }: { line: OrderLineFixture }) {
+function ShipmentSelectionRow({
+  line,
+  onSelectedChange,
+  selected,
+}: {
+  line: OrderLineFixture;
+  onSelectedChange: (selected: boolean) => void;
+  selected: boolean;
+}) {
   const disabledReason = line.readyForShipment
     ? undefined
     : (line.shipmentBlockedReason ?? "ยังเลือกสร้างรอบจัดส่งไม่ได้");
 
   return (
     <div className="grid gap-3 border-b border-border p-4 last:border-b-0 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
-      <label className="flex min-w-0 items-start gap-3">
+      <label
+        className={`flex min-w-0 items-start gap-3 ${
+          line.readyForShipment ? "cursor-pointer" : "cursor-not-allowed"
+        }`}
+      >
         <input
-          checked={line.readyForShipment}
+          checked={selected}
           className="mt-1 h-4 w-4 rounded border-border"
           disabled={!line.readyForShipment}
-          readOnly
+          onChange={(event) => onSelectedChange(event.target.checked)}
           type="checkbox"
         />
         <span className="min-w-0">
@@ -477,6 +540,8 @@ function ShipmentSelectionRow({ line }: { line: OrderLineFixture }) {
       <div className="flex flex-wrap gap-2 md:justify-end">
         {disabledReason ? (
           <StatusChip variant="warning">{disabledReason}</StatusChip>
+        ) : selected ? (
+          <StatusChip variant="success">เลือกแล้ว</StatusChip>
         ) : (
           <StatusChip variant="success">เลือกได้</StatusChip>
         )}

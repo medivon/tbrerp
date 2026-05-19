@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { DraftOrderQueue } from "@/features/orders/draft-order-queue";
 import { OrderDetail } from "@/features/orders/order-detail";
+import { OrderLineEdit } from "@/features/orders/order-line-edit";
 import { OrderList } from "@/features/orders/order-list";
 import { OrderCreate } from "@/features/orders/order-create";
 import { OrderReview } from "@/features/orders/order-review";
@@ -71,6 +72,23 @@ describe("Order read/create foundation", () => {
     );
   });
 
+  it("filters the Order list by local search and clears filters", () => {
+    render(<OrderList currentUser={currentUser} mode="all" />);
+
+    fireEvent.change(screen.getByLabelText("ค้นหาออเดอร์"), {
+      target: { value: "อรุณ" },
+    });
+
+    expect(screen.getAllByText("ORD-240602-009").length).toBeGreaterThan(0);
+    expect(screen.queryByText("ORD-240522-018")).toBeNull();
+    expect(screen.getByText("1 จาก 6 รายการ")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "ล้างตัวกรอง" }));
+
+    expect(screen.getAllByText("ORD-240522-018").length).toBeGreaterThan(0);
+    expect(screen.getByText("6 จาก 6 รายการ")).toBeTruthy();
+  });
+
   it("keeps shipment status filters separate from Order status filters", () => {
     render(<OrderList currentUser={currentUser} mode="all" />);
 
@@ -87,6 +105,41 @@ describe("Order read/create foundation", () => {
     expect(
       within(shipmentStatusFilters).getByText("รอยืนยันการจัดส่ง"),
     ).toBeTruthy();
+
+    fireEvent.click(
+      within(orderStatusFilters).getByRole("button", { name: "กำลังผลิต" }),
+    );
+
+    expect(screen.getAllByText("ORD-240522-018").length).toBeGreaterThan(0);
+    expect(screen.queryByText("ORD-240602-009")).toBeNull();
+
+    fireEvent.click(
+      within(orderStatusFilters).getByRole("button", { name: "ทั้งหมด" }),
+    );
+    fireEvent.click(
+      within(shipmentStatusFilters).getByRole("button", {
+        name: "รอยืนยันการจัดส่ง",
+      }),
+    );
+
+    expect(screen.getAllByText("ORD-240602-009").length).toBeGreaterThan(0);
+    expect(screen.queryByText("ORD-240522-018")).toBeNull();
+  });
+
+  it("shows local pagination controls with disabled boundaries", () => {
+    render(<OrderList currentUser={currentUser} mode="all" />);
+
+    const previousButton = screen.getByRole("button", { name: "ก่อนหน้า" });
+    const nextButton = screen.getByRole("button", { name: "ถัดไป" });
+
+    expect((previousButton as HTMLButtonElement).disabled).toBe(true);
+    expect((nextButton as HTMLButtonElement).disabled).toBe(true);
+
+    fireEvent.change(screen.getByLabelText(/ต่อหน้า/), {
+      target: { value: "50" },
+    });
+
+    expect(screen.getByText("1 / 1")).toBeTruthy();
   });
 
   it("keeps Draft Orders separate from real Order IDs", () => {
@@ -98,6 +151,23 @@ describe("Order read/create foundation", () => {
     expect(draftOrderFixtures.every((draft) => !("orderId" in draft))).toBe(
       true,
     );
+  });
+
+  it("filters Draft Orders with local search and clears filters", () => {
+    render(<DraftOrderQueue currentUser={currentUser} />);
+
+    fireEvent.change(screen.getByLabelText("ค้นหาร่างออเดอร์"), {
+      target: { value: "ปริญญา" },
+    });
+
+    expect(screen.getAllByText("DRAFT-00035").length).toBeGreaterThan(0);
+    expect(screen.queryByText("DRAFT-00034")).toBeNull();
+    expect(screen.queryByText(/ORD-\d/)).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "ล้างตัวกรอง" }));
+
+    expect(screen.getAllByText("DRAFT-00034").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/ORD-\d/)).toBeNull();
   });
 
   it("opens customer selection modal and updates Order Create state", () => {
@@ -142,9 +212,15 @@ describe("Order read/create foundation", () => {
     expect(within(dialog).getByLabelText("ค้นหาสินค้าพร้อมส่ง")).toBeTruthy();
     expect(within(dialog).getByText("ขายได้ 2 ชิ้น")).toBeTruthy();
     expect(within(dialog).getByText("หมด")).toBeTruthy();
+    expect(
+      within(dialog).queryByText(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง/),
+    ).toBeNull();
+    expect(
+      within(dialog).getByLabelText(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/),
+    ).toBeTruthy();
 
     fireEvent.change(
-      within(dialog).getByLabelText(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง/),
+      within(dialog).getByLabelText(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/),
       {
         target: { value: "3" },
       },
@@ -202,6 +278,30 @@ describe("Order read/create foundation", () => {
     ).toBeTruthy();
     expect(within(dialog).getByLabelText("รายละเอียดรักสมุก")).toBeTruthy();
     expect(within(dialog).getByLabelText("รูปอ้างอิง")).toBeTruthy();
+    expect(within(dialog).getByText("รูปอ้างอิงงานสั่งทำ")).toBeTruthy();
+    expect(within(dialog).getByText("รูปหลัก")).toBeTruthy();
+    expect(within(dialog).getByText("รูปสำหรับช่างไม้")).toBeTruthy();
+    expect(within(dialog).getByText("รูปสำหรับฝ่ายสี/ตกแต่ง")).toBeTruthy();
+    expect(within(dialog).getByText("รูปสำหรับรักสมุก")).toBeTruthy();
+    expect(
+      within(dialog).getByRole("button", {
+        name: "เพิ่มรูปอ้างอิง รูปหลัก",
+      }),
+    ).toBeTruthy();
+    expect(
+      within(dialog).getByText(/ยังไม่มีการ upload หรือบันทึกรูปจริง/),
+    ).toBeTruthy();
+
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: "เพิ่มรูปอ้างอิง รูปหลัก",
+      }),
+    );
+    expect(within(dialog).getByText("เพิ่มแล้วใน modal นี้")).toBeTruthy();
+    expect(within(dialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
+      "value",
+      expect.stringContaining("รูปหลัก"),
+    );
 
     fireEvent.change(within(dialog).getByLabelText("ชื่องาน / รายการ"), {
       target: { value: "ตู้เตี้ยไม้สักสั่งทำ" },
@@ -415,6 +515,46 @@ describe("Order read/create foundation", () => {
     expect(
       within(orderStatusBlock as HTMLElement).queryByText("รอยืนยันการจัดส่ง"),
     ).toBeNull();
+  });
+
+  it("updates Order Detail shipment selection locally before opening builder", () => {
+    render(<OrderDetail currentUser={currentUser} orderId="ORD-240528-014" />);
+
+    expect(screen.getByText(/เลือก 1 รายการพร้อมส่ง/)).toBeTruthy();
+    expect(screen.getByText("เลือกแล้ว")).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /ชุดเก้าอี้รับแขกไม้สักสีธรรมชาติ/,
+      }),
+    );
+
+    expect(screen.getByText(/เลือก 0 รายการพร้อมส่ง/)).toBeTruthy();
+    expect(screen.getByText("เลือกได้")).toBeTruthy();
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "สร้างรอบจัดส่งจากรายการที่เลือก",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+  });
+
+  it("shows visible reasons for disabled future-sector Order actions", () => {
+    render(
+      <OrderLineEdit currentUser={currentUser} orderId="ORD-240522-018" />,
+    );
+
+    expect(
+      screen.getByText(
+        "ปุ่มนี้เป็น foundation เท่านั้น ยังไม่บันทึกการแก้ไขจริง",
+      ),
+    ).toBeTruthy();
+    expect(
+      screen.getAllByText(
+        "เพิ่มรายการหลังยืนยันจะทำใน Sector ถัดไปผ่าน Review Changes",
+      ).length,
+    ).toBeGreaterThan(0);
   });
 
   it("keeps sensitive finance/cost/payout data out of general Order fixtures", () => {

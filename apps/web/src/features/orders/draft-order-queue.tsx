@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { FilePenLine, Search } from "lucide-react";
 import {
   Button,
@@ -12,10 +15,22 @@ import {
 import { DraftStatusChip } from "@/features/orders/components/order-status-chip";
 import { OrderTabs } from "@/features/orders/components/order-tabs";
 import { draftOrderFixtures } from "@/features/orders/fixtures/orders";
+import { filterDraftOrders } from "@/features/orders/order-list-state";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
 export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
+  const [query, setQuery] = useState("");
+  const filteredDrafts = useMemo(
+    () => filterDraftOrders(draftOrderFixtures, query),
+    [query],
+  );
+  const hasQuery = query.trim().length > 0;
+
+  function clearSearch() {
+    setQuery("");
+  }
+
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
@@ -28,9 +43,14 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
         }
         description="คิวร่างที่ถูกบันทึกโดยตั้งใจ มีเลขร่างเท่านั้น และยังไม่จองสต๊อก ไม่สร้าง Job ไม่สร้าง Shipment"
         meta={
-          <StatusChip variant="neutral">
-            {draftOrderFixtures.length} ร่าง
-          </StatusChip>
+          <div className="flex flex-wrap gap-2">
+            <StatusChip variant="neutral">
+              {filteredDrafts.length} จาก {draftOrderFixtures.length} ร่าง
+            </StatusChip>
+            {hasQuery ? (
+              <StatusChip variant="action">ค้นหาใน fixture</StatusChip>
+            ) : null}
+          </div>
         }
         title="ร่างออเดอร์"
       />
@@ -38,6 +58,18 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
       <OrderTabs activeTab="drafts" currentUser={currentUser} />
 
       <ToolbarShell
+        actions={
+          <Button
+            disabled={!hasQuery}
+            onClick={clearSearch}
+            size="sm"
+            title={hasQuery ? undefined : "ยังไม่มีคำค้นให้ล้าง"}
+            type="button"
+            variant="outline"
+          >
+            ล้างตัวกรอง
+          </Button>
+        }
         leading={
           <Search aria-hidden className="h-4 w-4 text-muted-foreground" />
         }
@@ -48,12 +80,14 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
         <input
           className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[22rem]"
           id="draft-search"
+          onChange={(event) => setQuery(event.target.value)}
           placeholder="ค้นหาเลขร่าง ลูกค้า เบอร์ ผู้รับ หรือผู้รับผิดชอบ"
           type="search"
+          value={query}
         />
       </ToolbarShell>
 
-      {draftOrderFixtures.length > 0 ? (
+      {filteredDrafts.length > 0 ? (
         <SurfaceCard className="overflow-hidden" padding="none">
           <div className="hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[860px] border-collapse text-left text-sm">
@@ -86,7 +120,7 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
                 </tr>
               </thead>
               <tbody>
-                {draftOrderFixtures.map((draft) => (
+                {filteredDrafts.map((draft) => (
                   <tr
                     className="border-t border-border bg-surface align-top transition-colors hover:bg-subtle/50"
                     key={draft.draftNo}
@@ -142,7 +176,7 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
           </div>
 
           <div className="grid lg:hidden">
-            {draftOrderFixtures.map((draft) => (
+            {filteredDrafts.map((draft) => (
               <article
                 className="grid gap-3 border-b border-border p-4 last:border-b-0"
                 key={draft.draftNo}
@@ -188,15 +222,34 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
       ) : (
         <EmptyState
           action={
-            <Button asChild>
-              <Link href={orderHref(orderRoutes.create, currentUser)}>
-                สร้างออเดอร์
-              </Link>
-            </Button>
+            hasQuery ? (
+              <Button
+                onClick={clearSearch}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                ล้างตัวกรอง
+              </Button>
+            ) : (
+              <Button asChild>
+                <Link href={orderHref(orderRoutes.create, currentUser)}>
+                  สร้างออเดอร์
+                </Link>
+              </Button>
+            )
           }
-          description="ร่างเกิดเมื่อกดบันทึกร่างเท่านั้น"
+          description={
+            hasQuery
+              ? "ไม่พบร่างออเดอร์ที่ตรงกับคำค้นใน fixture นี้"
+              : "ร่างเกิดเมื่อกดบันทึกร่างเท่านั้น"
+          }
           icon={<FilePenLine aria-hidden className="h-5 w-5" />}
-          title="ไม่มีร่างออเดอร์ที่กำลังทำอยู่"
+          title={
+            hasQuery
+              ? "ไม่พบร่างออเดอร์ที่ตรงกับตัวกรอง"
+              : "ไม่มีร่างออเดอร์ที่กำลังทำอยู่"
+          }
         />
       )}
     </div>

@@ -124,9 +124,14 @@ export function OrderCreate({
         <PageHeader
           actions={
             <>
-              <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
-                บันทึกร่าง
-              </Button>
+              <div className="grid justify-items-start gap-1 sm:justify-items-end">
+                <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
+                  บันทึกร่าง
+                </Button>
+                <p className="max-w-56 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
+                  ปิดไว้ใน Sector 3 จึงไม่สร้างหรือแก้ Draft จริง
+                </p>
+              </div>
               <ReviewAction
                 currentUser={currentUser}
                 onReview={rememberEntryForReview}

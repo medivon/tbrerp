@@ -49,12 +49,17 @@ export function OrderLineEdit({
                 กลับรายละเอียดออเดอร์
               </Link>
             </Button>
-            <Button
-              disabled
-              title="ต้องผ่าน Review Changes และยังไม่บันทึกจริงในรอบงานนี้"
-            >
-              ตรวจสอบการแก้ไข
-            </Button>
+            <div className="grid justify-items-start gap-1 sm:justify-items-end">
+              <Button
+                disabled
+                title="ต้องผ่าน Review Changes และยังไม่บันทึกจริงในรอบงานนี้"
+              >
+                ตรวจสอบการแก้ไข
+              </Button>
+              <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
+                ปุ่มนี้เป็น foundation เท่านั้น ยังไม่บันทึกการแก้ไขจริง
+              </p>
+            </div>
           </>
         }
         description="โหมดแก้ไขรายการของออเดอร์ที่ยืนยันแล้ว ไม่ใช่การสร้างออเดอร์ใหม่ และไม่มีร่างอัตโนมัติ"
@@ -195,15 +200,20 @@ function EditGroup({
     <SurfaceCard className="overflow-hidden" padding="none">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-subtle px-4 py-3">
         <p className="text-base font-extrabold text-foreground">{title}</p>
-        <Button
-          disabled
-          size="sm"
-          title="เป็นปุ่มตัวอย่าง ยังไม่เพิ่มรายการจริง"
-          variant="outline"
-        >
-          <PackagePlus aria-hidden className="mr-2 h-4 w-4" />
-          {actionLabel}
-        </Button>
+        <div className="grid justify-items-start gap-1 sm:justify-items-end">
+          <Button
+            disabled
+            size="sm"
+            title="เป็นปุ่มตัวอย่าง ยังไม่เพิ่มรายการจริง"
+            variant="outline"
+          >
+            <PackagePlus aria-hidden className="mr-2 h-4 w-4" />
+            {actionLabel}
+          </Button>
+          <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
+            เพิ่มรายการหลังยืนยันจะทำใน Sector ถัดไปผ่าน Review Changes
+          </p>
+        </div>
       </div>
       {lines.map((line) => (
         <OrderLineCard key={line.id} line={line} showEditState />
