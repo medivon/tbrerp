@@ -22,6 +22,53 @@ THAIBORAN ERP should use a premium operational ERP visual style. A light neutral
 - Mobile worker simplicity: worker screens use large cards, large actions, and role-limited content.
 - Evidence is contextual: payment evidence is required for Payment Records; Shipment close requires Tracking or one delivery evidence photo; production, stock, Expense, PV, and material evidence are optional unless the active behavior doc says otherwise.
 
+## Product UI Copy and Action Rules
+
+The staff-facing ERP must read like a real operations product, not developer scaffolding. Use concise Thai business language that explains what the user can do next or what business condition is missing.
+
+Do not show internal implementation language in product UI, including:
+
+- sector numbers
+- implementation phases
+- placeholder status
+- fixture data or mock data
+- in-memory state
+- database not connected
+- not implemented yet
+- future implementation
+- agent workflow
+- developer instructions
+
+Those terms may appear only in developer docs, tests, `docs/implementation/current-task.md`, `docs/implementation/review-report.md`, or technical notes.
+
+Every visible button, link, menu item, row action, modal action, and CTA must have a clear user meaning:
+
+- If the user has no permission, hide the action.
+- If the user has permission but the current business state blocks the action, show it disabled with a concise Thai business reason.
+- If the action belongs to a future implementation sector, prefer hiding it.
+- If it must stay visible for layout or workflow context, disable it and explain the real business condition, not implementation status.
+- Do not leave dead buttons or active-looking controls that do nothing.
+- Do not explain actions with developer-style text such as "this will be implemented later".
+
+Good user-facing disabled reasons include:
+
+- `ต้องเลือกลูกค้าก่อน`
+- `ต้องเลือกสินค้าอย่างน้อย 1 รายการ`
+- `ต้องเลือก Payment Term ก่อน`
+- `ต้องเพิ่มรายละเอียดงานสั่งทำให้ครบ`
+- `ต้องมี Tracking หรือรูปหลักฐานก่อน`
+- `ไม่มีสิทธิ์ดำเนินการ`
+- `ต้องปิดรอบจัดส่งก่อน`
+
+Bad user-facing disabled reasons include:
+
+- `ยังไม่ได้ทำใน Sector นี้`
+- `ยังไม่เชื่อม database`
+- `เป็น placeholder`
+- `เป็น fixture-backed`
+- `จะ implement ภายหลัง`
+- `ปุ่มนี้ยังไม่ทำงาน`
+
 ## Color Palette
 
 Use restrained accents and high-contrast operational surfaces. Dark/navy shell treatment is allowed when it improves visual hierarchy and readability, but main work surfaces such as cards, drawers, modals, tables, forms, and preview panels must remain practical for dense ERP scanning. Do not force full dark mode and do not force light-only UI.
@@ -359,6 +406,26 @@ Use for Woodwork, Coloring, Delivery Team, and Rak Samuk Worker.
 - No admin finance/customer/log panels.
 - Keep text concise; full instructions should be image-led and grouped by department.
 
+## Text Layout Stress Checks
+
+Thai-first ERP screens must be checked with real-length operational labels and dense data before visual handoff.
+
+Verify at `375px`, `768px`, `1024px`, and `1440px`:
+
+- Thai text overflow
+- text clipping
+- text bleeding outside cards, buttons, chips, tables, drawers, or modals
+- overlapping text
+- icon/text collision
+- chip/button/table/card text collision
+- modal/drawer text overflow
+- page-level horizontal overflow
+- mobile/tablet text clipping
+- long Thai labels wrapping badly
+- dense tables breaking on small screens
+
+Fix the layout, width, wrapping, or component pattern when text fails. Do not replace layout failures with explanatory developer copy in the product UI.
+
 ## Accessibility and Contrast Rules
 
 - Minimum contrast: 4.5:1 for normal text; 3:1 for large text and graphical UI indicators.
@@ -378,6 +445,7 @@ Do:
 - Use product/work thumbnails to aid recognition.
 - Keep admin queues dense and searchable.
 - Keep worker screens simple and role-limited.
+- Use concise Thai business reasons for disabled state-blocked actions.
 - Hide sensitive fields entirely when permission is missing.
 - Use read-first detail pages for confirmed records.
 - Put risky actions behind the confirmed review/confirmation patterns.
@@ -392,6 +460,8 @@ Don't:
 - Do not show customer, Order ID, payment, cost, payout, Management Log, or Audit Log on worker screens.
 - Do not mask sensitive fields with placeholders; remove them.
 - Do not show disabled nav/actions for missing permission.
+- Do not show user-facing sector, placeholder, fixture, mock, database, in-memory, not-implemented, future-implementation, agent-workflow, or developer-instruction language.
+- Do not leave dead buttons or active-looking controls that do nothing.
 - Do not add unapproved workflow states, draft states, finance gates, or approval steps.
 - Do not use `CRUD`, `Master`, or `ข้อมูลตั้งต้นสินค้า` in staff-facing UI.
 - Do not use infinite scroll for core operational tables.

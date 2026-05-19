@@ -49,7 +49,16 @@ If the implementation scope cannot be traced to the current task and source docs
 - Does it avoid generic plain UI, decorative marketing UI, over-animated UI, and low-contrast dark content surfaces?
 - If using a dark/navy shell, do main work surfaces remain readable and practical for dense ERP work?
 - Are visual hierarchy, spacing, hover/focus/cursor states, responsive behavior, accessibility, and image handling polished without changing business rules, workflow, permissions, sensitive-data visibility, or source-of-truth decisions?
+- Is the staff-facing UI product UI, not explanatory developer scaffolding?
+- Is the UI free of user-facing implementation language such as sector numbers, implementation phases, placeholder/mock/fixture wording, in-memory/database-not-connected status, "not implemented yet", future implementation, agent workflow, or developer instructions?
+- Does every visible button, link, menu item, row action, modal action, and CTA have a clear user meaning?
+- Are missing-permission actions hidden rather than disabled?
+- Are state-blocked actions disabled with concise Thai business reasons?
+- Are future-sector actions hidden unless layout or workflow context truly requires visibility, and if visible are they disabled for a real business condition rather than implementation status?
+- Are there no dead buttons, active-looking no-op controls, or actions explained as "will be implemented later"?
 - Does Thai-first text fit and wrap cleanly at required breakpoints?
+- Are text overflow, clipping, bleeding, overlap, icon/text collisions, chip/button/table/card collisions, modal/drawer overflow, and page-level horizontal overflow absent at `375px`, `768px`, `1024px`, and `1440px`?
+- Do long Thai labels wrap cleanly, including in dense tables and small-screen card/table transformations?
 - Are disabled, loading, empty, stale, and no-access states handled where relevant?
 - Are role-aware routes, lists, and detail pages consistent with source docs?
 

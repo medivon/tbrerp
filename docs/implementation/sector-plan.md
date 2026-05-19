@@ -37,6 +37,22 @@ Current visual direction allows premium operational ERP styling, including dark/
 
 Reviewers must reject frontend work that is generic plain UI, decorative marketing UI, over-animated UI, or low-contrast dark content surfaces.
 
+## Product UI Quality Gate
+
+Frontend/UI sectors must produce staff-facing product UI, not developer notes.
+
+User-facing UI must not mention sector numbers, implementation phases, placeholder status, fixture/mock data, in-memory state, database connection status, unfinished implementation, future implementation, agent workflow, or developer instructions. Keep those details in developer docs, tests, `current-task.md`, `review-report.md`, or technical notes.
+
+Every visible action must have a clear user meaning:
+
+- hide missing-permission actions
+- disable state-blocked actions with concise Thai business reasons
+- hide actions that belong to future implementation sectors unless workflow context requires visibility
+- if a future-sector action must stay visible, disable it with a real business-state reason rather than implementation status
+- avoid dead buttons and active-looking controls that do nothing
+
+Frontend sectors must stress-check Thai-first text layout at `375px`, `768px`, `1024px`, and `1440px`, including overflow, clipping, overlap, icon/text collision, chip/button/table/card collisions, modal/drawer overflow, page-level horizontal overflow, and dense table behavior on small screens.
+
 ## Sector 0: Codebase Foundation
 
 Goal: establish the technical foundation that lets later sectors implement THAIBORAN ERP consistently.

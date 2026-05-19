@@ -28,6 +28,22 @@ Responsive strategy:
 - Use stable dimensions for cards, toolbars, action bars, thumbnails, chips, and pagination so content does not jump while loading or changing state.
 - Validate responsive behavior at `375`, `768`, `1024`, and `1440` widths before visual handoff.
 
+Text layout stress checks are required at `375px`, `768px`, `1024px`, and `1440px`:
+
+- Thai text overflow
+- text clipping
+- text bleeding outside cards, buttons, chips, tables, drawers, or modals
+- overlapping text
+- icon/text collision
+- chip/button/table/card text collision
+- modal/drawer text overflow
+- page-level horizontal overflow
+- mobile/tablet text clipping
+- long Thai labels wrapping badly
+- dense tables breaking on small screens
+
+Fix responsive layout problems in the component pattern. Do not expose implementation status in the product UI to explain broken or future behavior.
+
 ## 2. Desktop Admin Layout Behavior
 
 Desktop admin is the default for office-heavy THAIBORAN ERP work.
@@ -495,6 +511,8 @@ Do:
 - Keep Thai-first labels and established internal terms.
 - Use image thumbnails for furniture/work recognition.
 - Preserve all active confirmation, reason, evidence, stale-state, and review patterns.
+- Keep disabled action reasons in concise Thai business language.
+- Hide future-sector actions on small screens unless workflow context truly requires a disabled business-state explanation.
 
 Don't:
 
@@ -506,5 +524,7 @@ Don't:
 - Do not add saved Shipment drafts, finance gates, approval steps, or workflow states.
 - Do not show disabled missing-permission nav/actions.
 - Do not use hover-only actions.
+- Do not leave dead buttons or active-looking controls that do nothing.
+- Do not show sector, placeholder, fixture, mock, database, in-memory, not-implemented, future-implementation, agent-workflow, or developer-instruction language in responsive product UI.
 - Do not create new mockup images from this guidance.
 - Do not treat archived mockups or old image prompts as source of truth.
