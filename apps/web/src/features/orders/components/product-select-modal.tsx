@@ -44,7 +44,7 @@ export function ProductSelectModal({
 
   return (
     <OrderEntryModalShell
-      description="เลือก Product/SKU และจำนวนจาก fixture เพื่อเพิ่มรายการในออเดอร์ ยังไม่จองสต๊อกจริง"
+      description="เลือกสินค้าและจำนวนเพื่อเพิ่มในออเดอร์"
       initialFocusRef={searchInputRef}
       onClose={onClose}
       open={open}
@@ -115,8 +115,8 @@ export function ProductSelectModal({
                   </p>
                   {soldOut ? (
                     <p className="break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
-                      สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้เพื่อให้ Review
-                      แสดงคำเตือนสต๊อกก่อนยืนยัน ไม่มีการจองสต๊อกจริงในรอบนี้
+                      สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้
+                      ระบบจะแสดงคำเตือนในหน้า Review
                     </p>
                   ) : null}
                 </div>
@@ -168,7 +168,7 @@ export function ProductSelectModal({
 
         {filteredOptions.length === 0 ? (
           <div className="break-words rounded-md border border-dashed border-border bg-subtle px-4 py-6 text-center text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
-            ไม่พบสินค้าใน fixture นี้
+            ไม่พบสินค้าที่ตรงกับคำค้นนี้
           </div>
         ) : null}
       </div>

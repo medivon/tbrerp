@@ -57,7 +57,7 @@ const modeCopy: Record<
     activeTab: "closed",
     title: "ปิดแล้ว / ยกเลิก",
     description:
-      "ออเดอร์ที่จัดส่งครบแล้วหรือยกเลิก เปิดดูแบบ read-first โดยไม่แก้ต้นฉบับออเดอร์ใน workflow ปกติ",
+      "ออเดอร์ที่จัดส่งครบแล้วหรือยกเลิก เปิดดูข้อมูลโดยไม่แก้ต้นฉบับออเดอร์ในขั้นตอนปกติ",
   },
   "follow-up": {
     activeTab: "follow-up",
@@ -140,7 +140,7 @@ export function OrderList({
               {filteredOrders.length} จาก {orders.length} รายการ
             </StatusChip>
             {hasFilters ? (
-              <StatusChip variant="action">กำลังกรองใน fixture</StatusChip>
+              <StatusChip variant="action">ใช้ตัวกรองอยู่</StatusChip>
             ) : null}
           </div>
         }

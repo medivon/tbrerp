@@ -32,7 +32,6 @@ import {
   calculateOrderEntrySummary,
   createBlankCustomWorkLineDraft,
   createCustomWorkDraftFromLine,
-  getOrderEntrySourceLabel,
   markOrderEntryInMemory,
   readyStockOptions,
   removeOrderEntryLine,
@@ -123,38 +122,22 @@ export function OrderCreate({
       <div className="mx-auto grid w-full max-w-[1480px] gap-5">
         <PageHeader
           actions={
-            <>
-              <div className="grid justify-items-start gap-1 sm:justify-items-end">
-                <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
-                  บันทึกร่าง
-                </Button>
-                <p className="max-w-56 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
-                  ปิดไว้ในรอบงานนี้ จึงไม่สร้างหรือแก้ Draft จริง
-                </p>
-              </div>
-              <ReviewAction
-                currentUser={currentUser}
-                onReview={rememberEntryForReview}
-                showReason
-                summary={summary}
-              />
-            </>
+            <ReviewAction
+              currentUser={currentUser}
+              onReview={rememberEntryForReview}
+              showReason
+              summary={summary}
+            />
           }
-          description="กรอกข้อมูลออเดอร์แบบชั่วคราว ลูกค้าต้องมาก่อนที่อยู่และรายการสินค้า"
+          description="กรอกข้อมูลออเดอร์ ลูกค้าต้องมาก่อนที่อยู่และรายการสินค้า"
           meta={
             <div className="flex flex-wrap gap-2">
-              <StatusChip variant="warning">
-                ยังไม่ได้สร้างออเดอร์จริง
-              </StatusChip>
+              <StatusChip variant="warning">กำลังกรอก</StatusChip>
               {draftNo ? (
                 <StatusChip variant="neutral">เลขร่าง {draftNo}</StatusChip>
               ) : (
                 <StatusChip variant="neutral">ยังไม่ได้บันทึกร่าง</StatusChip>
               )}
-              <StatusChip variant="action">
-                {getOrderEntrySourceLabel(entryState)}
-              </StatusChip>
-              <StatusChip variant="neutral">ไม่เขียนฐานข้อมูลจริง</StatusChip>
             </div>
           }
           title="สร้างออเดอร์"
@@ -193,9 +176,6 @@ export function OrderCreate({
                 >
                   เลือกลูกค้า
                 </Button>
-                <StatusChip variant="neutral">
-                  เพิ่มลูกค้าใหม่ยังไม่อยู่ในรอบงานนี้
-                </StatusChip>
               </div>
             </EntrySection>
 
@@ -218,21 +198,6 @@ export function OrderCreate({
                     value={entryState.address || "ยังไม่มีที่อยู่จัดส่ง"}
                   />
                 </div>
-              </div>
-              <div className="grid min-w-0 gap-1">
-                <label className="flex min-w-0 items-start gap-2 text-sm font-semibold leading-6 text-muted-foreground">
-                  <input
-                    className="mt-1 h-4 w-4 cursor-not-allowed rounded border-border"
-                    disabled
-                    type="checkbox"
-                  />
-                  <span className="min-w-0 break-words [overflow-wrap:anywhere]">
-                    บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า
-                  </span>
-                </label>
-                <p className="break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
-                  ปิดไว้ในรอบงานนี้ เพราะยังไม่ทำ Customer/CRM mutation
-                </p>
               </div>
             </EntrySection>
 
@@ -323,24 +288,20 @@ export function OrderCreate({
                   />
                 </label>
                 <ReadOnlyMetric
-                  label="ยอดรวมตัวอย่าง"
+                  label="ยอดรวม"
                   value={formatBaht(summary.totalBaht)}
                 />
               </div>
               {entryState.optionalPaymentRecord ? (
                 <div className="min-w-0 rounded-md border border-border bg-subtle px-3 py-3">
                   <p className="break-words text-sm font-bold text-foreground [overflow-wrap:anywhere]">
-                    รายการรับเงิน (ตัวอย่าง)
+                    รายการรับเงิน
                   </p>
                   <p className="mt-1 break-words text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                     {entryState.optionalPaymentRecord.method}{" "}
                     {formatBaht(entryState.optionalPaymentRecord.amountBaht)}
                     {" • "}
                     {entryState.optionalPaymentRecord.note}
-                  </p>
-                  <p className="mt-2 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
-                    แสดงเป็นข้อมูล fixture/local เท่านั้น ยังไม่สร้าง Payment
-                    Record จริง
                   </p>
                 </div>
               ) : null}
@@ -398,7 +359,7 @@ export function OrderCreate({
               </div>
             ) : (
               <div className="break-words rounded-md border border-shell-border bg-shell px-3 py-2 text-sm font-semibold leading-6 text-shell-muted [overflow-wrap:anywhere]">
-                Review จะใช้ข้อมูลจากหน้านี้ในหน่วยความจำเท่านั้น
+                ตรวจสอบข้อมูลก่อนสร้างออเดอร์
               </div>
             )}
 
@@ -423,16 +384,10 @@ export function OrderCreate({
                 {formatBaht(summary.totalBaht)}
               </p>
               <p className="mt-1 break-words text-xs font-semibold leading-5 text-shell-muted [overflow-wrap:anywhere]">
-                ยอดขายตัวอย่างสำหรับตรวจสอบก่อนสร้างออเดอร์
+                ยอดขายสำหรับตรวจสอบก่อนสร้างออเดอร์
               </p>
             </div>
             <div className="grid gap-2">
-              <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
-                บันทึกร่าง
-              </Button>
-              <p className="break-words text-xs font-semibold leading-5 text-shell-muted [overflow-wrap:anywhere]">
-                ปุ่มบันทึกร่างปิดไว้ในรอบงานนี้ จึงยังไม่สร้างหรือแก้ Draft จริง
-              </p>
               <ReviewAction
                 currentUser={currentUser}
                 onReview={rememberEntryForReview}

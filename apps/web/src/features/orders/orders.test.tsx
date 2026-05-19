@@ -27,6 +27,39 @@ import { getFixtureUser } from "@/shared/fixtures/users";
 
 const currentUser = getFixtureUser("admin-sales");
 
+const forbiddenProductCopy =
+  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง/i;
+
+function collectRenderedCopy(container: HTMLElement): string {
+  const copy: string[] = [container.textContent ?? ""];
+
+  for (const element of Array.from(
+    container.querySelectorAll<HTMLElement>("*"),
+  )) {
+    for (const attribute of ["aria-label", "alt", "placeholder", "title"]) {
+      const value = element.getAttribute(attribute);
+
+      if (value) {
+        copy.push(value);
+      }
+    }
+
+    if (
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement ||
+      element instanceof HTMLSelectElement
+    ) {
+      copy.push(element.value);
+    }
+  }
+
+  return copy.join("\n");
+}
+
+function expectNoForbiddenProductCopy(container = document.body) {
+  expect(collectRenderedCopy(container)).not.toMatch(forbiddenProductCopy);
+}
+
 function fillCustomWorkDialog(dialog: HTMLElement) {
   fireEvent.change(within(dialog).getByLabelText("ชื่องาน / รายการ"), {
     target: { value: "ตู้เตี้ยไม้สักสั่งทำ" },
@@ -53,7 +86,7 @@ function fillCustomWorkDialog(dialog: HTMLElement) {
     target: { value: "ไม่มีงานรักสมุกสำหรับรายการนี้" },
   });
   fireEvent.change(within(dialog).getByLabelText("รูปอ้างอิง"), {
-    target: { value: "ใช้ภาพตู้เตี้ย fixture เป็น reference" },
+    target: { value: "ใช้ภาพตู้เตี้ยเป็นภาพอ้างอิง" },
   });
 }
 
@@ -62,11 +95,11 @@ describe("Order read/create foundation", () => {
     resetOrderEntryMemoryState();
   });
 
-  it("renders fixture rows in the all orders list", () => {
+  it("renders Order rows in the all orders list", () => {
     render(<OrderList currentUser={currentUser} mode="all" />);
 
     expect(screen.getAllByText("ORD-240522-018").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("คุณศิริพร ตัวอย่าง").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("คุณศิริพร วงศ์ไม้").length).toBeGreaterThan(0);
     expect(screen.getAllByText(/ตู้โชว์ไม้สักแกะลาย/).length).toBeGreaterThan(
       0,
     );
@@ -183,15 +216,15 @@ describe("Order read/create foundation", () => {
     });
     fireEvent.click(
       within(dialog).getByRole("option", {
-        name: /คุณปริญญา ตัวอย่าง/,
+        name: /คุณปริญญา ศรีนคร/,
       }),
     );
 
     expect(screen.queryByRole("dialog", { name: "เลือกลูกค้า" })).toBeNull();
     expect(
-      screen.getAllByDisplayValue("คุณปริญญา ตัวอย่าง").length,
+      screen.getAllByDisplayValue("คุณปริญญา ศรีนคร").length,
     ).toBeGreaterThan(0);
-    expect(screen.getAllByText("คุณปริญญา ตัวอย่าง").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("คุณปริญญา ศรีนคร").length).toBeGreaterThan(0);
     expect(
       screen.queryByRole("button", { name: "เพิ่มลูกค้าในออเดอร์" }),
     ).toBeNull();
@@ -280,7 +313,7 @@ describe("Order read/create foundation", () => {
 
     expect(within(dialog).getByText("หมด")).toBeTruthy();
     expect(
-      within(dialog).getByText(/ยังเพิ่มเป็นรายการได้เพื่อให้ Review/),
+      within(dialog).getByText(/สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้/),
     ).toBeTruthy();
 
     const addSoldOutButton = within(dialog).getByRole("button", {
@@ -325,7 +358,9 @@ describe("Order read/create foundation", () => {
       }),
     ).toBeTruthy();
     expect(
-      within(dialog).getByText(/ยังไม่มีการ upload หรือบันทึกรูปจริง/),
+      within(dialog).getByText(
+        "เลือกตำแหน่งภาพอ้างอิงให้ทีมงานเห็นรูปที่เกี่ยวข้อง",
+      ),
     ).toBeTruthy();
 
     fireEvent.click(
@@ -335,10 +370,10 @@ describe("Order read/create foundation", () => {
     );
     const referenceImageField = within(dialog).getByLabelText("รูปอ้างอิง");
 
-    expect(within(dialog).getByText("เลือกแล้วใน modal นี้")).toBeTruthy();
+    expect(within(dialog).getByText("เลือกแล้ว")).toBeTruthy();
     expect(
       within(dialog).getByRole("button", {
-        name: "เลือกแล้วใน modal นี้",
+        name: "เลือกแล้ว",
       }),
     ).toHaveProperty("disabled", true);
     expect(referenceImageField).toHaveProperty(
@@ -352,7 +387,7 @@ describe("Order read/create foundation", () => {
     );
     expect(
       within(dialog).getAllByRole("button", {
-        name: "เลือกแล้วใน modal นี้",
+        name: "เลือกแล้ว",
       }),
     ).toHaveLength(2);
     expect(within(dialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
@@ -395,7 +430,7 @@ describe("Order read/create foundation", () => {
     );
     expect(
       within(editDialog).getAllByRole("button", {
-        name: "เลือกแล้วใน modal นี้",
+        name: "เลือกแล้ว",
       }),
     ).toHaveLength(2);
   });
@@ -462,7 +497,7 @@ describe("Order read/create foundation", () => {
     expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
   });
 
-  it("shows current in-memory Order Create state on Review", () => {
+  it("shows current Order Create state on Review", () => {
     const withSelectedSku = addReadyStockLineFromSelection(
       createInitialOrderEntryState(),
       {
@@ -475,23 +510,24 @@ describe("Order read/create foundation", () => {
 
     render(<OrderReview currentUser={currentUser} />);
 
-    expect(
-      screen.getByText("ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"),
-    ).toBeTruthy();
     expect(screen.getAllByText(/TBR-SID-DRK/).length).toBeGreaterThan(0);
     expect(
       screen.getAllByText(/โต๊ะข้างไม้สักพร้อมส่ง/).length,
     ).toBeGreaterThan(0);
   });
 
-  it("labels direct Review data as fixture-backed when no in-memory edit exists", () => {
+  it("opens direct Review data without implementation source labels", () => {
     render(<OrderReview currentUser={currentUser} />);
 
-    expect(screen.getByText("ข้อมูลตัวอย่างจาก fixture")).toBeTruthy();
-    expect(screen.getByText("ไม่ใช่การบันทึกจริง")).toBeTruthy();
+    expect(
+      screen.getByText(
+        "ตรวจสอบลูกค้า ผู้รับสินค้า รายการสินค้า และเงื่อนไขชำระเงินก่อนสร้างออเดอร์",
+      ),
+    ).toBeTruthy();
+    expectNoForbiddenProductCopy();
   });
 
-  it("enables Review confirmation only after required acknowledgement and shows fixture result", () => {
+  it("enables Review confirmation only after required acknowledgement and shows result", () => {
     render(<OrderReview currentUser={currentUser} />);
 
     const confirmButton = screen.getByRole("button", {
@@ -499,7 +535,7 @@ describe("Order read/create foundation", () => {
     });
 
     expect((confirmButton as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.queryByText("ORD-FIX-S4-0001")).toBeNull();
+    expect(screen.queryByText("ORD-240606-010")).toBeNull();
     expect(
       screen.getAllByText(/จะสร้าง JOB-O 1 รายการ/).length,
     ).toBeGreaterThan(0);
@@ -509,7 +545,7 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(
       screen.getByRole("checkbox", {
-        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
       }),
     );
 
@@ -517,20 +553,18 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(confirmButton);
 
-    expect(screen.getByText("ORD-FIX-S4-0001")).toBeTruthy();
-    expect(screen.getByText("JOB-O-FIX-S4-0001")).toBeTruthy();
+    expect(screen.getByText("ORD-240606-010")).toBeTruthy();
+    expect(screen.getByText("JOB-O-0271")).toBeTruthy();
     expect(
       screen.getAllByText(/คาดขายได้หลังจอง -1 ชิ้น/).length,
     ).toBeGreaterThan(0);
-    expect(
-      screen.getByText("กิจกรรมตัวอย่างสำหรับแสดงผล fixture"),
-    ).toBeTruthy();
+    expect(screen.getByText("ประวัติการสร้างออเดอร์")).toBeTruthy();
     expect(screen.getByText("สร้าง JOB-O")).toBeTruthy();
     expect(
       screen
         .getByRole("link", { name: /เปิด Order Detail/ })
         .getAttribute("href"),
-    ).toBe("/modules/orders/ORD-FIX-S4-0001?user=admin-sales");
+    ).toBe("/modules/orders/ORD-240606-010?user=admin-sales");
   });
 
   it("keeps Order Review as the final confirmation surface with no second modal", () => {
@@ -538,7 +572,7 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(
       screen.getByRole("checkbox", {
-        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
       }),
     );
     fireEvent.click(
@@ -548,10 +582,10 @@ describe("Order read/create foundation", () => {
     );
 
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(screen.getByText(/สร้างออเดอร์สำเร็จใน fixture/)).toBeTruthy();
+    expect(screen.getByText("สร้างออเดอร์สำเร็จ")).toBeTruthy();
   });
 
-  it("shows blocked Review fixture reasons inline", () => {
+  it("shows blocked Review reasons inline", () => {
     render(
       <OrderReview
         currentUser={currentUser}
@@ -565,7 +599,7 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(
       screen.getByRole("checkbox", {
-        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
       }),
     );
 
@@ -592,7 +626,7 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(
       screen.getByRole("checkbox", {
-        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
       }),
     );
     fireEvent.click(
@@ -626,7 +660,7 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(
       screen.getByRole("checkbox", {
-        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
       }),
     );
 
@@ -681,21 +715,55 @@ describe("Order read/create foundation", () => {
     ).toBe(true);
   });
 
-  it("shows visible reasons for disabled future-sector Order actions", () => {
+  it("shows visible business reasons for disabled Order edit actions", () => {
     render(
       <OrderLineEdit currentUser={currentUser} orderId="ORD-240522-018" />,
     );
 
     expect(
-      screen.getByText(
-        "ปุ่มนี้เป็น foundation เท่านั้น ยังไม่บันทึกการแก้ไขจริง",
-      ),
+      screen.getAllByText("ยังไม่มีการเปลี่ยนแปลงให้ตรวจสอบ").length,
     ).toBeTruthy();
     expect(
-      screen.getAllByText(
-        "เพิ่มรายการหลังยืนยันจะทำใน Sector ถัดไปผ่าน Review Changes",
-      ).length,
-    ).toBeGreaterThan(0);
+      screen.getByText("ยังไม่มีการเปลี่ยนแปลงที่พร้อมบันทึก"),
+    ).toBeTruthy();
+  });
+
+  it("keeps implemented Order UI free of internal implementation copy", () => {
+    const renderCases = [
+      () => render(<OrderList currentUser={currentUser} mode="follow-up" />),
+      () => render(<OrderList currentUser={currentUser} mode="all" />),
+      () => render(<OrderList currentUser={currentUser} mode="closed" />),
+      () => render(<DraftOrderQueue currentUser={currentUser} />),
+      () => render(<OrderCreate currentUser={currentUser} />),
+      () => render(<OrderReview currentUser={currentUser} />),
+      () =>
+        render(
+          <OrderReview
+            currentUser={currentUser}
+            scenarioId="missing-payment-term"
+          />,
+        ),
+      () =>
+        render(
+          <OrderDetail currentUser={currentUser} orderId="ORD-240602-009" />,
+        ),
+      () =>
+        render(
+          <OrderDetail currentUser={currentUser} orderId="ORD-240606-010" />,
+        ),
+      () =>
+        render(
+          <OrderLineEdit currentUser={currentUser} orderId="ORD-240522-018" />,
+        ),
+    ];
+
+    for (const renderCase of renderCases) {
+      const view = renderCase();
+
+      expectNoForbiddenProductCopy(view.container);
+      view.unmount();
+      resetOrderEntryMemoryState();
+    }
   });
 
   it("keeps sensitive finance/cost/payout data out of general Order fixtures", () => {

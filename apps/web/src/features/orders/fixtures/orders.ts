@@ -149,11 +149,11 @@ const imageSources = {
 export const orderFixtures: OrderFixture[] = [
   {
     id: "ORD-240522-018",
-    customerName: "คุณศิริพร ตัวอย่าง",
+    customerName: "คุณศิริพร วงศ์ไม้",
     customerPhone: "080-000-0018",
-    socialContact: "Facebook: Siriporn Sample Home",
+    socialContact: "Facebook: Siriporn Wood Home",
     customerTier: "ลูกค้า VIP",
-    recipientName: "คุณศิริพร ตัวอย่าง",
+    recipientName: "คุณศิริพร วงศ์ไม้",
     recipientPhone: "080-000-0018",
     address: "99/12 หมู่ 4 ต.หางดง อ.หางดง จ.เชียงใหม่ 50230",
     createdDate: "22 พ.ค. 67",
@@ -228,13 +228,13 @@ export const orderFixtures: OrderFixture[] = [
   },
   {
     id: "ORD-240528-014",
-    customerName: "คุณมาลี ตัวอย่าง",
+    customerName: "คุณมาลี จันทร์หอม",
     customerPhone: "080-000-0014",
-    socialContact: "Facebook: Malee Sample Living",
+    socialContact: "Facebook: Malee Living",
     customerTier: "ลูกค้าปกติ",
-    recipientName: "คุณภพ ตัวอย่าง",
+    recipientName: "คุณภพ เรืองศิลป์",
     recipientPhone: "080-000-0114",
-    address: "12/8 ถ.ตัวอย่าง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
+    address: "12/8 ถ.เจริญเมือง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
     createdDate: "28 พ.ค. 67",
     createdDateShort: "28 พ.ค. 67",
     orderStatus: "พร้อมสร้างรอบจัดส่ง",
@@ -279,10 +279,10 @@ export const orderFixtures: OrderFixture[] = [
   },
   {
     id: "ORD-240531-006",
-    customerName: "คุณนภัส ตัวอย่าง",
+    customerName: "คุณนภัส พิทักษ์เรือน",
     customerPhone: "080-000-0006",
     customerTier: "ลูกค้า VIP",
-    recipientName: "คุณนภัส ตัวอย่าง",
+    recipientName: "คุณนภัส พิทักษ์เรือน",
     recipientPhone: "080-000-0006",
     address: "88/5 หมู่ 2 ต.สันกำแพง อ.สันกำแพง จ.เชียงใหม่ 50130",
     createdDate: "31 พ.ค. 67",
@@ -350,7 +350,7 @@ export const orderFixtures: OrderFixture[] = [
         createdDate: "01 มิ.ย. 67",
         sentOutDate: "01 มิ.ย. 67",
         carrier: "Kerry",
-        tracking: "KR-SAMPLE-240601",
+        tracking: "KR240601004",
         status: "ปิดรอบจัดส่งแล้ว",
       },
     ],
@@ -367,10 +367,10 @@ export const orderFixtures: OrderFixture[] = [
   },
   {
     id: "ORD-240602-009",
-    customerName: "คุณอรุณ ตัวอย่าง",
+    customerName: "คุณอรุณ แก้วเมือง",
     customerPhone: "080-000-0009",
     customerTier: "ลูกค้าปกติ",
-    recipientName: "คุณอรุณ ตัวอย่าง",
+    recipientName: "คุณอรุณ แก้วเมือง",
     recipientPhone: "080-000-0009",
     address: "45/3 ต.ช้างเผือก อ.เมือง จ.เชียงใหม่ 50300",
     createdDate: "02 มิ.ย. 67",
@@ -432,10 +432,10 @@ export const orderFixtures: OrderFixture[] = [
   },
   {
     id: "ORD-240604-002",
-    customerName: "คุณพิมพ์ ตัวอย่าง",
+    customerName: "คุณพิมพ์ วัฒนาชัย",
     customerPhone: "080-000-0002",
     customerTier: "ลูกค้า VVIP",
-    recipientName: "คุณพิมพ์ ตัวอย่าง",
+    recipientName: "คุณพิมพ์ วัฒนาชัย",
     recipientPhone: "080-000-0002",
     address: "19/9 ต.สุเทพ อ.เมือง จ.เชียงใหม่ 50200",
     createdDate: "04 มิ.ย. 67",
@@ -443,7 +443,7 @@ export const orderFixtures: OrderFixture[] = [
     orderStatus: "จัดส่งครบแล้ว",
     shipmentSummary: {
       kind: "tracked",
-      label: "Kerry : KR-SAMPLE-240604",
+      label: "Kerry : KR240604001",
       detail: "จัดส่งครบแล้วด้วยรอบจัดส่ง SHP-240604-001",
     },
     netTotalBaht: 42000,
@@ -477,7 +477,7 @@ export const orderFixtures: OrderFixture[] = [
         shipmentBlockedReason: "ส่งแล้ว",
         editable: false,
         editBlockedReason:
-          "ออเดอร์จัดส่งครบแล้ว ต้นฉบับอ่านอย่างเดียวใน workflow ปกติ",
+          "ออเดอร์จัดส่งครบแล้ว ต้นฉบับอ่านอย่างเดียวในขั้นตอนปกติ",
       },
     ],
     shipmentRounds: [
@@ -486,7 +486,7 @@ export const orderFixtures: OrderFixture[] = [
         createdDate: "04 มิ.ย. 67",
         sentOutDate: "04 มิ.ย. 67",
         carrier: "Kerry",
-        tracking: "KR-SAMPLE-240604",
+        tracking: "KR240604001",
         status: "ปิดรอบจัดส่งแล้ว",
       },
     ],
@@ -499,10 +499,10 @@ export const orderFixtures: OrderFixture[] = [
   },
   {
     id: "ORD-240605-004",
-    customerName: "คุณลลิตา ตัวอย่าง",
+    customerName: "คุณลลิตา สายทอง",
     customerPhone: "080-000-0004",
     customerTier: "ลูกค้าปกติ",
-    recipientName: "คุณลลิตา ตัวอย่าง",
+    recipientName: "คุณลลิตา สายทอง",
     recipientPhone: "080-000-0004",
     address: "7/2 ต.แม่ริม อ.แม่ริม จ.เชียงใหม่ 50180",
     createdDate: "05 มิ.ย. 67",
@@ -519,7 +519,7 @@ export const orderFixtures: OrderFixture[] = [
       term: "ชำระก่อนจัดส่ง",
       paidBaht: 0,
       outstandingBaht: 0,
-      followUpStatus: "ยกเลิกแล้ว ไม่มีรายการติดตามการเงินในตัวอย่างนี้",
+      followUpStatus: "ยกเลิกแล้ว ไม่มีรายการติดตามการเงิน",
     },
     lines: [
       {
@@ -545,7 +545,7 @@ export const orderFixtures: OrderFixture[] = [
     timeline: [
       {
         title: "ยกเลิกออเดอร์",
-        detail: "ยกเลิกก่อนเกิดงาน downstream ในตัวอย่าง fixture",
+        detail: "ยกเลิกก่อนเกิดงานต่อเนื่อง",
       },
     ],
   },
@@ -554,9 +554,9 @@ export const orderFixtures: OrderFixture[] = [
 export const draftOrderFixtures: DraftOrderFixture[] = [
   {
     draftNo: "DRAFT-00034",
-    customerName: "คุณมาลี ตัวอย่าง",
+    customerName: "คุณมาลี จันทร์หอม",
     customerPhone: "080-000-0034",
-    recipientName: "คุณภพ ตัวอย่าง",
+    recipientName: "คุณภพ เรืองศิลป์",
     itemSummary: "ตู้โชว์ไม้สักสั่งทำ + 1 รายการ",
     itemCount: 2,
     ownerName: "แอดมินฝ่ายขาย",
@@ -567,9 +567,9 @@ export const draftOrderFixtures: DraftOrderFixture[] = [
   },
   {
     draftNo: "DRAFT-00035",
-    customerName: "คุณปริญญา ตัวอย่าง",
+    customerName: "คุณปริญญา ศรีนคร",
     customerPhone: "080-000-0035",
-    recipientName: "คุณปริญญา ตัวอย่าง",
+    recipientName: "คุณปริญญา ศรีนคร",
     itemSummary: "ชุดเก้าอี้รับแขกพร้อมส่ง",
     itemCount: 1,
     ownerName: "แอดมินฝ่ายขาย",
@@ -580,9 +580,9 @@ export const draftOrderFixtures: DraftOrderFixture[] = [
   },
   {
     draftNo: "DRAFT-00036",
-    customerName: "คุณณิชา ตัวอย่าง",
+    customerName: "คุณณิชา ธรรมวัฒน์",
     customerPhone: "080-000-0036",
-    recipientName: "คุณณิชา ตัวอย่าง",
+    recipientName: "คุณณิชา ธรรมวัฒน์",
     itemSummary: "โต๊ะคอนโซลแกะลายสั่งทำ",
     itemCount: 1,
     ownerName: "คุณผู้จัดการ",
@@ -594,11 +594,11 @@ export const draftOrderFixtures: DraftOrderFixture[] = [
 ];
 
 export const orderEntryFixture: OrderEntryFixture = {
-  customerName: "คุณมาลี ตัวอย่าง",
+  customerName: "คุณมาลี จันทร์หอม",
   customerPhone: "080-000-0099",
-  socialContact: "Facebook: Malee Sample Living",
+  socialContact: "Facebook: Malee Living",
   customerTier: "ลูกค้า VIP",
-  recipientName: "คุณภพ ตัวอย่าง",
+  recipientName: "คุณภพ เรืองศิลป์",
   recipientPhone: "080-000-0199",
   address: "55/10 หมู่ 1 ต.หนองควาย อ.หางดง จ.เชียงใหม่ 50230",
   readyStockLines: [
@@ -642,7 +642,7 @@ export const orderEntryFixture: OrderEntryFixture = {
   optionalPaymentRecord: {
     amountBaht: 30000,
     method: "โอนเงิน",
-    note: "ตัวอย่างรายการรับเงินในขั้นตอนกรอกออเดอร์",
+    note: "รับมัดจำตามเงื่อนไขชำระเงิน",
   },
   shipmentIntent: "ส่งพร้อมกัน",
   stockWarnings: ["ชุดเก้าอี้รับแขกไม้สักสีธรรมชาติ จำนวนเกินที่ขายได้"],
@@ -739,9 +739,9 @@ export function getOrderConfirmationInput({
     },
     customWorkLines,
     fixtureIdSeed: {
-      jobIdPrefix: "JOB-O-FIX-S4-",
-      jobStart: 1,
-      orderId: "ORD-FIX-S4-0001",
+      jobIdPrefix: "JOB-O-",
+      jobStart: 271,
+      orderId: "ORD-240606-010",
     },
     optionalPaymentRecord: orderEntryFixture.optionalPaymentRecord,
     paymentTerm: orderEntryFixture.paymentTerm,
@@ -751,7 +751,7 @@ export function getOrderConfirmationInput({
       name: orderEntryFixture.recipientName,
       phone: orderEntryFixture.recipientPhone,
     },
-    reviewId: "sector-4-order-review-fixture",
+    reviewId: "order-review-default",
     shipmentIntent: orderEntryFixture.shipmentIntent,
     sourceDraftNo: "DRAFT-00035",
     warnings: orderEntryFixture.stockWarnings.map((warning, index) => ({

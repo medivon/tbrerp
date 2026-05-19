@@ -24,7 +24,7 @@ const customWorkImageSlots = [
     description: "ภาพรวมรายการที่ลูกค้าใช้อ้างอิง",
     id: "main",
     label: "รูปหลัก",
-    previewAlt: "ภาพหลัก fixture สำหรับงานสั่งทำ",
+    previewAlt: "ภาพหลักสำหรับงานสั่งทำ",
     previewSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
   },
   {
@@ -38,7 +38,7 @@ const customWorkImageSlots = [
     label: "รูปสำหรับฝ่ายสี/ตกแต่ง",
   },
   {
-    description: "ลายรักสมุก จุดลงทอง หรือตัวอย่างลายเฉพาะ",
+    description: "ลายรักสมุก จุดลงทอง หรือลายเฉพาะ",
     id: "rak-samuk",
     label: "รูปสำหรับรักสมุก",
   },
@@ -48,8 +48,7 @@ type CustomWorkImageSlotId = (typeof customWorkImageSlots)[number]["id"];
 type CustomWorkImageSlot = (typeof customWorkImageSlots)[number];
 
 const generatedReferenceImageNotePrefix = "เลือก ";
-const generatedReferenceImageNoteSuffix =
-  " จาก fixture ใน modal นี้ ยังไม่มีการ upload หรือบันทึกรูปจริง";
+const generatedReferenceImageNoteSuffix = " เป็นภาพอ้างอิง";
 
 export function CustomWorkEntryModal({
   initialDraft,
@@ -137,7 +136,7 @@ export function CustomWorkEntryModal({
 
   return (
     <OrderEntryModalShell
-      description="กรอกรายละเอียดงานสั่งทำแบบแยกฝ่ายเพื่อให้ Review เห็นความพร้อม ก่อนยืนยันออเดอร์ยังไม่สร้าง JOB-O ใน modal นี้"
+      description="กรอกรายละเอียดงานสั่งทำแบบแยกฝ่ายเพื่อให้ Review เห็นความพร้อมก่อนยืนยันออเดอร์"
       initialFocusRef={nameInputRef}
       onClose={onClose}
       open={open}
@@ -155,7 +154,7 @@ export function CustomWorkEntryModal({
 
         {isComplete ? (
           <div className="break-words rounded-md border border-[#BFE5C9] bg-[#E6F4EA] px-3 py-2 text-sm font-semibold leading-6 text-[#166534] [overflow-wrap:anywhere]">
-            รายละเอียดครบพอให้ไป Review แบบ fixture/in-memory ได้
+            รายละเอียดครบพอสำหรับตรวจสอบก่อนสร้างออเดอร์
           </div>
         ) : (
           <div className="rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
@@ -247,7 +246,7 @@ export function CustomWorkEntryModal({
                 id="custom-work-reference-image"
                 label="รูปอ้างอิง"
                 onChange={(value) => updateDraft("referenceImageNote", value)}
-                placeholder="เช่น ใช้รูปตัวอย่างตู้โชว์จาก fixture เป็นภาพอ้างอิง"
+                placeholder="เช่น ใช้รูปตู้โชว์เป็นภาพอ้างอิง"
                 value={draft.referenceImageNote}
               />
               <TextArea
@@ -272,11 +271,10 @@ export function CustomWorkEntryModal({
                     รูปอ้างอิงงานสั่งทำ
                   </h3>
                   <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
-                    เพิ่มได้เฉพาะตำแหน่งภาพอ้างอิงใน UI นี้ ยังไม่มีการ upload
-                    หรือบันทึกรูปจริงในรอบงานนี้
+                    เลือกตำแหน่งภาพอ้างอิงให้ทีมงานเห็นรูปที่เกี่ยวข้อง
                   </p>
                 </div>
-                <StatusChip variant="neutral">fixture-only</StatusChip>
+                <StatusChip variant="neutral">ภาพอ้างอิง</StatusChip>
               </div>
 
               <div className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -295,7 +293,7 @@ export function CustomWorkEntryModal({
           <aside className="grid gap-3 rounded-md border border-border bg-subtle p-3">
             <div className="relative h-40 overflow-hidden rounded-md border border-border bg-surface">
               <Image
-                alt="ภาพอ้างอิง fixture สำหรับงานสั่งทำ"
+                alt="ภาพอ้างอิงสำหรับงานสั่งทำ"
                 className="object-cover"
                 fill
                 sizes="280px"
@@ -306,24 +304,19 @@ export function CustomWorkEntryModal({
               <div className="flex min-w-0 items-center gap-2 text-sm font-extrabold text-foreground">
                 <ImageIcon aria-hidden className="h-4 w-4 shrink-0" />
                 <span className="min-w-0 break-words [overflow-wrap:anywhere]">
-                  ภาพอ้างอิง fixture
+                  ภาพอ้างอิง
                 </span>
               </div>
               <p className="break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
-                รอบงานนี้ไม่มี upload จริง
-                ใช้บล็อกนี้เพื่อแสดงตำแหน่งรูปอ้างอิงก่อนสร้าง JOB-O
-                เมื่อยืนยันจาก Review
+                เลือกตำแหน่งรูปอ้างอิงเพื่อช่วยแยกรายละเอียดให้แต่ละฝ่าย
               </p>
             </div>
             <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
               <p className="break-words font-bold text-muted-foreground [overflow-wrap:anywhere]">
-                ยอดขายตัวอย่าง
+                ยอดขายรายการนี้
               </p>
               <p className="mt-1 break-words text-base font-extrabold text-foreground [overflow-wrap:anywhere]">
                 {formatBaht(draft.unitPriceBaht * Math.max(1, draft.quantity))}
-              </p>
-              <p className="mt-1 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
-                ใช้สำหรับ summary เท่านั้น ไม่ใช่ต้นทุนหรือข้อมูล Finance
               </p>
             </div>
           </aside>
@@ -385,7 +378,7 @@ function ReferenceImageTile({
         disabled={added}
         onClick={onAdd}
         size="sm"
-        title={added ? `เลือก ${slot.label} แล้วใน modal นี้` : undefined}
+        title={added ? `เลือก ${slot.label} แล้ว` : undefined}
         type="button"
         variant={added ? "outline" : "default"}
       >
@@ -394,7 +387,7 @@ function ReferenceImageTile({
         ) : (
           <Plus aria-hidden className="mr-2 h-4 w-4" />
         )}
-        {added ? "เลือกแล้วใน modal นี้" : `เพิ่มรูปอ้างอิง ${slot.label}`}
+        {added ? "เลือกแล้ว" : `เพิ่มรูปอ้างอิง ${slot.label}`}
       </Button>
     </div>
   );

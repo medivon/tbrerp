@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, CreditCard, ExternalLink, Truck } from "lucide-react";
+import { ChevronDown, Truck } from "lucide-react";
 import {
   Button,
   EmptyState,
@@ -125,20 +125,8 @@ export function OrderDetail({
       {isCompleted ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
           <p className="break-words text-sm font-bold leading-6 text-[#166534] [overflow-wrap:anywhere]">
-            ออเดอร์จัดส่งครบแล้ว ต้นฉบับออเดอร์เป็น read-first และไม่แก้รายการ
-            ผู้รับ หรือข้อมูลที่กระทบการจัดส่งใน workflow ปกติ
-          </p>
-        </SurfaceCard>
-      ) : null}
-
-      {order.fixtureOnlyNotice ? (
-        <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-          <p className="break-words text-sm font-bold leading-6 text-[#166534] [overflow-wrap:anywhere]">
-            ผลยืนยันจาก Order Review แสดงออเดอร์ที่สร้างแล้วใน fixture/dev
-            result เท่านั้น ยังไม่มี persistence จริง
-          </p>
-          <p className="mt-1 break-words text-sm font-semibold leading-6 text-[#166534] [overflow-wrap:anywhere]">
-            {order.fixtureOnlyNotice}
+            ออเดอร์จัดส่งครบแล้ว จึงอ่านอย่างเดียวและไม่แก้รายการ ผู้รับ
+            หรือข้อมูลที่กระทบการจัดส่งในขั้นตอนปกติ
           </p>
         </SurfaceCard>
       ) : null}
@@ -163,14 +151,6 @@ export function OrderDetail({
             <Fact label="ที่อยู่จัดส่ง" value={order.address} />
           </div>
         </dl>
-        <div className="border-t border-border p-4">
-          <Button asChild size="sm" variant="outline">
-            <Link href={orderHref("/modules/customers", currentUser)}>
-              เปิดลูกค้า
-              <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
       </ReadFirstSection>
 
       <ReadFirstSection
@@ -189,7 +169,7 @@ export function OrderDetail({
               </Button>
               <p className="max-w-64 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
                 {isCompleted
-                  ? "ออเดอร์จัดส่งครบแล้ว จึงอ่านอย่างเดียวใน workflow ปกติ"
+                  ? "ออเดอร์จัดส่งครบแล้ว จึงอ่านอย่างเดียวในขั้นตอนปกติ"
                   : "ออเดอร์ยกเลิกแล้ว จึงไม่เปิดการแก้รายการ"}
               </p>
             </div>
@@ -274,7 +254,7 @@ export function OrderDetail({
           )}
           <p className="mt-2 break-words text-sm font-semibold text-muted-foreground [overflow-wrap:anywhere]">
             {hasReadyShipmentLines
-              ? `เลือก ${selectedShipmentLineCount} รายการพร้อมส่งในหน้านี้เท่านั้น ยังไม่บันทึกหรือสร้างรอบจัดส่งจริง`
+              ? `เลือก ${selectedShipmentLineCount} รายการพร้อมส่งเพื่อสร้างรอบจัดส่ง`
               : "ไม่มีรายการพร้อมส่งที่เลือกได้ในออเดอร์นี้"}
           </p>
         </div>
@@ -353,22 +333,10 @@ export function OrderDetail({
             value={formatBaht(order.payment.outstandingBaht)}
           />
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border p-4">
+        <div className="flex flex-wrap items-center gap-3 border-t border-border p-4">
           <StatusChip variant="neutral">
             {order.payment.followUpStatus}
           </StatusChip>
-          <Button
-            disabled
-            size="sm"
-            title="ยังไม่เปิด Payment/COD action ในรอบงานนี้"
-            variant="outline"
-          >
-            <CreditCard aria-hidden className="mr-2 h-4 w-4" />
-            เปิดติดตามการเงิน
-          </Button>
-          <DisabledReason>
-            คำสั่ง Payment/COD ยังไม่เปิดในรอบงานนี้
-          </DisabledReason>
         </div>
       </ReadFirstSection>
 
@@ -409,9 +377,6 @@ function ManageOrderMenu({
         <ChevronDown aria-hidden className="ml-2 h-4 w-4" />
       </summary>
       <div className="absolute left-0 z-20 mt-2 grid w-[min(18rem,calc(100vw-2rem))] gap-1 rounded-lg border border-border bg-surface p-2 shadow-lifted sm:left-auto sm:right-0">
-        <MenuLink href={orderHref("/modules/customers", currentUser)}>
-          เปิดลูกค้า
-        </MenuLink>
         {disabled ? (
           <MenuDisabled>แก้ไขรายการสินค้า: ออเดอร์จัดส่งครบแล้ว</MenuDisabled>
         ) : (
@@ -431,7 +396,6 @@ function ManageOrderMenu({
           </MenuLink>
         )}
         <MenuDisabled>จัดการรอบจัดส่ง: อยู่ในส่วนด้านล่าง</MenuDisabled>
-        <MenuDisabled>เปิดติดตามการเงิน: ยังไม่เปิดคำสั่งเงินจริง</MenuDisabled>
         <MenuDisabled>
           ยกเลิกออเดอร์: มีงานต่อเนื่องที่ต้องจัดการก่อน
         </MenuDisabled>
@@ -456,14 +420,6 @@ function MenuDisabled({ children }: { children: ReactNode }) {
     <span className="min-h-10 min-w-0 break-words rounded-md px-3 py-2 text-sm font-semibold leading-6 text-muted-foreground opacity-70 [overflow-wrap:anywhere]">
       {children}
     </span>
-  );
-}
-
-function DisabledReason({ children }: { children: ReactNode }) {
-  return (
-    <p className="max-w-56 break-words text-left text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
-      {children}
-    </p>
   );
 }
 

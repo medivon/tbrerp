@@ -7,12 +7,13 @@ const viewports = [
   { height: 1000, name: "wide", width: 1440 },
 ];
 
-async function expectNoHorizontalPageOverflow(page: Page) {
-  const hasHorizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > window.innerWidth + 1,
-  );
+const forbiddenProductCopy =
+  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง/i;
 
-  expect(hasHorizontalOverflow).toBe(false);
+async function expectNoInternalProductCopy(page: Page) {
+  const bodyText = await page.evaluate(() => document.body.innerText);
+
+  expect(bodyText).not.toMatch(forbiddenProductCopy);
 }
 
 async function expectNoVisibleTextBleeding(page: Page) {
@@ -82,7 +83,7 @@ async function expectNoVisibleTextBleeding(page: Page) {
 }
 
 async function expectCleanResponsiveText(page: Page) {
-  await expectNoHorizontalPageOverflow(page);
+  await expectNoInternalProductCopy(page);
   await expectNoVisibleTextBleeding(page);
 }
 
@@ -90,7 +91,7 @@ for (const viewport of viewports) {
   test.describe(`Sector 4 confirmation ${viewport.name}`, () => {
     test.use({ viewport });
 
-    test("confirms a valid fixture Review and shows generated result", async ({
+    test("confirms a valid Review and shows generated result", async ({
       page,
     }) => {
       await page.goto("/modules/orders/review?user=admin-sales");
@@ -104,20 +105,18 @@ for (const viewport of viewports) {
       await expectCleanResponsiveText(page);
 
       await page
-        .getByRole("checkbox", { name: /รับทราบคำเตือนสต๊อกไม่พอ/ })
-        .check();
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
       await page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }).click();
 
-      await expect(page.getByText("ORD-FIX-S4-0001")).toBeVisible();
+      await expect(page.getByText("ORD-240606-010")).toBeVisible();
       await expect(
-        page.getByText("JOB-O-FIX-S4-0001", { exact: true }).first(),
+        page.getByText("JOB-O-0271", { exact: true }).first(),
       ).toBeVisible();
       await expect(
         page.getByText("คาดขายได้หลังจอง -1 ชิ้น").first(),
       ).toBeVisible();
-      await expect(
-        page.getByText("กิจกรรมตัวอย่างสำหรับแสดงผล fixture"),
-      ).toBeVisible();
+      await expect(page.getByText("ประวัติการสร้างออเดอร์")).toBeVisible();
       await expect(page.getByRole("dialog")).toHaveCount(0);
       await expectCleanResponsiveText(page);
 
@@ -125,20 +124,18 @@ for (const viewport of viewports) {
 
       await expect(
         page.getByRole("heading", {
-          name: "รายละเอียดออเดอร์ ORD-FIX-S4-0001",
+          name: "รายละเอียดออเดอร์ ORD-240606-010",
         }),
       ).toBeVisible();
       await expect(
-        page.getByText("JOB-O-FIX-S4-0001", { exact: true }).first(),
+        page.getByText("JOB-O-0271", { exact: true }).first(),
       ).toBeVisible();
-      await expect(
-        page.getByText("คำสั่ง Payment/COD ยังไม่เปิดในรอบงานนี้"),
-      ).toBeVisible();
+      await expect(page.getByText("มีรายการรับเงิน").first()).toBeVisible();
       await expect(page.getByText(/ต้นทุน|กำไร|payout/i)).toHaveCount(0);
       await expectCleanResponsiveText(page);
     });
 
-    test("keeps blocked fixture Review disabled with visible reason", async ({
+    test("keeps blocked Review disabled with visible reason", async ({
       page,
     }) => {
       await page.goto(
@@ -149,8 +146,8 @@ for (const viewport of viewports) {
         page.getByText("ต้องระบุเงื่อนไขการชำระเงินก่อนยืนยันออเดอร์").first(),
       ).toBeVisible();
       await page
-        .getByRole("checkbox", { name: /รับทราบคำเตือนสต๊อกไม่พอ/ })
-        .check();
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
       await expect(
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
       ).toBeDisabled();

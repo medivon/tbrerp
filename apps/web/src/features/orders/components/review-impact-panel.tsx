@@ -30,7 +30,7 @@ export function ReviewImpactPanel({
           ผลหลังยืนยันสร้างออเดอร์
         </p>
         <p className="mt-1 break-words text-sm leading-6 text-shell-muted [overflow-wrap:anywhere]">
-          ยืนยันแล้วจะสร้างผลลัพธ์ fixture/dev เท่านั้น ยังไม่เขียนฐานข้อมูลจริง
+          ตรวจสอบผลที่จะเกิดหลังยืนยันสร้างออเดอร์
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export function ReviewImpactPanel({
               ? `จะจองสต๊อก ${readyStockCount} รายการ`
               : "ไม่มีสินค้าพร้อมส่งให้จอง"
           }
-          previewLabel={readyStockCount > 0 ? "ตัวอย่าง" : "ไม่เกี่ยวข้อง"}
+          previewLabel={readyStockCount > 0 ? "จะเกิดขึ้น" : "ไม่เกี่ยวข้อง"}
           tone={readyStockCount > 0 ? "success" : "neutral"}
         />
         <ImpactRow
@@ -52,13 +52,13 @@ export function ReviewImpactPanel({
               ? `จะสร้าง JOB-O ${customWorkCount} รายการ`
               : "ไม่มี JOB-O ที่ต้องสร้าง"
           }
-          previewLabel={customWorkCount > 0 ? "ตัวอย่าง" : "ไม่เกี่ยวข้อง"}
+          previewLabel={customWorkCount > 0 ? "จะเกิดขึ้น" : "ไม่เกี่ยวข้อง"}
           tone={customWorkCount > 0 ? "revision" : "neutral"}
         />
         <ImpactRow
           icon={<Truck aria-hidden className="h-4 w-4" />}
           label="ยังไม่สร้างรอบจัดส่ง"
-          previewLabel="ตัวอย่าง"
+          previewLabel="ไม่เกี่ยวข้อง"
           tone="neutral"
         />
       </div>

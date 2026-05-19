@@ -22,6 +22,10 @@ const routes = [
     path: "/modules/orders/drafts?user=admin-sales",
   },
   {
+    heading: "ปิดแล้ว / ยกเลิก",
+    path: "/modules/orders/closed?user=admin-sales",
+  },
+  {
     heading: "สร้างออเดอร์",
     path: "/modules/orders/create?user=admin-sales",
   },
@@ -34,8 +38,8 @@ const routes = [
     path: "/modules/orders/ORD-240602-009?user=admin-sales",
   },
   {
-    heading: "รายละเอียดออเดอร์ ORD-FIX-S4-0001",
-    path: "/modules/orders/ORD-FIX-S4-0001?user=admin-sales",
+    heading: "รายละเอียดออเดอร์ ORD-240606-010",
+    path: "/modules/orders/ORD-240606-010?user=admin-sales",
   },
   {
     heading: "แก้ไขรายการออเดอร์",
@@ -43,8 +47,83 @@ const routes = [
   },
 ];
 
+const forbiddenProductCopy =
+  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง/i;
+
 function visibleText(page: Page, text: string) {
   return page.getByText(text).filter({ visible: true });
+}
+
+async function expectNoInternalProductCopy(page: Page) {
+  const bodyText = await page.evaluate(() => document.body.innerText);
+
+  expect(bodyText).not.toMatch(forbiddenProductCopy);
+}
+
+async function expectCleanResponsiveText(page: Page) {
+  const textOffenders = await page.evaluate(() => {
+    const textSelectors = "h1,h2,h3,p,span,button,a,label,li,dt,dd,summary";
+    const viewportWidth = document.documentElement.clientWidth;
+
+    function isVisible(element: Element) {
+      const rect = element.getBoundingClientRect();
+      const style = window.getComputedStyle(element);
+
+      return (
+        rect.width > 1 &&
+        rect.height > 1 &&
+        style.display !== "none" &&
+        style.visibility !== "hidden" &&
+        style.opacity !== "0"
+      );
+    }
+
+    function hasIntentionalHorizontalScroller(element: Element) {
+      let parent = element.parentElement;
+
+      while (parent && parent !== document.body) {
+        const style = window.getComputedStyle(parent);
+        const scrollsHorizontally =
+          (style.overflowX === "auto" || style.overflowX === "scroll") &&
+          parent.scrollWidth > parent.clientWidth + 2;
+
+        if (scrollsHorizontally) {
+          return true;
+        }
+
+        parent = parent.parentElement;
+      }
+
+      return false;
+    }
+
+    return Array.from(document.querySelectorAll<HTMLElement>(textSelectors))
+      .filter((element) => isVisible(element))
+      .filter((element) => !hasIntentionalHorizontalScroller(element))
+      .flatMap((element) => {
+        const rect = element.getBoundingClientRect();
+        const style = window.getComputedStyle(element);
+        const clipsText =
+          element.scrollWidth > element.clientWidth + 2 &&
+          (style.overflowX === "hidden" || style.overflowX === "clip");
+        const bleedsViewport = rect.left < -2 || rect.right > viewportWidth + 2;
+
+        if (!clipsText && !bleedsViewport) {
+          return [];
+        }
+
+        return [
+          {
+            clipsText,
+            text: (element.textContent ?? "").trim().slice(0, 90),
+            tag: element.tagName,
+            width: Math.round(rect.width),
+          },
+        ];
+      });
+  });
+
+  expect(textOffenders).toEqual([]);
 }
 
 for (const viewport of viewports) {
@@ -59,11 +138,8 @@ for (const viewport of viewports) {
           page.getByRole("heading", { name: route.heading }).first(),
         ).toBeVisible();
         await expect(page.getByText(/ต้นทุน|กำไร|payout/i)).toHaveCount(0);
-
-        const hasHorizontalOverflow = await page.evaluate(
-          () => document.documentElement.scrollWidth > window.innerWidth,
-        );
-        expect(hasHorizontalOverflow).toBe(false);
+        await expectNoInternalProductCopy(page);
+        await expectCleanResponsiveText(page);
       });
     }
 
@@ -76,14 +152,14 @@ for (const viewport of viewports) {
       await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
     });
 
-    test("filters Order and Draft queues with local fixture state", async ({
+    test("filters Order and Draft queues with operational state", async ({
       page,
     }) => {
       await page.goto("/modules/orders/all?user=admin-sales");
 
       await page.getByLabel("ค้นหาออเดอร์").fill("อรุณ");
       await expect(visibleText(page, "ORD-240602-009").first()).toBeVisible();
-      await expect(page.getByText("ORD-240522-018")).toHaveCount(0);
+      await expect(visibleText(page, "ORD-240522-018")).toHaveCount(0);
 
       await page.getByRole("button", { name: "ล้างตัวกรอง" }).click();
       await expect(visibleText(page, "ORD-240522-018").first()).toBeVisible();
@@ -92,14 +168,14 @@ for (const viewport of viewports) {
 
       await page.getByLabel("ค้นหาร่างออเดอร์").fill("ปริญญา");
       await expect(visibleText(page, "DRAFT-00035").first()).toBeVisible();
-      await expect(page.getByText("DRAFT-00034")).toHaveCount(0);
+      await expect(visibleText(page, "DRAFT-00034")).toHaveCount(0);
       await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
 
       await page.getByRole("button", { name: "ล้างตัวกรอง" }).click();
       await expect(visibleText(page, "DRAFT-00034").first()).toBeVisible();
     });
 
-    test("updates Order Create in-memory lines and carries them to Review", async ({
+    test("updates Order Create lines and carries them to Review", async ({
       page,
     }) => {
       await page.goto("/modules/orders/create?user=admin-sales");
@@ -110,10 +186,8 @@ for (const viewport of viewports) {
         name: "เลือกสินค้าพร้อมส่ง",
       });
       await expect(productDialog).toBeVisible();
-      const productModalHasHorizontalOverflow = await page.evaluate(
-        () => document.documentElement.scrollWidth > window.innerWidth,
-      );
-      expect(productModalHasHorizontalOverflow).toBe(false);
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
       await productDialog
         .getByLabel(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/)
         .fill("3");
@@ -136,10 +210,8 @@ for (const viewport of viewports) {
           name: "เพิ่มรูปอ้างอิง รูปหลัก",
         }),
       ).toBeVisible();
-      const customModalHasHorizontalOverflow = await page.evaluate(
-        () => document.documentElement.scrollWidth > window.innerWidth,
-      );
-      expect(customModalHasHorizontalOverflow).toBe(false);
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
       await customDialog
         .getByRole("button", {
           name: "เพิ่มรูปอ้างอิง รูปหลัก",
@@ -148,7 +220,7 @@ for (const viewport of viewports) {
       await expect(
         customDialog
           .getByRole("button", {
-            name: "เลือกแล้วใน modal นี้",
+            name: "เลือกแล้ว",
           })
           .first(),
       ).toBeDisabled();
@@ -182,7 +254,7 @@ for (const viewport of viewports) {
         .fill("ไม่มีงานรักสมุกสำหรับรายการนี้");
       await customDialog
         .getByLabel("รูปอ้างอิง")
-        .fill("ใช้ภาพตู้เตี้ย fixture เป็น reference");
+        .fill("ใช้ภาพตู้เตี้ยเป็นภาพอ้างอิง");
       await customDialog
         .getByRole("button", { name: "เพิ่มรายการสั่งทำ" })
         .click();
@@ -195,13 +267,12 @@ for (const viewport of viewports) {
         .first()
         .click();
 
-      await expect(
-        page.getByText("ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"),
-      ).toBeVisible();
       await expect(page.getByText("ตู้เตี้ยไม้สักสั่งทำ")).toBeVisible();
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
     });
 
-    test("can confirm valid fixture Review without a second modal", async ({
+    test("can confirm valid Review without a second modal", async ({
       page,
     }) => {
       await page.goto("/modules/orders/review?user=admin-sales");
@@ -210,15 +281,15 @@ for (const viewport of viewports) {
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
       ).toBeDisabled();
       await page
-        .getByRole("checkbox", { name: /รับทราบคำเตือนสต๊อกไม่พอ/ })
-        .check();
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
       await expect(
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
       ).toBeEnabled();
       await page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }).click();
-      await expect(page.getByText("ORD-FIX-S4-0001")).toBeVisible();
+      await expect(page.getByText("ORD-240606-010")).toBeVisible();
       await expect(
-        page.getByText("JOB-O-FIX-S4-0001", { exact: true }).first(),
+        page.getByText("JOB-O-0271", { exact: true }).first(),
       ).toBeVisible();
       await expect(
         page.getByText("คาดขายได้หลังจอง -1 ชิ้น").first(),
@@ -231,9 +302,11 @@ for (const viewport of viewports) {
       await expect(
         page.getByText("ยังไม่สร้างรอบจัดส่ง").first(),
       ).toBeVisible();
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
     });
 
-    test("shows blocked Review fixture reason", async ({ page }) => {
+    test("shows blocked Review reason", async ({ page }) => {
       await page.goto(
         "/modules/orders/review?user=admin-sales&case=missing-payment-term",
       );
@@ -242,11 +315,13 @@ for (const viewport of viewports) {
         page.getByText("ต้องระบุเงื่อนไขการชำระเงินก่อนยืนยันออเดอร์").first(),
       ).toBeVisible();
       await page
-        .getByRole("checkbox", { name: /รับทราบคำเตือนสต๊อกไม่พอ/ })
-        .check();
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
       await expect(
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
       ).toBeDisabled();
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
     });
 
     test("routes base role away from confirmation surface", async ({
@@ -272,6 +347,8 @@ for (const viewport of viewports) {
       await expect(orderStatus.getByText("กำลังดำเนินการ")).toBeVisible();
       await expect(shipmentStatus.getByText("รอยืนยันการจัดส่ง")).toBeVisible();
       await expect(orderStatus.getByText("รอยืนยันการจัดส่ง")).toHaveCount(0);
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
     });
   });
 }

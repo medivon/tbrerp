@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, PackagePlus, ShieldAlert } from "lucide-react";
+import { ArrowLeft, ShieldAlert } from "lucide-react";
 import {
   Button,
   EmptyState,
@@ -50,14 +50,11 @@ export function OrderLineEdit({
               </Link>
             </Button>
             <div className="grid justify-items-start gap-1 sm:justify-items-end">
-              <Button
-                disabled
-                title="ต้องผ่าน Review Changes และยังไม่บันทึกจริงในรอบงานนี้"
-              >
+              <Button disabled title="ยังไม่มีการเปลี่ยนแปลงให้ตรวจสอบ">
                 ตรวจสอบการแก้ไข
               </Button>
               <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
-                ปุ่มนี้เป็น foundation เท่านั้น ยังไม่บันทึกการแก้ไขจริง
+                ยังไม่มีการเปลี่ยนแปลงให้ตรวจสอบ
               </p>
             </div>
           </>
@@ -87,23 +84,15 @@ export function OrderLineEdit({
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-5">
-          <EditGroup
-            actionLabel="เพิ่มสินค้าพร้อมส่ง"
-            lines={readyStockLines}
-            title="สินค้าพร้อมส่ง"
-          />
-          <EditGroup
-            actionLabel="เพิ่มงานสั่งทำ"
-            lines={customLines}
-            title="งานสั่งทำ"
-          />
+          <EditGroup lines={readyStockLines} title="สินค้าพร้อมส่ง" />
+          <EditGroup lines={customLines} title="งานสั่งทำ" />
           <SurfaceCard className="grid gap-4" padding="md">
             <div>
               <p className="text-base font-extrabold text-foreground">
                 Review Changes
               </p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                ส่วนนี้แสดงตัวอย่างผลกระทบก่อนบันทึกจริง
+                ตรวจสอบผลกระทบของการแก้ไขก่อนบันทึก
               </p>
             </div>
             <div className="grid gap-2">
@@ -116,15 +105,9 @@ export function OrderLineEdit({
                 value={`${blockedLines.length} รายการ`}
               />
               <ImpactLine label="ผลต่อยอดรวม" value="ยังไม่มีการเปลี่ยนแปลง" />
-              <ImpactLine label="ผลต่อสต๊อก" value="ยังไม่จองหรือคืนสต๊อก" />
-              <ImpactLine
-                label="ผลต่อ JOB-O"
-                value="ยังไม่สร้างหรือแก้ JOB-O"
-              />
-              <ImpactLine
-                label="ผลต่อรอบจัดส่ง"
-                value="ยังไม่สร้างหรือแก้รอบจัดส่ง"
-              />
+              <ImpactLine label="ผลต่อสต๊อก" value="ไม่มีผลต่อสต๊อก" />
+              <ImpactLine label="ผลต่อ JOB-O" value="ไม่มีผลต่อ JOB-O" />
+              <ImpactLine label="ผลต่อรอบจัดส่ง" value="ไม่มีผลต่อรอบจัดส่ง" />
             </div>
             <div className="grid gap-2 border-t border-border pt-4 sm:flex sm:flex-wrap">
               <Button asChild variant="outline">
@@ -134,12 +117,11 @@ export function OrderLineEdit({
                   ยกเลิก
                 </Link>
               </Button>
-              <Button disabled title="ยังไม่บันทึกการแก้ไขจริงในรอบงานนี้">
+              <Button disabled title="ยังไม่มีการเปลี่ยนแปลงที่พร้อมบันทึก">
                 บันทึกการแก้ไข
               </Button>
               <p className="basis-full text-xs font-semibold leading-5 text-muted-foreground">
-                ปุ่มบันทึกปิดไว้ในรอบงานนี้ จึงยังไม่แก้รายการ ไม่จอง/คืนสต๊อก
-                และไม่สร้าง JOB-O จริง
+                ยังไม่มีการเปลี่ยนแปลงที่พร้อมบันทึก
               </p>
             </div>
           </SurfaceCard>
@@ -172,14 +154,11 @@ export function OrderLineEdit({
               value={`${blockedLines.length}`}
             />
           </div>
-          <Button
-            disabled
-            title="ต้องผ่าน Review Changes และยังไม่บันทึกจริงในรอบงานนี้"
-          >
+          <Button disabled title="ยังไม่มีการเปลี่ยนแปลงให้ตรวจสอบ">
             ตรวจสอบการแก้ไข
           </Button>
           <p className="text-xs font-semibold leading-5 text-shell-muted">
-            ปุ่มนี้เป็น foundation เท่านั้น ยังไม่เปิดการบันทึกธุรกิจจริง
+            ยังไม่มีการเปลี่ยนแปลงให้ตรวจสอบ
           </p>
         </SurfaceCard>
       </div>
@@ -188,11 +167,9 @@ export function OrderLineEdit({
 }
 
 function EditGroup({
-  actionLabel,
   lines,
   title,
 }: {
-  actionLabel: string;
   lines: OrderLineFixture[];
   title: string;
 }) {
@@ -200,20 +177,6 @@ function EditGroup({
     <SurfaceCard className="overflow-hidden" padding="none">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-subtle px-4 py-3">
         <p className="text-base font-extrabold text-foreground">{title}</p>
-        <div className="grid justify-items-start gap-1 sm:justify-items-end">
-          <Button
-            disabled
-            size="sm"
-            title="เป็นปุ่มตัวอย่าง ยังไม่เพิ่มรายการจริง"
-            variant="outline"
-          >
-            <PackagePlus aria-hidden className="mr-2 h-4 w-4" />
-            {actionLabel}
-          </Button>
-          <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
-            เพิ่มรายการหลังยืนยันจะทำใน Sector ถัดไปผ่าน Review Changes
-          </p>
-        </div>
       </div>
       {lines.map((line) => (
         <OrderLineCard key={line.id} line={line} showEditState />

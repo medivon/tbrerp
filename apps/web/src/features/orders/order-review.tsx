@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   ExternalLink,
-  FilePenLine,
   PackageCheck,
   Wrench,
 } from "lucide-react";
@@ -28,10 +27,7 @@ import {
   type OrderReviewScenarioId,
 } from "@/features/orders/fixtures/orders";
 import { useOrderEntryMemoryState } from "@/features/orders/order-entry-memory-store";
-import {
-  createOrderConfirmationInputFromEntryState,
-  getOrderEntrySourceLabel,
-} from "@/features/orders/order-entry-state";
+import { createOrderConfirmationInputFromEntryState } from "@/features/orders/order-entry-state";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
@@ -91,7 +87,7 @@ export function OrderReview({
   const canConfirm =
     confirmationPreview.status === "confirmed" && !confirmationResult;
   const confirmDisabledReason = confirmationResult
-    ? "ยืนยันแล้วใน fixture result นี้"
+    ? "ยืนยันออเดอร์แล้ว"
     : blockingReasons.length > 0
       ? blockingReasons.map((reason) => reason.message).join(" / ")
       : "ตรวจสอบข้อมูลก่อนยืนยัน";
@@ -111,25 +107,14 @@ export function OrderReview({
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
         actions={
-          <>
-            <Button asChild variant="outline">
-              <Link href={orderHref(orderRoutes.create, currentUser)}>
-                <ArrowLeft aria-hidden className="mr-2 h-4 w-4" />
-                กลับ
-              </Link>
-            </Button>
-            <div className="grid justify-items-start gap-1 sm:justify-items-end">
-              <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
-                <FilePenLine aria-hidden className="mr-2 h-4 w-4" />
-                บันทึกร่าง
-              </Button>
-              <p className="max-w-56 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
-                ปิดไว้ในรอบงานนี้ จึงไม่บันทึก Draft จริง
-              </p>
-            </div>
-          </>
+          <Button asChild variant="outline">
+            <Link href={orderHref(orderRoutes.create, currentUser)}>
+              <ArrowLeft aria-hidden className="mr-2 h-4 w-4" />
+              กลับ
+            </Link>
+          </Button>
         }
-        description="ตรวจสอบข้อมูลจากหน่วยความจำของหน้า Create หรือ fixture โดยยังไม่เขียนฐานข้อมูลจริง"
+        description="ตรวจสอบลูกค้า ผู้รับสินค้า รายการสินค้า และเงื่อนไขชำระเงินก่อนสร้างออเดอร์"
         meta={
           <div className="flex flex-wrap gap-2">
             <StatusChip
@@ -143,15 +128,8 @@ export function OrderReview({
                 ? "พร้อมสร้างออเดอร์"
                 : "ยังยืนยันไม่ได้"}
             </StatusChip>
-            <StatusChip variant="action">
-              {getOrderEntrySourceLabel(entryState)}
-            </StatusChip>
-            <StatusChip variant="neutral">ไม่ใช่การบันทึกจริง</StatusChip>
             {hasStockWarning ? (
               <StatusChip variant="warning">ต้องรับทราบคำเตือน</StatusChip>
-            ) : null}
-            {scenarioId !== "valid" ? (
-              <StatusChip variant="neutral">Fixture blocked case</StatusChip>
             ) : null}
           </div>
         }
@@ -403,7 +381,7 @@ function StockWarningBlock({
               type="checkbox"
             />
             <span className="min-w-0 break-words [overflow-wrap:anywhere]">
-              รับทราบคำเตือนสต๊อกไม่พอและยอมให้ผลจองแสดงขาด/ติดลบในผล fixture
+              รับทราบว่าสินค้าขายได้ไม่พอ และต้องการสร้างออเดอร์ต่อ
             </span>
           </label>
         </div>
@@ -444,13 +422,9 @@ function ConfirmationResultPanel({
           <div className="flex flex-wrap items-center gap-2">
             <CheckCircle2 aria-hidden className="h-5 w-5 text-[#166534]" />
             <p className="min-w-0 break-words [overflow-wrap:anywhere] text-base font-extrabold text-[#166534]">
-              สร้างออเดอร์สำเร็จใน fixture/dev result
+              สร้างออเดอร์สำเร็จ
             </p>
-            <StatusChip variant="neutral">ไม่เขียนฐานข้อมูลจริง</StatusChip>
           </div>
-          <p className="mt-2 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-[#166534]">
-            {result.confirmedOrder.fixtureOnlyNotice}
-          </p>
         </div>
         <Button asChild variant="outline">
           <Link
@@ -477,14 +451,14 @@ function ConfirmationResultPanel({
         />
         <ResultMetric
           label="ปลายทางถัดไป"
-          value="ไปหน้า Order Detail แบบ read-first"
+          value="ไปหน้า Order Detail เพื่ออ่านรายละเอียด"
         />
       </div>
 
       {result.convertedDraft ? (
         <p className="mt-4 break-words [overflow-wrap:anywhere] rounded-md border border-[#BFE5C9] bg-white/70 px-3 py-2 text-sm font-bold leading-6 text-[#166534]">
           {result.convertedDraft.draftNo} {result.convertedDraft.status}{" "}
-          และถูกซ่อนจากร่าง active ในผล fixture
+          และย้ายออกจากร่างที่กำลังทำอยู่
         </p>
       ) : null}
 
@@ -554,7 +528,7 @@ function ConfirmationResultPanel({
       <ResultSection
         className="mt-4"
         icon={<CheckCircle2 aria-hidden className="h-4 w-4" />}
-        title="กิจกรรมตัวอย่างสำหรับแสดงผล fixture"
+        title="ประวัติการสร้างออเดอร์"
       >
         <ol className="grid gap-2">
           {result.activityEvents.map((event, index) => (

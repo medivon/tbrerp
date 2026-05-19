@@ -227,8 +227,7 @@ export type OrderConfirmationResult =
 
 const confirmationRoleIds = new Set(["owner", "manager", "admin-sales"]);
 
-const fixtureOnlyNotice =
-  "เลขนี้เป็น deterministic fixture/dev ID สำหรับ Sector 4 เท่านั้น ยังไม่ใช่เลขจากฐานข้อมูลจริง";
+const fixtureOnlyNotice = "สร้างออเดอร์แล้วจากหน้า Review";
 
 export function canConfirmOrder(roleId: OrderConfirmationRoleId): boolean {
   return confirmationRoleIds.has(roleId);
@@ -286,7 +285,7 @@ export function confirmOrderFromReview(
       input.customWorkLines.length > 0 ? "กำลังผลิต" : "พร้อมสร้างรอบจัดส่ง",
     payment: {
       followUpStatus:
-        paidBaht > 0 ? "มีรายการรับเงินในตัวอย่าง" : "ยังไม่มีรายการรับเงิน",
+        paidBaht > 0 ? "มีรายการรับเงิน" : "ยังไม่มีรายการรับเงิน",
       outstandingBaht: Math.max(netTotalBaht - paidBaht, 0),
       paidBaht,
       term: input.paymentTerm ?? "",
@@ -531,7 +530,7 @@ function createActivityEvents(
   if (input.sourceDraftNo) {
     events.push({
       title: "แปลงร่างออเดอร์",
-      detail: `${input.sourceDraftNo} แปลงเป็นออเดอร์แล้วใน fixture result`,
+      detail: `${input.sourceDraftNo} แปลงเป็นออเดอร์แล้ว`,
     });
   }
 

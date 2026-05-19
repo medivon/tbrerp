@@ -140,21 +140,21 @@ export const orderEntryCustomerOptions: OrderEntryCustomerOption[] = [
   {
     address: "88/15 หมู่ 7 ต.สันผีเสื้อ อ.เมือง จ.เชียงใหม่ 50300",
     id: "customer-prinya",
-    name: "คุณปริญญา ตัวอย่าง",
+    name: "คุณปริญญา ศรีนคร",
     primaryPhone: "080-000-0220",
-    recipientName: "คุณปริญญา ตัวอย่าง",
+    recipientName: "คุณปริญญา ศรีนคร",
     recipientPhone: "080-000-0220",
-    socialContact: "Line: sample-prinya",
+    socialContact: "Line: prinya-home",
     tier: "ลูกค้าปกติ",
   },
   {
     address: "12/8 ถ.เจริญเมือง ต.วัดเกต อ.เมือง จ.เชียงใหม่ 50000",
     id: "customer-nicha",
-    name: "คุณณิชา ตัวอย่าง",
+    name: "คุณณิชา ธรรมวัฒน์",
     primaryPhone: "080-000-0330",
-    recipientName: "คุณณิชา ตัวอย่าง",
+    recipientName: "คุณณิชา ธรรมวัฒน์",
     recipientPhone: "080-000-0330",
-    socialContact: "Facebook: Nicha Sample House",
+    socialContact: "Facebook: Nicha House",
     tier: "ลูกค้าโครงการ",
   },
 ];
@@ -353,7 +353,7 @@ export function addCustomWorkLineFromDraft(
   const line = normalizeCustomWorkLine({
     ...draft,
     id: `entry-custom-added-${lineNumber}`,
-    imageAlt: "งานสั่งทำไม้สักตัวอย่าง",
+    imageAlt: "งานสั่งทำไม้สัก",
     imageSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
     title: getCustomWorkDisplayTitle(draft.workName, lineNumber),
     type: "custom-work",
@@ -573,12 +573,6 @@ export function getOrderEntryLines(
   return [...state.readyStockLines, ...state.customLines];
 }
 
-export function getOrderEntrySourceLabel(state: OrderEntryState): string {
-  return state.source === "in-memory"
-    ? "ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"
-    : "ข้อมูลตัวอย่างจาก fixture";
-}
-
 export function getCustomWorkDraftMissingFields(
   draft: CustomWorkLineDraft,
 ): string[] {
@@ -710,9 +704,9 @@ export function createOrderConfirmationInputFromEntryState({
       };
     }),
     fixtureIdSeed: {
-      jobIdPrefix: "JOB-O-FIX-S4-",
-      jobStart: 1,
-      orderId: "ORD-FIX-S4-0001",
+      jobIdPrefix: "JOB-O-",
+      jobStart: 271,
+      orderId: "ORD-240606-010",
     },
     optionalPaymentRecord: entryState.optionalPaymentRecord,
     paymentTerm: entryState.paymentTerm,
@@ -736,8 +730,8 @@ export function createOrderConfirmationInputFromEntryState({
     },
     reviewId:
       entryState.source === "in-memory"
-        ? "sector-4-order-review-in-memory"
-        : "sector-4-order-review-fixture",
+        ? "order-review-entry"
+        : "order-review-default",
     shipmentIntent:
       entryState.readyStockLines.length > 0 && entryState.customLines.length > 0
         ? entryState.shipmentIntent
@@ -870,7 +864,7 @@ function createCustomWorkLineFromFixture(
     materialDetail: "ไม้สัก",
     quantity: line.quantity,
     rakSamukDetail: "ไม่มีงานรักสมุกในรายการนี้",
-    referenceImageNote: "ใช้รูปหลักและรูปช่างไม้จาก fixture เป็นภาพอ้างอิง",
+    referenceImageNote: "ใช้รูปหลักและรูปช่างไม้เป็นภาพอ้างอิง",
     sizeDetail: line.dimensions ?? "160 x 45 x 210 ซม.",
     title: line.title,
     type: "custom-work",

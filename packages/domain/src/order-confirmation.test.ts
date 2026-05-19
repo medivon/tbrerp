@@ -16,9 +16,9 @@ const validInput: OrderConfirmationInput = {
     roleId: "admin-sales",
   },
   customer: {
-    name: "คุณมาลี ตัวอย่าง",
+    name: "คุณมาลี จันทร์หอม",
     primaryPhone: "080-000-0099",
-    socialContact: "Facebook: Malee Sample Living",
+    socialContact: "Facebook: Malee Living",
     tier: "ลูกค้า VIP",
   },
   customWorkLines: [
@@ -42,9 +42,9 @@ const validInput: OrderConfirmationInput = {
     },
   ],
   fixtureIdSeed: {
-    jobIdPrefix: "JOB-O-FIX-S4-",
-    jobStart: 1,
-    orderId: "ORD-FIX-S4-0001",
+    jobIdPrefix: "JOB-O-",
+    jobStart: 271,
+    orderId: "ORD-240606-010",
   },
   optionalPaymentRecord: {
     amountBaht: 30000,
@@ -68,10 +68,10 @@ const validInput: OrderConfirmationInput = {
   ],
   recipient: {
     address: "55/10 หมู่ 1 ต.หนองควาย อ.หางดง จ.เชียงใหม่ 50230",
-    name: "คุณภพ ตัวอย่าง",
+    name: "คุณภพ เรืองศิลป์",
     phone: "080-000-0199",
   },
-  reviewId: "review-fixture-valid",
+  reviewId: "order-review-valid",
   shipmentIntent: "ส่งพร้อมกัน",
   sourceDraftNo: "DRAFT-00035",
   warnings: [
@@ -94,8 +94,8 @@ describe("Order confirmation domain logic", () => {
       throw new Error("expected confirmation to succeed");
     }
 
-    expect(result.confirmedOrder.id).toBe("ORD-FIX-S4-0001");
-    expect(result.confirmedOrder.customerName).toBe("คุณมาลี ตัวอย่าง");
+    expect(result.confirmedOrder.id).toBe("ORD-240606-010");
+    expect(result.confirmedOrder.customerName).toBe("คุณมาลี จันทร์หอม");
     expect(result.confirmedOrder.orderStatus).toBe("กำลังผลิต");
     expect(result.confirmedOrder.shipmentSummary.label).toBe("ยังไม่ได้จัดส่ง");
     expect(result.convertedDraft).toEqual({
@@ -116,7 +116,7 @@ describe("Order confirmation domain logic", () => {
     expect(result.generatedJobs).toHaveLength(1);
     expect(result.generatedJobs[0]).toMatchObject({
       currentDepartment: "ช่างไม้",
-      id: "JOB-O-FIX-S4-0001",
+      id: "JOB-O-0271",
       safeProductionContextOnly: true,
       sourceLineId: "entry-custom-cabinet",
       sourceType: "Order",
@@ -197,7 +197,7 @@ describe("Order confirmation domain logic", () => {
     );
   });
 
-  it("preserves acknowledged customer caution warnings in the fixture result", () => {
+  it("preserves acknowledged customer caution warnings in the confirmation result", () => {
     const customerCautionWarning = {
       id: "customer-caution-malee",
       message: "ลูกค้าต้องตรวจแบบละเอียดก่อนผลิต",

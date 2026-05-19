@@ -37,7 +37,7 @@ export function CustomerSelectModal({
 
   return (
     <OrderEntryModalShell
-      description="ค้นหาและเลือกลูกค้าจาก fixture เท่านั้น รอบงานนี้ยังไม่สร้างข้อมูลลูกค้าใหม่"
+      description="ค้นหาและเลือกลูกค้าที่มีอยู่ในระบบ"
       initialFocusRef={searchInputRef}
       onClose={onClose}
       open={open}
@@ -67,11 +67,7 @@ export function CustomerSelectModal({
           </span>
         </label>
 
-        <div
-          aria-label="รายชื่อลูกค้า fixture"
-          className="grid gap-2"
-          role="listbox"
-        >
+        <div aria-label="รายชื่อลูกค้า" className="grid gap-2" role="listbox">
           {filteredCustomers.map((customer) => (
             <button
               aria-selected={customer.id === selectedCustomerId}
@@ -112,7 +108,6 @@ export function CustomerSelectModal({
                     ? "เลือกอยู่"
                     : customer.tier}
                 </StatusChip>
-                <StatusChip variant="action">Fixture</StatusChip>
               </div>
             </button>
           ))}
@@ -120,14 +115,9 @@ export function CustomerSelectModal({
 
         {filteredCustomers.length === 0 ? (
           <div className="break-words rounded-md border border-dashed border-border bg-subtle px-4 py-6 text-center text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
-            ไม่พบลูกค้าใน fixture นี้ และยังไม่เปิดการเพิ่มลูกค้าใหม่ในรอบงานนี้
+            ไม่พบลูกค้าที่ตรงกับคำค้นนี้
           </div>
         ) : null}
-
-        <div className="break-words rounded-md border border-border bg-subtle px-3 py-2 text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
-          การเพิ่มลูกค้าใหม่ถูกซ่อนไว้ตามขอบเขตรอบงานนี้ ไม่มีการเขียนข้อมูล
-          Customer/CRM จริง
-        </div>
       </div>
     </OrderEntryModalShell>
   );

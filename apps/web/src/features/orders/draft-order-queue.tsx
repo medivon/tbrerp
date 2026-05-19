@@ -41,14 +41,14 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
             </Link>
           </Button>
         }
-        description="คิวร่างที่ถูกบันทึกโดยตั้งใจ มีเลขร่างเท่านั้น และยังไม่จองสต๊อก ไม่สร้าง Job ไม่สร้าง Shipment"
+        description="คิวร่างออเดอร์ที่บันทึกไว้ มีเลขร่างและต้องตรวจสอบก่อนสร้างออเดอร์"
         meta={
           <div className="flex flex-wrap gap-2">
             <StatusChip variant="neutral">
               {filteredDrafts.length} จาก {draftOrderFixtures.length} ร่าง
             </StatusChip>
             {hasQuery ? (
-              <StatusChip variant="action">ค้นหาใน fixture</StatusChip>
+              <StatusChip variant="action">กำลังค้นหา</StatusChip>
             ) : null}
           </div>
         }
@@ -241,7 +241,7 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
           }
           description={
             hasQuery
-              ? "ไม่พบร่างออเดอร์ที่ตรงกับคำค้นใน fixture นี้"
+              ? "ไม่พบร่างออเดอร์ที่ตรงกับคำค้นนี้"
               : "ร่างเกิดเมื่อกดบันทึกร่างเท่านั้น"
           }
           icon={<FilePenLine aria-hidden className="h-5 w-5" />}

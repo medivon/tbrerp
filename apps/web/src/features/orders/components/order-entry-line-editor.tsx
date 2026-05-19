@@ -127,7 +127,7 @@ function ReadyStockLineEditor({
           <p className="inline-flex min-w-0 items-start gap-2 break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
             <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <span className="min-w-0">
-              คำเตือนนี้เป็นการแสดงผลในหน้ากรอกเท่านั้น ยังไม่จองสต๊อกจริง
+              ตรวจสอบจำนวนสินค้าในหน้า Review ก่อนสร้างออเดอร์
             </span>
           </p>
         ) : null}
@@ -244,9 +244,7 @@ function CustomWorkLineEditor({
           <StatusChip variant="neutral">รูปฝ่ายสี/ตกแต่ง</StatusChip>
           <StatusChip variant="neutral">รูปรักสมุก</StatusChip>
           <StatusChip variant={line.referenceImageNote ? "success" : "warning"}>
-            {line.referenceImageNote
-              ? "มีรูปอ้างอิง fixture"
-              : "ยังไม่มีรูปอ้างอิง"}
+            {line.referenceImageNote ? "มีรูปอ้างอิง" : "ยังไม่มีรูปอ้างอิง"}
           </StatusChip>
         </div>
       </div>
