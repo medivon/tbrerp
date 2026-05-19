@@ -2,8 +2,10 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { JobTabs } from "@/features/jobs/components/job-tabs";
 import { ColoringWorkQueue } from "@/features/jobs/coloring-work-queue";
 import { getReceiveBackPreview } from "@/features/jobs/fixtures/jobs";
+import { JobDetail } from "@/features/jobs/job-detail";
 import { JobOverview } from "@/features/jobs/job-overview";
 import { WoodworkQueue } from "@/features/jobs/woodwork-queue";
 import { RakSamukAssignment } from "@/features/rak-samuk/rak-samuk-assignment";
@@ -61,6 +63,33 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     expect(screen.getAllByText("รอวัตถุดิบ").length).toBeGreaterThan(0);
   });
 
+  it("requires a note before using the waiting-material worker action", () => {
+    render(<WoodworkQueue currentUser={woodworkUser} />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: "รอวัตถุดิบ" })[1]);
+
+    expect(screen.getByLabelText("หมายเหตุรอวัตถุดิบ *")).toBeTruthy();
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "บันทึกรอวัตถุดิบ",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(
+      screen.queryByText(
+        "รอวัตถุดิบ แสดงผลเฉพาะในหน้านี้ ยังไม่บันทึกลงฐานข้อมูล",
+      ),
+    ).toBeNull();
+
+    fireEvent.change(screen.getByLabelText("หมายเหตุรอวัตถุดิบ *"), {
+      target: { value: "รอไม้บัว" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "บันทึกรอวัตถุดิบ" }));
+
+    expect(screen.getByText(/หมายเหตุ: รอไม้บัว/)).toBeTruthy();
+  });
+
   it("routes completed Coloring JOB-O visually to admin waiting shipment, not Delivery Team", () => {
     render(<ColoringWorkQueue currentUser={coloringUser} />);
 
@@ -101,6 +130,36 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     expect(
       screen.getByRole("dialog", { name: "ยืนยันส่งงานรักสมุก" }),
     ).toBeTruthy();
+  });
+
+  it("hides missing-permission Job workspace navigation and receive-back action", () => {
+    const { unmount } = render(
+      <JobTabs activeTab="rak-samuk" currentUser={woodworkUser} />,
+    );
+
+    expect(screen.getByRole("link", { name: "คิวช่างไม้" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "รักสมุก" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "งานทั้งหมด" })).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "รอรับเข้าโรงงานสี" }),
+    ).toBeNull();
+
+    unmount();
+    render(<RakSamukAssignment currentUser={woodworkUser} />);
+
+    expect(
+      screen.queryByRole("link", { name: "รับงานรักสมุกกลับ" }),
+    ).toBeNull();
+  });
+
+  it("hides department shortcuts the current worker cannot access on Job detail", () => {
+    render(<JobDetail currentUser={woodworkUser} jobId="JOB-O-0250" />);
+
+    expect(screen.getByRole("link", { name: /เปิดคิวช่างไม้/ })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /ส่งไปรักสมุก/ })).toBeTruthy();
+    expect(
+      screen.queryByRole("link", { name: /เปิดรอรับเข้าโรงงานสี/ }),
+    ).toBeNull();
   });
 
   it("does not render workflow-moving controls for Rak Samuk Worker", () => {

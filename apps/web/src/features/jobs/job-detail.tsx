@@ -23,7 +23,12 @@ import {
 } from "@/features/jobs/fixtures/jobs";
 import { jobHref, jobRoutes } from "@/features/jobs/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
-import { canAccessJobOverview } from "@/shared/permissions/access";
+import {
+  canAccessColoringQueue,
+  canAccessJobOverview,
+  canAccessRakSamukAssignment,
+  canAccessWoodworkQueue,
+} from "@/shared/permissions/access";
 
 export function JobDetail({
   currentUser,
@@ -155,24 +160,30 @@ export function JobDetail({
             </div>
 
             <div className="mt-4 grid gap-2">
-              <Button asChild variant="outline">
-                <Link href={jobHref(jobRoutes.woodwork, currentUser)}>
-                  เปิดคิวช่างไม้
-                  <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={jobHref(jobRoutes.coloringIntake, currentUser)}>
-                  เปิดรอรับเข้าโรงงานสี
-                  <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={jobHref(jobRoutes.rakSamuk, currentUser)}>
-                  ส่งไปรักสมุก
-                  <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              {canAccessWoodworkQueue(currentUser) ? (
+                <Button asChild variant="outline">
+                  <Link href={jobHref(jobRoutes.woodwork, currentUser)}>
+                    เปิดคิวช่างไม้
+                    <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : null}
+              {canAccessColoringQueue(currentUser) ? (
+                <Button asChild variant="outline">
+                  <Link href={jobHref(jobRoutes.coloringIntake, currentUser)}>
+                    เปิดรอรับเข้าโรงงานสี
+                    <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : null}
+              {canAccessRakSamukAssignment(currentUser) ? (
+                <Button asChild variant="outline">
+                  <Link href={jobHref(jobRoutes.rakSamuk, currentUser)}>
+                    ส่งไปรักสมุก
+                    <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : null}
             </div>
           </SurfaceCard>
         </aside>

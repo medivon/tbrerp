@@ -14,6 +14,7 @@ import {
 } from "@/features/jobs/fixtures/jobs";
 import { jobHref, jobRoutes } from "@/features/jobs/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
+import { canReceiveRakSamukBack } from "@/shared/permissions/access";
 
 export function RakSamukAssignment({
   currentUser,
@@ -33,11 +34,13 @@ export function RakSamukAssignment({
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
         actions={
-          <Button asChild variant="outline">
-            <Link href={jobHref(jobRoutes.rakSamukReceiveBack, currentUser)}>
-              รับงานรักสมุกกลับ
-            </Link>
-          </Button>
+          canReceiveRakSamukBack(currentUser) ? (
+            <Button asChild variant="outline">
+              <Link href={jobHref(jobRoutes.rakSamukReceiveBack, currentUser)}>
+                รับงานรักสมุกกลับ
+              </Link>
+            </Button>
+          ) : null
         }
         description="ส่งงานให้ช่างรักสมุกต้องเลือกช่างทันที ถ้าไม่รู้ช่าง งานจะยังไม่ถูกส่ง"
         meta={<StatusChip variant="revision">เลือกช่างรักสมุก</StatusChip>}

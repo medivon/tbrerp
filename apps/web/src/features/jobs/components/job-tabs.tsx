@@ -6,6 +6,12 @@ import {
   type JobWorkspaceTab,
 } from "@/features/jobs/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
+import {
+  canAccessColoringQueue,
+  canAccessJobOverview,
+  canAccessRakSamukAssignment,
+  canAccessWoodworkQueue,
+} from "@/shared/permissions/access";
 import { cn } from "@/lib/utils";
 
 export function JobTabs({
@@ -15,12 +21,20 @@ export function JobTabs({
   activeTab: JobWorkspaceTab;
   currentUser: FixtureUser;
 }) {
+  const visibleTabs = jobWorkspaceTabs.filter((tab) =>
+    canSeeJobWorkspaceTab(tab.id, currentUser),
+  );
+
+  if (visibleTabs.length === 0) {
+    return null;
+  }
+
   return (
     <nav
       aria-label="เมนูงานสั่งทำ / ผลิต"
       className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface p-2 shadow-soft"
     >
-      {jobWorkspaceTabs.map((tab) => (
+      {visibleTabs.map((tab) => (
         <Link
           className={cn(
             "inline-flex min-h-10 cursor-pointer items-center rounded-md px-3 text-sm font-bold transition hover:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
@@ -36,4 +50,23 @@ export function JobTabs({
       ))}
     </nav>
   );
+}
+
+function canSeeJobWorkspaceTab(
+  tabId: JobWorkspaceTab,
+  currentUser: FixtureUser,
+): boolean {
+  if (tabId === "overview") {
+    return canAccessJobOverview(currentUser);
+  }
+
+  if (tabId === "woodwork") {
+    return canAccessWoodworkQueue(currentUser);
+  }
+
+  if (tabId === "coloring-intake" || tabId === "coloring") {
+    return canAccessColoringQueue(currentUser);
+  }
+
+  return canAccessRakSamukAssignment(currentUser);
 }

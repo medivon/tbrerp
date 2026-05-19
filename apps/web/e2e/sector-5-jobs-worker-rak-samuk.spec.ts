@@ -99,6 +99,46 @@ for (const viewport of viewports) {
       );
     });
 
+    test("hides receive-back navigation from Woodwork Rak Samuk sender", async ({
+      page,
+    }) => {
+      await page.goto("/modules/jobs/rak-samuk?user=woodwork");
+
+      await expect(
+        page.getByRole("main").getByRole("heading", {
+          exact: true,
+          name: "รักสมุก",
+        }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: "รับงานรักสมุกกลับ" }),
+      ).toHaveCount(0);
+      await expect(page.getByRole("link", { name: "งานทั้งหมด" })).toHaveCount(
+        0,
+      );
+      await expect(
+        page.getByRole("link", { name: "รอรับเข้าโรงงานสี" }),
+      ).toHaveCount(0);
+    });
+
+    test("requires a note before Woodwork marks waiting materials", async ({
+      page,
+    }) => {
+      await page.goto("/modules/jobs/woodwork?user=woodwork");
+
+      await page.getByRole("button", { name: "รอวัตถุดิบ" }).nth(1).click();
+
+      await expect(page.getByLabel("หมายเหตุรอวัตถุดิบ *")).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "บันทึกรอวัตถุดิบ" }),
+      ).toBeDisabled();
+
+      await page.getByLabel("หมายเหตุรอวัตถุดิบ *").fill("รอไม้บัว");
+      await page.getByRole("button", { name: "บันทึกรอวัตถุดิบ" }).click();
+
+      await expect(page.getByText(/หมายเหตุ: รอไม้บัว/)).toBeVisible();
+    });
+
     test("blocks Finance from price approval", async ({ page }) => {
       await page.goto("/modules/jobs/rak-samuk/approval?user=finance");
 

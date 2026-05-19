@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import type { ProductionAction } from "@thaiboran/domain";
 import { Button, StatusChip, SurfaceCard } from "@thaiboran/ui";
@@ -19,8 +22,11 @@ export function WorkerJobCard({
     label: ProductionAction | "เปิดงาน";
   }>;
   job: WorkerQueueJob;
-  onAction: (action: ProductionAction, jobId: string) => void;
+  onAction: (action: ProductionAction, jobId: string, note?: string) => void;
 }) {
+  const [waitingMaterialNote, setWaitingMaterialNote] = useState("");
+  const [showWaitingMaterialNote, setShowWaitingMaterialNote] = useState(false);
+
   return (
     <SurfaceCard className="overflow-hidden p-0" padding="none">
       <article className="grid gap-0 md:grid-cols-[220px_minmax(0,1fr)]">
@@ -90,9 +96,14 @@ export function WorkerJobCard({
                 <div className="grid gap-1" key={key}>
                   <Button
                     disabled={Boolean(disabledReason)}
-                    onClick={() =>
-                      onAction(action.label as ProductionAction, job.id)
-                    }
+                    onClick={() => {
+                      if (action.label === "รอวัตถุดิบ") {
+                        setShowWaitingMaterialNote(true);
+                        return;
+                      }
+
+                      onAction(action.label as ProductionAction, job.id);
+                    }}
                     size="lg"
                     title={disabledReason}
                     type="button"
@@ -109,6 +120,50 @@ export function WorkerJobCard({
               );
             })}
           </div>
+
+          {showWaitingMaterialNote ? (
+            <div className="grid gap-3 rounded-lg border border-[#FAD980] bg-[#FEF3C7] p-3">
+              <label className="grid gap-2 text-sm font-extrabold text-[#92400E]">
+                หมายเหตุรอวัตถุดิบ *
+                <textarea
+                  className="min-h-24 rounded-md border border-[#FAD980] bg-surface px-3 py-2 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  onChange={(event) =>
+                    setWaitingMaterialNote(event.target.value)
+                  }
+                  placeholder="ระบุวัตถุดิบที่ขาด เช่น ไม้บัว สีทอง หรือบานพับ"
+                  value={waitingMaterialNote}
+                />
+              </label>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  disabled={waitingMaterialNote.trim().length === 0}
+                  onClick={() => {
+                    onAction("รอวัตถุดิบ", job.id, waitingMaterialNote.trim());
+                    setShowWaitingMaterialNote(false);
+                    setWaitingMaterialNote("");
+                  }}
+                  title={
+                    waitingMaterialNote.trim().length === 0
+                      ? "ต้องระบุหมายเหตุรอวัตถุดิบ"
+                      : undefined
+                  }
+                  type="button"
+                >
+                  บันทึกรอวัตถุดิบ
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowWaitingMaterialNote(false);
+                    setWaitingMaterialNote("");
+                  }}
+                  type="button"
+                  variant="outline"
+                >
+                  ยกเลิก
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </article>
     </SurfaceCard>

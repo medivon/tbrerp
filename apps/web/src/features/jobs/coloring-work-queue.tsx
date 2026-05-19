@@ -86,9 +86,13 @@ export function ColoringWorkQueue({
               ]}
               job={job}
               key={job.id}
-              onAction={(action) => {
+              onAction={(action, _jobId, note) => {
                 const actionResult = simulateProductionAction(action);
-                setResult(actionResult.message);
+                setResult(
+                  note
+                    ? `${actionResult.message} • หมายเหตุ: ${note}`
+                    : actionResult.message,
+                );
               }}
             />
           ))}
