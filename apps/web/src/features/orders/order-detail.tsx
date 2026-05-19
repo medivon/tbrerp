@@ -23,6 +23,7 @@ import {
   type OrderLineFixture,
 } from "@/features/orders/fixtures/orders";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
+import { shipmentHref, shipmentRoutes } from "@/features/shipments/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
 export function OrderDetail({
@@ -51,6 +52,9 @@ export function OrderDetail({
   );
   const cancelledLines = order.lines.filter((line) => line.cancelledReason);
   const activeLines = order.lines.filter((line) => !line.cancelledReason);
+  const hasReadyShipmentLines = activeLines.some(
+    (line) => line.readyForShipment,
+  );
   const isCompleted = order.orderStatus === "จัดส่งครบแล้ว";
   const isCancelled = order.orderStatus === "ยกเลิก";
 
@@ -196,12 +200,27 @@ export function OrderDetail({
           ))}
         </div>
         <div className="border-t border-border p-4">
-          <Button disabled title="การสร้างรอบจัดส่งอยู่ใน sector ถัดไป">
-            <Truck aria-hidden className="mr-2 h-4 w-4" />
-            สร้างรอบจัดส่งจากรายการที่เลือก
-          </Button>
+          {hasReadyShipmentLines ? (
+            <Button asChild>
+              <Link
+                href={shipmentHref(
+                  shipmentRoutes.builder(order.id),
+                  currentUser,
+                )}
+              >
+                <Truck aria-hidden className="mr-2 h-4 w-4" />
+                สร้างรอบจัดส่งจากรายการที่เลือก
+              </Link>
+            </Button>
+          ) : (
+            <Button disabled title="ไม่มีรายการพร้อมส่งในออเดอร์นี้">
+              <Truck aria-hidden className="mr-2 h-4 w-4" />
+              สร้างรอบจัดส่งจากรายการที่เลือก
+            </Button>
+          )}
           <p className="mt-2 text-sm font-semibold text-muted-foreground">
-            ปุ่มนี้ปิดไว้ในรอบงานนี้ จึงยังไม่สร้างรอบจัดส่งจริง
+            เปิด Shipment Builder ด้วยรายการพร้อมส่งจากออเดอร์นี้ โดยยังไม่มี
+            persistence จริง
           </p>
         </div>
       </ReadFirstSection>
@@ -245,17 +264,16 @@ export function OrderDetail({
                     </td>
                     <td className="px-3 py-4">
                       <div className="grid justify-items-end gap-1">
-                        <Button
-                          disabled
-                          size="sm"
-                          title="รายละเอียดรอบจัดส่งยังไม่เปิดในรอบงานนี้"
-                          variant="outline"
-                        >
-                          เปิดรอบจัดส่ง
+                        <Button asChild size="sm" variant="outline">
+                          <Link
+                            href={shipmentHref(
+                              shipmentRoutes.detail(round.shipmentNo),
+                              currentUser,
+                            )}
+                          >
+                            เปิดรอบจัดส่ง
+                          </Link>
                         </Button>
-                        <DisabledReason>
-                          รายละเอียดรอบจัดส่งยังไม่เปิดในรอบงานนี้
-                        </DisabledReason>
                       </div>
                     </td>
                   </tr>

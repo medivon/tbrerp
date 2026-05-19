@@ -17,7 +17,16 @@ describe("navigation visibility", () => {
     expect(labels).toContain("แดชบอร์ด");
     expect(labels).toContain("ออเดอร์");
     expect(labels).toContain("งานสั่งทำ / ผลิต");
+    expect(labels).toContain("รอบจัดส่ง");
     expect(labels).not.toContain("ตั้งค่า");
+  });
+
+  it("shows only Shipment navigation for Delivery Team", () => {
+    const labels = getVisibleNavigation(getFixtureUser("delivery-team")).map(
+      (item) => item.label,
+    );
+
+    expect(labels).toEqual(["รอบจัดส่ง"]);
   });
 
   it("keeps Owner-level settings visible only for the highest-authority fixture user", () => {

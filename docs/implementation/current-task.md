@@ -1,49 +1,49 @@
 # Current Implementation Task
 
 Status: ready for review
-Sector: Sector 5 - Job / Worker / Rak Samuk
+Sector: Sector 6 - Shipment / Delivery
 Task owner: Codex implementer
 Date started: 2026-05-19
 Date completed: 2026-05-19
 
 ## Goal
 
-Implement fixture-backed Job, worker, and Rak Samuk workflow surfaces as one coherent reviewable slice: Job overview/detail, Woodwork queue, Coloring intake/work queues, Rak Samuk assignment, Rak Samuk Worker own-work views, missing-price proposal, Owner/Manager price approval, and receive-back/intake foundation.
+Implement fixture-backed Shipment and Delivery workflow surfaces as one coherent reviewable slice: ready-to-ship queue, temporary Shipment Builder, Delivery Team send-out work, admin shipment confirmation, evidence/tracking foundation, Delivery Note preview, Shipping Sheet preview, COD visibility rules, and special-shipment visual foundation where safe.
 
 ## Scope
 
-- Job overview / active Jobs and read-first Job Detail / Work Card foundation.
-- Mobile/tablet Woodwork and Coloring worker queues with fixture-backed in-memory actions only.
-- Coloring intake staging queue distinct from active Coloring work.
-- Rak Samuk assignment, worker own-work list/detail, missing-price/proposed-price foundation, Owner/Manager approval foundation, and receive-back to `รอรับเข้าโรงงานสี`.
-- Safe fixtures, pure domain helpers, route wiring, permission-aware navigation/actions, and tests for sensitive-data boundaries.
+- Ready-to-ship admin workbench `รอสร้างรอบจัดส่ง` grouped by Order with source chips, stock-warning signals, search/filter shell, and builder entry.
+- Temporary Shipment Builder with selected item list, address snapshot, delivery fields, preview links, release confirmation, stock-negative acknowledgement, and no saved draft action.
+- Delivery Team mobile/tablet dashboard with released today/future lists, fixture-local sent-out behavior, optional evidence/note foundation, and same-day sent-out history.
+- Admin `ยืนยันการจัดส่ง` queue with tracking/evidence panel, missing-evidence blocking, and fixture-local close behavior.
+- A4-style Delivery Note and Shipping Sheet previews with permission-safe COD behavior.
+- Safe fake fixtures and pure domain helpers for Shipment/Delivery visibility and local workflow rules.
 
 ## Visual Intent
 
-- Premium operational production workspace for THAIBORAN: Thai-first, image-led, restrained, and work-focused.
-- Admin Job screens use dense workbench rows, compact metrics, filters, thumbnails, current department/status chips, and explicit `เปิด Job` actions.
-- Worker screens are mobile/tablet-first with large-tap cards, practical image crops, clear disabled reasons, and no customer/payment/cost/payout/business-sensitive data.
-- Rak Samuk screens make assigned work and own price/proposed price clear without exposing standard rates or other workers' payout.
-- Existing dark/navy shell is retained; main work surfaces stay readable and practical for dense ERP work.
-- Avoided marketing UI, decorative animation, low-contrast dark content surfaces, and workflow shortcuts not present in source docs.
+- Mood: premium operational Shipment/Delivery workspace for THAIBORAN, Thai-first, practical, image-led, and focused on daily queue work.
+- Density: admin screens use dense workbench rows, compact summary strips, thumbnails, chips, and right-side review panels; Delivery Team screens use larger cards and large tap targets.
+- Shell/palette: keep the current dark/navy shell for hierarchy while work surfaces stay light, readable, high contrast, and suitable for dense ERP scanning.
+- Component polish: clear hover/focus/cursor states, stable table-to-card behavior, semantic status chips, optional evidence visuals that do not look required, and print previews without app chrome inside the A4 page.
+- Responsive behavior: verify at 375, 768, 1024, and 1440 widths; delivery is mobile/tablet-first, admin queues become stacked cards when tables are too narrow, print previews scale without revealing hidden data.
+- What not to do: no marketing/hero UI, no saved Shipment draft styling, no COD editor, no tracking input for Delivery Team, no barcode/carrier/printer integration, no decorative animation/gradients, no low-contrast dark content surfaces.
 
 ## UI UX Pro Max Guidance Used
 
-- Design-system query: `ERP production operations dashboard worker mobile Thai dense image-led`.
-- React stack query: `dense responsive operations cards forms accessibility`.
-- Applied guidance: dense operational workbench hierarchy, mobile worker card ergonomics, large tap targets, hover/focus/cursor states, stable responsive cards/tables, clear image handling, and no horizontal overflow at responsive checkpoints.
-- Project visual source of truth remains `docs/ux-ui/design-system/visual-design-system.md`, `responsive-mobile.md`, and `pages/job-worker-rak-samuk.md`.
+- Design-system query: `ERP shipment delivery operations dashboard Thai dense mobile`.
+- React stack query: `dense responsive delivery cards dashboard evidence print preview accessibility`.
+- Applied guidance: data-dense operations dashboard hierarchy, mobile delivery card ergonomics, labels for form controls, visible focus states, ARIA live regions for local send-out/close updates, stable responsive card/table layouts, and print-preview clarity.
+- Project visual source of truth remains `docs/ux-ui/design-system/visual-design-system.md`, `responsive-mobile.md`, and `pages/shipment-delivery.md`.
 
 ## Out of Scope
 
-- No real database, Prisma schema, migrations, seed data, persistence, or real workflow writes.
-- No API contracts, real auth/session, real permission management, or worker payroll automation.
-- No Shipment creation, Payment/COD action, PV finalization, payout clearing, Stock/Material movement, Customer/CRM implementation, Settings implementation, or full production accounting.
-- No Management Log or Audit Log persistence.
-- No new worker revision/request workflow beyond source docs.
-- No Rak Samuk prices in Order, Production, or Job workflow pages where docs forbid it.
+- No database schema, Prisma models, migrations, seed data, persistent storage, or real Shipment persistence.
+- No API contracts, real data fetching, real auth/session, or real permission management.
+- No real payment/COD close, stock movement, Order completion update, carrier API, barcode, label printer, or file upload/storage.
+- No full finance, Customer/CRM, Settings, Activity Log, Management Log, or Audit Log persistence.
+- No unrelated modules or business-rule changes.
 
-## Source Docs Read
+## Source Docs To Read
 
 - `AGENTS.md`
 - `docs/implementation/implementer-rules.md`
@@ -61,83 +61,70 @@ Implement fixture-backed Job, worker, and Rak Samuk workflow surfaces as one coh
 - `docs/ux-ui/02-screen-inventory.md`
 - `docs/ux-ui/design-system/visual-design-system.md`
 - `docs/ux-ui/design-system/responsive-mobile.md`
-- `docs/ux-ui/design-system/pages/job-worker-rak-samuk.md`
-- `docs/ux-ui/screens/SCR-ADM-003-active-jobs-overview.md`
-- `docs/ux-ui/screens/SCR-JOB-002-job-detail-work-card.md`
-- `docs/ux-ui/screens/SCR-WOOD-001-woodwork-queue.md`
-- `docs/ux-ui/screens/SCR-COLOR-001-coloring-intake-queue.md`
-- `docs/ux-ui/screens/SCR-COLOR-002-coloring-work-queue.md`
-- `docs/ux-ui/screens/SCR-RS-001-rak-samuk-assignment-queue.md`
-- `docs/ux-ui/screens/SCR-RS-002-rak-samuk-worker-work-list.md`
-- `docs/ux-ui/screens/SCR-RS-003-rak-samuk-missing-price.md`
-- `docs/ux-ui/screens/SCR-RS-004-rak-samuk-price-approval.md`
+- `docs/ux-ui/design-system/pages/shipment-delivery.md`
+- `docs/ux-ui/design-system/pages/order.md`
+- `docs/ux-ui/screens/SCR-SHIP-001-ready-to-ship-queue.md`
+- `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`
+- `docs/ux-ui/screens/SCR-ADM-005-shipment-confirmation-queue.md`
+- `docs/ux-ui/screens/SCR-DEL-001-delivery-dashboard.md`
+- `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`
+- `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`
+- `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
 
 ## Permission and Sensitive Data Rules
 
 - Missing-permission navigation and actions are hidden.
-- State-blocked actions are disabled and show the reason.
+- State-blocked actions are disabled with reason.
 - Sensitive fields are omitted before rendering for users without permission.
-- Worker views do not receive customer, Order ID, payment, sales price, cost, payout, Management Log, or Audit Log data.
-- Rak Samuk Worker sees only assigned work and own price/proposed-price state.
-- Rak Samuk Worker cannot move workflow status or mark work complete.
-- Finance is not the approver for Rak Samuk proposed prices.
+- COD is visible only where docs allow; Delivery Note never shows COD.
+- No sensitive cost/profit/payout/payment evidence/Management Log/Audit Log data in fixtures, tests, logs, screenshots, exports, or print previews.
 
 ## Implementation Notes
 
-- Added pure `@thaiboran/domain` Job/Rak Samuk workflow helpers for role access, worker-visible work filtering, proposal submission rules, memory-only action simulation, and receive-back routing.
-- Added safe fake fixtures for Jobs, worker users, and Rak Samuk work; worker-facing mappers return sanitized data.
-- Wired new routes under `/modules/jobs` while keeping route/page files thin.
-- Job overview/detail surfaces are admin/manager oriented and fixture-backed only.
-- Woodwork and Coloring actions update local UI state and report `persisted: false`; no database/API/write contract was added.
-- Coloring completed JOB-O visually routes to admin `รอสร้างรอบจัดส่ง`, not directly to Delivery Team.
-- Rak Samuk assignment requires immediate worker selection and confirmation before fixture-only send state.
-- Missing price proposal is per-piece; submitted state is `ส่งราคาแล้ว / รออนุมัติ`.
-- Owner/Manager approval shows proposed per-piece price, quantity, computed total preview, and standard-rate update prompt; Finance remains blocked.
-- Receive-back always routes to `รอรับเข้าโรงงานสี`; no destination picker or evidence requirement was added.
-- Existing Sector 1 e2e placeholder smoke was updated to use `รอบจัดส่ง` because Jobs is now implemented.
+- Shipment Builder is temporary pre-release work; no `บันทึกเป็นร่าง` action exists.
+- Delivery Team send-out is a local fixture handoff, not final Shipment close or proof capture.
+- Admin close remains local fixture state and is blocked unless tracking or at least one delivery evidence photo exists.
+- Delivery evidence thumbnails use safe local placeholders only; no real upload/storage is implemented.
 
 ## Files Changed
 
-- `packages/domain/src/job-workflow.ts`
-- `packages/domain/src/job-workflow.test.ts`
+- `packages/domain/src/shipment-workflow.ts`
+- `packages/domain/src/shipment-workflow.test.ts`
 - `packages/domain/src/index.ts`
+- `apps/web/src/features/shipments/`
+- `apps/web/src/features/print-preview/`
+- `apps/web/src/app/modules/shipments/`
+- `apps/web/src/features/orders/order-detail.tsx`
+- `apps/web/src/features/admin-dashboard/admin-dashboard.tsx`
+- `apps/web/src/shared/fixtures/admin-dashboard.ts`
 - `apps/web/src/shared/fixtures/users.ts`
 - `apps/web/src/shared/permissions/access.ts`
 - `apps/web/src/shared/permissions/access.test.ts`
 - `apps/web/src/shared/navigation/navigation.ts`
 - `apps/web/src/shared/navigation/navigation.test.ts`
-- `apps/web/src/features/orders/order-detail.tsx`
-- `apps/web/src/features/jobs/**`
-- `apps/web/src/features/worker/**`
-- `apps/web/src/features/rak-samuk/**`
-- `apps/web/src/app/modules/jobs/**`
 - `apps/web/e2e/sector-1-smoke.spec.ts`
-- `apps/web/e2e/sector-5-jobs-worker-rak-samuk.spec.ts`
+- `apps/web/e2e/sector-6-shipment-delivery.spec.ts`
 - `docs/implementation/current-task.md`
 
 ## Checks Run
 
-- UI UX Pro Max design-system query - passed.
-- UI UX Pro Max React stack query - passed.
-- `pnpm --filter @thaiboran/domain test` - passed.
-- Focused web tests for Sector 5 - passed during implementation.
-- `pnpm lint` - passed.
-- `pnpm typecheck` - passed.
-- `pnpm test` - passed.
-- `pnpm format:check` - passed.
-- `pnpm build` - passed.
-- `pnpm test:e2e` - passed: 124 tests.
+- `pnpm lint` - passed
+- `pnpm typecheck` - passed
+- `pnpm test` - passed
+- `pnpm format:check` - passed
+- `pnpm build` - passed
+- `pnpm test:e2e` - passed, 176 Playwright tests
+- Browser plugin visual smoke: tool discovery did not expose the Codex Browser tools in this session; Playwright browser smoke covered the new Shipment/Delivery routes at 375, 768, 1024, and 1440 widths.
 
 ## Known Gaps or Blockers
 
-- No source-doc conflicts found.
-- Browser plugin discovery did not expose an in-app browser tool in this session; responsive route/browser verification was covered by Playwright e2e at 375, 768, 1024, and 1440 widths.
-- All Job/Rak Samuk workflow effects remain fixture-backed or local UI state only by design.
+- No source-doc conflicts found before implementation.
+- No blocking gaps. Persistence, real auth/session, database schema, API contracts, file upload/storage, carrier/barcode/printer integrations, real stock movement, Order completion updates, and Payment/COD close remain intentionally excluded.
 
 ## Reviewer Focus
 
-- Verify worker and Rak Samuk Worker views do not receive or render sensitive fields.
-- Verify Rak Samuk standard rates and other workers' payout are not exposed outside allowed Owner/Manager approval context.
-- Verify memory-only actions are clearly non-persistent and do not imply real workflow writes.
-- Verify receive-back has no destination picker and always lands at `รอรับเข้าโรงงานสี`.
-- Verify the new UI stays operational, dense, Thai-first, and readable across worker and admin breakpoints.
+- Verify Shipment Builder has no draft action and no COD editing.
+- Verify Delivery Team cannot create/split/edit/track/close Shipments or close COD/payment follow-up.
+- Verify COD visibility and print-preview behavior are permission-safe.
+- Verify admin close requires tracking or delivery evidence.
+- Verify no sensitive cost/profit/payout/payment evidence/Management Log/Audit Log leakage.

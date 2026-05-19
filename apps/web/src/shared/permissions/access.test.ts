@@ -21,6 +21,13 @@ describe("role-aware access helpers", () => {
     expect(getOwnHome(getFixtureUser("admin-sales"))).toBe("dashboard");
   });
 
+  it("lands Delivery Team on its shipment work screen", () => {
+    expect(getOwnHome(getFixtureUser("delivery-team"))).toBe("delivery");
+    expect(getOwnHomePath(getFixtureUser("delivery-team"))).toBe(
+      "/modules/shipments/delivery?user=delivery-team",
+    );
+  });
+
   it("lands base-role users on the Personal Dashboard placeholder", () => {
     expect(getOwnHome(getFixtureUser("staff-base"))).toBe("personal");
     expect(getOwnHome(getFixtureUser("outsource-base"))).toBe("personal");

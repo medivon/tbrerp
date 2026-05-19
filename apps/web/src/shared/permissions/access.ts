@@ -4,6 +4,10 @@ import {
   canAccessJobOverview as canAccessDomainJobOverview,
   canAccessRakSamukAssignment as canAccessDomainRakSamukAssignment,
   canAccessRakSamukWorkerWork as canAccessDomainRakSamukWorkerWork,
+  canAccessDeliveryDashboard as canAccessDomainDeliveryDashboard,
+  canAccessReadyToShipQueue as canAccessDomainReadyToShipQueue,
+  canAccessShipmentBuilder as canAccessDomainShipmentBuilder,
+  canAccessShipmentConfirmationQueue as canAccessDomainShipmentConfirmationQueue,
   canAccessWoodworkQueue as canAccessDomainWoodworkQueue,
   canApproveRakSamukPrice as canApproveDomainRakSamukPrice,
   canConfirmOrder,
@@ -12,18 +16,18 @@ import {
 
 import type { FixtureUser } from "@/shared/fixtures/users";
 
-export type AppDestination = "dashboard" | "personal";
+export type AppDestination = "dashboard" | "delivery" | "personal";
 
 export function canAccessAdminDashboard(user: FixtureUser): boolean {
   return ["owner", "manager", "admin-sales"].includes(user.id);
 }
 
 export function canAccessMainNavigation(user: FixtureUser): boolean {
-  return canAccessAdminDashboard(user);
+  return canAccessAdminDashboard(user) || user.id === "delivery-team";
 }
 
 export function canAccessOrders(user: FixtureUser): boolean {
-  return canAccessMainNavigation(user);
+  return canAccessAdminDashboard(user);
 }
 
 export function canConfirmOrders(user: FixtureUser): boolean {
@@ -64,6 +68,30 @@ export function canAccessRakSamukWorkerWork(user: FixtureUser): boolean {
   return canAccessDomainRakSamukWorkerWork(user.id);
 }
 
+export function canAccessShipments(user: FixtureUser): boolean {
+  return (
+    canAccessDomainReadyToShipQueue(user.id) ||
+    canAccessDomainDeliveryDashboard(user.id) ||
+    canAccessDomainShipmentConfirmationQueue(user.id)
+  );
+}
+
+export function canAccessReadyToShipQueue(user: FixtureUser): boolean {
+  return canAccessDomainReadyToShipQueue(user.id);
+}
+
+export function canAccessShipmentBuilder(user: FixtureUser): boolean {
+  return canAccessDomainShipmentBuilder(user.id);
+}
+
+export function canAccessDeliveryDashboard(user: FixtureUser): boolean {
+  return canAccessDomainDeliveryDashboard(user.id);
+}
+
+export function canAccessShipmentConfirmationQueue(user: FixtureUser): boolean {
+  return canAccessDomainShipmentConfirmationQueue(user.id);
+}
+
 export function canApproveRakSamukPrice(user: FixtureUser): boolean {
   return canApproveDomainRakSamukPrice(user.id);
 }
@@ -73,11 +101,25 @@ export function canReceiveRakSamukBack(user: FixtureUser): boolean {
 }
 
 export function getOwnHome(user: FixtureUser): AppDestination {
-  return canAccessAdminDashboard(user) ? "dashboard" : "personal";
+  if (canAccessAdminDashboard(user)) {
+    return "dashboard";
+  }
+
+  if (user.id === "delivery-team") {
+    return "delivery";
+  }
+
+  return "personal";
 }
 
 export function getOwnHomePath(user: FixtureUser): string {
-  const path = getOwnHome(user) === "dashboard" ? "/dashboard" : "/personal";
+  const ownHome = getOwnHome(user);
+  const path =
+    ownHome === "dashboard"
+      ? "/dashboard"
+      : ownHome === "delivery"
+        ? "/modules/shipments/delivery"
+        : "/personal";
 
   return withUserParam(path, user.id);
 }

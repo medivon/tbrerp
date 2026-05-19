@@ -23,6 +23,7 @@ import {
   type DashboardCardFixture,
 } from "@/shared/fixtures/admin-dashboard";
 import { getDashboardCardDestination } from "@/shared/navigation/navigation";
+import { withUserParam } from "@/shared/permissions/access";
 
 const dashboardCardIcons: Record<DashboardCardFixture["icon"], LucideIcon> = {
   finance: CreditCard,
@@ -109,7 +110,11 @@ function DashboardCard({
   return (
     <Link
       className="group block h-full cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
-      href={getDashboardCardDestination(card.destination, currentUser)}
+      href={
+        card.destinationPath
+          ? withUserParam(card.destinationPath, currentUser.id)
+          : getDashboardCardDestination(card.destination, currentUser)
+      }
     >
       <QueueLauncherCard
         actionIcon={

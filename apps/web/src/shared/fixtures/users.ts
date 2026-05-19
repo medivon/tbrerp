@@ -5,6 +5,7 @@ export const sectorOneRoleIds = [
   "finance",
   "woodwork",
   "coloring",
+  "delivery-team",
   "rak-samuk-worker",
   "staff-base",
   "outsource-base",
@@ -64,6 +65,13 @@ export const fixtureUsers: FixtureUser[] = [
     roleLabel: "Coloring",
     userType: "พนักงานภายใน",
     initials: "ส",
+  },
+  {
+    id: "delivery-team",
+    displayName: "ทีมจัดส่ง",
+    roleLabel: "Delivery Team",
+    userType: "พนักงานภายใน",
+    initials: "ด",
   },
   {
     id: "rak-samuk-worker",

@@ -11,6 +11,7 @@ export type DashboardCardFixture = {
   subtext: string;
   actionLabel: string;
   destination: NavigationItemId;
+  destinationPath?: string;
   icon: "orders" | "jobs" | "shipments" | "production" | "finance";
 };
 
@@ -65,6 +66,7 @@ export const dashboardCards: DashboardCardFixture[] = [
     subtext: "มี COD 3 ออเดอร์",
     actionLabel: "เปิดคิวงาน",
     destination: "shipments",
+    destinationPath: "/modules/shipments",
     icon: "shipments",
   },
   {
@@ -77,6 +79,7 @@ export const dashboardCards: DashboardCardFixture[] = [
     subtext: "เพิ่มเลขติดตามพัสดุ / หลักฐานขนส่ง",
     actionLabel: "เปิดคิวงาน",
     destination: "shipments",
+    destinationPath: "/modules/shipments/confirmation",
     icon: "shipments",
   },
   {

@@ -61,7 +61,7 @@ const mainNavigation: NavigationItem[] = [
     label: "รอบจัดส่ง",
     path: "/modules/shipments",
     icon: Truck,
-    implemented: false,
+    implemented: true,
   },
   {
     id: "stock",
@@ -105,6 +105,10 @@ export function getVisibleNavigation(user: FixtureUser): NavigationItem[] {
   }
 
   return mainNavigation.filter((item) => {
+    if (user.id === "delivery-team") {
+      return item.id === "shipments";
+    }
+
     if (item.id === "settings") {
       return user.id === "owner";
     }
