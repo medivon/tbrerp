@@ -8,6 +8,17 @@ import {
 
 export type OrderEntrySource = "fixture" | "in-memory";
 
+export type OrderEntryCustomerOption = {
+  address: string;
+  id: string;
+  name: string;
+  primaryPhone: string;
+  recipientName: string;
+  recipientPhone: string;
+  socialContact?: string;
+  tier: string;
+};
+
 export type ReadyStockOption = {
   color: string;
   dimensions: string;
@@ -40,26 +51,48 @@ export type OrderEntryReadyStockLine = {
   unitPriceBaht: number;
 };
 
+export type CustomWorkLineDraft = {
+  colorDetail: string;
+  coloringDetail: string;
+  deliveryDate: string;
+  internalNote: string;
+  materialDetail: string;
+  quantity: number;
+  rakSamukDetail: string;
+  referenceImageNote: string;
+  sizeDetail: string;
+  unitPriceBaht: number;
+  woodworkDetail: string;
+  workName: string;
+};
+
 export type OrderEntryCustomWorkLine = {
   colorDetail: string;
+  coloringDetail: string;
   customDetail: string;
   deliveryDate?: string;
   id: string;
   imageAlt: string;
   imageSrc: string;
+  internalNote: string;
   lineTotalBaht: number;
   materialDetail: string;
   quantity: number;
+  rakSamukDetail: string;
   readyForShipment: false;
+  referenceImageNote: string;
   shipmentState: string;
   sizeDetail: string;
   title: string;
   type: "custom-work";
   unitPriceBaht: number;
+  woodworkDetail: string;
+  workName: string;
 };
 
 export type OrderEntryState = {
   address: string;
+  customerId?: string;
   customerName: string;
   customerPhone: string;
   customerTier: string;
@@ -79,16 +112,52 @@ export type OrderEntryState = {
 };
 
 export type OrderEntrySummary = {
+  addressStatus: string;
   customDetailStatus: string;
+  customerStatus: string;
   hasMixedLineTypes: boolean;
   isComplete: boolean;
   lineCount: number;
   paymentTermStatus: string;
   readySkuSummary: string;
+  reviewBlockReasons: string[];
   stockWarnings: string[];
   totalBaht: number;
   totalQuantity: number;
 };
+
+export const orderEntryCustomerOptions: OrderEntryCustomerOption[] = [
+  {
+    address: orderEntryFixture.address,
+    id: "customer-malee",
+    name: orderEntryFixture.customerName,
+    primaryPhone: orderEntryFixture.customerPhone,
+    recipientName: orderEntryFixture.recipientName,
+    recipientPhone: orderEntryFixture.recipientPhone,
+    socialContact: orderEntryFixture.socialContact,
+    tier: orderEntryFixture.customerTier,
+  },
+  {
+    address: "88/15 หมู่ 7 ต.สันผีเสื้อ อ.เมือง จ.เชียงใหม่ 50300",
+    id: "customer-prinya",
+    name: "คุณปริญญา ตัวอย่าง",
+    primaryPhone: "080-000-0220",
+    recipientName: "คุณปริญญา ตัวอย่าง",
+    recipientPhone: "080-000-0220",
+    socialContact: "Line: sample-prinya",
+    tier: "ลูกค้าปกติ",
+  },
+  {
+    address: "12/8 ถ.เจริญเมือง ต.วัดเกต อ.เมือง จ.เชียงใหม่ 50000",
+    id: "customer-nicha",
+    name: "คุณณิชา ตัวอย่าง",
+    primaryPhone: "080-000-0330",
+    recipientName: "คุณณิชา ตัวอย่าง",
+    recipientPhone: "080-000-0330",
+    socialContact: "Facebook: Nicha Sample House",
+    tier: "ลูกค้าโครงการ",
+  },
+];
 
 export const readyStockOptions: ReadyStockOption[] = [
   {
@@ -124,11 +193,23 @@ export const readyStockOptions: ReadyStockOption[] = [
     skuCode: "TBR-SID-DRK",
     unitPriceBaht: 12500,
   },
+  {
+    color: "แดงชาด / ทอง",
+    dimensions: "100 x 42 x 86 ซม.",
+    id: "ready-rak-cabinet-sold-out",
+    imageAlt: "ตู้เตี้ยลงรักสมุกสีแดงชาด",
+    imageSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
+    productModelName: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+    sellableStock: 0,
+    skuCode: "TBR-CAB-RAK-RED",
+    unitPriceBaht: 38500,
+  },
 ];
 
 export function createInitialOrderEntryState(): OrderEntryState {
   return {
     address: orderEntryFixture.address,
+    customerId: orderEntryCustomerOptions[0]?.id,
     customerName: orderEntryFixture.customerName,
     customerPhone: orderEntryFixture.customerPhone,
     customerTier: orderEntryFixture.customerTier,
@@ -157,9 +238,52 @@ export function markOrderEntryInMemory(
   };
 }
 
+export function selectOrderEntryCustomer(
+  state: OrderEntryState,
+  customerId: string,
+): OrderEntryState {
+  const customer = orderEntryCustomerOptions.find(
+    (candidate) => candidate.id === customerId,
+  );
+
+  if (!customer) {
+    return state;
+  }
+
+  return {
+    ...state,
+    address: customer.address,
+    customerId: customer.id,
+    customerName: customer.name,
+    customerPhone: customer.primaryPhone,
+    customerTier: customer.tier,
+    recipientName: customer.recipientName,
+    recipientPhone: customer.recipientPhone,
+    socialContact: customer.socialContact,
+  };
+}
+
 export function addReadyStockLine(state: OrderEntryState): OrderEntryState {
   const option =
     readyStockOptions[state.readyStockLines.length % readyStockOptions.length];
+
+  return addReadyStockLineFromSelection(state, {
+    optionId: option.id,
+    quantity: 1,
+  });
+}
+
+export function addReadyStockLineFromSelection(
+  state: OrderEntryState,
+  selection: {
+    optionId: string;
+    quantity: number;
+  },
+): OrderEntryState {
+  if (!getReadyStockOption(selection.optionId)) {
+    return state;
+  }
+
   const lineNumber = nextLineNumber(
     state.readyStockLines.map((line) => line.id),
     "entry-ready-added-",
@@ -171,36 +295,98 @@ export function addReadyStockLine(state: OrderEntryState): OrderEntryState {
       ...state.readyStockLines,
       createReadyStockLine({
         id: `entry-ready-added-${lineNumber}`,
-        optionId: option.id,
-        quantity: 1,
+        optionId: selection.optionId,
+        quantity: selection.quantity,
       }),
     ],
   };
 }
 
+export function createBlankCustomWorkLineDraft(): CustomWorkLineDraft {
+  return {
+    colorDetail: "",
+    coloringDetail: "",
+    deliveryDate: "",
+    internalNote: "",
+    materialDetail: "ไม้สัก",
+    quantity: 1,
+    rakSamukDetail: "",
+    referenceImageNote: "",
+    sizeDetail: "",
+    unitPriceBaht: 18000,
+    woodworkDetail: "",
+    workName: "",
+  };
+}
+
+export function createCustomWorkDraftFromLine(
+  line: OrderEntryCustomWorkLine,
+): CustomWorkLineDraft {
+  return {
+    colorDetail: line.colorDetail,
+    coloringDetail: line.coloringDetail,
+    deliveryDate: line.deliveryDate ?? "",
+    internalNote: line.internalNote,
+    materialDetail: line.materialDetail,
+    quantity: line.quantity,
+    rakSamukDetail: line.rakSamukDetail,
+    referenceImageNote: line.referenceImageNote,
+    sizeDetail: line.sizeDetail,
+    unitPriceBaht: line.unitPriceBaht,
+    woodworkDetail: line.woodworkDetail,
+    workName: line.workName,
+  };
+}
+
 export function addCustomWorkLine(state: OrderEntryState): OrderEntryState {
+  return addCustomWorkLineFromDraft(state, createBlankCustomWorkLineDraft());
+}
+
+export function addCustomWorkLineFromDraft(
+  state: OrderEntryState,
+  draft: CustomWorkLineDraft,
+): OrderEntryState {
   const lineNumber = nextLineNumber(
     state.customLines.map((line) => line.id),
     "entry-custom-added-",
   );
   const line = normalizeCustomWorkLine({
-    colorDetail: "รอระบุสี",
-    customDetail: "",
-    deliveryDate: "ยังไม่ระบุ",
+    ...draft,
     id: `entry-custom-added-${lineNumber}`,
     imageAlt: "งานสั่งทำไม้สักตัวอย่าง",
     imageSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
-    materialDetail: "ไม้สัก",
-    quantity: 1,
-    sizeDetail: "รอระบุขนาด",
-    title: `งานสั่งทำเพิ่มใหม่ ${lineNumber}`,
+    title: getCustomWorkDisplayTitle(draft.workName, lineNumber),
     type: "custom-work",
-    unitPriceBaht: 18000,
   });
 
   return {
     ...state,
     customLines: [...state.customLines, line],
+  };
+}
+
+export function updateCustomWorkLineFromDraft(
+  state: OrderEntryState,
+  lineId: string,
+  draft: CustomWorkLineDraft,
+): OrderEntryState {
+  return {
+    ...state,
+    customLines: state.customLines.map((line) =>
+      line.id === lineId
+        ? normalizeCustomWorkLine({
+            ...draft,
+            id: line.id,
+            imageAlt: line.imageAlt,
+            imageSrc: line.imageSrc,
+            title:
+              draft.workName.trim().length > 0
+                ? draft.workName.trim()
+                : line.title,
+            type: "custom-work",
+          })
+        : line,
+    ),
   };
 }
 
@@ -268,7 +454,7 @@ export function updateCustomWorkLineDetail(
       line.id === lineId
         ? normalizeCustomWorkLine({
             ...line,
-            customDetail,
+            woodworkDetail: customDetail,
           })
         : line,
     ),
@@ -315,13 +501,43 @@ export function calculateOrderEntrySummary(
     (total, line) => total + line.lineTotalBaht,
     0,
   );
-  const incompleteCustomLines = state.customLines.filter((line) =>
-    isBlank(line.customDetail),
+  const incompleteCustomLines = state.customLines.filter(
+    (line) => !isCustomWorkLineComplete(line),
   );
   const stockWarnings = state.readyStockLines
     .filter((line) => line.stockWarning)
     .map((line) => `${line.title}: ${line.stockWarning}`);
   const paymentTermComplete = !isBlank(state.paymentTerm);
+  const customerComplete =
+    !isBlank(state.customerName) && !isBlank(state.customerPhone);
+  const addressComplete =
+    !isBlank(state.recipientName) &&
+    !isBlank(state.recipientPhone) &&
+    !isBlank(state.address);
+  const reviewBlockReasons: string[] = [];
+
+  if (!customerComplete) {
+    reviewBlockReasons.push("ต้องเลือกลูกค้าก่อนเข้าสู่ Review");
+  }
+
+  if (!addressComplete) {
+    reviewBlockReasons.push("ต้องมีผู้รับ เบอร์ผู้รับ และที่อยู่จัดส่ง");
+  }
+
+  if (lineCount === 0) {
+    reviewBlockReasons.push("ต้องมีรายการในออเดอร์อย่างน้อย 1 รายการ");
+  }
+
+  if (!paymentTermComplete) {
+    reviewBlockReasons.push("ต้องระบุ Payment Term");
+  }
+
+  if (incompleteCustomLines.length > 0) {
+    reviewBlockReasons.push(
+      `รายละเอียดงานสั่งทำยังไม่ครบ ${incompleteCustomLines.length} รายการ`,
+    );
+  }
+
   const customDetailStatus =
     state.customLines.length === 0
       ? "ไม่มีงานสั่งทำ"
@@ -330,15 +546,12 @@ export function calculateOrderEntrySummary(
         : `${incompleteCustomLines.length} รายการยังไม่ครบ`;
 
   return {
+    addressStatus: addressComplete ? "ครบ" : "ยังไม่ครบ",
     customDetailStatus,
+    customerStatus: customerComplete ? state.customerName : "ยังไม่ได้เลือก",
     hasMixedLineTypes:
       state.readyStockLines.length > 0 && state.customLines.length > 0,
-    isComplete:
-      !isBlank(state.customerName) &&
-      !isBlank(state.address) &&
-      paymentTermComplete &&
-      lineCount > 0 &&
-      incompleteCustomLines.length === 0,
+    isComplete: reviewBlockReasons.length === 0,
     lineCount,
     paymentTermStatus: paymentTermComplete ? "ครบ" : "ยังไม่มี",
     readySkuSummary:
@@ -347,6 +560,7 @@ export function calculateOrderEntrySummary(
             .map((line) => `${line.skuCode} / ${line.color}`)
             .join(", ")
         : "ยังไม่มีสินค้าพร้อมส่ง",
+    reviewBlockReasons,
     stockWarnings,
     totalBaht,
     totalQuantity,
@@ -363,6 +577,83 @@ export function getOrderEntrySourceLabel(state: OrderEntryState): string {
   return state.source === "in-memory"
     ? "ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"
     : "ข้อมูลตัวอย่างจาก fixture";
+}
+
+export function getCustomWorkDraftMissingFields(
+  draft: CustomWorkLineDraft,
+): string[] {
+  const missingFields: string[] = [];
+
+  if (isBlank(draft.workName)) {
+    missingFields.push("ชื่องาน");
+  }
+
+  if (draft.quantity <= 0) {
+    missingFields.push("จำนวน");
+  }
+
+  if (isBlank(draft.sizeDetail)) {
+    missingFields.push("ขนาด");
+  }
+
+  if (isBlank(draft.deliveryDate)) {
+    missingFields.push("กำหนดส่ง");
+  }
+
+  if (isBlank(draft.materialDetail)) {
+    missingFields.push("วัสดุ");
+  }
+
+  if (isBlank(draft.colorDetail)) {
+    missingFields.push("สี");
+  }
+
+  if (isBlank(draft.woodworkDetail)) {
+    missingFields.push("รายละเอียดช่างไม้");
+  }
+
+  if (isBlank(draft.coloringDetail)) {
+    missingFields.push("รายละเอียดฝ่ายสี/ตกแต่ง");
+  }
+
+  if (isBlank(draft.rakSamukDetail)) {
+    missingFields.push("รายละเอียดรักสมุก");
+  }
+
+  if (isBlank(draft.referenceImageNote)) {
+    missingFields.push("รูปอ้างอิง");
+  }
+
+  if (draft.unitPriceBaht <= 0) {
+    missingFields.push("ราคา");
+  }
+
+  return missingFields;
+}
+
+export function getCustomWorkLineMissingFields(
+  line: OrderEntryCustomWorkLine,
+): string[] {
+  return getCustomWorkDraftMissingFields(createCustomWorkDraftFromLine(line));
+}
+
+export function isCustomWorkLineComplete(
+  line: OrderEntryCustomWorkLine,
+): boolean {
+  return getCustomWorkLineMissingFields(line).length === 0;
+}
+
+export function buildCustomWorkProductionDetail(
+  line: OrderEntryCustomWorkLine,
+): string {
+  return [
+    line.woodworkDetail ? `ช่างไม้: ${line.woodworkDetail}` : undefined,
+    line.coloringDetail ? `ฝ่ายสี/ตกแต่ง: ${line.coloringDetail}` : undefined,
+    line.rakSamukDetail ? `รักสมุก: ${line.rakSamukDetail}` : undefined,
+    line.internalNote ? `หมายเหตุภายใน: ${line.internalNote}` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" / ");
 }
 
 export function createOrderConfirmationInputFromEntryState({
@@ -394,24 +685,30 @@ export function createOrderConfirmationInputFromEntryState({
       socialContact: entryState.socialContact,
       tier: entryState.customerTier,
     },
-    customWorkLines: entryState.customLines.map((line) => ({
-      customWorkDetail: {
-        colorDetail: line.colorDetail,
+    customWorkLines: entryState.customLines.map((line) => {
+      const isComplete = isCustomWorkLineComplete(line);
+
+      return {
+        customWorkDetail: {
+          colorDetail: line.colorDetail,
+          deliveryDate: line.deliveryDate,
+          materialDetail: line.materialDetail,
+          productionDetail: isComplete
+            ? buildCustomWorkProductionDetail(line)
+            : "",
+          referenceImageCount: isBlank(line.referenceImageNote) ? 0 : 1,
+          sizeDetail: line.sizeDetail,
+          workName: line.workName,
+        },
         deliveryDate: line.deliveryDate,
-        materialDetail: line.materialDetail,
-        productionDetail: line.customDetail,
-        referenceImageCount: line.customDetail ? 1 : 0,
-        sizeDetail: line.sizeDetail,
-        workName: line.title,
-      },
-      deliveryDate: line.deliveryDate,
-      id: line.id,
-      imageAlt: line.imageAlt,
-      imageSrc: line.imageSrc,
-      lineTotalBaht: line.lineTotalBaht,
-      quantity: line.quantity,
-      title: line.title,
-    })),
+        id: line.id,
+        imageAlt: line.imageAlt,
+        imageSrc: line.imageSrc,
+        lineTotalBaht: line.lineTotalBaht,
+        quantity: line.quantity,
+        title: line.title,
+      };
+    }),
     fixtureIdSeed: {
       jobIdPrefix: "JOB-O-FIX-S4-",
       jobStart: 1,
@@ -564,42 +861,112 @@ function createCustomWorkLineFromFixture(
 
   return normalizeCustomWorkLine({
     colorDetail: line.color ?? "สีโอ๊คเข้ม",
-    customDetail: stripCustomDetailPrefix(line.customDetail ?? ""),
-    deliveryDate: line.deliveryDate,
+    coloringDetail: "ทำสีโอ๊คเข้ม เคลือบด้าน เน้นให้เห็นลายไม้",
+    deliveryDate: line.deliveryDate ?? "20 มิ.ย. 67",
     id: line.id,
     imageAlt: line.imageAlt,
     imageSrc: line.imageSrc,
+    internalNote: "ยืนยันขนาดจริงกับลูกค้าก่อนส่งแบบเข้าผลิต",
     materialDetail: "ไม้สัก",
     quantity: line.quantity,
+    rakSamukDetail: "ไม่มีงานรักสมุกในรายการนี้",
+    referenceImageNote: "ใช้รูปหลักและรูปช่างไม้จาก fixture เป็นภาพอ้างอิง",
     sizeDetail: line.dimensions ?? "160 x 45 x 210 ซม.",
     title: line.title,
     type: "custom-work",
     unitPriceBaht,
+    woodworkDetail:
+      stripCustomDetailPrefix(line.customDetail ?? "") ||
+      "โครงตู้โชว์ไม้สัก หน้าบานแกะดอกพิกุล และติดไฟในตู้",
+    workName: line.title,
   });
 }
 
 function normalizeCustomWorkLine(
   line: Omit<
     OrderEntryCustomWorkLine,
-    "lineTotalBaht" | "readyForShipment" | "shipmentState"
+    "customDetail" | "lineTotalBaht" | "readyForShipment" | "shipmentState"
   >,
 ): OrderEntryCustomWorkLine {
   const quantity = normalizeQuantity(line.quantity);
+  const normalizedLine = {
+    ...line,
+    colorDetail: line.colorDetail.trim(),
+    coloringDetail: line.coloringDetail.trim(),
+    deliveryDate: normalizeOptionalText(line.deliveryDate),
+    internalNote: line.internalNote.trim(),
+    materialDetail: line.materialDetail.trim(),
+    quantity,
+    rakSamukDetail: line.rakSamukDetail.trim(),
+    referenceImageNote: line.referenceImageNote.trim(),
+    sizeDetail: line.sizeDetail.trim(),
+    title: line.title.trim(),
+    unitPriceBaht: Math.max(0, Math.floor(line.unitPriceBaht)),
+    woodworkDetail: line.woodworkDetail.trim(),
+    workName: line.workName.trim(),
+  };
+  const customDetail = buildCustomWorkSummary(normalizedLine);
+  const complete =
+    getCustomWorkDraftMissingFields({
+      colorDetail: normalizedLine.colorDetail,
+      coloringDetail: normalizedLine.coloringDetail,
+      deliveryDate: normalizedLine.deliveryDate ?? "",
+      internalNote: normalizedLine.internalNote,
+      materialDetail: normalizedLine.materialDetail,
+      quantity: normalizedLine.quantity,
+      rakSamukDetail: normalizedLine.rakSamukDetail,
+      referenceImageNote: normalizedLine.referenceImageNote,
+      sizeDetail: normalizedLine.sizeDetail,
+      unitPriceBaht: normalizedLine.unitPriceBaht,
+      woodworkDetail: normalizedLine.woodworkDetail,
+      workName: normalizedLine.workName,
+    }).length === 0;
 
   return {
-    ...line,
-    customDetail: stripCustomDetailPrefix(line.customDetail),
-    lineTotalBaht: line.unitPriceBaht * quantity,
-    quantity,
+    ...normalizedLine,
+    customDetail,
+    lineTotalBaht: normalizedLine.unitPriceBaht * quantity,
     readyForShipment: false,
-    shipmentState: isBlank(line.customDetail)
-      ? "รายละเอียดงานสั่งทำยังไม่ครบ"
-      : "ยังไม่สร้างรอบจัดส่ง",
+    shipmentState: complete
+      ? "ยังไม่สร้างรอบจัดส่ง"
+      : "รายละเอียดงานสั่งทำยังไม่ครบ",
   };
+}
+
+function buildCustomWorkSummary(
+  line: Pick<
+    OrderEntryCustomWorkLine,
+    | "colorDetail"
+    | "coloringDetail"
+    | "materialDetail"
+    | "rakSamukDetail"
+    | "sizeDetail"
+    | "woodworkDetail"
+  >,
+): string {
+  const parts = [
+    line.woodworkDetail,
+    line.coloringDetail,
+    line.rakSamukDetail,
+    line.sizeDetail ? `ขนาด ${line.sizeDetail}` : undefined,
+    line.materialDetail ? `วัสดุ ${line.materialDetail}` : undefined,
+    line.colorDetail ? `สี ${line.colorDetail}` : undefined,
+  ].filter(Boolean);
+
+  return parts.length > 0 ? `รายละเอียดงานสั่งทำ: ${parts.join(" / ")}` : "";
 }
 
 function getReadyStockOption(optionId: string): ReadyStockOption | undefined {
   return readyStockOptions.find((option) => option.id === optionId);
+}
+
+function getCustomWorkDisplayTitle(
+  workName: string,
+  lineNumber: number,
+): string {
+  return workName.trim().length > 0
+    ? workName.trim()
+    : `งานสั่งทำยังไม่ระบุชื่อ ${lineNumber}`;
 }
 
 function nextLineNumber(ids: string[], prefix: string): number {
@@ -617,6 +984,12 @@ function normalizeQuantity(quantity: number): number {
   }
 
   return Math.max(1, Math.floor(quantity));
+}
+
+function normalizeOptionalText(value: string | undefined): string | undefined {
+  const normalized = value?.trim();
+
+  return normalized ? normalized : undefined;
 }
 
 function stripCustomDetailPrefix(value: string): string {

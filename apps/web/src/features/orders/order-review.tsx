@@ -335,9 +335,11 @@ function toCustomWorkReviewLineCard(
       isBlank(line.deliveryDate ?? detail.deliveryDate));
 
   return {
-    customDetail: detailText
-      ? `รายละเอียดงานสั่งทำ: ${detailText}`
-      : "รายละเอียดงานสั่งทำยังไม่ครบ",
+    customDetail: hasIncompleteDetail
+      ? detailText
+        ? `รายละเอียดงานสั่งทำยังไม่ครบ: ${detailText}`
+        : "รายละเอียดงานสั่งทำยังไม่ครบ"
+      : `รายละเอียดงานสั่งทำ: ${detailText}`,
     deliveryDate: line.deliveryDate ?? detail.deliveryDate,
     editable: true,
     id: line.id,

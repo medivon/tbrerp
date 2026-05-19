@@ -1,33 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle, PenLine, Trash2 } from "lucide-react";
 import { Button, StatusChip } from "@thaiboran/ui";
 
-import type {
-  OrderEntryCustomWorkLine,
-  OrderEntryReadyStockLine,
-  ReadyStockOption,
-} from "@/features/orders/order-entry-state";
 import { formatBaht } from "@/features/orders/fixtures/orders";
+import {
+  buildCustomWorkProductionDetail,
+  getCustomWorkLineMissingFields,
+  type OrderEntryCustomWorkLine,
+  type OrderEntryReadyStockLine,
+} from "@/features/orders/order-entry-state";
 
 export function OrderEntryLineEditor({
   customLines,
-  onCustomDetailChange,
   onCustomQuantityChange,
+  onEditCustomLine,
   onReadyQuantityChange,
-  onReadySkuChange,
   onRemoveLine,
-  readyOptions,
   readyStockLines,
 }: {
   customLines: OrderEntryCustomWorkLine[];
-  onCustomDetailChange: (lineId: string, value: string) => void;
   onCustomQuantityChange: (lineId: string, quantity: number) => void;
+  onEditCustomLine: (lineId: string) => void;
   onReadyQuantityChange: (lineId: string, quantity: number) => void;
-  onReadySkuChange: (lineId: string, optionId: string) => void;
   onRemoveLine: (lineId: string) => void;
-  readyOptions: ReadyStockOption[];
   readyStockLines: OrderEntryReadyStockLine[];
 }) {
   const hasNoLines = readyStockLines.length === 0 && customLines.length === 0;
@@ -48,15 +45,13 @@ export function OrderEntryLineEditor({
           line={line}
           onQuantityChange={onReadyQuantityChange}
           onRemoveLine={onRemoveLine}
-          onSkuChange={onReadySkuChange}
-          readyOptions={readyOptions}
         />
       ))}
       {customLines.map((line) => (
         <CustomWorkLineEditor
           key={line.id}
           line={line}
-          onCustomDetailChange={onCustomDetailChange}
+          onEditCustomLine={onEditCustomLine}
           onQuantityChange={onCustomQuantityChange}
           onRemoveLine={onRemoveLine}
         />
@@ -69,17 +64,12 @@ function ReadyStockLineEditor({
   line,
   onQuantityChange,
   onRemoveLine,
-  onSkuChange,
-  readyOptions,
 }: {
   line: OrderEntryReadyStockLine;
   onQuantityChange: (lineId: string, quantity: number) => void;
   onRemoveLine: (lineId: string) => void;
-  onSkuChange: (lineId: string, optionId: string) => void;
-  readyOptions: ReadyStockOption[];
 }) {
   const quantityId = `${line.id}-quantity`;
-  const skuId = `${line.id}-sku`;
 
   return (
     <article
@@ -113,26 +103,7 @@ function ReadyStockLineEditor({
         </div>
 
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_140px]">
-          <label
-            className="grid gap-1 text-sm font-bold text-foreground"
-            htmlFor={skuId}
-          >
-            สินค้า / SKU
-            <select
-              className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-              id={skuId}
-              onChange={(event) => onSkuChange(line.id, event.target.value)}
-              value={line.optionId}
-            >
-              {readyOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.productModelName} / {option.color} / {option.skuCode}{" "}
-                  / ขายได้ {option.sellableStock} ชิ้น
-                </option>
-              ))}
-            </select>
-          </label>
-
+          <ReadOnlyLineFact label="สินค้า / SKU" value={line.skuCode} />
           <label
             className="grid gap-1 text-sm font-bold text-foreground"
             htmlFor={quantityId}
@@ -172,17 +143,18 @@ function ReadyStockLineEditor({
 
 function CustomWorkLineEditor({
   line,
-  onCustomDetailChange,
+  onEditCustomLine,
   onQuantityChange,
   onRemoveLine,
 }: {
   line: OrderEntryCustomWorkLine;
-  onCustomDetailChange: (lineId: string, value: string) => void;
+  onEditCustomLine: (lineId: string) => void;
   onQuantityChange: (lineId: string, quantity: number) => void;
   onRemoveLine: (lineId: string) => void;
 }) {
   const quantityId = `${line.id}-quantity`;
-  const detailId = `${line.id}-detail`;
+  const missingFields = getCustomWorkLineMissingFields(line);
+  const isComplete = missingFields.length === 0;
 
   return (
     <article
@@ -194,7 +166,9 @@ function CustomWorkLineEditor({
       <div className="min-w-0 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <StatusChip variant="revision">งานสั่งทำ</StatusChip>
-          <StatusChip variant="neutral">{line.shipmentState}</StatusChip>
+          <StatusChip variant={isComplete ? "neutral" : "warning"}>
+            {line.shipmentState}
+          </StatusChip>
           <StatusChip variant="revision">จะสร้าง JOB-O / งานลูกค้า</StatusChip>
         </div>
 
@@ -203,10 +177,18 @@ function CustomWorkLineEditor({
             {line.title}
           </h3>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            กำหนดส่ง {line.deliveryDate ?? "ยังไม่ระบุ"} • {line.materialDetail}{" "}
-            • {line.colorDetail}
+            กำหนดส่ง {line.deliveryDate ?? "ยังไม่ระบุ"} •{" "}
+            {line.materialDetail || "ยังไม่ระบุวัสดุ"} •{" "}
+            {line.colorDetail || "ยังไม่ระบุสี"}
           </p>
         </div>
+
+        {!isComplete ? (
+          <p className="inline-flex items-start gap-2 rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
+            <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+            ยังไม่ครบ: {missingFields.join(", ")}
+          </p>
+        ) : null}
 
         <div className="grid gap-3 md:grid-cols-[140px_minmax(0,1fr)]">
           <label
@@ -227,21 +209,29 @@ function CustomWorkLineEditor({
             />
           </label>
 
-          <label
-            className="grid gap-1 text-sm font-bold text-foreground"
-            htmlFor={detailId}
-          >
-            รายละเอียดงานสั่งทำ
-            <textarea
-              className="min-h-24 rounded-md border border-border bg-surface px-3 py-2 text-sm font-semibold leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-              id={detailId}
-              onChange={(event) =>
-                onCustomDetailChange(line.id, event.target.value)
-              }
-              placeholder="ระบุรายละเอียดผลิต ขนาด สี วัสดุ และลายตกแต่ง"
-              value={line.customDetail}
-            />
-          </label>
+          <div className="grid gap-2">
+            <p className="text-sm font-bold text-foreground">
+              รายละเอียดงานสั่งทำ
+            </p>
+            <div className="grid gap-2 lg:grid-cols-3">
+              <DetailBlock
+                label="รายละเอียดช่างไม้"
+                value={line.woodworkDetail}
+              />
+              <DetailBlock
+                label="รายละเอียดฝ่ายสี/ตกแต่ง"
+                value={line.coloringDetail}
+              />
+              <DetailBlock
+                label="รายละเอียดรักสมุก"
+                value={line.rakSamukDetail}
+              />
+            </div>
+            <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm leading-6 text-foreground">
+              {buildCustomWorkProductionDetail(line) ||
+                "ยังไม่มีรายละเอียดผลิต"}
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -249,16 +239,70 @@ function CustomWorkLineEditor({
           <StatusChip variant="neutral">รูปสำหรับช่างไม้</StatusChip>
           <StatusChip variant="neutral">รูปฝ่ายสี/ตกแต่ง</StatusChip>
           <StatusChip variant="neutral">รูปรักสมุก</StatusChip>
+          <StatusChip variant={line.referenceImageNote ? "success" : "warning"}>
+            {line.referenceImageNote
+              ? "มีรูปอ้างอิง fixture"
+              : "ยังไม่มีรูปอ้างอิง"}
+          </StatusChip>
         </div>
       </div>
 
-      <LineActions
-        lineTotalBaht={line.lineTotalBaht}
-        onRemoveLine={() => onRemoveLine(line.id)}
-        removeLabel={`ลบรายการ ${line.title}`}
-        unitPriceBaht={line.unitPriceBaht}
-      />
+      <div className="grid gap-3 xl:justify-items-end">
+        <LineTotal
+          lineTotalBaht={line.lineTotalBaht}
+          unitPriceBaht={line.unitPriceBaht}
+        />
+        <Button
+          onClick={() => onEditCustomLine(line.id)}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <PenLine aria-hidden className="mr-2 h-4 w-4" />
+          แก้ไขรายละเอียด
+        </Button>
+        <Button
+          aria-label={`ลบรายการ ${line.title}`}
+          onClick={() => onRemoveLine(line.id)}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <Trash2 aria-hidden className="mr-2 h-4 w-4" />
+          ลบรายการ
+        </Button>
+      </div>
     </article>
+  );
+}
+
+function ReadOnlyLineFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid gap-1 text-sm font-bold text-foreground">
+      {label}
+      <div className="flex min-h-10 items-center rounded-md border border-border bg-subtle px-3 text-sm font-semibold text-foreground">
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function DetailBlock({ label, value }: { label: string; value: string }) {
+  const hasValue = value.trim().length > 0;
+
+  return (
+    <div
+      className={`rounded-md border px-3 py-2 text-sm leading-6 ${
+        hasValue
+          ? "border-border bg-surface text-foreground"
+          : "border-[#FAD980] bg-[#FEF3C7] text-[#92400E]"
+      }`}
+    >
+      <p className="font-bold">{label}</p>
+      <p className="mt-1 font-semibold">
+        {hasValue ? value : `${label}ยังไม่ครบ`}
+      </p>
+    </div>
   );
 }
 
@@ -283,14 +327,7 @@ function LineActions({
 }) {
   return (
     <div className="grid gap-3 xl:justify-items-end">
-      <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
-        <p className="font-extrabold text-foreground">
-          {formatBaht(lineTotalBaht)}
-        </p>
-        <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
-          หน่วยละ {formatBaht(unitPriceBaht)}
-        </p>
-      </div>
+      <LineTotal lineTotalBaht={lineTotalBaht} unitPriceBaht={unitPriceBaht} />
       <Button
         aria-label={removeLabel}
         onClick={onRemoveLine}
@@ -301,6 +338,25 @@ function LineActions({
         <Trash2 aria-hidden className="mr-2 h-4 w-4" />
         ลบรายการ
       </Button>
+    </div>
+  );
+}
+
+function LineTotal({
+  lineTotalBaht,
+  unitPriceBaht,
+}: {
+  lineTotalBaht: number;
+  unitPriceBaht: number;
+}) {
+  return (
+    <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
+      <p className="font-extrabold text-foreground">
+        {formatBaht(lineTotalBaht)}
+      </p>
+      <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
+        หน่วยละ {formatBaht(unitPriceBaht)}
+      </p>
     </div>
   );
 }

@@ -18,14 +18,43 @@ import {
   setOrderEntryMemoryState,
 } from "@/features/orders/order-entry-memory-store";
 import {
-  addReadyStockLine,
+  addReadyStockLineFromSelection,
   createInitialOrderEntryState,
   markOrderEntryInMemory,
-  updateReadyStockLineOption,
 } from "@/features/orders/order-entry-state";
 import { getFixtureUser } from "@/shared/fixtures/users";
 
 const currentUser = getFixtureUser("admin-sales");
+
+function fillCustomWorkDialog(dialog: HTMLElement) {
+  fireEvent.change(within(dialog).getByLabelText("ชื่องาน / รายการ"), {
+    target: { value: "ตู้เตี้ยไม้สักสั่งทำ" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("จำนวน"), {
+    target: { value: "2" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("ขนาด / หมายเหตุขนาด"), {
+    target: { value: "180 x 45 x 90 ซม." },
+  });
+  fireEvent.change(within(dialog).getByLabelText("กำหนดส่งที่คุยไว้"), {
+    target: { value: "30 มิ.ย. 67" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("สี / งานตกแต่งหลัก"), {
+    target: { value: "โอ๊คอ่อน เคลือบด้าน" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("รายละเอียดช่างไม้"), {
+    target: { value: "ทำโครงตู้เตี้ย บานเลื่อน และชั้นวางสองระดับ" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("รายละเอียดฝ่ายสี/ตกแต่ง"), {
+    target: { value: "ทำสีโอ๊คอ่อน เคลือบด้าน ให้เห็นลายไม้" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("รายละเอียดรักสมุก"), {
+    target: { value: "ไม่มีงานรักสมุกสำหรับรายการนี้" },
+  });
+  fireEvent.change(within(dialog).getByLabelText("รูปอ้างอิง"), {
+    target: { value: "ใช้ภาพตู้เตี้ย fixture เป็น reference" },
+  });
+}
 
 describe("Order read/create foundation", () => {
   beforeEach(() => {
@@ -71,7 +100,34 @@ describe("Order read/create foundation", () => {
     );
   });
 
-  it("adds and edits ready-stock lines in the Order Create in-memory state", () => {
+  it("opens customer selection modal and updates Order Create state", () => {
+    render(<OrderCreate currentUser={currentUser} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "เลือกลูกค้า" }));
+
+    const dialog = screen.getByRole("dialog", { name: "เลือกลูกค้า" });
+    expect(within(dialog).getByLabelText("ค้นหาลูกค้า")).toBeTruthy();
+
+    fireEvent.change(within(dialog).getByLabelText("ค้นหาลูกค้า"), {
+      target: { value: "ปริญญา" },
+    });
+    fireEvent.click(
+      within(dialog).getByRole("option", {
+        name: /คุณปริญญา ตัวอย่าง/,
+      }),
+    );
+
+    expect(screen.queryByRole("dialog", { name: "เลือกลูกค้า" })).toBeNull();
+    expect(
+      screen.getAllByDisplayValue("คุณปริญญา ตัวอย่าง").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("คุณปริญญา ตัวอย่าง").length).toBeGreaterThan(0);
+    expect(
+      screen.queryByRole("button", { name: "เพิ่มลูกค้าในออเดอร์" }),
+    ).toBeNull();
+  });
+
+  it("opens product search modal and adds ready-stock lines from SKU selection", () => {
     render(<OrderCreate currentUser={currentUser} />);
 
     expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
@@ -80,17 +136,30 @@ describe("Order read/create foundation", () => {
       screen.getByRole("button", { name: "เพิ่มสินค้าพร้อมส่ง" }),
     );
 
+    const dialog = screen.getByRole("dialog", {
+      name: "เลือกสินค้าพร้อมส่ง",
+    });
+    expect(within(dialog).getByLabelText("ค้นหาสินค้าพร้อมส่ง")).toBeTruthy();
+    expect(within(dialog).getByText("ขายได้ 2 ชิ้น")).toBeTruthy();
+    expect(within(dialog).getByText("หมด")).toBeTruthy();
+
+    fireEvent.change(
+      within(dialog).getByLabelText(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง/),
+      {
+        target: { value: "3" },
+      },
+    );
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: /เพิ่มรายการ โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/,
+      }),
+    );
+
     const addedLine = within(screen.getByTestId("entry-ready-added-1"));
-    expect(addedLine.getByText("โต๊ะคอนโซลแกะลายพร้อมส่ง")).toBeTruthy();
-    expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
-
-    fireEvent.change(addedLine.getByLabelText("สินค้า / SKU"), {
-      target: { value: "ready-side-table-dark" },
-    });
-    fireEvent.change(addedLine.getByLabelText("จำนวน"), {
-      target: { value: "3" },
-    });
-
+    expect(addedLine.getByText("โต๊ะข้างไม้สักพร้อมส่ง")).toBeTruthy();
+    expect(
+      screen.queryByRole("dialog", { name: "เลือกสินค้าพร้อมส่ง" }),
+    ).toBeNull();
     expect(addedLine.getAllByText(/TBR-SID-DRK/).length).toBeGreaterThan(0);
     expect(screen.getByText(/TBR-SID-DRK \/ วอลนัทเข้ม/)).toBeTruthy();
     expect(screen.getByText("3 รายการ / 6 ชิ้น")).toBeTruthy();
@@ -107,42 +176,94 @@ describe("Order read/create foundation", () => {
       target: { value: "ชำระเต็มจำนวนก่อนจัดส่ง" },
     });
     expect(screen.getAllByText("ครบ").length).toBeGreaterThan(0);
+
+    fireEvent.click(
+      addedLine.getByRole("button", {
+        name: "ลบรายการ โต๊ะข้างไม้สักพร้อมส่ง",
+      }),
+    );
+
+    expect(screen.queryByText("โต๊ะข้างไม้สักพร้อมส่ง")).toBeNull();
+    expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
   });
 
-  it("adds, edits, and removes custom-work lines in the Order Create in-memory state", () => {
+  it("opens structured custom-work entry and keeps incomplete details visibly blocked", () => {
     render(<OrderCreate currentUser={currentUser} />);
 
     fireEvent.click(screen.getByRole("button", { name: "เพิ่มงานสั่งทำ" }));
 
-    const addedLine = within(screen.getByTestId("entry-custom-added-1"));
-    expect(addedLine.getByText("งานสั่งทำเพิ่มใหม่ 1")).toBeTruthy();
-    expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
-    expect(screen.getByText("1 รายการยังไม่ครบ")).toBeTruthy();
-
-    fireEvent.change(addedLine.getByLabelText("รายละเอียดงานสั่งทำ"), {
-      target: { value: "เพิ่มลิ้นชักซ่อน สีโอ๊คอ่อน ขนาดตามพื้นที่จริง" },
+    const dialog = screen.getByRole("dialog", {
+      name: "รายละเอียดงานสั่งทำ",
     });
-    fireEvent.change(addedLine.getByLabelText("จำนวน"), {
-      target: { value: "2" },
+    expect(within(dialog).getByLabelText("ชื่องาน / รายการ")).toBeTruthy();
+    expect(within(dialog).getByLabelText("รายละเอียดช่างไม้")).toBeTruthy();
+    expect(
+      within(dialog).getByLabelText("รายละเอียดฝ่ายสี/ตกแต่ง"),
+    ).toBeTruthy();
+    expect(within(dialog).getByLabelText("รายละเอียดรักสมุก")).toBeTruthy();
+    expect(within(dialog).getByLabelText("รูปอ้างอิง")).toBeTruthy();
+
+    fireEvent.change(within(dialog).getByLabelText("ชื่องาน / รายการ"), {
+      target: { value: "ตู้เตี้ยไม้สักสั่งทำ" },
     });
-
-    expect(screen.queryByText("1 รายการยังไม่ครบ")).toBeNull();
-    expect(screen.getByText("3 รายการ / 5 ชิ้น")).toBeTruthy();
-
     fireEvent.click(
-      addedLine.getByRole("button", { name: "ลบรายการ งานสั่งทำเพิ่มใหม่ 1" }),
+      within(dialog).getByRole("button", { name: "เพิ่มรายการสั่งทำ" }),
     );
 
-    expect(screen.queryByText("งานสั่งทำเพิ่มใหม่ 1")).toBeNull();
+    const addedLine = within(screen.getByTestId("entry-custom-added-1"));
+    expect(addedLine.getByText("ตู้เตี้ยไม้สักสั่งทำ")).toBeTruthy();
+    expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
+    expect(screen.getByText("1 รายการยังไม่ครบ")).toBeTruthy();
+    expect(screen.getAllByText(/ยังไป Review ไม่ได้/).length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen
+        .getAllByRole("button", { name: "ตรวจสอบก่อนสร้างออเดอร์" })
+        .some((button) => (button as HTMLButtonElement).disabled),
+    ).toBe(true);
+  });
+
+  it("adds complete custom-work detail, edits quantity, and removes the line", () => {
+    render(<OrderCreate currentUser={currentUser} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "เพิ่มงานสั่งทำ" }));
+
+    const dialog = screen.getByRole("dialog", {
+      name: "รายละเอียดงานสั่งทำ",
+    });
+
+    fillCustomWorkDialog(dialog);
+    fireEvent.click(
+      within(dialog).getByRole("button", { name: "เพิ่มรายการสั่งทำ" }),
+    );
+
+    const addedLine = within(screen.getByTestId("entry-custom-added-1"));
+    expect(addedLine.getByText("ตู้เตี้ยไม้สักสั่งทำ")).toBeTruthy();
+    expect(screen.getByText("3 รายการ / 5 ชิ้น")).toBeTruthy();
+    expect(screen.queryByText("1 รายการยังไม่ครบ")).toBeNull();
+
+    fireEvent.change(addedLine.getByLabelText("จำนวน"), {
+      target: { value: "3" },
+    });
+
+    expect(screen.getByText("3 รายการ / 6 ชิ้น")).toBeTruthy();
+
+    fireEvent.click(
+      addedLine.getByRole("button", { name: "ลบรายการ ตู้เตี้ยไม้สักสั่งทำ" }),
+    );
+
+    expect(screen.queryByText("ตู้เตี้ยไม้สักสั่งทำ")).toBeNull();
     expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
   });
 
   it("shows current in-memory Order Create state on Review", () => {
-    const withReadyLine = addReadyStockLine(createInitialOrderEntryState());
-    const withSelectedSku = updateReadyStockLineOption(
-      withReadyLine,
-      "entry-ready-added-1",
-      "ready-side-table-dark",
+    const withSelectedSku = addReadyStockLineFromSelection(
+      createInitialOrderEntryState(),
+      {
+        optionId: "ready-side-table-dark",
+        quantity: 3,
+      },
     );
 
     setOrderEntryMemoryState(markOrderEntryInMemory(withSelectedSku));
@@ -152,8 +273,10 @@ describe("Order read/create foundation", () => {
     expect(
       screen.getByText("ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"),
     ).toBeTruthy();
-    expect(screen.getByText(/TBR-SID-DRK/)).toBeTruthy();
-    expect(screen.getByText(/โต๊ะข้างไม้สักพร้อมส่ง/)).toBeTruthy();
+    expect(screen.getAllByText(/TBR-SID-DRK/).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/โต๊ะข้างไม้สักพร้อมส่ง/).length,
+    ).toBeGreaterThan(0);
   });
 
   it("labels direct Review data as fixture-backed when no in-memory edit exists", () => {
@@ -256,7 +379,7 @@ describe("Order read/create foundation", () => {
       ),
     ).toBeTruthy();
     expect(
-      screen.getAllByText("รายละเอียดงานสั่งทำยังไม่ครบ").length,
+      screen.getAllByText(/รายละเอียดงานสั่งทำยังไม่ครบ/).length,
     ).toBeGreaterThan(0);
     expect(screen.queryByText(/ลายแกะดอกพิกุล มีไฟในตู้/)).toBeNull();
 

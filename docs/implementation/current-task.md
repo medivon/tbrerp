@@ -1,19 +1,21 @@
 # Current Implementation Task
 
 Status: ready for review
-Sector: Sector 3 - Order Read/Create Foundation interaction fix
+Sector: Sector 3 - Order Read/Create Foundation modal interaction fix
 Task owner: Codex implementer
 Date started: 2026-05-19
 Date completed: 2026-05-19
 
 ## Goal
 
-Fix the Order Create/Edit in-memory interaction foundation so adding, editing, and removing ready-stock/custom-work lines updates the visible Order Lines section and completeness summary immediately, and so Order Review clearly receives or falls back to fixture-backed in-memory data without implying real persistence.
+Repair the Order Create/Edit interaction foundation so customer selection, ready-stock selection, and custom-work detail entry use visible modal/structured entry surfaces, update the current in-memory Order state immediately, and continue to keep Review fixture/in-memory only without implying real persistence.
 
 ## Scope
 
-- Add React in-memory state behavior for `เพิ่มสินค้าพร้อมส่ง` and `เพิ่มงานสั่งทำ`.
-- Update visible summary/completeness state when quantity, selected SKU/color, custom-work detail, or Payment Term changes.
+- Make `เลือกลูกค้า` open a customer search/select modal and remove the `เพิ่มลูกค้าในออเดอร์` action for this sector.
+- Make `เพิ่มสินค้าพร้อมส่ง` open a Product/SKU search modal and add a ready-stock line only after selection/quantity confirmation.
+- Make `เพิ่มงานสั่งทำ` open a structured custom-work entry modal with woodwork, coloring/decorating, and Rak Samuk instruction fields.
+- Update visible summary/completeness state when customer, quantity, selected SKU/color, structured custom-work detail, or Payment Term changes.
 - Keep Order Review read-only and clearly marked as in-memory or fixture-backed for this sector.
 - Add focused tests for the create/edit in-memory interactions and Review handoff/fallback behavior.
 
@@ -22,15 +24,17 @@ Fix the Order Create/Edit in-memory interaction foundation so adding, editing, a
 - Mood: premium operational ERP Order workbench, Thai-first, calm, and practical for admin entry work.
 - Density: preserve the dense editor plus sticky summary pattern; line editors should be compact but readable with labels on every control.
 - Shell/palette: keep the existing dark/navy app shell and light readable work surfaces; use restrained chips and warnings for fixture/in-memory state.
+- Modal/workbench behavior: selection happens in focused, searchable, keyboard-friendly dialogs with clear row hierarchy, stock labels, quantity controls, and visible close/cancel paths.
+- Custom-work behavior: structured production detail appears as department instruction blocks, not a plain text bucket; incomplete fields are visible and block Review/confirmation without creating `JOB-O`.
 - Component polish: explicit cursor/hover/focus states, stable line-card controls, clear disabled/no-real-persistence language, and readable Thai wrapping.
 - Responsive behavior: editor controls should stack cleanly on phone/tablet without horizontal scroll; summary remains usable when it moves below content.
 - What not to do: no marketing UI, no decorative gradients/animation, no real save/confirmation side effects, no hidden sensitive data, and no invented workflow states.
 
 ## UI UX Pro Max Guidance Used
 
-- Design-system query: `ERP order create edit dense Thai operations workbench`.
-- React stack query: `React in-memory form state responsive dashboard accessibility`.
-- Applied guidance: data-dense dashboard/workbench hierarchy, labeled form controls, lazy local state initialization, clear hover/focus/cursor states, and responsive stacked controls.
+- Design-system query: `ERP order entry modal search product customer custom work dense Thai`.
+- React stack query: `modal list search form accessibility focus state React`.
+- Applied guidance: data-dense dashboard/workbench hierarchy, focused searchable modal patterns, labeled form controls, keyboard/focus handling, clear hover/focus/cursor states, and responsive stacked controls.
 
 ## Out of Scope
 
@@ -74,9 +78,13 @@ Fix the Order Create/Edit in-memory interaction foundation so adding, editing, a
 
 ## Behavior Implemented
 
-- `เพิ่มสินค้าพร้อมส่ง` appends a ready-stock line to the current browser-memory Order entry state.
-- `เพิ่มงานสั่งทำ` appends a custom-work line with an embedded `รายละเอียดงานสั่งทำ` editor.
-- Quantity edits, SKU/color selection, custom-work detail edits, line removal, and Payment Term edits recalculate summary counts, quantity, totals, warnings, and completeness text.
+- `เลือกลูกค้า` opens a customer search/select modal backed by safe fixture customers; selecting one updates the customer section, recipient/address draft, and summary completeness.
+- `เพิ่มลูกค้าในออเดอร์` is removed from Order Create because new customer creation is excluded from this sector.
+- `เพิ่มสินค้าพร้อมส่ง` opens a Product/SKU search modal with product imagery/placeholders, color/SKU, sellable stock labels, quantity controls, and disabled sold-out rows.
+- Confirming a product modal selection adds a ready-stock line to the current browser-memory Order entry state.
+- `เพิ่มงานสั่งทำ` opens a structured custom-work entry modal with work name, quantity, dimensions, `รายละเอียดช่างไม้`, `รายละเอียดฝ่ายสี/ตกแต่ง`, `รายละเอียดรักสมุก`, reference image placeholder, and internal note.
+- Confirming a custom-work modal adds or updates a custom-work line; incomplete custom-work detail remains visibly incomplete and blocks Review.
+- Quantity edits, structured custom-work detail edits, line removal, and Payment Term edits recalculate summary counts, quantity, totals, warnings, and completeness text.
 - Order Review reads the current in-memory Order entry state after client navigation and labels direct/fallback data as fixture-backed.
 - Review remains a mock/foundation confirmation surface and clearly says it does not write to the database.
 
@@ -86,6 +94,10 @@ Fix the Order Create/Edit in-memory interaction foundation so adding, editing, a
 - `apps/web/src/features/orders/order-review.tsx`
 - `apps/web/src/features/orders/order-entry-state.ts`
 - `apps/web/src/features/orders/order-entry-memory-store.ts`
+- `apps/web/src/features/orders/components/customer-select-modal.tsx`
+- `apps/web/src/features/orders/components/product-select-modal.tsx`
+- `apps/web/src/features/orders/components/custom-work-entry-modal.tsx`
+- `apps/web/src/features/orders/components/order-entry-modal-shell.tsx`
 - `apps/web/src/features/orders/components/order-entry-line-editor.tsx`
 - `apps/web/src/features/orders/orders.test.tsx`
 - `apps/web/e2e/sector-3-orders-smoke.spec.ts`
@@ -99,7 +111,7 @@ Fix the Order Create/Edit in-memory interaction foundation so adding, editing, a
 - `pnpm test` - passed
 - `pnpm format:check` - passed after formatting the edited Order files
 - `pnpm build` - passed
-- `pnpm test:e2e` - passed, 180 Playwright tests
+- `CI=1 pnpm exec playwright test --pass-with-no-tests --workers=1` - passed, 180 Playwright tests
 - Note: the first full e2e attempt failed because Playwright reused a stale dev server after `next build` rewrote `.next`; the stale server showed a Next runtime missing-chunk error. The stale server was stopped, generated `.next` was cleared, and the clean rerun passed.
 
 ## Known Gaps or Blockers
@@ -111,6 +123,8 @@ Fix the Order Create/Edit in-memory interaction foundation so adding, editing, a
 ## Reviewer Focus
 
 - Verify Order Create interactions are local browser-memory only and do not imply database persistence.
+- Verify customer selection modal, Product/SKU selection modal, and structured custom-work modal are not dead controls and close predictably.
 - Verify ready-stock/custom-work add/edit/remove behavior updates both line list and summary.
+- Verify incomplete custom-work detail is visible and blocks Review without creating `JOB-O`.
 - Verify Review clearly distinguishes current in-memory data from fixture fallback data.
 - Verify no real Order ID, JOB-O, reservation, Shipment, Payment/COD action, or sensitive finance/cost/profit/payout data is introduced.

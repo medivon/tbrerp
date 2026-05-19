@@ -78,22 +78,52 @@ for (const viewport of viewports) {
 
       await expect(page.getByText("2 รายการ / 3 ชิ้น")).toBeVisible();
       await page.getByRole("button", { name: "เพิ่มสินค้าพร้อมส่ง" }).click();
+      const productDialog = page.getByRole("dialog", {
+        name: "เลือกสินค้าพร้อมส่ง",
+      });
+      await expect(productDialog).toBeVisible();
+      await productDialog.getByLabel(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง/).fill("3");
+      await productDialog
+        .getByRole("button", {
+          name: /เพิ่มรายการ โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/,
+        })
+        .click();
       await expect(page.getByTestId("entry-ready-added-1")).toBeVisible();
-      await expect(page.getByText("3 รายการ / 4 ชิ้น")).toBeVisible();
-
-      await page
-        .getByTestId("entry-ready-added-1")
-        .getByLabel("จำนวน")
-        .fill("3");
       await expect(page.getByText("3 รายการ / 6 ชิ้น")).toBeVisible();
 
       await page.getByRole("button", { name: "เพิ่มงานสั่งทำ" }).click();
+      const customDialog = page.getByRole("dialog", {
+        name: "รายละเอียดงานสั่งทำ",
+      });
+      await expect(customDialog.getByLabel("รายละเอียดช่างไม้")).toBeVisible();
+      await customDialog
+        .getByLabel("ชื่องาน / รายการ")
+        .fill("ตู้เตี้ยไม้สักสั่งทำ");
+      await customDialog.getByLabel("จำนวน").fill("2");
+      await customDialog
+        .getByLabel("ขนาด / หมายเหตุขนาด")
+        .fill("180 x 45 x 90 ซม.");
+      await customDialog.getByLabel("กำหนดส่งที่คุยไว้").fill("30 มิ.ย. 67");
+      await customDialog
+        .getByLabel("สี / งานตกแต่งหลัก")
+        .fill("โอ๊คอ่อน เคลือบด้าน");
+      await customDialog
+        .getByLabel("รายละเอียดช่างไม้")
+        .fill("ทำโครงตู้เตี้ย บานเลื่อน และชั้นวางสองระดับ");
+      await customDialog
+        .getByLabel("รายละเอียดฝ่ายสี/ตกแต่ง")
+        .fill("ทำสีโอ๊คอ่อน เคลือบด้าน ให้เห็นลายไม้");
+      await customDialog
+        .getByLabel("รายละเอียดรักสมุก")
+        .fill("ไม่มีงานรักสมุกสำหรับรายการนี้");
+      await customDialog
+        .getByLabel("รูปอ้างอิง")
+        .fill("ใช้ภาพตู้เตี้ย fixture เป็น reference");
+      await customDialog
+        .getByRole("button", { name: "เพิ่มรายการสั่งทำ" })
+        .click();
       await expect(page.getByTestId("entry-custom-added-1")).toBeVisible();
-      await expect(page.getByText("4 รายการ / 7 ชิ้น")).toBeVisible();
-      await page
-        .getByTestId("entry-custom-added-1")
-        .getByLabel("รายละเอียดงานสั่งทำ")
-        .fill("เพิ่มตู้เตี้ยไม้สัก สีโอ๊คอ่อน ขนาดตามพื้นที่จริง");
+      await expect(page.getByText("4 รายการ / 8 ชิ้น")).toBeVisible();
       await expect(page.getByText("1 รายการยังไม่ครบ")).toHaveCount(0);
 
       await page
@@ -104,7 +134,7 @@ for (const viewport of viewports) {
       await expect(
         page.getByText("ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"),
       ).toBeVisible();
-      await expect(page.getByText("งานสั่งทำเพิ่มใหม่ 1")).toBeVisible();
+      await expect(page.getByText("ตู้เตี้ยไม้สักสั่งทำ")).toBeVisible();
     });
 
     test("can confirm valid fixture Review without a second modal", async ({
