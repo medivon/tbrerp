@@ -113,8 +113,8 @@ export function ProductSelectModal({
                   </p>
                   {soldOut ? (
                     <p className="rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
-                      สินค้านี้หมด จึงยังไม่ให้เลือกจาก modal รอบนี้
-                      และไม่มีการจองสต๊อกจริง
+                      สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้เพื่อให้ Review
+                      แสดงคำเตือนสต๊อกก่อนยืนยัน ไม่มีการจองสต๊อกจริงในรอบนี้
                     </p>
                   ) : null}
                 </div>
@@ -144,7 +144,6 @@ export function ProductSelectModal({
                   <Button
                     aria-label={`เพิ่มรายการ ${option.productModelName} ${option.skuCode}`}
                     className="w-full sm:w-auto lg:w-full"
-                    disabled={soldOut}
                     onClick={() =>
                       onAdd({
                         optionId: option.id,

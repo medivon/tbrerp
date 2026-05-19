@@ -263,6 +263,42 @@ describe("Order read/create foundation", () => {
     expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
   });
 
+  it("allows sold-out ready-stock selection with a local stock warning", () => {
+    render(<OrderCreate currentUser={currentUser} />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "เพิ่มสินค้าพร้อมส่ง" }),
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: "เลือกสินค้าพร้อมส่ง",
+    });
+
+    fireEvent.change(within(dialog).getByLabelText("ค้นหาสินค้าพร้อมส่ง"), {
+      target: { value: "แดงชาด" },
+    });
+
+    expect(within(dialog).getByText("หมด")).toBeTruthy();
+    expect(
+      within(dialog).getByText(/ยังเพิ่มเป็นรายการได้เพื่อให้ Review/),
+    ).toBeTruthy();
+
+    const addSoldOutButton = within(dialog).getByRole("button", {
+      name: /เพิ่มรายการ ตู้เตี้ยลงรักสมุกพร้อมส่ง TBR-CAB-RAK-RED/,
+    });
+
+    expect((addSoldOutButton as HTMLButtonElement).disabled).toBe(false);
+
+    fireEvent.click(addSoldOutButton);
+
+    const addedLine = within(screen.getByTestId("entry-ready-added-1"));
+    expect(addedLine.getByText("ตู้เตี้ยลงรักสมุกพร้อมส่ง")).toBeTruthy();
+    expect(
+      screen.getAllByText(/จำนวนเกินที่ขายได้: ขายได้ 0 ชิ้น/).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
+  });
+
   it("opens structured custom-work entry and keeps incomplete details visibly blocked", () => {
     render(<OrderCreate currentUser={currentUser} />);
 
