@@ -1,124 +1,125 @@
 # Current Implementation Task
 
 Status: ready for review
-Sector: Sector 3 - Order Read/Create Foundation button workflow and modal polish
+Sector: Sector 4 - Order Confirm + JOB-O Creation
 Task owner: Codex implementer
-Date started: 2026-05-19
-Date completed: 2026-05-19
+Date started: 2026-05-20
 
 ## Goal
 
-Repair Sector 3 Order buttons and controls so anything that looks active produces visible local UI behavior, while future-sector actions remain disabled with visible Thai reasons. Also polish Order Create/Edit selection modals so the ready-stock picker works cleanly on phone widths and the custom-work modal exposes structured image-reference slots without real upload or persistence.
+Complete the fixture-backed Order Review confirmation foundation so a valid Review can confirm into a deterministic confirmed Order result, generate safe read-only `JOB-O` outputs for complete custom-work lines, show ready-stock reservation outcomes, preserve warning acknowledgements, and route/display the resulting Order Detail without database persistence.
 
 ## Scope
 
-- Make Order list search, status filters, shipment filter, clear filters, and pagination work with fixture-only React state.
-- Make Draft Order queue search and clear filters work with fixture-only React state.
-- Keep future mutation actions disabled but show visible reasons, not only `title` tooltips.
-- Let Order Detail shipment selection checkboxes update local UI state before routing to the existing Shipment Builder placeholder route.
-- Polish Order Create/Edit product/custom-work modal behavior without adding persistence or upload.
-- Prevent mobile horizontal overflow in the ready-stock product modal.
-- Add fixture-only custom-work reference-image slots for `รูปหลัก`, `รูปสำหรับช่างไม้`, `รูปสำหรับฝ่ายสี/ตกแต่ง`, and `รูปสำหรับรักสมุก`.
+- Add and polish pure Order confirmation domain logic using fixture/in-memory inputs only.
+- Show Order Review confirmation readiness, blocked reasons, warning acknowledgement, confirmation result, generated `JOB-O` references, ready-stock reservation outcomes, fixture activity events, and Order Detail destination.
+- Show confirmed Order Detail with generated `JOB-O` references and read-first result state.
+- Keep Shipment, Payment/COD, Stock movement, CRM, Finance, Settings, worker queues, and full Job module actions disabled or absent according to current sector boundaries.
+- Verify responsive text wrapping, clipping, and bleeding at Order Review / confirmation result / Order Detail breakpoints.
 
 ## Visual Intent
 
-- Mood: premium operational ERP workbench, Thai-first, dense, and practical for admin scanning.
-- Density: keep tables/cards compact; filters and pagination should feel like real operational tools, not decorative controls.
-- Shell/palette: retain the current dark/navy shell with readable light work surfaces and restrained chips.
-- Button workflow behavior: active controls give immediate visual feedback; blocked controls remain visible only when state-blocked and show clear Thai reasons.
-- Filter behavior: search/filter chips use hover, focus, and selected states that are obvious without animation-heavy treatment.
-- Responsive behavior: filter toolbars wrap cleanly and pagination remains usable on phone/tablet without horizontal overflow.
-- Modal behavior: product and custom-work modals stay dense but readable on phone widths; controls wrap rather than forcing horizontal scroll.
-- Custom-work images: show practical fixture-only image-reference affordances grouped by production use, without implying real upload.
-- What not to do: no marketing UI, no DB/API persistence, no real Draft/Order/JOB-O/Shipment/Payment mutation, no hidden sensitive data, and no invented workflow states.
+- Mood: premium operational ERP workbench, Thai-first, dense, and consequence-focused.
+- Density: keep Order Review and Order Detail compact enough for admin scanning while still making downstream effects obvious.
+- Shell/palette: preserve the current dark/navy shell with readable light work surfaces and restrained warning/success/revision chips.
+- Component polish goals: confirmation consequences should be clearer than decorative summaries; generated `JOB-O` and reservation outcomes should wrap safely and never expose sensitive finance/cost/payout/log data.
+- Responsive behavior: no horizontal page scroll, no text clipping, no text bleeding outside cards/buttons/chips at 375, 768, 1024, and 1440 widths.
+- What not to do: no marketing page, no second confirmation modal, no real persistence, no Prisma/database/API schema, no real stock movement, no Shipment/Payment workflow, no full Job module, and no new business states.
 
 ## UI UX Pro Max Guidance Used
 
-- Design-system query: `ERP order list filters pagination disabled buttons dense Thai operations workbench`.
-- React stack query: `React local filter pagination button workflow accessibility`.
-- Modal design-system query: `ERP order entry mobile modal dense Thai operational dashboard`.
-- React stack query: `responsive modal form input horizontal overflow accessibility`.
-- Applied guidance: data-dense dashboard/workbench hierarchy, visible hover/focus/cursor states, clear disabled-state explanations, stateful filter/pagination controls with Thai-readable wrapping, labeled modal fields, focus-managed dialogs, and mobile controls constrained to avoid horizontal overflow.
+- Design-system query: `ERP order review confirmation job creation responsive text overflow Thai dense operations`.
+- UX query: `text overflow clipping Thai responsive dashboard cards buttons`.
+- React stack query: `React responsive text wrapping cards table accessibility overflow`.
+- Applied guidance: keep text readable and wrapping inside constrained cards/buttons/chips, avoid blind clipping, preserve horizontal scroll only inside intentional table wrappers, and verify responsive widths.
+
+## Source Docs Read
+
+- `AGENTS.md`
+- `docs/implementation/implementer-rules.md`
+- `docs/implementation/sector-plan.md`
+- `docs/implementation/foundation-proposal.md`
+- `docs/implementation/current-task.md`
+- `CONTEXT.md`
+- `docs/adr/*.md`
+- `docs/decision-log.md`
+- `docs/qa-summary.md`
+- `docs/ux-ui/04-interaction-modal-behavior.md`
+- `docs/ux-ui/03-navigation-map.md`
+- `docs/ux-ui/design-system/visual-design-system.md`
+- `docs/ux-ui/design-system/responsive-mobile.md`
+- `docs/ux-ui/design-system/pages/order.md`
+- `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`
+- `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`
+- `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
+- `docs/ux-ui/screens/SCR-ORD-007-order-line-edit.md`
 
 ## Out of Scope
 
-- No database schema, Prisma models, migrations, seed data, API contracts, or real persistence.
-- No real Order record, Draft save, confirmation mutation, JOB-O creation, stock reservation, Shipment creation, Payment/COD action, or finance mutation.
-- No business-rule changes, invented workflow states, unrelated module work, or sensitive finance/cost/profit/payout exposure.
+- No Prisma schema, migrations, database tables, seed data, API contracts, or real persistence.
+- No real Order/Draft/Job/Shipment/Payment/Stock mutation.
+- No Shipment creation, Delivery workflow, Payment/COD action, Product/Stock movement, Material workflow, Customer/CRM implementation, Finance/PV behavior, Settings/Role management, full Job module, or worker queues.
+- No business-rule changes, invented workflow states, sensitive finance/cost/profit/payout exposure, Management Log UI, or Audit Log UI.
 
 ## Permission and Sensitive Data Rules
 
-- Missing-permission navigation and actions are hidden.
-- State-blocked actions are disabled with visible reason.
-- Sensitive fields are omitted before rendering for users without permission.
-- No sensitive data in fixtures, tests, logs, screenshots, exports, or print previews.
+- Missing-permission confirmation access routes to no-access.
+- State-blocked confirmation actions remain disabled with visible Thai reasons.
+- Only Owner, Manager, and Admin/Sales fixture roles can confirm.
+- Sensitive fields are omitted before rendering; no cost, profit, payout, payment evidence, Management Log, or Audit Log appears in fixtures, tests, UI, logs, screenshots, exports, or print previews.
 
 ## Implementation Notes
 
-- State is React/browser memory only for this sector.
-- Order list and Draft queue filters reset locally and do not become saved user preferences.
-- Pagination is fixture-only; no infinite scroll and no server/data fetching.
-- Shipment selection on Order Detail changes only the current UI selection and does not persist selected line IDs.
-- Existing links to implemented or placeholder module pages remain intact.
-- Product selection modal quantity controls use short visible labels with accessible product/SKU context to avoid Thai text forcing phone overflow.
-- Custom-work image slot selection only updates the current modal UI and reference note placeholder; it does not upload, store, or attach files.
-
-## Behavior Implemented
-
-- Order list search filters Order ID, customer/recipient, phones, address, Job ID, product/SKU/work text, shipment fields, status text, and timeline text from fixture data only.
-- Order status chips now toggle a single local status filter, while `รอยืนยันการจัดส่ง` remains a separate shipment-summary filter.
-- `ล้างตัวกรอง`, empty-state reset, page-size selector, and pagination boundary buttons now produce visible local UI state.
-- Draft Order queue search filters Draft No., customer, phone, recipient, item summary, owner, status, and missing-data chips without ever showing real Order IDs.
-- Create/Edit, Review, Order Line Edit, and blocked Order Detail actions now show visible Thai reasons for future-sector disabled behavior.
-- Ready-stock product modal now prevents mobile horizontal overflow, wraps product/SKU text, and keeps the full product/SKU context available to assistive labels.
-- Custom-work modal now shows `รูปอ้างอิงงานสั่งทำ` with fixture-only image slots for `รูปหลัก`, `รูปสำหรับช่างไม้`, `รูปสำหรับฝ่ายสี/ตกแต่ง`, and `รูปสำหรับรักสมุก`, plus visible no-upload/no-persistence language.
-- Order Detail shipment-selection rows now allow local ready-line check/uncheck, keep blocked lines disabled with reason chips, and disable `สร้างรอบจัดส่งจากรายการที่เลือก` when nothing is selected.
-- Shared `PageHeader` action layout now wraps on small screens so visible disabled reasons do not create phone horizontal overflow.
+- Pure confirmation logic lives in `packages/domain/src/order-confirmation.ts`; this task keeps it fixture/dev deterministic and covered by domain tests rather than adding persistence.
+- Confirmation IDs are deterministic fixture/dev IDs only and must remain clearly labeled as non-production.
+- Order Review is the final confirmation surface; `ยืนยันสร้างออเดอร์` must not open a second modal.
+- Stock-insufficient acknowledgement is one inline Review acknowledgement and creates fixture Activity Log-like events only.
+- Ready-stock reservation outcomes are directional read models only; they do not update persistent stock quantity or create Stock Movement.
+- `JOB-O` output is read-only safe production context only; no full Job actions or worker queues.
+- Create Order custom-work reference image slot behavior remains fixture-only/in-memory: selected slots update the modal note, selected buttons become disabled, and manual reference notes are preserved.
 
 ## Files Changed
 
-- `apps/web/src/features/orders/order-list-state.ts`
-- `apps/web/src/features/orders/order-list.tsx`
-- `apps/web/src/features/orders/draft-order-queue.tsx`
+- `packages/domain/src/order-confirmation.test.ts`
+- `packages/ui/src/button.tsx`
+- `packages/ui/src/status-chip.tsx`
+- `packages/ui/src/surface-card.tsx`
+- `packages/ui/src/page-header.tsx`
+- `packages/ui/src/section-header.tsx`
+- `apps/web/src/features/orders/order-review.tsx`
 - `apps/web/src/features/orders/order-detail.tsx`
 - `apps/web/src/features/orders/order-create.tsx`
-- `apps/web/src/features/orders/order-review.tsx`
-- `apps/web/src/features/orders/order-line-edit.tsx`
-- `apps/web/src/features/orders/components/order-entry-modal-shell.tsx`
-- `apps/web/src/features/orders/components/product-select-modal.tsx`
-- `apps/web/src/features/orders/components/custom-work-entry-modal.tsx`
+- `apps/web/src/features/orders/order-entry-state.ts`
 - `apps/web/src/features/orders/orders.test.tsx`
+- `apps/web/src/features/orders/components/review-impact-panel.tsx`
+- `apps/web/src/features/orders/components/order-line-card.tsx`
+- `apps/web/src/features/orders/components/order-entry-line-editor.tsx`
+- `apps/web/src/features/orders/components/order-entry-modal-shell.tsx`
+- `apps/web/src/features/orders/components/custom-work-entry-modal.tsx`
+- `apps/web/src/features/orders/components/customer-select-modal.tsx`
+- `apps/web/src/features/orders/components/product-select-modal.tsx`
 - `apps/web/e2e/sector-3-orders-smoke.spec.ts`
-- `packages/ui/src/page-header.tsx`
+- `apps/web/e2e/sector-4-order-confirmation.spec.ts`
 - `docs/implementation/current-task.md`
 
 ## Checks Run
 
-- `pnpm lint`
-- `pnpm typecheck`
-- `pnpm test`
-- `pnpm format:check`
-- `pnpm build`
-- `pnpm test:e2e apps/web/e2e/sector-3-orders-smoke.spec.ts` - passed, 60 Playwright tests
-- `pnpm test:e2e` - passed, 184 Playwright tests
-- `CI=1 pnpm exec playwright test apps/web/e2e/sector-3-orders-smoke.spec.ts --pass-with-no-tests --workers=1` - passed, 60 Playwright tests
-- `rm -rf apps/web/.next && CI=1 pnpm exec playwright test --pass-with-no-tests --workers=1` - passed, 184 Playwright tests
-- Note: the first Sector 3 Playwright attempt reused a stale dev server on port 3000 and showed old UI behavior. The stale server was stopped, generated `.next` output was cleared, and the clean rerun passed.
+- `pnpm lint` - passed
+- `pnpm typecheck` - passed
+- `pnpm test` - passed
+- `pnpm format:check` - passed
+- `pnpm build` - passed
+- `CI=1 pnpm exec playwright test apps/web/e2e/sector-3-orders-smoke.spec.ts apps/web/e2e/sector-4-order-confirmation.spec.ts --workers=1` - passed, 72 tests
+- `CI=1 pnpm test:e2e` - passed, 196 tests
 
-## Exclusions Preserved
+## Known Gaps or Blockers
 
-- No database schema, Prisma model, migration, seed data, API contract, or real persistence was added.
-- No real Order, Draft save, confirmation mutation, JOB-O creation, stock reservation, Shipment creation, Payment/COD action, or finance mutation was added.
-- No real custom-work image upload, file storage, attachment persistence, or image API was added.
-- No business rules or workflow states were changed.
-- No sensitive finance/cost/profit/payout data was added to fixtures, UI, tests, logs, screenshots, exports, or print previews.
+- None identified.
 
 ## Reviewer Focus
 
-- Verify every active Sector 3 button/control has visible behavior.
-- Verify future-sector mutation actions are disabled with visible Thai reasons.
-- Verify Order list and Draft queue interactions are fixture-only and do not imply persistence.
-- Verify Order Detail shipment selection is local UI state only and does not create Shipment records.
-- Verify ready-stock product modal has no phone-width horizontal overflow and quantity inputs stay usable.
-- Verify custom-work image slots are clearly fixture-only and do not imply real upload/persistence.
-- Verify no real Order/Draft/JOB-O/stock/Shipment/Payment mutation or sensitive finance/cost/profit/payout data is introduced.
+- Verify Sector 4 domain logic is pure and fixture-backed.
+- Verify Review confirmation result shows confirmed Order ID, generated `JOB-O`, ready-stock reservation outcome, acknowledged warnings, and next Order Detail destination.
+- Verify Order Detail shows the confirmed fixture result and keeps Shipment/Payment actions disabled/placeheld.
+- Verify responsive text wrapping and no clipping/bleeding at required breakpoints.
+- Verify exclusions: no DB/API/persistence/Shipment/Payment/Stock movement/full Job/sensitive data.

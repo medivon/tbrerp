@@ -197,6 +197,60 @@ describe("Order confirmation domain logic", () => {
     );
   });
 
+  it("preserves acknowledged customer caution warnings in the fixture result", () => {
+    const customerCautionWarning = {
+      id: "customer-caution-malee",
+      message: "ลูกค้าต้องตรวจแบบละเอียดก่อนผลิต",
+      type: "customer-caution" as const,
+    };
+    const result = confirmOrderFromReview({
+      ...validInput,
+      acknowledgement: {
+        customerCautionAccepted: true,
+        stockShortageAccepted: true,
+      },
+      warnings: [...validInput.warnings, customerCautionWarning],
+    });
+
+    expect(result.status).toBe("confirmed");
+
+    if (result.status !== "confirmed") {
+      throw new Error("expected confirmation to succeed");
+    }
+
+    expect(result.acknowledgedWarnings).toEqual(
+      expect.arrayContaining([customerCautionWarning]),
+    );
+  });
+
+  it("blocks customer caution warning without acknowledgement", () => {
+    const result = confirmOrderFromReview({
+      ...validInput,
+      warnings: [
+        ...validInput.warnings,
+        {
+          id: "customer-caution-malee",
+          message: "ลูกค้าต้องตรวจแบบละเอียดก่อนผลิต",
+          type: "customer-caution" as const,
+        },
+      ],
+    });
+
+    expect(result.status).toBe("blocked");
+
+    if (result.status !== "blocked") {
+      throw new Error("expected confirmation to block");
+    }
+
+    expect(result.blockingReasons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "customer-caution-acknowledgement-required",
+        }),
+      ]),
+    );
+  });
+
   it("blocks missing stock acknowledgement", () => {
     const result = confirmOrderFromReview({
       ...validInput,

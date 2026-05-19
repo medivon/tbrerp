@@ -56,7 +56,9 @@ export function ProductSelectModal({
           className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
           htmlFor="order-entry-product-search"
         >
-          ค้นหาสินค้าพร้อมส่ง
+          <span className="break-words [overflow-wrap:anywhere]">
+            ค้นหาสินค้าพร้อมส่ง
+          </span>
           <span className="relative">
             <Search
               aria-hidden
@@ -83,7 +85,7 @@ export function ProductSelectModal({
                 className="grid min-w-0 gap-3 rounded-md border border-border bg-surface p-3 sm:grid-cols-[88px_minmax(0,1fr)] sm:items-start lg:grid-cols-[88px_minmax(0,1fr)_180px]"
                 key={option.id}
               >
-                <div className="relative h-20 w-20 overflow-hidden rounded-md border border-border bg-subtle sm:h-[88px] sm:w-[88px]">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-subtle sm:h-[88px] sm:w-[88px]">
                   <Image
                     alt={option.imageAlt}
                     className="object-cover"
@@ -101,18 +103,18 @@ export function ProductSelectModal({
                     </StatusChip>
                   </div>
                   <div>
-                    <h3 className="break-words text-base font-extrabold leading-7 text-foreground">
+                    <h3 className="break-words text-base font-extrabold leading-7 text-foreground [overflow-wrap:anywhere]">
                       {option.productModelName}
                     </h3>
-                    <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground">
+                    <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                       {option.color} • {option.dimensions} • {option.skuCode}
                     </p>
                   </div>
-                  <p className="text-sm font-bold leading-6 text-foreground">
+                  <p className="break-words text-sm font-bold leading-6 text-foreground [overflow-wrap:anywhere]">
                     {formatBaht(option.unitPriceBaht)} / ชิ้น
                   </p>
                   {soldOut ? (
-                    <p className="rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
+                    <p className="break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
                       สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้เพื่อให้ Review
                       แสดงคำเตือนสต๊อกก่อนยืนยัน ไม่มีการจองสต๊อกจริงในรอบนี้
                     </p>
@@ -124,7 +126,9 @@ export function ProductSelectModal({
                     className="grid w-full min-w-0 gap-1 text-sm font-bold text-foreground lg:w-36"
                     htmlFor={quantityId}
                   >
-                    จำนวน
+                    <span className="break-words [overflow-wrap:anywhere]">
+                      จำนวน
+                    </span>
                     <input
                       aria-label={`จำนวน ${option.productModelName} ${option.skuCode}`}
                       className="min-h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -163,7 +167,7 @@ export function ProductSelectModal({
         </div>
 
         {filteredOptions.length === 0 ? (
-          <div className="rounded-md border border-dashed border-border bg-subtle px-4 py-6 text-center text-sm font-semibold leading-6 text-muted-foreground">
+          <div className="break-words rounded-md border border-dashed border-border bg-subtle px-4 py-6 text-center text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
             ไม่พบสินค้าใน fixture นี้
           </div>
         ) : null}

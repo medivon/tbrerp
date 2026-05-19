@@ -30,26 +30,26 @@ export function PageHeader({
       )}
       {...props}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         {eyebrow ? (
-          <p className="mb-1 text-xs font-bold uppercase text-muted-foreground">
+          <p className="mb-1 break-words text-xs font-bold uppercase text-muted-foreground">
             {eyebrow}
           </p>
         ) : null}
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-extrabold leading-tight text-foreground sm:text-[28px]">
+          <h1 className="min-w-0 break-words [overflow-wrap:anywhere] text-2xl font-extrabold leading-tight text-foreground sm:text-[28px]">
             {title}
           </h1>
-          {meta}
+          {meta ? <div className="min-w-0">{meta}</div> : null}
         </div>
         {description ? (
-          <p className="mt-2 max-w-4xl text-sm leading-7 text-muted-foreground">
+          <p className="mt-2 max-w-4xl break-words [overflow-wrap:anywhere] text-sm leading-7 text-muted-foreground">
             {description}
           </p>
         ) : null}
       </div>
       {actions ? (
-        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0">
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:shrink-0">
           {actions}
         </div>
       ) : null}

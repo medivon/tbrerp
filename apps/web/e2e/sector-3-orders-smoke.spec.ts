@@ -141,6 +141,26 @@ for (const viewport of viewports) {
       );
       expect(customModalHasHorizontalOverflow).toBe(false);
       await customDialog
+        .getByRole("button", {
+          name: "เพิ่มรูปอ้างอิง รูปหลัก",
+        })
+        .click();
+      await expect(
+        customDialog
+          .getByRole("button", {
+            name: "เลือกแล้วใน modal นี้",
+          })
+          .first(),
+      ).toBeDisabled();
+      await customDialog
+        .getByRole("button", {
+          name: "เพิ่มรูปอ้างอิง รูปสำหรับช่างไม้",
+        })
+        .click();
+      await expect(customDialog.getByLabel("รูปอ้างอิง")).toHaveValue(
+        /รูปหลัก.*รูปสำหรับช่างไม้/,
+      );
+      await customDialog
         .getByLabel("ชื่องาน / รายการ")
         .fill("ตู้เตี้ยไม้สักสั่งทำ");
       await customDialog.getByLabel("จำนวน").fill("2");
@@ -200,10 +220,14 @@ for (const viewport of viewports) {
       await expect(
         page.getByText("JOB-O-FIX-S4-0001", { exact: true }).first(),
       ).toBeVisible();
-      await expect(page.getByText("คาดขายได้หลังจอง -1 ชิ้น")).toBeVisible();
+      await expect(
+        page.getByText("คาดขายได้หลังจอง -1 ชิ้น").first(),
+      ).toBeVisible();
       await expect(page.getByRole("dialog")).toHaveCount(0);
-      await expect(page.getByText("จะจองสต๊อก").first()).toBeVisible();
-      await expect(page.getByText("จะสร้าง JOB-O").first()).toBeVisible();
+      await expect(page.getByText(/จะจองสต๊อก 1 รายการ/).first()).toBeVisible();
+      await expect(
+        page.getByText(/จะสร้าง JOB-O 1 รายการ/).first(),
+      ).toBeVisible();
       await expect(
         page.getByText("ยังไม่สร้างรอบจัดส่ง").first(),
       ).toBeVisible();

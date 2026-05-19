@@ -119,12 +119,12 @@ export function OrderReview({
               </Link>
             </Button>
             <div className="grid justify-items-start gap-1 sm:justify-items-end">
-              <Button disabled title="ยังไม่บันทึกร่างจริงใน Sector 3">
+              <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
                 <FilePenLine aria-hidden className="mr-2 h-4 w-4" />
                 บันทึกร่าง
               </Button>
               <p className="max-w-56 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
-                ปิดไว้ใน Sector 3 จึงไม่บันทึก Draft จริง
+                ปิดไว้ในรอบงานนี้ จึงไม่บันทึก Draft จริง
               </p>
             </div>
           </>
@@ -279,9 +279,11 @@ export function OrderReview({
 
         <ReviewImpactPanel
           canConfirm={canConfirm}
+          customWorkCount={confirmationInput.customWorkLines.length}
           confirmDisabledReason={confirmDisabledReason}
           hasStockWarning={hasStockWarning}
           onConfirm={confirmFixtureOrder}
+          readyStockCount={confirmationInput.readyStockLines.length}
           stockWarningAcknowledged={stockShortageAccepted}
         />
       </div>
@@ -385,17 +387,24 @@ function StockWarningBlock({
           <p className="text-sm font-extrabold">คำเตือนสต๊อกก่อนยืนยัน</p>
           <ul className="mt-2 grid gap-1 text-sm font-semibold leading-6">
             {warnings.map((warning) => (
-              <li key={warning}>{warning}</li>
+              <li
+                className="break-words [overflow-wrap:anywhere]"
+                key={warning}
+              >
+                {warning}
+              </li>
             ))}
           </ul>
-          <label className="mt-3 flex cursor-pointer items-start gap-2 text-sm font-semibold leading-6">
+          <label className="mt-3 flex min-w-0 cursor-pointer items-start gap-2 text-sm font-semibold leading-6">
             <input
               checked={accepted}
               className="mt-1 h-4 w-4 rounded border-[#FAD980]"
               onChange={(event) => onAcceptedChange(event.target.checked)}
               type="checkbox"
             />
-            รับทราบคำเตือนสต๊อกไม่พอและยอมให้ผลจองแสดงขาด/ติดลบในผล fixture
+            <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+              รับทราบคำเตือนสต๊อกไม่พอและยอมให้ผลจองแสดงขาด/ติดลบในผล fixture
+            </span>
           </label>
         </div>
       </div>
@@ -412,7 +421,9 @@ function BlockingReasonsPanel({ reasons }: { reasons: string[] }) {
       <p className="text-sm font-extrabold">เหตุผลที่ยังยืนยันไม่ได้</p>
       <ul className="mt-2 grid gap-1 text-sm font-semibold leading-6">
         {reasons.map((reason) => (
-          <li key={reason}>{reason}</li>
+          <li className="break-words [overflow-wrap:anywhere]" key={reason}>
+            {reason}
+          </li>
         ))}
       </ul>
     </SurfaceCard>
@@ -428,16 +439,16 @@ function ConfirmationResultPanel({
 }) {
   return (
     <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <CheckCircle2 aria-hidden className="h-5 w-5 text-[#166534]" />
-            <p className="text-base font-extrabold text-[#166534]">
+            <p className="min-w-0 break-words [overflow-wrap:anywhere] text-base font-extrabold text-[#166534]">
               สร้างออเดอร์สำเร็จใน fixture/dev result
             </p>
             <StatusChip variant="neutral">ไม่เขียนฐานข้อมูลจริง</StatusChip>
           </div>
-          <p className="mt-2 text-sm font-semibold leading-6 text-[#166534]">
+          <p className="mt-2 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-[#166534]">
             {result.confirmedOrder.fixtureOnlyNotice}
           </p>
         </div>
@@ -454,7 +465,7 @@ function ConfirmationResultPanel({
         </Button>
       </div>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-3">
+      <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-3">
         <ResultMetric label="เลขออเดอร์" value={result.confirmedOrder.id} />
         <ResultMetric
           label="JOB-O ที่สร้าง"
@@ -471,73 +482,108 @@ function ConfirmationResultPanel({
       </div>
 
       {result.convertedDraft ? (
-        <p className="mt-4 rounded-md border border-[#BFE5C9] bg-white/70 px-3 py-2 text-sm font-bold leading-6 text-[#166534]">
+        <p className="mt-4 break-words [overflow-wrap:anywhere] rounded-md border border-[#BFE5C9] bg-white/70 px-3 py-2 text-sm font-bold leading-6 text-[#166534]">
           {result.convertedDraft.draftNo} {result.convertedDraft.status}{" "}
           และถูกซ่อนจากร่าง active ในผล fixture
         </p>
       ) : null}
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid min-w-0 gap-4 lg:grid-cols-2">
         <ResultSection
           icon={<Wrench aria-hidden className="h-4 w-4" />}
           title="JOB-O ที่สร้าง"
         >
-          {result.generatedJobs.map((job) => (
-            <div
-              className="rounded-md border border-[#BFE5C9] bg-white/80 p-3"
-              key={job.id}
-            >
-              <p className="text-sm font-extrabold text-foreground">
-                {job.id} / งานลูกค้า
-              </p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-                {job.workName} • {job.quantity} ชิ้น • {job.currentDepartment} •{" "}
-                {job.status}
-              </p>
-              <p className="mt-1 text-sm leading-6 text-foreground">
-                {job.productionDetail} / {job.materialDetail} /{" "}
-                {job.colorDetail}
-              </p>
-            </div>
-          ))}
+          {result.generatedJobs.length > 0 ? (
+            result.generatedJobs.map((job) => (
+              <div
+                className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
+                key={job.id}
+              >
+                <p className="break-words [overflow-wrap:anywhere] text-sm font-extrabold text-foreground">
+                  {job.id} / งานลูกค้า
+                </p>
+                <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-muted-foreground">
+                  {job.workName} • {job.quantity} ชิ้น • {job.currentDepartment}{" "}
+                  • {job.status}
+                </p>
+                <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm leading-6 text-foreground">
+                  {job.productionDetail} / {job.materialDetail} /{" "}
+                  {job.colorDetail}
+                </p>
+              </div>
+            ))
+          ) : (
+            <ResultEmpty>ไม่มีงานสั่งทำที่ต้องสร้าง JOB-O</ResultEmpty>
+          )}
         </ResultSection>
 
         <ResultSection
           icon={<PackageCheck aria-hidden className="h-4 w-4" />}
           title="ผลจองสินค้าพร้อมส่ง"
         >
-          {result.readyStockReservationOutcomes.map((outcome) => (
-            <div
-              className="rounded-md border border-[#BFE5C9] bg-white/80 p-3"
-              key={outcome.lineId}
-            >
-              <p className="text-sm font-extrabold text-foreground">
-                {outcome.skuCode}
-              </p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-                จอง {outcome.quantity} ชิ้น จากขายได้ก่อนยืนยัน{" "}
-                {outcome.sellableStockBefore} ชิ้น
-              </p>
-              <StatusChip
-                variant={
-                  outcome.outcome === "shortage-acknowledged"
-                    ? "warning"
-                    : "success"
-                }
+          {result.readyStockReservationOutcomes.length > 0 ? (
+            result.readyStockReservationOutcomes.map((outcome) => (
+              <div
+                className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
+                key={outcome.lineId}
               >
-                คาดขายได้หลังจอง {outcome.projectedSellableAfter} ชิ้น
-              </StatusChip>
-            </div>
-          ))}
+                <p className="break-words [overflow-wrap:anywhere] text-sm font-extrabold text-foreground">
+                  {outcome.skuCode}
+                </p>
+                <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-muted-foreground">
+                  จอง {outcome.quantity} ชิ้น จากขายได้ก่อนยืนยัน{" "}
+                  {outcome.sellableStockBefore} ชิ้น
+                </p>
+                <StatusChip
+                  variant={
+                    outcome.outcome === "shortage-acknowledged"
+                      ? "warning"
+                      : "success"
+                  }
+                >
+                  คาดขายได้หลังจอง {outcome.projectedSellableAfter} ชิ้น
+                </StatusChip>
+              </div>
+            ))
+          ) : (
+            <ResultEmpty>ไม่มีสินค้าพร้อมส่งที่ต้องจอง</ResultEmpty>
+          )}
         </ResultSection>
       </div>
 
+      <ResultSection
+        className="mt-4"
+        icon={<CheckCircle2 aria-hidden className="h-4 w-4" />}
+        title="กิจกรรมตัวอย่างสำหรับแสดงผล fixture"
+      >
+        <ol className="grid gap-2">
+          {result.activityEvents.map((event, index) => (
+            <li
+              className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
+              key={`${event.title}-${index}`}
+            >
+              <p className="break-words [overflow-wrap:anywhere] text-sm font-extrabold text-foreground">
+                {event.title}
+              </p>
+              <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-muted-foreground">
+                {event.detail}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </ResultSection>
+
       {result.acknowledgedWarnings.length > 0 ? (
-        <div className="mt-4 rounded-md border border-[#FAD980] bg-[#FEF3C7] p-3 text-[#92400E]">
+        <div className="mt-4 min-w-0 rounded-md border border-[#FAD980] bg-[#FEF3C7] p-3 text-[#92400E]">
           <p className="text-sm font-extrabold">คำเตือนที่รับทราบแล้ว</p>
           <ul className="mt-2 grid gap-1 text-sm font-semibold leading-6">
             {result.acknowledgedWarnings.map((warning) => (
-              <li key={warning.id}>{warning.message}</li>
+              <li
+                className="break-words [overflow-wrap:anywhere]"
+                key={warning.id}
+              >
+                {warning.message}
+              </li>
             ))}
           </ul>
         </div>
@@ -548,18 +594,22 @@ function ConfirmationResultPanel({
 
 function ResultSection({
   children,
+  className,
   icon,
   title,
 }: {
   children: ReactNode;
+  className?: string;
   icon: ReactNode;
   title: string;
 }) {
   return (
-    <section className="grid gap-3">
-      <div className="flex items-center gap-2 text-sm font-extrabold text-[#166534]">
-        {icon}
-        {title}
+    <section className={`grid min-w-0 gap-3 ${className ?? ""}`}>
+      <div className="flex min-w-0 items-center gap-2 text-sm font-extrabold text-[#166534]">
+        <span className="shrink-0">{icon}</span>
+        <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+          {title}
+        </span>
       </div>
       {children}
     </section>
@@ -568,11 +618,21 @@ function ResultSection({
 
 function ResultMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-[#BFE5C9] bg-white/80 p-3">
-      <p className="text-xs font-bold text-muted-foreground">{label}</p>
-      <p className="mt-1 break-words text-sm font-extrabold leading-6 text-foreground">
+    <div className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3">
+      <p className="break-words [overflow-wrap:anywhere] text-xs font-bold text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-extrabold leading-6 text-foreground">
         {value}
       </p>
+    </div>
+  );
+}
+
+function ResultEmpty({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/70 p-3 text-sm font-semibold leading-6 text-muted-foreground">
+      {children}
     </div>
   );
 }
@@ -580,8 +640,10 @@ function ResultMetric({ label, value }: { label: string; value: string }) {
 function ReviewFact({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-b border-border p-4">
-      <dt className="text-xs font-bold text-muted-foreground">{label}</dt>
-      <dd className="mt-1 text-sm font-semibold leading-6 text-foreground">
+      <dt className="break-words [overflow-wrap:anywhere] text-xs font-bold text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-foreground">
         {value}
       </dd>
     </div>

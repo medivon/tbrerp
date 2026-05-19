@@ -736,8 +736,8 @@ export function createOrderConfirmationInputFromEntryState({
     },
     reviewId:
       entryState.source === "in-memory"
-        ? "sector-3-order-review-in-memory"
-        : "sector-3-order-review-fixture",
+        ? "sector-4-order-review-in-memory"
+        : "sector-4-order-review-fixture",
     shipmentIntent:
       entryState.readyStockLines.length > 0 && entryState.customLines.length > 0
         ? entryState.shipmentIntent

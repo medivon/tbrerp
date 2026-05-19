@@ -333,10 +333,31 @@ describe("Order read/create foundation", () => {
         name: "เพิ่มรูปอ้างอิง รูปหลัก",
       }),
     );
-    expect(within(dialog).getByText("เพิ่มแล้วใน modal นี้")).toBeTruthy();
-    expect(within(dialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
+    const referenceImageField = within(dialog).getByLabelText("รูปอ้างอิง");
+
+    expect(within(dialog).getByText("เลือกแล้วใน modal นี้")).toBeTruthy();
+    expect(
+      within(dialog).getByRole("button", {
+        name: "เลือกแล้วใน modal นี้",
+      }),
+    ).toHaveProperty("disabled", true);
+    expect(referenceImageField).toHaveProperty(
       "value",
       expect.stringContaining("รูปหลัก"),
+    );
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: "เพิ่มรูปอ้างอิง รูปสำหรับช่างไม้",
+      }),
+    );
+    expect(
+      within(dialog).getAllByRole("button", {
+        name: "เลือกแล้วใน modal นี้",
+      }),
+    ).toHaveLength(2);
+    expect(within(dialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
+      "value",
+      expect.stringContaining("รูปสำหรับช่างไม้"),
     );
 
     fireEvent.change(within(dialog).getByLabelText("ชื่องาน / รายการ"), {
@@ -358,6 +379,54 @@ describe("Order read/create foundation", () => {
         .getAllByRole("button", { name: "ตรวจสอบก่อนสร้างออเดอร์" })
         .some((button) => (button as HTMLButtonElement).disabled),
     ).toBe(true);
+
+    fireEvent.click(addedLine.getByRole("button", { name: "แก้ไขรายละเอียด" }));
+
+    const editDialog = screen.getByRole("dialog", {
+      name: "รายละเอียดงานสั่งทำ",
+    });
+    expect(within(editDialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
+      "value",
+      expect.stringContaining("รูปหลัก"),
+    );
+    expect(within(editDialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
+      "value",
+      expect.stringContaining("รูปสำหรับช่างไม้"),
+    );
+    expect(
+      within(editDialog).getAllByRole("button", {
+        name: "เลือกแล้วใน modal นี้",
+      }),
+    ).toHaveLength(2);
+  });
+
+  it("preserves manually typed custom-work reference text after image slot selection", () => {
+    render(<OrderCreate currentUser={currentUser} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "เพิ่มงานสั่งทำ" }));
+
+    const dialog = screen.getByRole("dialog", {
+      name: "รายละเอียดงานสั่งทำ",
+    });
+
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: "เพิ่มรูปอ้างอิง รูปหลัก",
+      }),
+    );
+    fireEvent.change(within(dialog).getByLabelText("รูปอ้างอิง"), {
+      target: { value: "ใช้รูปที่ลูกค้าส่งในแชท Line เป็นหลัก" },
+    });
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: "เพิ่มรูปอ้างอิง รูปสำหรับช่างไม้",
+      }),
+    );
+
+    expect(within(dialog).getByLabelText("รูปอ้างอิง")).toHaveProperty(
+      "value",
+      "ใช้รูปที่ลูกค้าส่งในแชท Line เป็นหลัก",
+    );
   });
 
   it("adds complete custom-work detail, edits quantity, and removes the line", () => {
@@ -431,7 +500,9 @@ describe("Order read/create foundation", () => {
 
     expect((confirmButton as HTMLButtonElement).disabled).toBe(true);
     expect(screen.queryByText("ORD-FIX-S4-0001")).toBeNull();
-    expect(screen.getAllByText("จะสร้าง JOB-O").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/จะสร้าง JOB-O 1 รายการ/).length,
+    ).toBeGreaterThan(0);
     expect(screen.getAllByText("ยังไม่สร้างรอบจัดส่ง").length).toBeGreaterThan(
       0,
     );
@@ -448,7 +519,13 @@ describe("Order read/create foundation", () => {
 
     expect(screen.getByText("ORD-FIX-S4-0001")).toBeTruthy();
     expect(screen.getByText("JOB-O-FIX-S4-0001")).toBeTruthy();
-    expect(screen.getByText(/คาดขายได้หลังจอง -1 ชิ้น/)).toBeTruthy();
+    expect(
+      screen.getAllByText(/คาดขายได้หลังจอง -1 ชิ้น/).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByText("กิจกรรมตัวอย่างสำหรับแสดงผล fixture"),
+    ).toBeTruthy();
+    expect(screen.getByText("สร้าง JOB-O")).toBeTruthy();
     expect(
       screen
         .getByRole("link", { name: /เปิด Order Detail/ })
@@ -499,6 +576,34 @@ describe("Order read/create foundation", () => {
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(true);
+  });
+
+  it("shows no generated JOB-O section when Review has only ready-stock lines", () => {
+    const readyStockOnlyState = {
+      ...createInitialOrderEntryState(),
+      customLines: [],
+    };
+
+    setOrderEntryMemoryState(markOrderEntryInMemory(readyStockOnlyState));
+
+    render(<OrderReview currentUser={currentUser} />);
+
+    expect(screen.getByText("ไม่มี JOB-O ที่ต้องสร้าง")).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบคำเตือนสต๊อกไม่พอ/,
+      }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "ยืนยันสร้างออเดอร์",
+      }),
+    );
+
+    expect(screen.getByText("ไม่มีงานสั่งทำ")).toBeTruthy();
+    expect(screen.getByText("ไม่มีงานสั่งทำที่ต้องสร้าง JOB-O")).toBeTruthy();
+    expect(screen.getAllByText(/คาดขายได้หลังจอง/).length).toBeGreaterThan(0);
   });
 
   it("renders incomplete custom-work Review data as incomplete", () => {

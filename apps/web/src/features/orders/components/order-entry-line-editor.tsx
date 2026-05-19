@@ -31,14 +31,14 @@ export function OrderEntryLineEditor({
 
   if (hasNoLines) {
     return (
-      <div className="rounded-md border border-dashed border-border bg-subtle px-4 py-6 text-center text-sm font-semibold leading-6 text-muted-foreground">
+      <div className="break-words rounded-md border border-dashed border-border bg-subtle px-4 py-6 text-center text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
         ยังไม่มีรายการในออเดอร์
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-surface">
+    <div className="min-w-0 overflow-hidden rounded-md border border-border bg-surface">
       {readyStockLines.map((line) => (
         <ReadyStockLineEditor
           key={line.id}
@@ -73,7 +73,7 @@ function ReadyStockLineEditor({
 
   return (
     <article
-      className="grid gap-4 border-b border-border p-4 last:border-b-0 xl:grid-cols-[76px_minmax(0,1fr)_220px] xl:items-start"
+      className="grid min-w-0 gap-4 border-b border-border p-4 last:border-b-0 xl:grid-cols-[76px_minmax(0,1fr)_220px] xl:items-start"
       data-testid={line.id}
     >
       <LineImage alt={line.imageAlt} src={line.imageSrc} />
@@ -94,10 +94,10 @@ function ReadyStockLineEditor({
         </div>
 
         <div>
-          <h3 className="text-base font-bold leading-7 text-foreground">
+          <h3 className="break-words text-base font-bold leading-7 text-foreground [overflow-wrap:anywhere]">
             {line.title}
           </h3>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          <p className="mt-1 break-words text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
             {line.color} • {line.dimensions} • {line.skuCode}
           </p>
         </div>
@@ -105,12 +105,12 @@ function ReadyStockLineEditor({
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_140px]">
           <ReadOnlyLineFact label="สินค้า / SKU" value={line.skuCode} />
           <label
-            className="grid gap-1 text-sm font-bold text-foreground"
+            className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
             htmlFor={quantityId}
           >
-            จำนวน
+            <span className="break-words [overflow-wrap:anywhere]">จำนวน</span>
             <input
-              className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="min-h-10 min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               id={quantityId}
               inputMode="numeric"
               min={1}
@@ -124,9 +124,11 @@ function ReadyStockLineEditor({
         </div>
 
         {line.stockWarning ? (
-          <p className="inline-flex items-start gap-2 rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
+          <p className="inline-flex min-w-0 items-start gap-2 break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
             <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-            คำเตือนนี้เป็นการแสดงผลในหน้ากรอกเท่านั้น ยังไม่จองสต๊อกจริง
+            <span className="min-w-0">
+              คำเตือนนี้เป็นการแสดงผลในหน้ากรอกเท่านั้น ยังไม่จองสต๊อกจริง
+            </span>
           </p>
         ) : null}
       </div>
@@ -158,7 +160,7 @@ function CustomWorkLineEditor({
 
   return (
     <article
-      className="grid gap-4 border-b border-border bg-subtle p-4 last:border-b-0 xl:grid-cols-[76px_minmax(0,1fr)_220px] xl:items-start"
+      className="grid min-w-0 gap-4 border-b border-border bg-subtle p-4 last:border-b-0 xl:grid-cols-[76px_minmax(0,1fr)_220px] xl:items-start"
       data-testid={line.id}
     >
       <LineImage alt={line.imageAlt} src={line.imageSrc} />
@@ -173,10 +175,10 @@ function CustomWorkLineEditor({
         </div>
 
         <div>
-          <h3 className="text-base font-bold leading-7 text-foreground">
+          <h3 className="break-words text-base font-bold leading-7 text-foreground [overflow-wrap:anywhere]">
             {line.title}
           </h3>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          <p className="mt-1 break-words text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
             กำหนดส่ง {line.deliveryDate ?? "ยังไม่ระบุ"} •{" "}
             {line.materialDetail || "ยังไม่ระบุวัสดุ"} •{" "}
             {line.colorDetail || "ยังไม่ระบุสี"}
@@ -184,20 +186,22 @@ function CustomWorkLineEditor({
         </div>
 
         {!isComplete ? (
-          <p className="inline-flex items-start gap-2 rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
+          <p className="inline-flex min-w-0 items-start gap-2 break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
             <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-            ยังไม่ครบ: {missingFields.join(", ")}
+            <span className="min-w-0">
+              ยังไม่ครบ: {missingFields.join(", ")}
+            </span>
           </p>
         ) : null}
 
         <div className="grid gap-3 md:grid-cols-[140px_minmax(0,1fr)]">
           <label
-            className="grid gap-1 text-sm font-bold text-foreground"
+            className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
             htmlFor={quantityId}
           >
-            จำนวน
+            <span className="break-words [overflow-wrap:anywhere]">จำนวน</span>
             <input
-              className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="min-h-10 min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               id={quantityId}
               inputMode="numeric"
               min={1}
@@ -209,8 +213,8 @@ function CustomWorkLineEditor({
             />
           </label>
 
-          <div className="grid gap-2">
-            <p className="text-sm font-bold text-foreground">
+          <div className="grid min-w-0 gap-2">
+            <p className="break-words text-sm font-bold text-foreground [overflow-wrap:anywhere]">
               รายละเอียดงานสั่งทำ
             </p>
             <div className="grid gap-2 lg:grid-cols-3">
@@ -227,7 +231,7 @@ function CustomWorkLineEditor({
                 value={line.rakSamukDetail}
               />
             </div>
-            <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm leading-6 text-foreground">
+            <div className="break-words rounded-md border border-border bg-surface px-3 py-2 text-sm leading-6 text-foreground [overflow-wrap:anywhere]">
               {buildCustomWorkProductionDetail(line) ||
                 "ยังไม่มีรายละเอียดผลิต"}
             </div>
@@ -247,7 +251,7 @@ function CustomWorkLineEditor({
         </div>
       </div>
 
-      <div className="grid gap-3 xl:justify-items-end">
+      <div className="grid min-w-0 gap-3 xl:justify-items-end">
         <LineTotal
           lineTotalBaht={line.lineTotalBaht}
           unitPriceBaht={line.unitPriceBaht}
@@ -278,9 +282,9 @@ function CustomWorkLineEditor({
 
 function ReadOnlyLineFact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 text-sm font-bold text-foreground">
-      {label}
-      <div className="flex min-h-10 items-center rounded-md border border-border bg-subtle px-3 text-sm font-semibold text-foreground">
+    <div className="grid min-w-0 gap-1 text-sm font-bold text-foreground">
+      <span className="break-words [overflow-wrap:anywhere]">{label}</span>
+      <div className="flex min-h-10 min-w-0 items-center break-words rounded-md border border-border bg-subtle px-3 text-sm font-semibold text-foreground [overflow-wrap:anywhere]">
         {value}
       </div>
     </div>
@@ -292,14 +296,14 @@ function DetailBlock({ label, value }: { label: string; value: string }) {
 
   return (
     <div
-      className={`rounded-md border px-3 py-2 text-sm leading-6 ${
+      className={`min-w-0 rounded-md border px-3 py-2 text-sm leading-6 ${
         hasValue
           ? "border-border bg-surface text-foreground"
           : "border-[#FAD980] bg-[#FEF3C7] text-[#92400E]"
       }`}
     >
-      <p className="font-bold">{label}</p>
-      <p className="mt-1 font-semibold">
+      <p className="break-words font-bold [overflow-wrap:anywhere]">{label}</p>
+      <p className="mt-1 break-words font-semibold [overflow-wrap:anywhere]">
         {hasValue ? value : `${label}ยังไม่ครบ`}
       </p>
     </div>
@@ -308,7 +312,7 @@ function DetailBlock({ label, value }: { label: string; value: string }) {
 
 function LineImage({ alt, src }: { alt: string; src: string }) {
   return (
-    <div className="relative h-20 w-20 overflow-hidden rounded-md border border-border bg-surface md:h-[76px] md:w-[76px]">
+    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border bg-surface md:h-[76px] md:w-[76px]">
       <Image alt={alt} className="object-cover" fill sizes="76px" src={src} />
     </div>
   );
@@ -326,7 +330,7 @@ function LineActions({
   unitPriceBaht: number;
 }) {
   return (
-    <div className="grid gap-3 xl:justify-items-end">
+    <div className="grid min-w-0 gap-3 xl:justify-items-end">
       <LineTotal lineTotalBaht={lineTotalBaht} unitPriceBaht={unitPriceBaht} />
       <Button
         aria-label={removeLabel}
@@ -350,11 +354,11 @@ function LineTotal({
   unitPriceBaht: number;
 }) {
   return (
-    <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
-      <p className="font-extrabold text-foreground">
+    <div className="min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-sm">
+      <p className="break-words font-extrabold text-foreground [overflow-wrap:anywhere]">
         {formatBaht(lineTotalBaht)}
       </p>
-      <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
+      <p className="mt-1 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
         หน่วยละ {formatBaht(unitPriceBaht)}
       </p>
     </div>

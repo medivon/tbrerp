@@ -30,25 +30,29 @@ export function SectionHeader({
       )}
       {...props}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         {eyebrow ? (
-          <p className="mb-1 text-xs font-bold uppercase text-muted-foreground">
+          <p className="mb-1 break-words text-xs font-bold uppercase text-muted-foreground">
             {eyebrow}
           </p>
         ) : null}
         <h2
-          className="text-lg font-bold leading-7 text-foreground"
+          className="break-words [overflow-wrap:anywhere] text-lg font-bold leading-7 text-foreground"
           id={titleId}
         >
           {title}
         </h2>
         {description ? (
-          <p className="mt-1 max-w-3xl text-sm leading-7 text-muted-foreground">
+          <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-7 text-muted-foreground">
             {description}
           </p>
         ) : null}
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? (
+        <div className="flex w-full min-w-0 justify-start sm:w-auto sm:shrink-0 sm:justify-end">
+          {action}
+        </div>
+      ) : null}
     </div>
   );
 }

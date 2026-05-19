@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
-import { AlertTriangle, ClipboardList, ImageIcon, Plus } from "lucide-react";
+import {
+  AlertTriangle,
+  Check,
+  ClipboardList,
+  ImageIcon,
+  Plus,
+} from "lucide-react";
 import { Button, StatusChip } from "@thaiboran/ui";
 
 import { OrderEntryModalShell } from "@/features/orders/components/order-entry-modal-shell";
@@ -39,6 +45,11 @@ const customWorkImageSlots = [
 ] as const;
 
 type CustomWorkImageSlotId = (typeof customWorkImageSlots)[number]["id"];
+type CustomWorkImageSlot = (typeof customWorkImageSlots)[number];
+
+const generatedReferenceImageNotePrefix = "เลือก ";
+const generatedReferenceImageNoteSuffix =
+  " จาก fixture ใน modal นี้ ยังไม่มีการ upload หรือบันทึกรูปจริง";
 
 export function CustomWorkEntryModal({
   initialDraft,
@@ -67,8 +78,14 @@ export function CustomWorkEntryModal({
 
   useEffect(() => {
     if (open) {
-      setDraft(initialDraft ?? createBlankCustomWorkLineDraft());
-      setSelectedImageSlots({});
+      const nextDraft = initialDraft ?? createBlankCustomWorkLineDraft();
+
+      setDraft(nextDraft);
+      setSelectedImageSlots(
+        createSelectedImageSlotState(
+          getGeneratedReferenceImageSlotIds(nextDraft.referenceImageNote),
+        ),
+      );
     }
   }, [initialDraft, open]);
 
@@ -82,20 +99,36 @@ export function CustomWorkEntryModal({
     }));
   }
 
-  function markReferenceImageSlot(slot: (typeof customWorkImageSlots)[number]) {
+  function markReferenceImageSlot(slot: CustomWorkImageSlot) {
+    const previousSlotIds = getSelectedImageSlotIds(selectedImageSlots);
+
+    if (previousSlotIds.includes(slot.id)) {
+      return;
+    }
+
+    const nextSlotIds = getSelectedImageSlotIds({
+      ...selectedImageSlots,
+      [slot.id]: true,
+    });
+
     setSelectedImageSlots((current) => ({
       ...current,
       [slot.id]: true,
     }));
 
     setDraft((current) => {
-      if (current.referenceImageNote.trim().length > 0) {
+      if (
+        !shouldAutoManageReferenceImageNote(
+          current.referenceImageNote,
+          previousSlotIds,
+        )
+      ) {
         return current;
       }
 
       return {
         ...current,
-        referenceImageNote: `เลือก ${slot.label} จาก fixture ใน modal นี้ ยังไม่มีการ upload หรือบันทึกรูปจริง`,
+        referenceImageNote: buildGeneratedReferenceImageNote(nextSlotIds),
       };
     });
   }
@@ -104,7 +137,7 @@ export function CustomWorkEntryModal({
 
   return (
     <OrderEntryModalShell
-      description="กรอกรายละเอียดงานสั่งทำแบบแยกฝ่ายเพื่อให้ Review เห็นความพร้อมก่อน Sector ถัดไป ยังไม่สร้าง JOB-O"
+      description="กรอกรายละเอียดงานสั่งทำแบบแยกฝ่ายเพื่อให้ Review เห็นความพร้อม ก่อนยืนยันออเดอร์ยังไม่สร้าง JOB-O ใน modal นี้"
       initialFocusRef={nameInputRef}
       onClose={onClose}
       open={open}
@@ -121,14 +154,14 @@ export function CustomWorkEntryModal({
         </div>
 
         {isComplete ? (
-          <div className="rounded-md border border-[#BFE5C9] bg-[#E6F4EA] px-3 py-2 text-sm font-semibold leading-6 text-[#166534]">
+          <div className="break-words rounded-md border border-[#BFE5C9] bg-[#E6F4EA] px-3 py-2 text-sm font-semibold leading-6 text-[#166534] [overflow-wrap:anywhere]">
             รายละเอียดครบพอให้ไป Review แบบ fixture/in-memory ได้
           </div>
         ) : (
           <div className="rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
             <div className="flex items-start gap-2">
               <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-              <p>
+              <p className="min-w-0 break-words [overflow-wrap:anywhere]">
                 ยังไม่ครบสำหรับ Review: {missingFields.join(", ")}
                 {" — "}
                 เพิ่มลงรายการได้เพื่อกรอกต่อ แต่ปุ่ม Review
@@ -233,14 +266,14 @@ export function CustomWorkEntryModal({
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <h3
-                    className="text-sm font-extrabold leading-6 text-foreground"
+                    className="break-words text-sm font-extrabold leading-6 text-foreground [overflow-wrap:anywhere]"
                     id="custom-work-reference-images-heading"
                   >
                     รูปอ้างอิงงานสั่งทำ
                   </h3>
-                  <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground">
+                  <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                     เพิ่มได้เฉพาะตำแหน่งภาพอ้างอิงใน UI นี้ ยังไม่มีการ upload
-                    หรือบันทึกรูปจริงใน Sector 3
+                    หรือบันทึกรูปจริงในรอบงานนี้
                   </p>
                 </div>
                 <StatusChip variant="neutral">fixture-only</StatusChip>
@@ -270,22 +303,26 @@ export function CustomWorkEntryModal({
               />
             </div>
             <div className="grid gap-2">
-              <div className="flex items-center gap-2 text-sm font-extrabold text-foreground">
-                <ImageIcon aria-hidden className="h-4 w-4" />
-                ภาพอ้างอิง fixture
+              <div className="flex min-w-0 items-center gap-2 text-sm font-extrabold text-foreground">
+                <ImageIcon aria-hidden className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+                  ภาพอ้างอิง fixture
+                </span>
               </div>
-              <p className="text-sm font-semibold leading-6 text-muted-foreground">
+              <p className="break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                 รอบงานนี้ไม่มี upload จริง
-                ใช้บล็อกนี้เพื่อแสดงตำแหน่งรูปอ้างอิงก่อนสร้าง JOB-O ใน Sector
-                ถัดไป
+                ใช้บล็อกนี้เพื่อแสดงตำแหน่งรูปอ้างอิงก่อนสร้าง JOB-O
+                เมื่อยืนยันจาก Review
               </p>
             </div>
             <div className="rounded-md border border-border bg-surface px-3 py-2 text-sm">
-              <p className="font-bold text-muted-foreground">ยอดขายตัวอย่าง</p>
-              <p className="mt-1 text-base font-extrabold text-foreground">
+              <p className="break-words font-bold text-muted-foreground [overflow-wrap:anywhere]">
+                ยอดขายตัวอย่าง
+              </p>
+              <p className="mt-1 break-words text-base font-extrabold text-foreground [overflow-wrap:anywhere]">
                 {formatBaht(draft.unitPriceBaht * Math.max(1, draft.quantity))}
               </p>
-              <p className="mt-1 text-xs font-semibold leading-5 text-muted-foreground">
+              <p className="mt-1 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
                 ใช้สำหรับ summary เท่านั้น ไม่ใช่ต้นทุนหรือข้อมูล Finance
               </p>
             </div>
@@ -313,7 +350,7 @@ function ReferenceImageTile({
 }: {
   added: boolean;
   onAdd: () => void;
-  slot: (typeof customWorkImageSlots)[number];
+  slot: CustomWorkImageSlot;
 }) {
   return (
     <div
@@ -335,26 +372,114 @@ function ReferenceImageTile({
         )}
       </div>
       <div className="min-w-0">
-        <p className="break-words text-sm font-extrabold leading-6 text-foreground">
+        <p className="break-words text-sm font-extrabold leading-6 text-foreground [overflow-wrap:anywhere]">
           {slot.label}
         </p>
-        <p className="mt-1 break-words text-xs font-semibold leading-5 text-muted-foreground">
+        <p className="mt-1 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
           {slot.description}
         </p>
       </div>
       <Button
         aria-pressed={added}
         className="w-full"
+        disabled={added}
         onClick={onAdd}
         size="sm"
+        title={added ? `เลือก ${slot.label} แล้วใน modal นี้` : undefined}
         type="button"
         variant={added ? "outline" : "default"}
       >
-        <Plus aria-hidden className="mr-2 h-4 w-4" />
-        {added ? "เพิ่มแล้วใน modal นี้" : `เพิ่มรูปอ้างอิง ${slot.label}`}
+        {added ? (
+          <Check aria-hidden className="mr-2 h-4 w-4" />
+        ) : (
+          <Plus aria-hidden className="mr-2 h-4 w-4" />
+        )}
+        {added ? "เลือกแล้วใน modal นี้" : `เพิ่มรูปอ้างอิง ${slot.label}`}
       </Button>
     </div>
   );
+}
+
+function createSelectedImageSlotState(
+  slotIds: CustomWorkImageSlotId[],
+): Partial<Record<CustomWorkImageSlotId, boolean>> {
+  return slotIds.reduce<Partial<Record<CustomWorkImageSlotId, boolean>>>(
+    (selectedSlots, slotId) => ({
+      ...selectedSlots,
+      [slotId]: true,
+    }),
+    {},
+  );
+}
+
+function getSelectedImageSlotIds(
+  selectedSlots: Partial<Record<CustomWorkImageSlotId, boolean>>,
+): CustomWorkImageSlotId[] {
+  return customWorkImageSlots
+    .filter((slot) => selectedSlots[slot.id])
+    .map((slot) => slot.id);
+}
+
+function buildGeneratedReferenceImageNote(
+  slotIds: CustomWorkImageSlotId[],
+): string {
+  if (slotIds.length === 0) {
+    return "";
+  }
+
+  const selectedSlotIdSet = new Set(slotIds);
+  const labels = customWorkImageSlots
+    .filter((slot) => selectedSlotIdSet.has(slot.id))
+    .map((slot) => slot.label);
+
+  return `${generatedReferenceImageNotePrefix}${labels.join(
+    ", ",
+  )}${generatedReferenceImageNoteSuffix}`;
+}
+
+function shouldAutoManageReferenceImageNote(
+  note: string,
+  selectedSlotIds: CustomWorkImageSlotId[],
+): boolean {
+  const normalizedNote = note.trim();
+
+  return (
+    normalizedNote.length === 0 ||
+    normalizedNote === buildGeneratedReferenceImageNote(selectedSlotIds)
+  );
+}
+
+function getGeneratedReferenceImageSlotIds(
+  note: string,
+): CustomWorkImageSlotId[] {
+  const normalizedNote = note.trim();
+
+  if (
+    !normalizedNote.startsWith(generatedReferenceImageNotePrefix) ||
+    !normalizedNote.endsWith(generatedReferenceImageNoteSuffix)
+  ) {
+    return [];
+  }
+
+  const labelsText = normalizedNote
+    .slice(generatedReferenceImageNotePrefix.length)
+    .slice(0, -generatedReferenceImageNoteSuffix.length);
+  const labels = labelsText.split(", ").filter(Boolean);
+  const slotsByLabel: ReadonlyMap<string, CustomWorkImageSlotId> = new Map(
+    customWorkImageSlots.map((slot) => [slot.label, slot.id]),
+  );
+
+  if (labels.length === 0) {
+    return [];
+  }
+
+  const slotIds = labels.map((label) => slotsByLabel.get(label));
+
+  if (slotIds.some((slotId) => !slotId)) {
+    return [];
+  }
+
+  return slotIds as CustomWorkImageSlotId[];
 }
 
 function TextInput({
@@ -377,7 +502,7 @@ function TextInput({
       className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
       htmlFor={id}
     >
-      {label}
+      <span className="break-words [overflow-wrap:anywhere]">{label}</span>
       <input
         className="min-h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         id={id}
@@ -407,7 +532,7 @@ function NumberInput({
       className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
       htmlFor={id}
     >
-      {label}
+      <span className="break-words [overflow-wrap:anywhere]">{label}</span>
       <input
         className="min-h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         id={id}
@@ -439,7 +564,7 @@ function TextArea({
       className="grid min-w-0 gap-1 text-sm font-bold text-foreground"
       htmlFor={id}
     >
-      {label}
+      <span className="break-words [overflow-wrap:anywhere]">{label}</span>
       <textarea
         className="min-h-28 w-full min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-sm font-semibold leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
         id={id}

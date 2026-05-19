@@ -128,8 +128,8 @@ export function OrderCreate({
                 <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
                   บันทึกร่าง
                 </Button>
-                <p className="max-w-56 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
-                  ปิดไว้ใน Sector 3 จึงไม่สร้างหรือแก้ Draft จริง
+                <p className="max-w-56 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
+                  ปิดไว้ในรอบงานนี้ จึงไม่สร้างหรือแก้ Draft จริง
                 </p>
               </div>
               <ReviewAction
@@ -194,7 +194,7 @@ export function OrderCreate({
                   เลือกลูกค้า
                 </Button>
                 <StatusChip variant="neutral">
-                  เพิ่มลูกค้าใหม่ยังไม่อยู่ใน Sector นี้
+                  เพิ่มลูกค้าใหม่ยังไม่อยู่ในรอบงานนี้
                 </StatusChip>
               </div>
             </EntrySection>
@@ -219,17 +219,19 @@ export function OrderCreate({
                   />
                 </div>
               </div>
-              <div className="grid gap-1">
-                <label className="flex items-start gap-2 text-sm font-semibold leading-6 text-muted-foreground">
+              <div className="grid min-w-0 gap-1">
+                <label className="flex min-w-0 items-start gap-2 text-sm font-semibold leading-6 text-muted-foreground">
                   <input
                     className="mt-1 h-4 w-4 cursor-not-allowed rounded border-border"
                     disabled
                     type="checkbox"
                   />
-                  บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า
+                  <span className="min-w-0 break-words [overflow-wrap:anywhere]">
+                    บันทึกที่อยู่นี้ไว้ในข้อมูลลูกค้า
+                  </span>
                 </label>
-                <p className="text-xs font-semibold leading-5 text-muted-foreground">
-                  ปิดไว้ใน Sector 3 เพราะยังไม่ทำ Customer/CRM mutation
+                <p className="break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
+                  ปิดไว้ในรอบงานนี้ เพราะยังไม่ทำ Customer/CRM mutation
                 </p>
               </div>
             </EntrySection>
@@ -291,7 +293,7 @@ export function OrderCreate({
               />
 
               {summary.hasMixedLineTypes ? (
-                <div className="rounded-md border border-border bg-subtle px-3 py-2 text-sm leading-6 text-muted-foreground">
+                <div className="break-words rounded-md border border-border bg-subtle px-3 py-2 text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                   แผนจัดส่ง: {entryState.shipmentIntent}
                 </div>
               ) : null}
@@ -303,12 +305,14 @@ export function OrderCreate({
             >
               <div className="grid gap-3 md:grid-cols-2">
                 <label
-                  className="grid gap-1 text-sm font-semibold text-foreground"
+                  className="grid min-w-0 gap-1 text-sm font-semibold text-foreground"
                   htmlFor="order-entry-payment-term"
                 >
-                  Payment Term
+                  <span className="break-words [overflow-wrap:anywhere]">
+                    Payment Term
+                  </span>
                   <textarea
-                    className="min-h-24 rounded-md border border-border bg-surface px-3 py-2 text-sm font-normal leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="min-h-24 min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-sm font-normal leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                     id="order-entry-payment-term"
                     onChange={(event) =>
                       commitEntryChange((currentState) =>
@@ -324,17 +328,17 @@ export function OrderCreate({
                 />
               </div>
               {entryState.optionalPaymentRecord ? (
-                <div className="rounded-md border border-border bg-subtle px-3 py-3">
-                  <p className="text-sm font-bold text-foreground">
+                <div className="min-w-0 rounded-md border border-border bg-subtle px-3 py-3">
+                  <p className="break-words text-sm font-bold text-foreground [overflow-wrap:anywhere]">
                     รายการรับเงิน (ตัวอย่าง)
                   </p>
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  <p className="mt-1 break-words text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                     {entryState.optionalPaymentRecord.method}{" "}
                     {formatBaht(entryState.optionalPaymentRecord.amountBaht)}
                     {" • "}
                     {entryState.optionalPaymentRecord.note}
                   </p>
-                  <p className="mt-2 text-xs font-semibold leading-5 text-muted-foreground">
+                  <p className="mt-2 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
                     แสดงเป็นข้อมูล fixture/local เท่านั้น ยังไม่สร้าง Payment
                     Record จริง
                   </p>
@@ -348,11 +352,11 @@ export function OrderCreate({
             padding="md"
             variant="shell"
           >
-            <div>
-              <p className="text-base font-extrabold text-shell-foreground">
+            <div className="min-w-0">
+              <p className="break-words text-base font-extrabold text-shell-foreground [overflow-wrap:anywhere]">
                 สรุปความพร้อม
               </p>
-              <p className="mt-1 text-sm leading-6 text-shell-muted">
+              <p className="mt-1 break-words text-sm leading-6 text-shell-muted [overflow-wrap:anywhere]">
                 {summary.isComplete
                   ? "พร้อมไปหน้า Review โดยยังไม่ออกเลขออเดอร์"
                   : "ยังมีข้อมูลที่ต้องตรวจในหน้านี้"}
@@ -377,16 +381,23 @@ export function OrderCreate({
             </div>
 
             {summary.reviewBlockReasons.length > 0 ? (
-              <div className="rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
-                <p className="font-extrabold">ยังไป Review ไม่ได้</p>
+              <div className="min-w-0 rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
+                <p className="break-words font-extrabold [overflow-wrap:anywhere]">
+                  ยังไป Review ไม่ได้
+                </p>
                 <ul className="mt-1 grid gap-1">
                   {summary.reviewBlockReasons.map((reason) => (
-                    <li key={reason}>{reason}</li>
+                    <li
+                      className="break-words [overflow-wrap:anywhere]"
+                      key={reason}
+                    >
+                      {reason}
+                    </li>
                   ))}
                 </ul>
               </div>
             ) : (
-              <div className="rounded-md border border-shell-border bg-shell px-3 py-2 text-sm font-semibold leading-6 text-shell-muted">
+              <div className="break-words rounded-md border border-shell-border bg-shell px-3 py-2 text-sm font-semibold leading-6 text-shell-muted [overflow-wrap:anywhere]">
                 Review จะใช้ข้อมูลจากหน้านี้ในหน่วยความจำเท่านั้น
               </div>
             )}
@@ -395,23 +406,23 @@ export function OrderCreate({
               {summary.stockWarnings.length > 0 ? (
                 summary.stockWarnings.map((warning) => (
                   <div
-                    className="rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]"
+                    className="break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]"
                     key={warning}
                   >
                     {warning}
                   </div>
                 ))
               ) : (
-                <div className="rounded-md border border-shell-border bg-shell px-3 py-2 text-sm font-semibold leading-6 text-shell-muted">
+                <div className="break-words rounded-md border border-shell-border bg-shell px-3 py-2 text-sm font-semibold leading-6 text-shell-muted [overflow-wrap:anywhere]">
                   ไม่มีคำเตือนสต๊อกในสถานะปัจจุบัน
                 </div>
               )}
             </div>
             <div className="border-t border-shell-border pt-4">
-              <p className="text-sm font-bold text-shell-foreground">
+              <p className="break-words text-sm font-bold text-shell-foreground [overflow-wrap:anywhere]">
                 {formatBaht(summary.totalBaht)}
               </p>
-              <p className="mt-1 text-xs font-semibold leading-5 text-shell-muted">
+              <p className="mt-1 break-words text-xs font-semibold leading-5 text-shell-muted [overflow-wrap:anywhere]">
                 ยอดขายตัวอย่างสำหรับตรวจสอบก่อนสร้างออเดอร์
               </p>
             </div>
@@ -419,7 +430,7 @@ export function OrderCreate({
               <Button disabled title="ยังไม่บันทึกร่างจริงในรอบงานนี้">
                 บันทึกร่าง
               </Button>
-              <p className="text-xs font-semibold leading-5 text-shell-muted">
+              <p className="break-words text-xs font-semibold leading-5 text-shell-muted [overflow-wrap:anywhere]">
                 ปุ่มบันทึกร่างปิดไว้ในรอบงานนี้ จึงยังไม่สร้างหรือแก้ Draft จริง
               </p>
               <ReviewAction
@@ -478,7 +489,7 @@ function EntrySection({
   title: string;
 }) {
   return (
-    <SurfaceCard className="grid gap-4" padding="md">
+    <SurfaceCard className="grid min-w-0 gap-4" padding="md">
       <SectionHeader
         eyebrow={
           <span className="inline-flex items-center gap-2">
@@ -495,10 +506,10 @@ function EntrySection({
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <label className="grid gap-1 text-sm font-semibold text-foreground">
-      {label}
+    <label className="grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+      <span className="break-words [overflow-wrap:anywhere]">{label}</span>
       <input
-        className="min-h-10 rounded-md border border-border bg-subtle px-3 text-sm font-normal text-foreground outline-none"
+        className="min-h-10 min-w-0 rounded-md border border-border bg-subtle px-3 text-sm font-normal text-foreground outline-none"
         readOnly
         value={value}
       />
@@ -508,9 +519,9 @@ function Field({ label, value }: { label: string; value: string }) {
 
 function ReadOnlyMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 text-sm font-semibold text-foreground">
-      {label}
-      <div className="flex min-h-10 items-center rounded-md border border-border bg-subtle px-3 text-sm font-extrabold text-foreground">
+    <div className="grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+      <span className="break-words [overflow-wrap:anywhere]">{label}</span>
+      <div className="flex min-h-10 min-w-0 items-center break-words rounded-md border border-border bg-subtle px-3 text-sm font-extrabold text-foreground [overflow-wrap:anywhere]">
         {value}
       </div>
     </div>
@@ -519,9 +530,11 @@ function ReadOnlyMetric({ label, value }: { label: string; value: string }) {
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid gap-1 rounded-md border border-shell-border bg-shell px-3 py-2 text-sm sm:grid-cols-[120px_minmax(0,1fr)] sm:items-start">
-      <span className="font-semibold text-shell-muted">{label}</span>
-      <span className="break-words font-extrabold text-shell-foreground">
+    <div className="grid min-w-0 gap-1 rounded-md border border-shell-border bg-shell px-3 py-2 text-sm sm:grid-cols-[120px_minmax(0,1fr)] sm:items-start">
+      <span className="break-words font-semibold text-shell-muted [overflow-wrap:anywhere]">
+        {label}
+      </span>
+      <span className="break-words font-extrabold text-shell-foreground [overflow-wrap:anywhere]">
         {value}
       </span>
     </div>
@@ -556,12 +569,12 @@ function ReviewAction({
   }
 
   return (
-    <div className="grid gap-1">
+    <div className="grid min-w-0 gap-1">
       <Button disabled title={firstReason}>
         ตรวจสอบก่อนสร้างออเดอร์
       </Button>
       {showReason ? (
-        <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground">
+        <p className="max-w-64 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
           {firstReason}
         </p>
       ) : null}

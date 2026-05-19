@@ -101,13 +101,17 @@ export function OrderDetail({
         }
         description="หน้าอ่านข้อมูลออเดอร์ก่อนแก้ แยกสถานะออเดอร์ออกจากสถานะจัดส่ง"
         meta={
-          <div className="flex flex-wrap gap-2">
-            <span className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm font-bold text-foreground">
-              <span className="text-muted-foreground">สถานะออเดอร์</span>
+          <div className="flex min-w-0 flex-wrap gap-2">
+            <span className="inline-flex min-w-0 flex-wrap items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm font-bold text-foreground">
+              <span className="min-w-0 break-words text-muted-foreground [overflow-wrap:anywhere]">
+                สถานะออเดอร์
+              </span>
               <OrderStatusChip status={order.orderStatus} />
             </span>
-            <span className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm font-bold text-foreground">
-              <span className="text-muted-foreground">สถานะจัดส่ง</span>
+            <span className="inline-flex min-w-0 flex-wrap items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm font-bold text-foreground">
+              <span className="min-w-0 break-words text-muted-foreground [overflow-wrap:anywhere]">
+                สถานะจัดส่ง
+              </span>
               <ShipmentStatusChip
                 kind={order.shipmentSummary.kind}
                 label={order.shipmentSummary.label}
@@ -120,7 +124,7 @@ export function OrderDetail({
 
       {isCompleted ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-          <p className="text-sm font-bold leading-6 text-[#166534]">
+          <p className="break-words text-sm font-bold leading-6 text-[#166534] [overflow-wrap:anywhere]">
             ออเดอร์จัดส่งครบแล้ว ต้นฉบับออเดอร์เป็น read-first และไม่แก้รายการ
             ผู้รับ หรือข้อมูลที่กระทบการจัดส่งใน workflow ปกติ
           </p>
@@ -129,11 +133,11 @@ export function OrderDetail({
 
       {order.fixtureOnlyNotice ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-          <p className="text-sm font-bold leading-6 text-[#166534]">
+          <p className="break-words text-sm font-bold leading-6 text-[#166534] [overflow-wrap:anywhere]">
             ผลยืนยันจาก Order Review แสดงออเดอร์ที่สร้างแล้วใน fixture/dev
             result เท่านั้น ยังไม่มี persistence จริง
           </p>
-          <p className="mt-1 text-sm font-semibold leading-6 text-[#166534]">
+          <p className="mt-1 break-words text-sm font-semibold leading-6 text-[#166534] [overflow-wrap:anywhere]">
             {order.fixtureOnlyNotice}
           </p>
         </SurfaceCard>
@@ -183,7 +187,7 @@ export function OrderDetail({
               >
                 แก้ไขรายการออเดอร์
               </Button>
-              <p className="max-w-64 text-xs font-semibold leading-5 text-muted-foreground sm:text-right">
+              <p className="max-w-64 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
                 {isCompleted
                   ? "ออเดอร์จัดส่งครบแล้ว จึงอ่านอย่างเดียวใน workflow ปกติ"
                   : "ออเดอร์ยกเลิกแล้ว จึงไม่เปิดการแก้รายการ"}
@@ -268,7 +272,7 @@ export function OrderDetail({
               สร้างรอบจัดส่งจากรายการที่เลือก
             </Button>
           )}
-          <p className="mt-2 text-sm font-semibold text-muted-foreground">
+          <p className="mt-2 break-words text-sm font-semibold text-muted-foreground [overflow-wrap:anywhere]">
             {hasReadyShipmentLines
               ? `เลือก ${selectedShipmentLineCount} รายการพร้อมส่งในหน้านี้เท่านั้น ยังไม่บันทึกหรือสร้างรอบจัดส่งจริง`
               : "ไม่มีรายการพร้อมส่งที่เลือกได้ในออเดอร์นี้"}
@@ -372,11 +376,13 @@ export function OrderDetail({
         <ol className="grid">
           {order.timeline.map((event) => (
             <li
-              className="grid gap-1 border-b border-border p-4 last:border-b-0"
+              className="grid min-w-0 gap-1 border-b border-border p-4 last:border-b-0"
               key={`${event.title}-${event.detail}`}
             >
-              <p className="text-sm font-bold text-foreground">{event.title}</p>
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="break-words text-sm font-bold text-foreground [overflow-wrap:anywhere]">
+                {event.title}
+              </p>
+              <p className="break-words text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
                 {event.detail}
               </p>
             </li>
@@ -397,12 +403,12 @@ function ManageOrderMenu({
   order: OrderFixture;
 }) {
   return (
-    <details className="relative">
-      <summary className="inline-flex min-h-10 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
+    <details className="relative min-w-0">
+      <summary className="inline-flex min-h-10 min-w-0 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
         จัดการออเดอร์
         <ChevronDown aria-hidden className="ml-2 h-4 w-4" />
       </summary>
-      <div className="absolute right-0 z-20 mt-2 grid w-64 gap-1 rounded-lg border border-border bg-surface p-2 shadow-lifted">
+      <div className="absolute left-0 z-20 mt-2 grid w-[min(18rem,calc(100vw-2rem))] gap-1 rounded-lg border border-border bg-surface p-2 shadow-lifted sm:left-auto sm:right-0">
         <MenuLink href={orderHref("/modules/customers", currentUser)}>
           เปิดลูกค้า
         </MenuLink>
@@ -437,7 +443,7 @@ function ManageOrderMenu({
 function MenuLink({ children, href }: { children: ReactNode; href: string }) {
   return (
     <Link
-      className="min-h-10 rounded-md px-3 py-2 text-sm font-semibold text-foreground transition hover:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="min-h-10 min-w-0 break-words rounded-md px-3 py-2 text-sm font-semibold text-foreground transition [overflow-wrap:anywhere] hover:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
       href={href}
     >
       {children}
@@ -447,7 +453,7 @@ function MenuLink({ children, href }: { children: ReactNode; href: string }) {
 
 function MenuDisabled({ children }: { children: ReactNode }) {
   return (
-    <span className="min-h-10 rounded-md px-3 py-2 text-sm font-semibold leading-6 text-muted-foreground opacity-70">
+    <span className="min-h-10 min-w-0 break-words rounded-md px-3 py-2 text-sm font-semibold leading-6 text-muted-foreground opacity-70 [overflow-wrap:anywhere]">
       {children}
     </span>
   );
@@ -455,7 +461,7 @@ function MenuDisabled({ children }: { children: ReactNode }) {
 
 function DisabledReason({ children }: { children: ReactNode }) {
   return (
-    <p className="max-w-56 text-right text-xs font-semibold leading-5 text-muted-foreground">
+    <p className="max-w-56 break-words text-left text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
       {children}
     </p>
   );
@@ -463,9 +469,11 @@ function DisabledReason({ children }: { children: ReactNode }) {
 
 function Fact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-b border-border p-4">
-      <dt className="text-xs font-bold text-muted-foreground">{label}</dt>
-      <dd className="mt-1 text-sm font-semibold leading-6 text-foreground">
+    <div className="min-w-0 border-b border-border p-4">
+      <dt className="break-words text-xs font-bold text-muted-foreground [overflow-wrap:anywhere]">
+        {label}
+      </dt>
+      <dd className="mt-1 break-words text-sm font-semibold leading-6 text-foreground [overflow-wrap:anywhere]">
         {value}
       </dd>
     </div>
@@ -484,7 +492,9 @@ function LineGroup({
   return (
     <div className="border-b border-border last:border-b-0">
       <div className="border-b border-border bg-subtle px-4 py-3">
-        <p className="text-sm font-extrabold text-foreground">{title}</p>
+        <p className="break-words text-sm font-extrabold text-foreground [overflow-wrap:anywhere]">
+          {title}
+        </p>
       </div>
       {lines.map((line) => (
         <OrderLineCard
@@ -529,10 +539,10 @@ function ShipmentSelectionRow({
           type="checkbox"
         />
         <span className="min-w-0">
-          <span className="block text-sm font-bold text-foreground">
+          <span className="block break-words text-sm font-bold text-foreground [overflow-wrap:anywhere]">
             {line.title}
           </span>
-          <span className="mt-1 block text-sm leading-6 text-muted-foreground">
+          <span className="mt-1 block break-words text-sm leading-6 text-muted-foreground [overflow-wrap:anywhere]">
             {line.quantity} ชิ้น • {line.shipmentState}
           </span>
         </span>
