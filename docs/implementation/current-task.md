@@ -1,47 +1,42 @@
 # Current Implementation Task
 
 Status: ready for review
-Sector: Sector 6 - Shipment / Delivery
+Sector: Sector 3 - Order Read/Create Foundation interaction fix
 Task owner: Codex implementer
 Date started: 2026-05-19
 Date completed: 2026-05-19
 
 ## Goal
 
-Implement fixture-backed Shipment and Delivery workflow surfaces as one coherent reviewable slice: ready-to-ship queue, temporary Shipment Builder, Delivery Team send-out work, admin shipment confirmation, evidence/tracking foundation, Delivery Note preview, Shipping Sheet preview, COD visibility rules, and special-shipment visual foundation where safe.
+Fix the Order Create/Edit in-memory interaction foundation so adding, editing, and removing ready-stock/custom-work lines updates the visible Order Lines section and completeness summary immediately, and so Order Review clearly receives or falls back to fixture-backed in-memory data without implying real persistence.
 
 ## Scope
 
-- Ready-to-ship admin workbench `รอสร้างรอบจัดส่ง` grouped by Order with source chips, stock-warning signals, search/filter shell, and builder entry.
-- Temporary Shipment Builder with selected item list, address snapshot, delivery fields, preview links, release confirmation, stock-negative acknowledgement, and no saved draft action.
-- Delivery Team mobile/tablet dashboard with released today/future lists, fixture-local sent-out behavior, optional evidence/note foundation, and same-day sent-out history.
-- Admin `ยืนยันการจัดส่ง` queue with tracking/evidence panel, missing-evidence blocking, and fixture-local close behavior.
-- A4-style Delivery Note and Shipping Sheet previews with permission-safe COD behavior.
-- Safe fake fixtures and pure domain helpers for Shipment/Delivery visibility and local workflow rules.
+- Add React in-memory state behavior for `เพิ่มสินค้าพร้อมส่ง` and `เพิ่มงานสั่งทำ`.
+- Update visible summary/completeness state when quantity, selected SKU/color, custom-work detail, or Payment Term changes.
+- Keep Order Review read-only and clearly marked as in-memory or fixture-backed for this sector.
+- Add focused tests for the create/edit in-memory interactions and Review handoff/fallback behavior.
 
 ## Visual Intent
 
-- Mood: premium operational Shipment/Delivery workspace for THAIBORAN, Thai-first, practical, image-led, and focused on daily queue work.
-- Density: admin screens use dense workbench rows, compact summary strips, thumbnails, chips, and right-side review panels; Delivery Team screens use larger cards and large tap targets.
-- Shell/palette: keep the current dark/navy shell for hierarchy while work surfaces stay light, readable, high contrast, and suitable for dense ERP scanning.
-- Component polish: clear hover/focus/cursor states, stable table-to-card behavior, semantic status chips, optional evidence visuals that do not look required, and print previews without app chrome inside the A4 page.
-- Responsive behavior: verify at 375, 768, 1024, and 1440 widths; delivery is mobile/tablet-first, admin queues become stacked cards when tables are too narrow, print previews scale without revealing hidden data.
-- What not to do: no marketing/hero UI, no saved Shipment draft styling, no COD editor, no tracking input for Delivery Team, no barcode/carrier/printer integration, no decorative animation/gradients, no low-contrast dark content surfaces.
+- Mood: premium operational ERP Order workbench, Thai-first, calm, and practical for admin entry work.
+- Density: preserve the dense editor plus sticky summary pattern; line editors should be compact but readable with labels on every control.
+- Shell/palette: keep the existing dark/navy app shell and light readable work surfaces; use restrained chips and warnings for fixture/in-memory state.
+- Component polish: explicit cursor/hover/focus states, stable line-card controls, clear disabled/no-real-persistence language, and readable Thai wrapping.
+- Responsive behavior: editor controls should stack cleanly on phone/tablet without horizontal scroll; summary remains usable when it moves below content.
+- What not to do: no marketing UI, no decorative gradients/animation, no real save/confirmation side effects, no hidden sensitive data, and no invented workflow states.
 
 ## UI UX Pro Max Guidance Used
 
-- Design-system query: `ERP shipment delivery operations dashboard Thai dense mobile`.
-- React stack query: `dense responsive delivery cards dashboard evidence print preview accessibility`.
-- Applied guidance: data-dense operations dashboard hierarchy, mobile delivery card ergonomics, labels for form controls, visible focus states, ARIA live regions for local send-out/close updates, stable responsive card/table layouts, and print-preview clarity.
-- Project visual source of truth remains `docs/ux-ui/design-system/visual-design-system.md`, `responsive-mobile.md`, and `pages/shipment-delivery.md`.
+- Design-system query: `ERP order create edit dense Thai operations workbench`.
+- React stack query: `React in-memory form state responsive dashboard accessibility`.
+- Applied guidance: data-dense dashboard/workbench hierarchy, labeled form controls, lazy local state initialization, clear hover/focus/cursor states, and responsive stacked controls.
 
 ## Out of Scope
 
-- No database schema, Prisma models, migrations, seed data, persistent storage, or real Shipment persistence.
-- No API contracts, real data fetching, real auth/session, or real permission management.
-- No real payment/COD close, stock movement, Order completion update, carrier API, barcode, label printer, or file upload/storage.
-- No full finance, Customer/CRM, Settings, Activity Log, Management Log, or Audit Log persistence.
-- No unrelated modules or business-rule changes.
+- No database schema, Prisma models, migrations, seed data, API contracts, or real persistence.
+- No real Order record, Order ID creation, confirmation mutation, JOB-O creation, stock reservation, Shipment creation, Payment/COD action, or finance mutation.
+- No business-rule changes, invented workflow states, unrelated module work, or sensitive finance/cost/profit/payout exposure.
 
 ## Source Docs To Read
 
@@ -53,78 +48,69 @@ Implement fixture-backed Shipment and Delivery workflow surfaces as one coherent
 - `docs/implementation/review-report.md`
 - `docs/implementation/task-handoff-template.md`
 - `CONTEXT.md`
-- `docs/adr/*.md`
 - `docs/decision-log.md`
 - `docs/qa-summary.md`
 - `docs/ux-ui/04-interaction-modal-behavior.md`
-- `docs/ux-ui/03-navigation-map.md`
-- `docs/ux-ui/02-screen-inventory.md`
 - `docs/ux-ui/design-system/visual-design-system.md`
 - `docs/ux-ui/design-system/responsive-mobile.md`
-- `docs/ux-ui/design-system/pages/shipment-delivery.md`
 - `docs/ux-ui/design-system/pages/order.md`
-- `docs/ux-ui/screens/SCR-SHIP-001-ready-to-ship-queue.md`
-- `docs/ux-ui/screens/SCR-SHIP-002-shipment-builder.md`
-- `docs/ux-ui/screens/SCR-ADM-005-shipment-confirmation-queue.md`
-- `docs/ux-ui/screens/SCR-DEL-001-delivery-dashboard.md`
-- `docs/ux-ui/screens/SCR-SHIP-005-delivery-note-preview.md`
-- `docs/ux-ui/screens/SCR-SHIP-006-shipping-sheet-preview.md`
-- `docs/ux-ui/screens/SCR-ORD-005-order-detail.md`
+- `docs/ux-ui/screens/SCR-ORD-001-draft-order-editor.md`
+- `docs/ux-ui/screens/SCR-ORD-004-order-review-create-order.md`
 
 ## Permission and Sensitive Data Rules
 
 - Missing-permission navigation and actions are hidden.
 - State-blocked actions are disabled with reason.
 - Sensitive fields are omitted before rendering for users without permission.
-- COD is visible only where docs allow; Delivery Note never shows COD.
-- No sensitive cost/profit/payout/payment evidence/Management Log/Audit Log data in fixtures, tests, logs, screenshots, exports, or print previews.
+- No sensitive data in fixtures, tests, logs, screenshots, exports, or print previews.
 
 ## Implementation Notes
 
-- Shipment Builder is temporary pre-release work; no `บันทึกเป็นร่าง` action exists.
-- Delivery Team send-out is a local fixture handoff, not final Shipment close or proof capture.
-- Admin close remains local fixture state and is blocked unless tracking or at least one delivery evidence photo exists.
-- Delivery evidence thumbnails use safe local placeholders only; no real upload/storage is implemented.
+- State is React/module memory only for this sector.
+- Review may read the current in-memory entry state after client-side navigation, or fall back to safe fixture data with an explicit fixture label.
+- `ยืนยันสร้างออเดอร์` remains mocked/foundation-only and must not create a real Order or downstream records.
+- Ready-stock and custom-work add/edit/remove interactions update the visible Order Lines section and sticky summary immediately.
+- Payment Term, ready SKU/color, quantity, stock warning state, and custom-work detail completeness are derived from the current in-memory entry state.
+
+## Behavior Implemented
+
+- `เพิ่มสินค้าพร้อมส่ง` appends a ready-stock line to the current browser-memory Order entry state.
+- `เพิ่มงานสั่งทำ` appends a custom-work line with an embedded `รายละเอียดงานสั่งทำ` editor.
+- Quantity edits, SKU/color selection, custom-work detail edits, line removal, and Payment Term edits recalculate summary counts, quantity, totals, warnings, and completeness text.
+- Order Review reads the current in-memory Order entry state after client navigation and labels direct/fallback data as fixture-backed.
+- Review remains a mock/foundation confirmation surface and clearly says it does not write to the database.
 
 ## Files Changed
 
-- `packages/domain/src/shipment-workflow.ts`
-- `packages/domain/src/shipment-workflow.test.ts`
-- `packages/domain/src/index.ts`
-- `apps/web/src/features/shipments/`
-- `apps/web/src/features/print-preview/`
-- `apps/web/src/app/modules/shipments/`
-- `apps/web/src/features/orders/order-detail.tsx`
-- `apps/web/src/features/admin-dashboard/admin-dashboard.tsx`
-- `apps/web/src/shared/fixtures/admin-dashboard.ts`
-- `apps/web/src/shared/fixtures/users.ts`
-- `apps/web/src/shared/permissions/access.ts`
-- `apps/web/src/shared/permissions/access.test.ts`
-- `apps/web/src/shared/navigation/navigation.ts`
-- `apps/web/src/shared/navigation/navigation.test.ts`
-- `apps/web/e2e/sector-1-smoke.spec.ts`
-- `apps/web/e2e/sector-6-shipment-delivery.spec.ts`
+- `apps/web/src/features/orders/order-create.tsx`
+- `apps/web/src/features/orders/order-review.tsx`
+- `apps/web/src/features/orders/order-entry-state.ts`
+- `apps/web/src/features/orders/order-entry-memory-store.ts`
+- `apps/web/src/features/orders/components/order-entry-line-editor.tsx`
+- `apps/web/src/features/orders/orders.test.tsx`
+- `apps/web/e2e/sector-3-orders-smoke.spec.ts`
 - `docs/implementation/current-task.md`
 
 ## Checks Run
 
+- `pnpm --filter @thaiboran/web test -- orders.test.tsx` - passed
 - `pnpm lint` - passed
 - `pnpm typecheck` - passed
 - `pnpm test` - passed
-- `pnpm format:check` - passed
+- `pnpm format:check` - passed after formatting the edited Order files
 - `pnpm build` - passed
-- `pnpm test:e2e` - passed, 176 Playwright tests
-- Browser plugin visual smoke: tool discovery did not expose the Codex Browser tools in this session; Playwright browser smoke covered the new Shipment/Delivery routes at 375, 768, 1024, and 1440 widths.
+- `pnpm test:e2e` - passed, 180 Playwright tests
+- Note: the first full e2e attempt failed because Playwright reused a stale dev server after `next build` rewrote `.next`; the stale server showed a Next runtime missing-chunk error. The stale server was stopped, generated `.next` was cleared, and the clean rerun passed.
 
 ## Known Gaps or Blockers
 
-- No source-doc conflicts found before implementation.
-- No blocking gaps. Persistence, real auth/session, database schema, API contracts, file upload/storage, carrier/barcode/printer integrations, real stock movement, Order completion updates, and Payment/COD close remain intentionally excluded.
+- No source-doc conflicts found.
+- No blockers.
+- Real persistence, real Draft save, real Order confirmation, JOB-O creation, stock reservation, Shipment creation, and Payment/COD mutations remain excluded.
 
 ## Reviewer Focus
 
-- Verify Shipment Builder has no draft action and no COD editing.
-- Verify Delivery Team cannot create/split/edit/track/close Shipments or close COD/payment follow-up.
-- Verify COD visibility and print-preview behavior are permission-safe.
-- Verify admin close requires tracking or delivery evidence.
-- Verify no sensitive cost/profit/payout/payment evidence/Management Log/Audit Log leakage.
+- Verify Order Create interactions are local browser-memory only and do not imply database persistence.
+- Verify ready-stock/custom-work add/edit/remove behavior updates both line list and summary.
+- Verify Review clearly distinguishes current in-memory data from fixture fallback data.
+- Verify no real Order ID, JOB-O, reservation, Shipment, Payment/COD action, or sensitive finance/cost/profit/payout data is introduced.

@@ -71,6 +71,42 @@ for (const viewport of viewports) {
       await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
     });
 
+    test("updates Order Create in-memory lines and carries them to Review", async ({
+      page,
+    }) => {
+      await page.goto("/modules/orders/create?user=admin-sales");
+
+      await expect(page.getByText("2 รายการ / 3 ชิ้น")).toBeVisible();
+      await page.getByRole("button", { name: "เพิ่มสินค้าพร้อมส่ง" }).click();
+      await expect(page.getByTestId("entry-ready-added-1")).toBeVisible();
+      await expect(page.getByText("3 รายการ / 4 ชิ้น")).toBeVisible();
+
+      await page
+        .getByTestId("entry-ready-added-1")
+        .getByLabel("จำนวน")
+        .fill("3");
+      await expect(page.getByText("3 รายการ / 6 ชิ้น")).toBeVisible();
+
+      await page.getByRole("button", { name: "เพิ่มงานสั่งทำ" }).click();
+      await expect(page.getByTestId("entry-custom-added-1")).toBeVisible();
+      await expect(page.getByText("4 รายการ / 7 ชิ้น")).toBeVisible();
+      await page
+        .getByTestId("entry-custom-added-1")
+        .getByLabel("รายละเอียดงานสั่งทำ")
+        .fill("เพิ่มตู้เตี้ยไม้สัก สีโอ๊คอ่อน ขนาดตามพื้นที่จริง");
+      await expect(page.getByText("1 รายการยังไม่ครบ")).toHaveCount(0);
+
+      await page
+        .getByRole("link", { name: "ตรวจสอบก่อนสร้างออเดอร์" })
+        .first()
+        .click();
+
+      await expect(
+        page.getByText("ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"),
+      ).toBeVisible();
+      await expect(page.getByText("งานสั่งทำเพิ่มใหม่ 1")).toBeVisible();
+    });
+
     test("can confirm valid fixture Review without a second modal", async ({
       page,
     }) => {

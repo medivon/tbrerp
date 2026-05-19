@@ -1,10 +1,11 @@
 import React from "react";
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { DraftOrderQueue } from "@/features/orders/draft-order-queue";
 import { OrderDetail } from "@/features/orders/order-detail";
 import { OrderList } from "@/features/orders/order-list";
+import { OrderCreate } from "@/features/orders/order-create";
 import { OrderReview } from "@/features/orders/order-review";
 import {
   confirmedOrderFixture,
@@ -12,11 +13,25 @@ import {
   draftOrderFixtures,
   orderFixtures,
 } from "@/features/orders/fixtures/orders";
+import {
+  resetOrderEntryMemoryState,
+  setOrderEntryMemoryState,
+} from "@/features/orders/order-entry-memory-store";
+import {
+  addReadyStockLine,
+  createInitialOrderEntryState,
+  markOrderEntryInMemory,
+  updateReadyStockLineOption,
+} from "@/features/orders/order-entry-state";
 import { getFixtureUser } from "@/shared/fixtures/users";
 
 const currentUser = getFixtureUser("admin-sales");
 
 describe("Order read/create foundation", () => {
+  beforeEach(() => {
+    resetOrderEntryMemoryState();
+  });
+
   it("renders fixture rows in the all orders list", () => {
     render(<OrderList currentUser={currentUser} mode="all" />);
 
@@ -54,6 +69,98 @@ describe("Order read/create foundation", () => {
     expect(draftOrderFixtures.every((draft) => !("orderId" in draft))).toBe(
       true,
     );
+  });
+
+  it("adds and edits ready-stock lines in the Order Create in-memory state", () => {
+    render(<OrderCreate currentUser={currentUser} />);
+
+    expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "เพิ่มสินค้าพร้อมส่ง" }),
+    );
+
+    const addedLine = within(screen.getByTestId("entry-ready-added-1"));
+    expect(addedLine.getByText("โต๊ะคอนโซลแกะลายพร้อมส่ง")).toBeTruthy();
+    expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
+
+    fireEvent.change(addedLine.getByLabelText("สินค้า / SKU"), {
+      target: { value: "ready-side-table-dark" },
+    });
+    fireEvent.change(addedLine.getByLabelText("จำนวน"), {
+      target: { value: "3" },
+    });
+
+    expect(addedLine.getAllByText(/TBR-SID-DRK/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/TBR-SID-DRK \/ วอลนัทเข้ม/)).toBeTruthy();
+    expect(screen.getByText("3 รายการ / 6 ชิ้น")).toBeTruthy();
+    expect(
+      screen.getAllByText(/จำนวนเกินที่ขายได้: ขายได้ 2 ชิ้น/).length,
+    ).toBeGreaterThan(0);
+
+    fireEvent.change(screen.getByLabelText("Payment Term"), {
+      target: { value: "" },
+    });
+    expect(screen.getAllByText("ยังไม่มี").length).toBeGreaterThan(0);
+
+    fireEvent.change(screen.getByLabelText("Payment Term"), {
+      target: { value: "ชำระเต็มจำนวนก่อนจัดส่ง" },
+    });
+    expect(screen.getAllByText("ครบ").length).toBeGreaterThan(0);
+  });
+
+  it("adds, edits, and removes custom-work lines in the Order Create in-memory state", () => {
+    render(<OrderCreate currentUser={currentUser} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "เพิ่มงานสั่งทำ" }));
+
+    const addedLine = within(screen.getByTestId("entry-custom-added-1"));
+    expect(addedLine.getByText("งานสั่งทำเพิ่มใหม่ 1")).toBeTruthy();
+    expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
+    expect(screen.getByText("1 รายการยังไม่ครบ")).toBeTruthy();
+
+    fireEvent.change(addedLine.getByLabelText("รายละเอียดงานสั่งทำ"), {
+      target: { value: "เพิ่มลิ้นชักซ่อน สีโอ๊คอ่อน ขนาดตามพื้นที่จริง" },
+    });
+    fireEvent.change(addedLine.getByLabelText("จำนวน"), {
+      target: { value: "2" },
+    });
+
+    expect(screen.queryByText("1 รายการยังไม่ครบ")).toBeNull();
+    expect(screen.getByText("3 รายการ / 5 ชิ้น")).toBeTruthy();
+
+    fireEvent.click(
+      addedLine.getByRole("button", { name: "ลบรายการ งานสั่งทำเพิ่มใหม่ 1" }),
+    );
+
+    expect(screen.queryByText("งานสั่งทำเพิ่มใหม่ 1")).toBeNull();
+    expect(screen.getByText("2 รายการ / 3 ชิ้น")).toBeTruthy();
+  });
+
+  it("shows current in-memory Order Create state on Review", () => {
+    const withReadyLine = addReadyStockLine(createInitialOrderEntryState());
+    const withSelectedSku = updateReadyStockLineOption(
+      withReadyLine,
+      "entry-ready-added-1",
+      "ready-side-table-dark",
+    );
+
+    setOrderEntryMemoryState(markOrderEntryInMemory(withSelectedSku));
+
+    render(<OrderReview currentUser={currentUser} />);
+
+    expect(
+      screen.getByText("ข้อมูลจากหน้าสร้างออเดอร์ในหน่วยความจำ"),
+    ).toBeTruthy();
+    expect(screen.getByText(/TBR-SID-DRK/)).toBeTruthy();
+    expect(screen.getByText(/โต๊ะข้างไม้สักพร้อมส่ง/)).toBeTruthy();
+  });
+
+  it("labels direct Review data as fixture-backed when no in-memory edit exists", () => {
+    render(<OrderReview currentUser={currentUser} />);
+
+    expect(screen.getByText("ข้อมูลตัวอย่างจาก fixture")).toBeTruthy();
+    expect(screen.getByText("ไม่ใช่การบันทึกจริง")).toBeTruthy();
   });
 
   it("enables Review confirmation only after required acknowledgement and shows fixture result", () => {

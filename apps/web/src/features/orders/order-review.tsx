@@ -23,11 +23,15 @@ import { ReadFirstSection } from "@/features/orders/components/read-first-sectio
 import { ReviewImpactPanel } from "@/features/orders/components/review-impact-panel";
 import {
   formatBaht,
-  getOrderConfirmationInput,
   type OrderConfirmationFixtureResult,
   type OrderLineFixture,
   type OrderReviewScenarioId,
 } from "@/features/orders/fixtures/orders";
+import { useOrderEntryMemoryState } from "@/features/orders/order-entry-memory-store";
+import {
+  createOrderConfirmationInputFromEntryState,
+  getOrderEntrySourceLabel,
+} from "@/features/orders/order-entry-state";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
@@ -41,19 +45,22 @@ export function OrderReview({
   const [stockShortageAccepted, setStockShortageAccepted] = useState(false);
   const [confirmationResult, setConfirmationResult] =
     useState<OrderConfirmationFixtureResult | null>(null);
+  const entryState = useOrderEntryMemoryState();
   const confirmationInput = useMemo(
     () =>
-      getOrderConfirmationInput({
+      createOrderConfirmationInputFromEntryState({
         actor: {
           displayName: currentUser.displayName,
           id: currentUser.id,
         },
+        entryState,
         scenarioId,
         stockShortageAccepted,
       }),
     [
       currentUser.displayName,
       currentUser.id,
+      entryState,
       scenarioId,
       stockShortageAccepted,
     ],
@@ -117,7 +124,7 @@ export function OrderReview({
             </Button>
           </>
         }
-        description="ตรวจสอบข้อมูลและผลลัพธ์ downstream ก่อนสร้าง fixture/dev Order ID"
+        description="ตรวจสอบข้อมูลจากหน่วยความจำของหน้า Create หรือ fixture โดยยังไม่เขียนฐานข้อมูลจริง"
         meta={
           <div className="flex flex-wrap gap-2">
             <StatusChip
@@ -131,6 +138,10 @@ export function OrderReview({
                 ? "พร้อมสร้างออเดอร์"
                 : "ยังยืนยันไม่ได้"}
             </StatusChip>
+            <StatusChip variant="action">
+              {getOrderEntrySourceLabel(entryState)}
+            </StatusChip>
+            <StatusChip variant="neutral">ไม่ใช่การบันทึกจริง</StatusChip>
             {hasStockWarning ? (
               <StatusChip variant="warning">ต้องรับทราบคำเตือน</StatusChip>
             ) : null}
