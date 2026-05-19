@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Camera, FileText, Printer, Truck } from "lucide-react";
+import { getShipmentCodVisibility } from "@thaiboran/domain";
 import {
   Button,
   EmptyState,
@@ -13,10 +14,7 @@ import {
   ShipmentItemThumb,
   SourceChip,
 } from "@/features/shipments/components/shipment-common";
-import {
-  getPrintPreviewShipment,
-  getShipmentBuilderFixture,
-} from "@/features/shipments/fixtures/shipments";
+import { getPrintPreviewShipment } from "@/features/shipments/fixtures/shipments";
 import { shipmentHref, shipmentRoutes } from "@/features/shipments/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
@@ -33,9 +31,11 @@ export function ShipmentDetail({
     return <EmptyState title="ไม่พบรอบจัดส่งนี้" />;
   }
 
-  const builderCod =
-    shipment.orderId &&
-    getShipmentBuilderFixture(shipment.orderId, currentUser);
+  const codVisibility = getShipmentCodVisibility(currentUser.id, {
+    codAmountBaht: shipment.codAmountBaht,
+    isFinalOrderClosingRound: shipment.isFinalOrderClosingRound,
+    responsibleUserId: shipment.responsibleUserId,
+  });
 
   return (
     <div className="mx-auto grid w-full max-w-[1180px] gap-5">
@@ -125,9 +125,7 @@ export function ShipmentDetail({
               />
             </dl>
             <div className="mt-3 flex flex-wrap gap-2">
-              {builderCod ? (
-                <CodVisibilityChip codVisibility={builderCod.codVisibility} />
-              ) : null}
+              <CodVisibilityChip codVisibility={codVisibility} />
               <StatusChip variant="neutral">
                 <Truck aria-hidden className="h-3.5 w-3.5" />
                 ข้อมูลอ่านอย่างเดียว

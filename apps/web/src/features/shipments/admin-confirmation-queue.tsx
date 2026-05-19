@@ -293,10 +293,22 @@ export function AdminShipmentConfirmationQueue({
               onTrackingChange={(shipmentId, tracking) => {
                 updateShipment(shipmentId, (shipment) => ({
                   ...shipment,
-                  closeBlockedReason: undefined,
-                  evidenceStatus: "หลักฐานครบ",
+                  closeBlockedReason: canCloseShipmentWithEvidence({
+                    evidencePhotoCount: shipment.evidencePhotoCount,
+                    tracking,
+                  })
+                    ? undefined
+                    : "กรุณาเพิ่ม Tracking หรือรูปหลักฐานจัดส่งก่อนปิดรอบจัดส่ง",
+                  evidenceStatus: canCloseShipmentWithEvidence({
+                    evidencePhotoCount: shipment.evidencePhotoCount,
+                    tracking,
+                  })
+                    ? "หลักฐานครบ"
+                    : "หลักฐานไม่ครบ",
                   tracking,
-                  trackingStatus: tracking ? "มี Tracking" : "รอเลขพัสดุ",
+                  trackingStatus: tracking.trim()
+                    ? "มี Tracking"
+                    : "รอเลขพัสดุ",
                 }));
               }}
               shipment={selectedShipment}

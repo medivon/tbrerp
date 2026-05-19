@@ -11,6 +11,7 @@ import {
   releasedDeliveryShipments,
   sentOutConfirmationShipments,
 } from "@/features/shipments/fixtures/shipments";
+import { ShipmentDetail } from "@/features/shipments/shipment-detail";
 import { ReadyToShipQueue } from "@/features/shipments/ready-to-ship-queue";
 import { ShipmentBuilder } from "@/features/shipments/shipment-builder";
 import { getFixtureUser } from "@/shared/fixtures/users";
@@ -92,6 +93,14 @@ describe("Shipment / Delivery foundation", () => {
     expect(screen.queryByText("COD 9,500 บาท")).toBeNull();
   });
 
+  it("shows responsible COD on Shipment Detail from the shipment fixture itself", () => {
+    render(
+      <ShipmentDetail currentUser={deliveryUser} shipmentId="SHP-240604-007" />,
+    );
+
+    expect(screen.getByText("COD 12,500 บาท")).toBeTruthy();
+  });
+
   it("Delivery Team cannot close Shipment, add Tracking, or close COD/payment follow-up", () => {
     render(<DeliveryDashboard currentUser={deliveryUser} />);
 
@@ -160,6 +169,26 @@ describe("Shipment / Delivery foundation", () => {
     expect(
       screen.getByText(/ปิดรอบจัดส่งใน local fixture เท่านั้น/),
     ).toBeTruthy();
+  });
+
+  it("returns admin confirmation status to evidence missing when Tracking is cleared", () => {
+    render(<AdminShipmentConfirmationQueue currentUser={adminUser} />);
+
+    fireEvent.change(screen.getByLabelText("Tracking"), {
+      target: { value: "TH-TEST-0001" },
+    });
+    fireEvent.change(screen.getByLabelText("Tracking"), {
+      target: { value: "" },
+    });
+
+    expect(screen.getAllByText("หลักฐานไม่ครบ").length).toBeGreaterThan(0);
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "ยืนยันและปิดรอบจัดส่ง",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
   });
 
   it("allows admin close when evidence photo exists", () => {
