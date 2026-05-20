@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { Filter, PackageCheck, Search, Truck } from "lucide-react";
 import {
   Button,
@@ -21,11 +24,30 @@ import { ShipmentTabs } from "@/features/shipments/components/shipment-tabs";
 import {
   getReadyToShipOrdersForUser,
   getSourceLabel,
-  specialShipmentFoundation,
   type ReadyToShipOrderView,
 } from "@/features/shipments/fixtures/shipments";
 import { shipmentHref, shipmentRoutes } from "@/features/shipments/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
+import { cn } from "@/lib/utils";
+
+type ReadyFilter =
+  | "ทั้งหมด"
+  | "กำหนดส่งวันนี้"
+  | "สินค้าพร้อมส่ง"
+  | "งานสั่งทำเสร็จแล้ว"
+  | "งานบริการ"
+  | "COD"
+  | "สร้างรวมได้";
+
+const readyFilters: ReadyFilter[] = [
+  "ทั้งหมด",
+  "กำหนดส่งวันนี้",
+  "สินค้าพร้อมส่ง",
+  "งานสั่งทำเสร็จแล้ว",
+  "งานบริการ",
+  "COD",
+  "สร้างรวมได้",
+];
 
 export function ReadyToShipQueue({
   currentUser,
@@ -33,28 +55,46 @@ export function ReadyToShipQueue({
   currentUser: FixtureUser;
 }) {
   const orders = getReadyToShipOrdersForUser(currentUser);
-  const dueTodayCount = orders.filter(
+  const [query, setQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<ReadyFilter>("ทั้งหมด");
+  const [selectedOrderId, setSelectedOrderId] = useState(orders[0]?.id);
+  const filteredOrders = useMemo(
+    () =>
+      orders.filter(
+        (order) =>
+          matchesReadySearch(order, query) &&
+          matchesReadyFilter(order, activeFilter),
+      ),
+    [activeFilter, orders, query],
+  );
+  const selectedOrder =
+    filteredOrders.find((order) => order.id === selectedOrderId) ??
+    filteredOrders[0];
+  const dueTodayCount = filteredOrders.filter(
     (order) => order.deliveryDate === "วันนี้",
   ).length;
-  const stockReadyCount = orders.filter((order) =>
+  const stockReadyCount = filteredOrders.filter((order) =>
     order.items.some((item) => item.source === "stock"),
   ).length;
-  const customReadyCount = orders.filter((order) =>
+  const customReadyCount = filteredOrders.filter((order) =>
     order.items.some((item) => item.source === "custom"),
   ).length;
-  const serviceCount = orders.filter((order) =>
+  const serviceCount = filteredOrders.filter((order) =>
     order.items.some((item) => item.source === "service"),
   ).length;
-  const codCount = orders.filter(
+  const codCount = filteredOrders.filter(
     (order) => order.codVisibility.kind !== "none",
   ).length;
-  const selectedOrder = orders[0];
 
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        description="รายการพร้อมส่งที่รอแอดมินสร้างรอบจัดส่ง แยกจากรายการของฝ่ายจัดส่ง"
-        meta={<StatusChip variant="success">{orders.length} Order</StatusChip>}
+        description="รายการพร้อมส่งที่รอสร้างรอบจัดส่ง แยกจากรายการของฝ่ายจัดส่ง"
+        meta={
+          <StatusChip variant="success">
+            {filteredOrders.length} รายการ
+          </StatusChip>
+        }
         title="รอสร้างรอบจัดส่ง"
       />
 
@@ -65,41 +105,41 @@ export function ReadyToShipQueue({
         className="grid gap-3 md:grid-cols-3 xl:grid-cols-6"
       >
         <MetricCard
-          description="นับตาม Order / Service item"
+          description="นับตาม Order / งานบริการ"
           icon={<PackageCheck aria-hidden className="h-5 w-5" />}
           title="พร้อมสร้างรอบ"
-          unit="Order"
-          value={orders.length}
+          unit="รายการ"
+          value={filteredOrders.length}
         />
         <MetricCard
           description="กำหนดส่งวันนี้"
           statusLabel="วันนี้"
           statusVariant="warning"
           title="กำหนดส่งวันนี้"
-          unit="Order"
+          unit="รายการ"
           value={dueTodayCount}
         />
         <MetricCard
           description="รายการสินค้าพร้อมส่ง"
           statusLabel="สินค้าพร้อมส่ง"
           statusVariant="neutral"
-          title="Stock ready"
-          unit="Order"
+          title="สินค้าพร้อมส่ง"
+          unit="รายการ"
           value={stockReadyCount}
         />
         <MetricCard
           description="JOB-O เสร็จแล้ว"
           statusLabel="งานสั่งทำ"
           statusVariant="revision"
-          title="Custom ready"
-          unit="Order"
+          title="งานสั่งทำเสร็จ"
+          unit="รายการ"
           value={customReadyCount}
         />
         <MetricCard
           description="รอบจัดส่งงานบริการ"
           statusLabel="งานบริการ"
           statusVariant="action"
-          title="Service"
+          title="งานบริการ"
           unit="รายการ"
           value={serviceCount}
         />
@@ -107,8 +147,8 @@ export function ReadyToShipQueue({
           description="แสดงเฉพาะสิทธิ์ที่เห็นได้"
           statusLabel="COD"
           statusVariant="danger"
-          title="COD signal"
-          unit="Order"
+          title="COD"
+          unit="รายการ"
           value={codCount}
         />
       </section>
@@ -119,34 +159,34 @@ export function ReadyToShipQueue({
         }
       >
         <label className="sr-only" htmlFor="shipment-ready-search">
-          ค้นหา Customer, phone, Order ID หรือ Job ID
+          ค้นหาลูกค้า ผู้รับ เบอร์ เลขออเดอร์ หรือ Job
         </label>
         <input
           className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[20rem]"
           id="shipment-ready-search"
-          placeholder="ค้นหา Customer, phone, Order ID หรือ Job ID"
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="ค้นหาลูกค้า ผู้รับ เบอร์ เลขออเดอร์ หรือ Job"
           type="search"
+          value={query}
         />
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 text-xs font-extrabold text-muted-foreground">
             <Filter aria-hidden className="h-3.5 w-3.5" />
             ตัวกรอง
           </span>
-          {[
-            "ทั้งหมด",
-            "กำหนดส่งวันนี้",
-            "สินค้าพร้อมส่ง",
-            "งานสั่งทำเสร็จแล้ว",
-            "งานบริการ",
-            "COD",
-            "สร้างรวมได้",
-          ].map((filter) => (
-            <FilterChip key={filter}>{filter}</FilterChip>
+          {readyFilters.map((filter) => (
+            <FilterChip
+              active={activeFilter === filter}
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+            >
+              {filter}
+            </FilterChip>
           ))}
         </div>
       </ToolbarShell>
 
-      {orders.length > 0 ? (
+      {filteredOrders.length > 0 ? (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
           <SurfaceCard className="overflow-hidden" padding="none">
             <div className="hidden overflow-x-auto xl:block">
@@ -168,11 +208,13 @@ export function ReadyToShipQueue({
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((order) => (
+                  {filteredOrders.map((order) => (
                     <ReadyOrderRow
                       currentUser={currentUser}
                       key={order.id}
+                      onOpen={() => setSelectedOrderId(order.id)}
                       order={order}
+                      selected={selectedOrder?.id === order.id}
                     />
                   ))}
                 </tbody>
@@ -180,11 +222,13 @@ export function ReadyToShipQueue({
             </div>
 
             <div className="grid xl:hidden">
-              {orders.map((order) => (
+              {filteredOrders.map((order) => (
                 <ReadyOrderCard
                   currentUser={currentUser}
                   key={order.id}
+                  onOpen={() => setSelectedOrderId(order.id)}
                   order={order}
+                  selected={selectedOrder?.id === order.id}
                 />
               ))}
             </div>
@@ -198,38 +242,36 @@ export function ReadyToShipQueue({
           ) : null}
         </div>
       ) : (
-        <EmptyState title="ไม่มีรายการพร้อมส่งที่รอสร้างรอบจัดส่ง" />
+        <EmptyState
+          title={
+            orders.length > 0
+              ? "ไม่พบรายการที่ค้นหา"
+              : "ไม่มีรายการพร้อมส่งที่รอสร้างรอบจัดส่ง"
+          }
+        />
       )}
-
-      <SurfaceCard className="border-[#FAD980] bg-[#FEF3C7]" padding="md">
-        <div className="flex flex-wrap items-center gap-2">
-          <StatusChip variant="warning">
-            {specialShipmentFoundation.banner}
-          </StatusChip>
-          {specialShipmentFoundation.chips.map((chip) => (
-            <StatusChip key={chip} variant="neutral">
-              {chip}
-            </StatusChip>
-          ))}
-        </div>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[#92400E]">
-          Foundation เท่านั้น: Owner/Manager-only จาก Order Detail ที่ปิดแล้ว
-          ต้องมีเหตุผล และไม่กระทบสต๊อกหรือสถานะออเดอร์
-        </p>
-      </SurfaceCard>
     </div>
   );
 }
 
 function ReadyOrderRow({
   currentUser,
+  onOpen,
   order,
+  selected,
 }: {
   currentUser: FixtureUser;
+  onOpen: () => void;
   order: ReadyToShipOrderView;
+  selected: boolean;
 }) {
   return (
-    <tr className="border-t border-border bg-surface align-top transition-colors hover:bg-subtle/50">
+    <tr
+      className={cn(
+        "border-t border-border bg-surface align-top transition-colors hover:bg-subtle/50",
+        selected && "bg-primary-soft/60",
+      )}
+    >
       <td className="px-3 py-4">
         <p className="font-extrabold text-foreground">{order.id}</p>
         <p className="mt-1 text-sm font-semibold text-foreground">
@@ -285,14 +327,19 @@ function ReadyOrderRow({
         </div>
       </td>
       <td className="px-3 py-4 text-right">
-        <Button asChild size="sm">
-          <Link
-            href={shipmentHref(shipmentRoutes.builder(order.id), currentUser)}
-          >
-            <Truck aria-hidden className="mr-2 h-4 w-4" />
-            สร้างรอบจัดส่ง
-          </Link>
-        </Button>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button onClick={onOpen} size="sm" type="button" variant="outline">
+            ดูสรุป
+          </Button>
+          <Button asChild size="sm">
+            <Link
+              href={shipmentHref(shipmentRoutes.builder(order.id), currentUser)}
+            >
+              <Truck aria-hidden className="mr-2 h-4 w-4" />
+              สร้างรอบจัดส่ง
+            </Link>
+          </Button>
+        </div>
       </td>
     </tr>
   );
@@ -300,13 +347,22 @@ function ReadyOrderRow({
 
 function ReadyOrderCard({
   currentUser,
+  onOpen,
   order,
+  selected,
 }: {
   currentUser: FixtureUser;
+  onOpen: () => void;
   order: ReadyToShipOrderView;
+  selected: boolean;
 }) {
   return (
-    <article className="grid gap-3 border-b border-border p-4 last:border-b-0 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+    <article
+      className={cn(
+        "grid gap-3 border-b border-border p-4 last:border-b-0 md:grid-cols-[minmax(0,1fr)_auto] md:items-start",
+        selected && "bg-primary-soft/60",
+      )}
+    >
       <div className="min-w-0 space-y-3">
         <div className="flex flex-wrap gap-2">
           <StatusChip>{order.id}</StatusChip>
@@ -344,13 +400,18 @@ function ReadyOrderCard({
           ) : null}
         </div>
       </div>
-      <Button asChild size="sm">
-        <Link
-          href={shipmentHref(shipmentRoutes.builder(order.id), currentUser)}
-        >
-          สร้างรอบจัดส่ง
-        </Link>
-      </Button>
+      <div className="grid gap-2 sm:min-w-36">
+        <Button onClick={onOpen} size="sm" type="button" variant="outline">
+          ดูสรุป
+        </Button>
+        <Button asChild size="sm">
+          <Link
+            href={shipmentHref(shipmentRoutes.builder(order.id), currentUser)}
+          >
+            สร้างรอบจัดส่ง
+          </Link>
+        </Button>
+      </div>
     </article>
   );
 }
@@ -366,7 +427,7 @@ function SelectedOrderPanel({
     <aside className="grid content-start gap-3 rounded-lg border border-border bg-surface p-4 shadow-soft">
       <div>
         <p className="text-xs font-extrabold text-muted-foreground">
-          สรุป Order ที่เลือก
+          สรุปรายการที่เลือก
         </p>
         <h2 className="mt-1 text-lg font-extrabold text-foreground">
           {order.id}
@@ -404,11 +465,75 @@ function SelectedOrderPanel({
         <Link
           href={shipmentHref(shipmentRoutes.builder(order.id), currentUser)}
         >
-          เปิด Shipment Builder
+          สร้างรอบจัดส่ง
         </Link>
       </Button>
     </aside>
   );
+}
+
+function matchesReadyFilter(
+  order: ReadyToShipOrderView,
+  activeFilter: ReadyFilter,
+): boolean {
+  if (activeFilter === "กำหนดส่งวันนี้") {
+    return order.deliveryDate === "วันนี้";
+  }
+
+  if (activeFilter === "สินค้าพร้อมส่ง") {
+    return order.items.some((item) => item.source === "stock");
+  }
+
+  if (activeFilter === "งานสั่งทำเสร็จแล้ว") {
+    return order.items.some((item) => item.source === "custom");
+  }
+
+  if (activeFilter === "งานบริการ") {
+    return order.items.some((item) => item.source === "service");
+  }
+
+  if (activeFilter === "COD") {
+    return order.codVisibility.kind !== "none";
+  }
+
+  if (activeFilter === "สร้างรวมได้") {
+    return order.bulkEligible;
+  }
+
+  return true;
+}
+
+function matchesReadySearch(order: ReadyToShipOrderView, query: string) {
+  const normalizedQuery = normalizeSearch(query);
+
+  if (!normalizedQuery) {
+    return true;
+  }
+
+  return [
+    order.id,
+    order.customerName,
+    order.recipientName,
+    order.phone,
+    order.address,
+    order.carrier,
+    order.note,
+    order.deliveryDate,
+    ...order.items.flatMap((item) => [
+      item.title,
+      item.jobId,
+      item.skuCode,
+      item.color,
+      getSourceLabel(item.source),
+      item.note,
+    ]),
+  ]
+    .filter(Boolean)
+    .some((value) => normalizeSearch(String(value)).includes(normalizedQuery));
+}
+
+function normalizeSearch(value: string) {
+  return value.trim().toLocaleLowerCase("th-TH");
 }
 
 function sourceLabels(order: ReadyToShipOrderView): string[] {

@@ -38,6 +38,9 @@ const routes = [
   },
 ];
 
+const forbiddenStaffCopy =
+  /fixture|local state|local fixture|placeholder|Foundation|print backend|persistence|sector|optional|Delivery Team|Admin|ตัวอย่าง|SAMPLE|mock|database|in-memory|future|not implemented|ยังไม่เชื่อม|ฐานข้อมูล|Shipment Builder แสดง|COD read-only|บันทึกเป็นร่าง/i;
+
 for (const viewport of viewports) {
   test.describe(`Sector 6 shipment delivery ${viewport.name}`, () => {
     test.use({ viewport });
@@ -57,6 +60,9 @@ for (const viewport of viewports) {
         await expect(
           page.getByText(/หลักฐานรับเงิน|สลิป|เลขบัญชี/),
         ).toHaveCount(0);
+        await expect(page.locator("body")).not.toContainText(
+          forbiddenStaffCopy,
+        );
 
         const hasHorizontalOverflow = await page.evaluate(
           () => document.documentElement.scrollWidth > window.innerWidth,

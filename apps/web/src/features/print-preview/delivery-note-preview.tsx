@@ -1,9 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FileText, Printer } from "lucide-react";
 import { Button, EmptyState, PageHeader, StatusChip } from "@thaiboran/ui";
 
-import { getDeliveryNoteModel } from "@/features/shipments/fixtures/shipments";
+import {
+  canViewPrintPreviewShipment,
+  getDeliveryNoteModel,
+  getPrintPreviewShipment,
+} from "@/features/shipments/fixtures/shipments";
 import { shipmentHref, shipmentRoutes } from "@/features/shipments/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
@@ -14,11 +20,18 @@ export function DeliveryNotePreview({
   currentUser: FixtureUser;
   shipmentId: string;
 }) {
+  const shipment = getPrintPreviewShipment(shipmentId);
   const document = getDeliveryNoteModel(shipmentId);
 
-  if (!document) {
+  if (!shipment || !document) {
     return <EmptyState title="ไม่มีรายการสินค้าในใบส่งของ" />;
   }
+
+  if (!canViewPrintPreviewShipment(shipmentId, currentUser)) {
+    return <EmptyState title="ไม่มีสิทธิ์เข้าถึงหน้านี้" />;
+  }
+
+  const canPrint = !shipment.builderPreview;
 
   return (
     <div className="mx-auto grid w-full max-w-[1180px] gap-5">
@@ -26,8 +39,12 @@ export function DeliveryNotePreview({
         actions={
           <div className="flex flex-wrap gap-2">
             <Button
-              disabled
-              title="ไม่มี print backend ใน sector นี้"
+              disabled={!canPrint}
+              onClick={() => window.print()}
+              title={
+                canPrint ? undefined : "พิมพ์ได้หลังปล่อยให้ฝ่ายจัดส่งแล้ว"
+              }
+              type="button"
               variant="outline"
             >
               <Printer aria-hidden className="mr-2 h-4 w-4" />
@@ -45,7 +62,8 @@ export function DeliveryNotePreview({
             </Button>
           </div>
         }
-        description="A4 item-focused preview ไม่มีราคาและไม่มีข้อมูลการเงิน"
+        className="print:hidden"
+        description="เอกสารตรวจรายการสินค้า ไม่มีราคาและไม่มีข้อมูลการเงิน"
         meta={
           <StatusChip variant="neutral">
             ไม่มีข้อมูลการเงินในเอกสารนี้
@@ -54,7 +72,7 @@ export function DeliveryNotePreview({
         title="ใบส่งของ"
       />
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-subtle p-3 sm:p-6">
+      <div className="overflow-x-auto rounded-lg border border-border bg-subtle p-3 print:overflow-visible print:border-0 print:bg-white print:p-0 sm:p-6">
         <article className="mx-auto min-h-[980px] w-full max-w-[794px] bg-white p-6 text-[#17231F] shadow-lifted sm:p-10">
           <header className="grid gap-4 border-b border-[#D9E2DE] pb-5 sm:grid-cols-[minmax(0,1fr)_auto]">
             <div>

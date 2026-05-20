@@ -6,6 +6,7 @@ import {
   canDeliveryTeamCloseCodFollowUp,
   canDeliveryTeamCloseShipment,
   canDeliveryTeamCreateOrSplitShipment,
+  canViewShipmentForRole,
   canEditCodInShipmentBuilder,
   createDeliveryNotePrintModel,
   createShippingSheetPrintModel,
@@ -54,6 +55,24 @@ describe("shipment workflow helpers", () => {
     ).toEqual({ kind: "hidden" });
   });
 
+  it("allows Delivery Team detail access only for responsible Shipments", () => {
+    expect(
+      canViewShipmentForRole("delivery-team", {
+        responsibleUserId: "delivery-team",
+      }),
+    ).toBe(true);
+    expect(
+      canViewShipmentForRole("delivery-team", {
+        responsibleUserId: "other-delivery-user",
+      }),
+    ).toBe(false);
+    expect(
+      canViewShipmentForRole("admin-sales", {
+        responsibleUserId: "other-delivery-user",
+      }),
+    ).toBe(true);
+  });
+
   it("keeps Delivery Team out of Shipment close, tracking, split, and COD follow-up close", () => {
     expect(canDeliveryTeamCreateOrSplitShipment("delivery-team")).toBe(false);
     expect(canDeliveryTeamAddTracking("delivery-team")).toBe(false);
@@ -85,7 +104,7 @@ describe("shipment workflow helpers", () => {
     expect(
       canCloseShipmentWithEvidence({
         evidencePhotoCount: 0,
-        tracking: "TH-SAMPLE-001",
+        tracking: "TH240604001",
       }),
     ).toBe(true);
     expect(
@@ -117,14 +136,14 @@ describe("shipment workflow helpers", () => {
 
   it("includes Shipping Sheet COD only when permission-visible", () => {
     const shipment = {
-      address: "99/12 ถนนตัวอย่าง กรุงเทพฯ",
+      address: "99/12 ถนนสวนแก้ว กรุงเทพฯ",
       carrier: "รถร้าน",
       codAmountBaht: 12000,
       id: "SHP-001",
       isFinalOrderClosingRound: true,
-      itemSummary: "ตู้โชว์ตัวอย่าง 1 ชิ้น",
+      itemSummary: "ตู้โชว์ไม้สัก 1 ชิ้น",
       phone: "080-000-0001",
-      recipient: "คุณตัวอย่าง",
+      recipient: "คุณสายฝน",
       responsibleUserId: "delivery-team",
     };
 

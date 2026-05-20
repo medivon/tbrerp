@@ -35,6 +35,10 @@ export type ShipmentCodContext = {
   responsibleUserId?: string;
 };
 
+export type ShipmentViewContext = {
+  responsibleUserId?: string;
+};
+
 export type CloseShipmentEvidenceInput = {
   evidencePhotoCount: number;
   tracking?: string;
@@ -135,6 +139,16 @@ export function canEditCodInShipmentBuilder(): false {
   return false;
 }
 
+export function canViewShipmentForRole(
+  roleId: ShipmentRoleId,
+  context: ShipmentViewContext,
+): boolean {
+  return (
+    shipmentAdminRoleIds.has(roleId) ||
+    (roleId === "delivery-team" && context.responsibleUserId === roleId)
+  );
+}
+
 export function getShipmentCodVisibility(
   roleId: ShipmentRoleId,
   context: ShipmentCodContext,
@@ -143,15 +157,15 @@ export function getShipmentCodVisibility(
     return { kind: "none" };
   }
 
-  if (!context.isFinalOrderClosingRound) {
-    return {
-      kind: "disabled",
-      label: "เปิด COD ไม่ได้",
-      reason: "เปิด COD ได้เฉพาะรอบสุดท้าย",
-    };
-  }
-
   if (codVisibleRoleIds.has(roleId)) {
+    if (!context.isFinalOrderClosingRound) {
+      return {
+        kind: "disabled",
+        label: "เปิด COD ไม่ได้",
+        reason: "เปิด COD ได้เฉพาะรอบสุดท้าย",
+      };
+    }
+
     return {
       amountBaht: context.codAmountBaht,
       kind: "visible",
@@ -163,6 +177,14 @@ export function getShipmentCodVisibility(
     roleId === "delivery-team" &&
     context.responsibleUserId === "delivery-team"
   ) {
+    if (!context.isFinalOrderClosingRound) {
+      return {
+        kind: "disabled",
+        label: "เปิด COD ไม่ได้",
+        reason: "เปิด COD ได้เฉพาะรอบสุดท้าย",
+      };
+    }
+
     return {
       amountBaht: context.codAmountBaht,
       kind: "visible",
@@ -234,6 +256,7 @@ export function createShippingSheetPrintModel(
     carrier: shipment.carrier,
     codAmountBaht:
       codVisibility.kind === "visible" ? codVisibility.amountBaht : undefined,
+    codVisibilityKind: codVisibility.kind,
     deliveryDate: shipment.deliveryDate,
     deliveryNote: shipment.deliveryNote,
     documentTitle: "ใบจัดส่ง" as const,

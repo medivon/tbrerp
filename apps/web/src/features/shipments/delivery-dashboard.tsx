@@ -78,19 +78,59 @@ export function DeliveryDashboard({
   function confirmSendOut(ids: string[]) {
     const result = markShipmentsSentOut(activeShipments, ids);
     setActiveShipments(result.activeShipments);
-    setSentOutToday([...result.sentOutToday, ...sentOutToday]);
+    setSentOutToday((current) => [
+      ...result.sentOutToday.map((shipment) => ({
+        ...shipment,
+        sentOutTime: shipment.sentOutTime ?? "ส่งออกแล้ววันนี้",
+      })),
+      ...current,
+    ]);
     setSelectedIds([]);
     setConfirmIds(null);
     setActiveTab("sent-out");
-    setMessage(
-      `ส่งออกแล้ว ${result.selectedCount} รอบ แสดงใน local fixture เท่านั้น`,
+    setMessage(`บันทึกว่าส่งออกแล้ว ${result.selectedCount} รอบ`);
+  }
+
+  function updateShipment(
+    shipmentId: string,
+    updater: (shipment: DeliveryShipmentView) => DeliveryShipmentView,
+  ) {
+    setActiveShipments((current) =>
+      current.map((shipment) =>
+        shipment.id === shipmentId ? updater(shipment) : shipment,
+      ),
     );
+    setSentOutToday((current) =>
+      current.map((shipment) =>
+        shipment.id === shipmentId ? updater(shipment) : shipment,
+      ),
+    );
+  }
+
+  function addEvidence(shipmentId: string) {
+    updateShipment(shipmentId, (shipment) => ({
+      ...shipment,
+      evidencePhotoCount: shipment.evidencePhotoCount + 1,
+    }));
+    setMessage(`${shipmentId}: เพิ่มรูปหลักฐานจัดส่งแล้ว`);
+  }
+
+  function addNote(shipmentId: string) {
+    updateShipment(shipmentId, (shipment) => ({
+      ...shipment,
+      deliveryNote: shipment.deliveryNote.includes(
+        "ฝ่ายจัดส่งบันทึกหมายเหตุแล้ว",
+      )
+        ? shipment.deliveryNote
+        : `${shipment.deliveryNote} / ฝ่ายจัดส่งบันทึกหมายเหตุแล้ว`,
+    }));
+    setMessage(`${shipmentId}: เพิ่มหมายเหตุแล้ว`);
   }
 
   return (
     <div className="mx-auto grid w-full max-w-[1180px] gap-5">
       <PageHeader
-        description="Delivery Team ทำได้เฉพาะดูงานจัดส่ง เพิ่มรูป/หมายเหตุแบบ optional และบันทึกว่าส่งออกแล้ว"
+        description="ดูรายการจัดส่ง เพิ่มรูปหรือหมายเหตุเมื่อมี และบันทึกว่าส่งออกแล้ว"
         meta={
           <div className="flex flex-wrap gap-2">
             <StatusChip variant="warning">
@@ -185,12 +225,10 @@ export function DeliveryDashboard({
               currentUser={currentUser}
               key={shipment.id}
               onAddEvidence={() => {
-                setMessage(
-                  `${shipment.id}: เพิ่มรูปหลักฐานจัดส่ง optional ใน local state`,
-                );
+                addEvidence(shipment.id);
               }}
               onAddNote={() => {
-                setMessage(`${shipment.id}: เพิ่มหมายเหตุใน local state`);
+                addNote(shipment.id);
               }}
               onSelect={(checked) => {
                 setSelectedIds((current) =>
@@ -356,14 +394,30 @@ function DeliveryShipmentCard({
         <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
           หมายเหตุ: {shipment.deliveryNote}
         </p>
+        {shipment.evidencePhotoCount > 0 ? (
+          <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
+            รูปหลักฐานจัดส่ง {shipment.evidencePhotoCount} รูป
+          </p>
+        ) : null}
       </div>
 
       <div className="grid gap-2 sm:grid-cols-2">
         {activeTab !== "sent-out" ? (
-          <Button onClick={onSendOut} size="lg" type="button">
-            <CheckCircle2 aria-hidden className="mr-2 h-4 w-4" />
-            ส่งออกแล้ว
-          </Button>
+          <>
+            <Button onClick={onSendOut} size="lg" type="button">
+              <CheckCircle2 aria-hidden className="mr-2 h-4 w-4" />
+              ส่งออกแล้ว
+            </Button>
+            <Button
+              onClick={onAddEvidence}
+              size="lg"
+              type="button"
+              variant="outline"
+            >
+              <Camera aria-hidden className="mr-2 h-4 w-4" />
+              เพิ่มรูปหลักฐานจัดส่ง (ถ้ามี)
+            </Button>
+          </>
         ) : (
           <Button
             onClick={onAddEvidence}
@@ -372,7 +426,7 @@ function DeliveryShipmentCard({
             variant="outline"
           >
             <Camera aria-hidden className="mr-2 h-4 w-4" />
-            เพิ่มรูปหลักฐานจัดส่ง
+            เพิ่มรูปหลักฐานจัดส่ง (ถ้ามี)
           </Button>
         )}
         <Button asChild size="lg" variant="outline">
@@ -382,18 +436,16 @@ function DeliveryShipmentCard({
             เปิดรอบจัดส่ง
           </Link>
         </Button>
-        {activeTab === "sent-out" ? (
-          <Button onClick={onAddNote} size="lg" type="button" variant="outline">
-            เพิ่มหมายเหตุ
-          </Button>
-        ) : null}
+        <Button onClick={onAddNote} size="lg" type="button" variant="outline">
+          เพิ่มหมายเหตุ
+        </Button>
       </div>
 
       {activeTab === "sent-out" ? (
         <p className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground">
           <Clock aria-hidden className="h-4 w-4" />
-          {shipment.sentOutTime ?? "ส่งออกแล้ววันนี้"} • รูป/หมายเหตุเป็น
-          optional จนกว่า Admin จะปิดรอบ
+          {shipment.sentOutTime ?? "ส่งออกแล้ววันนี้"} •
+          เพิ่มรูปหรือหมายเหตุได้จนกว่าจะปิดรอบจัดส่ง
         </p>
       ) : null}
     </article>

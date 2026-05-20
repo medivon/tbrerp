@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { MapPin, Phone, Printer, Truck } from "lucide-react";
 import { Button, EmptyState, PageHeader, StatusChip } from "@thaiboran/ui";
 
 import {
+  canViewPrintPreviewShipment,
   formatBaht,
+  getPrintPreviewShipment,
   getShippingSheetModel,
 } from "@/features/shipments/fixtures/shipments";
 import { shipmentHref, shipmentRoutes } from "@/features/shipments/routes";
@@ -16,11 +20,18 @@ export function ShippingSheetPreview({
   currentUser: FixtureUser;
   shipmentId: string;
 }) {
+  const shipment = getPrintPreviewShipment(shipmentId);
   const document = getShippingSheetModel(shipmentId, currentUser);
 
-  if (!document) {
+  if (!shipment || !document) {
     return <EmptyState title="ไม่มีข้อมูลผู้รับสินค้าในใบจัดส่ง" />;
   }
+
+  if (!canViewPrintPreviewShipment(shipmentId, currentUser)) {
+    return <EmptyState title="ไม่มีสิทธิ์เข้าถึงหน้านี้" />;
+  }
+
+  const canPrint = !shipment.builderPreview;
 
   return (
     <div className="mx-auto grid w-full max-w-[1180px] gap-5">
@@ -28,8 +39,12 @@ export function ShippingSheetPreview({
         actions={
           <div className="flex flex-wrap gap-2">
             <Button
-              disabled
-              title="ไม่มี print backend ใน sector นี้"
+              disabled={!canPrint}
+              onClick={() => window.print()}
+              title={
+                canPrint ? undefined : "พิมพ์ได้หลังปล่อยให้ฝ่ายจัดส่งแล้ว"
+              }
+              type="button"
               variant="outline"
             >
               <Printer aria-hidden className="mr-2 h-4 w-4" />
@@ -47,20 +62,21 @@ export function ShippingSheetPreview({
             </Button>
           </div>
         }
-        description="A4 recipient/address-focused preview แสดง COD เฉพาะเมื่อสิทธิ์มองเห็นได้"
+        className="print:hidden"
+        description="เอกสารเน้นผู้รับ ที่อยู่ ขนส่ง และสรุปรายการ"
         meta={
           document.codAmountBaht ? (
             <StatusChip variant="danger">
               COD {formatBaht(document.codAmountBaht)}
             </StatusChip>
           ) : (
-            <StatusChip variant="neutral">ไม่มี COD ที่มองเห็นได้</StatusChip>
+            <StatusChip variant="neutral">ใบจัดส่ง</StatusChip>
           )
         }
         title="ใบจัดส่ง"
       />
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-subtle p-3 sm:p-6">
+      <div className="overflow-x-auto rounded-lg border border-border bg-subtle p-3 print:overflow-visible print:border-0 print:bg-white print:p-0 sm:p-6">
         <article className="mx-auto min-h-[980px] w-full max-w-[794px] bg-white p-6 text-[#17231F] shadow-lifted sm:p-10">
           <header className="grid gap-4 border-b border-[#D9E2DE] pb-5 sm:grid-cols-[minmax(0,1fr)_auto]">
             <div>
@@ -88,7 +104,13 @@ export function ShippingSheetPreview({
             </p>
           </section>
 
-          <section className="mt-5 grid gap-4 sm:grid-cols-2">
+          <section
+            className={
+              document.codAmountBaht
+                ? "mt-5 grid gap-4 sm:grid-cols-2"
+                : "mt-5 grid gap-4"
+            }
+          >
             <div className="rounded-lg border border-[#D9E2DE] p-4">
               <p className="flex items-center gap-2 text-sm font-bold text-[#64736D]">
                 <Truck aria-hidden className="h-4 w-4" />
@@ -96,14 +118,14 @@ export function ShippingSheetPreview({
               </p>
               <p className="mt-2 text-lg font-extrabold">{document.carrier}</p>
             </div>
-            <div className="rounded-lg border border-[#D9E2DE] p-4">
-              <p className="text-sm font-bold text-[#64736D]">COD</p>
-              <p className="mt-2 text-lg font-extrabold">
-                {document.codAmountBaht
-                  ? formatBaht(document.codAmountBaht)
-                  : "ไม่แสดง"}
-              </p>
-            </div>
+            {document.codAmountBaht ? (
+              <div className="rounded-lg border border-[#D9E2DE] p-4">
+                <p className="text-sm font-bold text-[#64736D]">COD</p>
+                <p className="mt-2 text-lg font-extrabold">
+                  {formatBaht(document.codAmountBaht)}
+                </p>
+              </div>
+            ) : null}
           </section>
 
           <section className="mt-5 rounded-lg border border-[#D9E2DE] p-4">

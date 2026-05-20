@@ -1,9 +1,10 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Lock } from "lucide-react";
 import { StatusChip } from "@thaiboran/ui";
 import type { ShipmentCodVisibility } from "@thaiboran/domain";
 
+import { cn } from "@/lib/utils";
 import {
   formatBaht,
   getSourceLabel,
@@ -88,11 +89,26 @@ export function ShipmentThumbnailStrip({
   );
 }
 
-export function FilterChip({ children }: { children: ReactNode }) {
+export function FilterChip({
+  active,
+  children,
+  className,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  active?: boolean;
+  children: ReactNode;
+}) {
   return (
     <button
-      className="min-h-9 cursor-pointer rounded-full border border-border bg-surface px-3 text-sm font-semibold text-muted-foreground transition hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className={cn(
+        "min-h-9 cursor-pointer rounded-full border px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+        active
+          ? "border-primary/40 bg-primary-soft text-primary"
+          : "border-border bg-surface text-muted-foreground hover:border-primary/40 hover:text-foreground",
+        className,
+      )}
       type="button"
+      {...props}
     >
       {children}
     </button>

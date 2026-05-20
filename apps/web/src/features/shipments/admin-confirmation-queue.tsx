@@ -16,7 +16,6 @@ import {
 
 import {
   CodVisibilityChip,
-  FilterChip,
   ShipmentItemThumb,
 } from "@/features/shipments/components/shipment-common";
 import { ShipmentTabs } from "@/features/shipments/components/shipment-tabs";
@@ -48,14 +47,20 @@ export function AdminShipmentConfirmationQueue({
   );
   const [activeFilter, setActiveFilter] =
     useState<ConfirmationFilter>("ทั้งหมด");
+  const [query, setQuery] = useState("");
   const [message, setMessage] = useState<string | null>(null);
-  const selectedShipment =
-    shipments.find((shipment) => shipment.id === selectedShipmentId) ??
-    shipments[0];
   const filteredShipments = useMemo(
-    () => shipments.filter((shipment) => matchesFilter(shipment, activeFilter)),
-    [activeFilter, shipments],
+    () =>
+      shipments.filter(
+        (shipment) =>
+          matchesFilter(shipment, activeFilter) &&
+          matchesConfirmationSearch(shipment, query),
+      ),
+    [activeFilter, query, shipments],
   );
+  const selectedShipment =
+    filteredShipments.find((shipment) => shipment.id === selectedShipmentId) ??
+    filteredShipments[0];
   const missingTrackingCount = shipments.filter(
     (shipment) => !shipment.tracking,
   ).length;
@@ -101,15 +106,17 @@ export function AdminShipmentConfirmationQueue({
     const remaining = shipments.filter((item) => item.id !== shipmentId);
     setShipments(remaining);
     setSelectedShipmentId(remaining[0]?.id);
-    setMessage(`${shipmentId} ปิดรอบจัดส่งใน local fixture เท่านั้น`);
+    setMessage(`${shipmentId} ปิดรอบจัดส่งแล้ว`);
   }
 
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        description="รอบจัดส่งที่ฝ่ายจัดส่งบันทึกส่งออกแล้ว รอ Admin ตรวจ Tracking หรือรูปหลักฐานก่อนปิดรอบ"
+        description="รอบจัดส่งที่ฝ่ายจัดส่งบันทึกส่งออกแล้ว รอผู้ดูแลตรวจ Tracking หรือรูปหลักฐานก่อนปิดรอบ"
         meta={
-          <StatusChip variant="warning">{shipments.length} Shipment</StatusChip>
+          <StatusChip variant="warning">
+            {shipments.length} รอบจัดส่ง
+          </StatusChip>
         }
         title="ยืนยันการจัดส่ง"
       />
@@ -167,13 +174,15 @@ export function AdminShipmentConfirmationQueue({
         }
       >
         <label className="sr-only" htmlFor="shipment-confirmation-search">
-          ค้นหา Shipment, Order, ผู้รับ หรือ Tracking
+          ค้นหาเลขรอบจัดส่ง Order ผู้รับ หรือ Tracking
         </label>
         <input
           className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[20rem]"
           id="shipment-confirmation-search"
-          placeholder="ค้นหา Shipment, Order, ผู้รับ หรือ Tracking"
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="ค้นหาเลขรอบจัดส่ง Order ผู้รับ ขนส่ง หรือ Tracking"
           type="search"
+          value={query}
         />
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 text-xs font-extrabold text-muted-foreground">
@@ -203,7 +212,6 @@ export function AdminShipmentConfirmationQueue({
               {filter}
             </button>
           ))}
-          <FilterChip>รีเฟรช fixture</FilterChip>
         </div>
       </ToolbarShell>
 
@@ -232,49 +240,55 @@ export function AdminShipmentConfirmationQueue({
       </div>
 
       {shipments.length > 0 ? (
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
           <SurfaceCard className="overflow-hidden" padding="none">
-            <div className="hidden overflow-x-auto xl:block">
-              <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
-                <thead className="bg-subtle text-xs font-bold text-muted-foreground">
-                  <tr>
-                    {[
-                      "รอบจัดส่ง",
-                      "ผู้รับ / ขนส่ง",
-                      "ส่งออกแล้ว",
-                      "Tracking / หลักฐาน",
-                      "สัญญาณ",
-                      "การทำงาน",
-                    ].map((heading) => (
-                      <th className="px-3 py-3" key={heading} scope="col">
-                        {heading}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
+            {filteredShipments.length > 0 ? (
+              <>
+                <div className="hidden overflow-x-auto lg:block">
+                  <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+                    <thead className="bg-subtle text-xs font-bold text-muted-foreground">
+                      <tr>
+                        {[
+                          "รอบจัดส่ง",
+                          "ผู้รับ / ขนส่ง",
+                          "ส่งออกแล้ว",
+                          "Tracking / หลักฐาน",
+                          "สัญญาณ",
+                          "การทำงาน",
+                        ].map((heading) => (
+                          <th className="px-3 py-3" key={heading} scope="col">
+                            {heading}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredShipments.map((shipment) => (
+                        <ConfirmationRow
+                          currentUser={currentUser}
+                          key={shipment.id}
+                          onOpen={() => setSelectedShipmentId(shipment.id)}
+                          shipment={shipment}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="grid lg:hidden">
                   {filteredShipments.map((shipment) => (
-                    <ConfirmationRow
+                    <ConfirmationCard
                       currentUser={currentUser}
                       key={shipment.id}
                       onOpen={() => setSelectedShipmentId(shipment.id)}
                       shipment={shipment}
                     />
                   ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="grid xl:hidden">
-              {filteredShipments.map((shipment) => (
-                <ConfirmationCard
-                  currentUser={currentUser}
-                  key={shipment.id}
-                  onOpen={() => setSelectedShipmentId(shipment.id)}
-                  shipment={shipment}
-                />
-              ))}
-            </div>
+                </div>
+              </>
+            ) : (
+              <EmptyState title="ไม่พบรายการที่ค้นหา" />
+            )}
           </SurfaceCard>
 
           {selectedShipment ? (
@@ -464,7 +478,7 @@ function EvidencePanel({
   });
 
   return (
-    <aside className="grid content-start gap-4 rounded-lg border border-border bg-surface p-4 shadow-soft">
+    <aside className="grid content-start gap-4 rounded-lg border border-border bg-surface p-4 shadow-soft max-lg:fixed max-lg:inset-x-3 max-lg:bottom-3 max-lg:z-20 max-lg:max-h-[calc(100dvh-2rem)] max-lg:overflow-auto lg:sticky lg:top-24">
       <div>
         <p className="text-xs font-extrabold text-muted-foreground">
           ตรวจหลักฐาน
@@ -496,7 +510,7 @@ function EvidencePanel({
           onChange={(event) =>
             onTrackingChange(shipment.id, event.target.value)
           }
-          placeholder="เพิ่มเลขพัสดุโดย Admin"
+          placeholder="เพิ่มเลขพัสดุสำหรับปิดรอบจัดส่ง"
           value={shipment.tracking ?? ""}
         />
       </div>
@@ -525,7 +539,7 @@ function EvidencePanel({
               >
                 รูปหลักฐาน
                 <br />
-                ตัวอย่าง
+                ลำดับ {index + 1}
               </div>
             ),
           )}
@@ -534,7 +548,7 @@ function EvidencePanel({
             onClick={() => onAddEvidence(shipment.id)}
             type="button"
           >
-            เพิ่มรูป optional
+            เพิ่มรูปหลักฐาน
           </button>
         </div>
       </div>
@@ -559,7 +573,7 @@ function EvidencePanel({
         <CodVisibilityChip codVisibility={shipment.codVisibility} />
         {shipment.codVisibility.kind === "visible" ? (
           <StatusChip variant="neutral">
-            COD/payment follow-up แยกจากปิดรอบจัดส่ง
+            COD ให้ฝ่ายการเงินติดตามแยกจากการปิดรอบจัดส่ง
           </StatusChip>
         ) : null}
       </div>
@@ -622,4 +636,31 @@ function matchesFilter(
   }
 
   return true;
+}
+
+function matchesConfirmationSearch(
+  shipment: ConfirmationShipmentView,
+  query: string,
+): boolean {
+  const normalizedQuery = normalizeSearch(query);
+
+  if (!normalizedQuery) {
+    return true;
+  }
+
+  return [
+    shipment.id,
+    shipment.orderId,
+    shipment.recipientName,
+    shipment.phone,
+    shipment.carrier,
+    shipment.tracking,
+    shipment.itemSummary,
+  ]
+    .filter(Boolean)
+    .some((value) => normalizeSearch(value).includes(normalizedQuery));
+}
+
+function normalizeSearch(value: string | undefined): string {
+  return value?.trim().toLocaleLowerCase("th-TH") ?? "";
 }

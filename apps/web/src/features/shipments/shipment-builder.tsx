@@ -46,7 +46,7 @@ export function ShipmentBuilder({
   const [deliveryDate, setDeliveryDate] = useState(builder?.deliveryDate ?? "");
   const [deliveryNote, setDeliveryNote] = useState(builder?.note ?? "");
   const [stockAcknowledged, setStockAcknowledged] = useState(false);
-  const [releaseMessage, setReleaseMessage] = useState<string | null>(null);
+  const [released, setReleased] = useState(false);
   const [activeModal, setActiveModal] = useState<
     "stock" | "release" | "cancel" | null
   >(null);
@@ -80,18 +80,22 @@ export function ShipmentBuilder({
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        actions={<StatusChip variant="warning">กำลังสร้างรอบจัดส่ง</StatusChip>}
-        description="หน้าตรวจทานชั่วคราวก่อนปล่อยรอบจัดส่ง ไม่มีการบันทึกร่าง"
+        actions={
+          <StatusChip variant={released ? "success" : "warning"}>
+            {released ? "ปล่อยให้ฝ่ายจัดส่งแล้ว" : "กำลังสร้างรอบจัดส่ง"}
+          </StatusChip>
+        }
+        description="ตรวจรายการและข้อมูลจัดส่งก่อนปล่อยให้ฝ่ายจัดส่ง ไม่มีร่างรอบจัดส่งค้างไว้"
         meta={<StatusChip variant="neutral">{builder.id}</StatusChip>}
         title="สร้างรอบจัดส่ง"
       />
 
       <ShipmentTabs activeTab="ready" currentUser={currentUser} />
 
-      {releaseMessage ? (
+      {released ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
           <p className="text-sm font-bold leading-6 text-[#166534]">
-            {releaseMessage}
+            ปล่อยให้ฝ่ายจัดส่งแล้ว รายการนี้พร้อมเข้าสู่หน้าฝ่ายจัดส่ง
           </p>
         </SurfaceCard>
       ) : null}
@@ -120,7 +124,7 @@ export function ShipmentBuilder({
               ข้อมูลจัดส่ง
             </h2>
             <p className="mt-1 text-sm font-semibold text-muted-foreground">
-              Snapshot สำหรับรอบจัดส่งนี้ ไม่แก้ Customer หรือ Order เดิม
+              ใช้เฉพาะรอบจัดส่งนี้ ไม่เปลี่ยนข้อมูลลูกค้าหรือออเดอร์เดิม
             </p>
           </div>
 
@@ -184,7 +188,7 @@ export function ShipmentBuilder({
 
             <div className="rounded-md border border-border bg-subtle p-3">
               <p className="text-xs font-bold text-muted-foreground">
-                COD read-only
+                COD อ่านอย่างเดียว
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <CodVisibilityChip codVisibility={builder.codVisibility} />
@@ -194,9 +198,8 @@ export function ShipmentBuilder({
               </div>
               {builder.codVisibility.kind === "visible" ? (
                 <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
-                  Shipment Builder แสดง{" "}
-                  {formatBaht(builder.codVisibility.amountBaht)}{" "}
-                  แบบอ่านอย่างเดียว
+                  ยอด {formatBaht(builder.codVisibility.amountBaht)}{" "}
+                  แก้จากหน้านี้ไม่ได้
                 </p>
               ) : null}
             </div>
@@ -241,15 +244,22 @@ export function ShipmentBuilder({
       <div className="sticky bottom-0 z-[1] rounded-lg border border-border bg-surface p-3 shadow-lifted">
         <div className="flex flex-wrap justify-end gap-2">
           <Button
+            disabled={released}
             onClick={() => setActiveModal("cancel")}
+            title={released ? "ปล่อยให้ฝ่ายจัดส่งแล้ว" : undefined}
             type="button"
             variant="outline"
           >
             ยกเลิก
           </Button>
-          <Button onClick={requestRelease} type="button">
+          <Button
+            disabled={released}
+            onClick={requestRelease}
+            title={released ? "ปล่อยให้ฝ่ายจัดส่งแล้ว" : undefined}
+            type="button"
+          >
             <Truck aria-hidden className="mr-2 h-4 w-4" />
-            พร้อมจัดส่ง
+            {released ? "ปล่อยให้ฝ่ายจัดส่งแล้ว" : "พร้อมจัดส่ง"}
           </Button>
         </div>
       </div>
@@ -335,9 +345,7 @@ export function ShipmentBuilder({
               <Button
                 onClick={() => {
                   setActiveModal(null);
-                  setReleaseMessage(
-                    "พร้อมจัดส่งแล้วใน local fixture เท่านั้น ยังไม่สร้าง record หรือ persistence จริง",
-                  );
+                  setReleased(true);
                 }}
                 type="button"
               >
@@ -349,10 +357,9 @@ export function ShipmentBuilder({
       ) : null}
 
       {activeModal === "cancel" ? (
-        <Dialog title="ออกจาก Shipment Builder">
+        <Dialog title="ออกจากการสร้างรอบจัดส่ง">
           <p className="text-sm font-semibold leading-6 text-muted-foreground">
-            งานในหน้านี้เป็นการสร้างรอบจัดส่งชั่วคราว หากออกตอนนี้จะไม่มี
-            Shipment draft ถูกบันทึกไว้
+            หากออกตอนนี้ รายการที่แก้ในหน้านี้จะไม่ถูกสร้างเป็นรอบจัดส่ง
           </p>
           <div className="mt-4 flex flex-wrap justify-end gap-2">
             <Button onClick={() => setActiveModal(null)} variant="outline">

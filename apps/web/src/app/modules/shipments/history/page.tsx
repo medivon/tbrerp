@@ -27,7 +27,7 @@ export default async function ShipmentHistoryPage({
     <ShipmentShell currentUser={currentUser} title="ประวัติรอบจัดส่ง">
       <div className="mx-auto grid w-full max-w-[1180px] gap-5">
         <ShipmentTabs activeTab="history" currentUser={currentUser} />
-        <EmptyState title="ประวัติรอบจัดส่งเป็น placeholder สำหรับ sector ถัดไป" />
+        <EmptyState title="ยังไม่มีประวัติรอบจัดส่ง" />
       </div>
     </ShipmentShell>
   );

@@ -1,4 +1,5 @@
 import {
+  canViewShipmentForRole,
   createDeliveryNotePrintModel,
   createShippingSheetPrintModel,
   getShipmentCodVisibility,
@@ -95,10 +96,10 @@ export type PrintPreviewShipmentFixture = DeliveryShipmentFixture & {
 export const readyToShipOrders: ReadyToShipOrderFixture[] = [
   {
     id: "ORD-240528-014",
-    customerName: "คุณมาลี ตัวอย่าง",
-    recipientName: "คุณภพ ตัวอย่าง",
-    phone: "080-000-0114",
-    address: "12/8 ถ.ตัวอย่าง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
+    customerName: "คุณมาลี วงศ์ไม้",
+    recipientName: "คุณภพ กาญจนกุล",
+    phone: "081-240-0114",
+    address: "12/8 ถ.รอบเมือง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
     deliveryDate: "วันนี้",
     carrier: "รถร้าน",
     note: "โทรก่อนส่ง 30 นาที",
@@ -121,9 +122,9 @@ export const readyToShipOrders: ReadyToShipOrderFixture[] = [
   },
   {
     id: "ORD-240522-018",
-    customerName: "คุณศิริพร ตัวอย่าง",
-    recipientName: "คุณศิริพร ตัวอย่าง",
-    phone: "080-000-0018",
+    customerName: "คุณศิริพร วงศ์ไม้",
+    recipientName: "คุณศิริพร วงศ์ไม้",
+    phone: "081-522-0018",
     address: "99/12 หมู่ 4 ต.หางดง อ.หางดง จ.เชียงใหม่ 50230",
     deliveryDate: "26 พ.ค. 67",
     carrier: "รอระบุในรอบจัดส่ง",
@@ -149,9 +150,9 @@ export const readyToShipOrders: ReadyToShipOrderFixture[] = [
   },
   {
     id: "ORD-240607-012",
-    customerName: "คุณธนา ตัวอย่าง",
-    recipientName: "คุณธนา ตัวอย่าง",
-    phone: "080-000-0712",
+    customerName: "คุณธนา ภักดี",
+    recipientName: "คุณธนา ภักดี",
+    phone: "081-607-0712",
     address: "41/6 ต.บางกร่าง อ.เมือง จ.นนทบุรี 11000",
     deliveryDate: "พรุ่งนี้",
     carrier: "ไปรษณีย์ไทย EMS",
@@ -176,9 +177,9 @@ export const readyToShipOrders: ReadyToShipOrderFixture[] = [
   },
   {
     id: "SVC-240608-003",
-    customerName: "คุณแพรว ตัวอย่าง",
-    recipientName: "คุณแพรว ตัวอย่าง",
-    phone: "080-000-0803",
+    customerName: "คุณแพรว ลานนา",
+    recipientName: "คุณแพรว ลานนา",
+    phone: "081-608-0803",
     address: "66/4 ต.รอบเวียง อ.เมือง จ.เชียงราย 57000",
     carrier: "รถร้าน",
     note: "ส่งชิ้นส่วนบริการกลับลูกค้า ไม่กระทบออเดอร์เดิม",
@@ -203,8 +204,8 @@ export const releasedDeliveryShipments: DeliveryShipmentFixture[] = [
   {
     id: "SHP-240606-001",
     orderId: "ORD-240607-012",
-    recipientName: "คุณธนา ตัวอย่าง",
-    phone: "080-000-0712",
+    recipientName: "คุณธนา ภักดี",
+    phone: "081-607-0712",
     address: "41/6 ต.บางกร่าง อ.เมือง จ.นนทบุรี 11000",
     shortAddress: "บางกร่าง, นนทบุรี",
     carrier: "ไปรษณีย์ไทย EMS",
@@ -221,9 +222,9 @@ export const releasedDeliveryShipments: DeliveryShipmentFixture[] = [
   {
     id: "SHP-240606-002",
     orderId: "ORD-240528-014",
-    recipientName: "คุณภพ ตัวอย่าง",
-    phone: "080-000-0114",
-    address: "12/8 ถ.ตัวอย่าง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
+    recipientName: "คุณภพ กาญจนกุล",
+    phone: "081-240-0114",
+    address: "12/8 ถ.รอบเมือง ต.ในเมือง อ.เมือง จ.ลำพูน 51000",
     shortAddress: "เมืองลำพูน, ลำพูน",
     carrier: "รถร้าน",
     deliveryDate: undefined,
@@ -238,8 +239,8 @@ export const releasedDeliveryShipments: DeliveryShipmentFixture[] = [
   {
     id: "SHP-240609-004",
     orderId: "ORD-240609-004",
-    recipientName: "คุณอร ตัวอย่าง",
-    phone: "080-000-0904",
+    recipientName: "คุณอร พาณิชย์",
+    phone: "081-609-0904",
     address: "8/10 ต.ป่าตัน อ.เมือง จ.เชียงใหม่ 50300",
     shortAddress: "เมืองเชียงใหม่, เชียงใหม่",
     carrier: "Kerry",
@@ -269,8 +270,8 @@ export const sentOutConfirmationShipments: DeliveryShipmentFixture[] = [
   {
     id: "SHP-240603-002",
     orderId: "ORD-240602-009",
-    recipientName: "คุณอรุณ ตัวอย่าง",
-    phone: "080-000-0009",
+    recipientName: "คุณอรุณ ศรีนคร",
+    phone: "081-602-0009",
     address: "45/3 ต.ช้างเผือก อ.เมือง จ.เชียงใหม่ 50300",
     shortAddress: "ช้างเผือก, เชียงใหม่",
     carrier: "ขนส่งร้าน",
@@ -297,8 +298,8 @@ export const sentOutConfirmationShipments: DeliveryShipmentFixture[] = [
   {
     id: "SHP-240604-007",
     orderId: "ORD-240604-007",
-    recipientName: "คุณวิภา ตัวอย่าง",
-    phone: "080-000-0407",
+    recipientName: "คุณวิภา ธารทอง",
+    phone: "081-604-0407",
     address: "90/1 ต.บ้านสวน อ.เมือง จ.ชลบุรี 20000",
     shortAddress: "บ้านสวน, ชลบุรี",
     carrier: "Kerry",
@@ -316,8 +317,8 @@ export const sentOutConfirmationShipments: DeliveryShipmentFixture[] = [
   {
     id: "SHP-240604-008",
     orderId: "ORD-240604-008",
-    recipientName: "คุณกานต์ ตัวอย่าง",
-    phone: "080-000-0408",
+    recipientName: "คุณกานต์ ไม้งาม",
+    phone: "081-604-0408",
     address: "11/3 ต.ในเมือง อ.เมือง จ.นครราชสีมา 30000",
     shortAddress: "เมืองนครราชสีมา",
     carrier: "ไปรษณีย์ไทย EMS",
@@ -340,16 +341,9 @@ export const sentOutConfirmationShipments: DeliveryShipmentFixture[] = [
     responsibleUserId: "delivery-team",
     sentOut: true,
     sentOutTime: "วันนี้ 12:30",
-    tracking: "TH-SAMPLE-240604",
+    tracking: "TH240604008",
   },
 ];
-
-export const specialShipmentFoundation = {
-  allowedRoleIds: ["owner", "manager"],
-  banner: "รอบจัดส่งพิเศษ",
-  chips: ["ไม่กระทบสต๊อก", "ไม่กระทบสถานะออเดอร์"],
-  reasonRequired: true,
-};
 
 export function getReadyToShipOrdersForUser(
   currentUser: FixtureUser,
@@ -387,23 +381,22 @@ export function getShipmentBuilderFixture(
     }),
     previewShipmentId: `BUILD-${order.id}`,
     saveAddressPrompt:
-      "ที่อยู่นี้เป็น snapshot ของรอบจัดส่ง หากต่างจากที่อยู่เดิมสามารถบันทึกเป็นที่อยู่รองได้",
+      "บันทึกที่อยู่นี้เป็นที่อยู่จัดส่งรองของลูกค้า โดยไม่เปลี่ยนที่อยู่หลัก",
   };
 }
 
 export function getDeliveryShipmentsForUser(
   currentUser: FixtureUser,
 ): DeliveryShipmentView[] {
-  return releasedDeliveryShipments.map((shipment) =>
-    toDeliveryShipmentView(shipment, currentUser),
-  );
+  return filterDeliveryShipmentsForUser(releasedDeliveryShipments, currentUser);
 }
 
 export function getSentOutShipmentsForUser(
   currentUser: FixtureUser,
 ): DeliveryShipmentView[] {
-  return sentOutConfirmationShipments.map((shipment) =>
-    toDeliveryShipmentView(shipment, currentUser),
+  return filterDeliveryShipmentsForUser(
+    sentOutConfirmationShipments,
+    currentUser,
   );
 }
 
@@ -464,6 +457,29 @@ export function getPrintPreviewShipment(
   return [...releasedDeliveryShipments, ...sentOutConfirmationShipments].find(
     (shipment) => shipment.id === shipmentId,
   );
+}
+
+export function canViewPrintPreviewShipment(
+  shipmentId: string,
+  currentUser: FixtureUser,
+): boolean {
+  const shipment = getPrintPreviewShipment(shipmentId);
+
+  if (!shipment) {
+    return false;
+  }
+
+  if (shipment.builderPreview) {
+    return (
+      currentUser.id === "owner" ||
+      currentUser.id === "manager" ||
+      currentUser.id === "admin-sales"
+    );
+  }
+
+  return canViewShipmentForRole(currentUser.id, {
+    responsibleUserId: shipment.responsibleUserId,
+  });
 }
 
 export function getDeliveryNoteModel(shipmentId: string) {
@@ -568,6 +584,19 @@ function toDeliveryShipmentView(
     shortAddress: shipment.shortAddress,
     tracking: shipment.tracking,
   };
+}
+
+function filterDeliveryShipmentsForUser(
+  shipments: DeliveryShipmentFixture[],
+  currentUser: FixtureUser,
+): DeliveryShipmentView[] {
+  return shipments
+    .filter(
+      (shipment) =>
+        currentUser.id !== "delivery-team" ||
+        shipment.responsibleUserId === currentUser.id,
+    )
+    .map((shipment) => toDeliveryShipmentView(shipment, currentUser));
 }
 
 function summarizeItems(items: ShipmentItemFixture[]): string {
