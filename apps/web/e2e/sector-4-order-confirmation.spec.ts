@@ -8,7 +8,7 @@ const viewports = [
 ];
 
 const forbiddenProductCopy =
-  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง/i;
+  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง|\bReview\b|Order Detail|acknowledgement|modal/i;
 
 async function expectNoInternalProductCopy(page: Page) {
   const bodyText = await page.evaluate(() => document.body.innerText);
@@ -120,7 +120,7 @@ for (const viewport of viewports) {
       await expect(page.getByRole("dialog")).toHaveCount(0);
       await expectCleanResponsiveText(page);
 
-      await page.getByRole("link", { name: /เปิด Order Detail/ }).click();
+      await page.getByRole("link", { name: /เปิดรายละเอียดออเดอร์/ }).click();
 
       await expect(
         page.getByRole("heading", {

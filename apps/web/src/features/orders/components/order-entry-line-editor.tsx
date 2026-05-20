@@ -127,7 +127,7 @@ function ReadyStockLineEditor({
           <p className="inline-flex min-w-0 items-start gap-2 break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
             <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
             <span className="min-w-0">
-              ตรวจสอบจำนวนสินค้าในหน้า Review ก่อนสร้างออเดอร์
+              ตรวจสอบจำนวนสินค้าในหน้าตรวจสอบก่อนสร้างออเดอร์
             </span>
           </p>
         ) : null}

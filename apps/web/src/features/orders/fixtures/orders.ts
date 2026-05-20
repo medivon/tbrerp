@@ -241,7 +241,7 @@ export const orderFixtures: OrderFixture[] = [
     shipmentSummary: {
       kind: "none",
       label: "ยังไม่ได้จัดส่ง",
-      detail: "ยังไม่มีรอบจัดส่ง รายการพร้อมให้เลือกจาก Order Detail",
+      detail: "ยังไม่มีรอบจัดส่ง รายการพร้อมให้เลือกจากหน้ารายละเอียดออเดอร์",
     },
     netTotalBaht: 24500,
     hasCustomWork: false,
@@ -700,7 +700,7 @@ export function getOrderConfirmationInput({
     lineTotalBaht: line.lineTotalBaht,
     quantity: line.quantity,
     sellableStockBefore: line.sellableStockBefore ?? line.quantity,
-    skuCode: line.skuCode ?? "SKU-FIXTURE-MISSING",
+    skuCode: line.skuCode ?? "SKU-MISSING",
     skuName: line.skuName ?? line.title,
     title: line.title,
   }));

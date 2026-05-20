@@ -136,7 +136,7 @@ export function CustomWorkEntryModal({
 
   return (
     <OrderEntryModalShell
-      description="กรอกรายละเอียดงานสั่งทำแบบแยกฝ่ายเพื่อให้ Review เห็นความพร้อมก่อนยืนยันออเดอร์"
+      description="กรอกรายละเอียดงานสั่งทำแบบแยกฝ่ายเพื่อให้ตรวจสอบความพร้อมก่อนยืนยันออเดอร์"
       initialFocusRef={nameInputRef}
       onClose={onClose}
       open={open}
@@ -147,7 +147,7 @@ export function CustomWorkEntryModal({
         <div className="flex flex-wrap items-center gap-2">
           <StatusChip variant="revision">งานสั่งทำ</StatusChip>
           <StatusChip variant={isComplete ? "success" : "warning"}>
-            {isComplete ? "รายละเอียดครบสำหรับ Review" : "ยังไม่ครบ"}
+            {isComplete ? "รายละเอียดพร้อมตรวจสอบ" : "ยังไม่ครบ"}
           </StatusChip>
           <StatusChip variant="neutral">ยังไม่สร้าง JOB-O</StatusChip>
         </div>
@@ -161,10 +161,11 @@ export function CustomWorkEntryModal({
             <div className="flex items-start gap-2">
               <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
               <p className="min-w-0 break-words [overflow-wrap:anywhere]">
-                ยังไม่ครบสำหรับ Review: {missingFields.join(", ")}
+                ยังไม่ครบสำหรับตรวจสอบก่อนสร้างออเดอร์:{" "}
+                {missingFields.join(", ")}
                 {" — "}
-                เพิ่มลงรายการได้เพื่อกรอกต่อ แต่ปุ่ม Review
-                จะถูกบล็อกจนกว่าจะครบ
+                เพิ่มลงรายการได้เพื่อกรอกต่อ
+                แต่ยังตรวจสอบก่อนสร้างไม่ได้จนกว่าจะครบ
               </p>
             </div>
           </div>

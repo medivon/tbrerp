@@ -319,7 +319,7 @@ export function OrderCreate({
               </p>
               <p className="mt-1 break-words text-sm leading-6 text-shell-muted [overflow-wrap:anywhere]">
                 {summary.isComplete
-                  ? "พร้อมไปหน้า Review โดยยังไม่ออกเลขออเดอร์"
+                  ? "พร้อมตรวจสอบก่อนสร้างออเดอร์ โดยยังไม่ออกเลขออเดอร์"
                   : "ยังมีข้อมูลที่ต้องตรวจในหน้านี้"}
               </p>
             </div>
@@ -344,7 +344,7 @@ export function OrderCreate({
             {summary.reviewBlockReasons.length > 0 ? (
               <div className="min-w-0 rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E]">
                 <p className="break-words font-extrabold [overflow-wrap:anywhere]">
-                  ยังไป Review ไม่ได้
+                  ยังตรวจสอบก่อนสร้างไม่ได้
                 </p>
                 <ul className="mt-1 grid gap-1">
                   {summary.reviewBlockReasons.map((reason) => (

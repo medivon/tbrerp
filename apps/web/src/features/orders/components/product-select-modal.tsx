@@ -116,7 +116,7 @@ export function ProductSelectModal({
                   {soldOut ? (
                     <p className="break-words rounded-md border border-[#FAD980] bg-[#FEF3C7] px-3 py-2 text-sm font-semibold leading-6 text-[#92400E] [overflow-wrap:anywhere]">
                       สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้
-                      ระบบจะแสดงคำเตือนในหน้า Review
+                      ระบบจะแสดงคำเตือนในหน้าตรวจสอบก่อนสร้างออเดอร์
                     </p>
                   ) : null}
                 </div>

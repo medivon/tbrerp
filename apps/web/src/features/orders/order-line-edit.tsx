@@ -73,7 +73,7 @@ export function OrderLineEdit({
         <div className="flex items-start gap-3 text-[#92400E]">
           <ShieldAlert aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
-            <p className="text-sm font-extrabold">Review Changes ก่อนบันทึก</p>
+            <p className="text-sm font-extrabold">ตรวจสอบการแก้ไขก่อนบันทึก</p>
             <p className="mt-1 text-sm leading-6 font-semibold">
               บางรายการแก้ไม่ได้เพราะมี JOB-O อยู่ในรอบจัดส่ง ส่งออกแล้ว
               หรือออเดอร์ปิดแล้ว เหตุผลจะแสดงในแถวรายการ
@@ -89,7 +89,7 @@ export function OrderLineEdit({
           <SurfaceCard className="grid gap-4" padding="md">
             <div>
               <p className="text-base font-extrabold text-foreground">
-                Review Changes
+                ตรวจสอบการแก้ไข
               </p>
               <p className="mt-1 text-sm leading-6 text-muted-foreground">
                 ตรวจสอบผลกระทบของการแก้ไขก่อนบันทึก
@@ -101,7 +101,7 @@ export function OrderLineEdit({
                 value={`${editableLines.length} รายการ`}
               />
               <ImpactLine
-                label="รายการที่ถูกบล็อก"
+                label="รายการที่ยังแก้ไม่ได้"
                 value={`${blockedLines.length} รายการ`}
               />
               <ImpactLine label="ผลต่อยอดรวม" value="ยังไม่มีการเปลี่ยนแปลง" />

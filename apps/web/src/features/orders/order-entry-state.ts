@@ -517,7 +517,7 @@ export function calculateOrderEntrySummary(
   const reviewBlockReasons: string[] = [];
 
   if (!customerComplete) {
-    reviewBlockReasons.push("ต้องเลือกลูกค้าก่อนเข้าสู่ Review");
+    reviewBlockReasons.push("ต้องเลือกลูกค้าก่อนตรวจสอบสร้างออเดอร์");
   }
 
   if (!addressComplete) {

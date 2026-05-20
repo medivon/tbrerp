@@ -433,7 +433,7 @@ function ConfirmationResultPanel({
               currentUser,
             )}
           >
-            เปิด Order Detail
+            เปิดรายละเอียดออเดอร์
             <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
           </Link>
         </Button>
@@ -449,10 +449,7 @@ function ConfirmationResultPanel({
               : "ไม่มีงานสั่งทำ"
           }
         />
-        <ResultMetric
-          label="ปลายทางถัดไป"
-          value="ไปหน้า Order Detail เพื่ออ่านรายละเอียด"
-        />
+        <ResultMetric label="ปลายทางถัดไป" value="ไปหน้ารายละเอียดออเดอร์" />
       </div>
 
       {result.convertedDraft ? (

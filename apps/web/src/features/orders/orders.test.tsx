@@ -28,7 +28,7 @@ import { getFixtureUser } from "@/shared/fixtures/users";
 const currentUser = getFixtureUser("admin-sales");
 
 const forbiddenProductCopy =
-  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง/i;
+  /fixture|mock|placeholder|sector|in-memory|database|ฐานข้อมูล|หน่วยความจำ|ยังไม่เชื่อมฐานข้อมูล|รอทำใน sector|ไม่จองสต๊อกจริง|ไม่เขียนฐานข้อมูลจริง|ยังไม่ได้เชื่อมฐานข้อมูล|ปุ่มนี้|foundation|dev result|upload จริง|บันทึกจริง|จองสต๊อกจริง|Customer\/CRM|mutation|persistence|ข้อมูลตัวอย่าง|ยอดรวมตัวอย่าง|กิจกรรมตัวอย่าง|ปุ่มตัวอย่าง|เป็นปุ่มตัวอย่าง|ในตัวอย่างนี้|ถ\.ตัวอย่าง|\bReview\b|Order Detail|acknowledgement|modal/i;
 
 function collectRenderedCopy(container: HTMLElement): string {
   const copy: string[] = [container.textContent ?? ""];
@@ -406,9 +406,9 @@ describe("Order read/create foundation", () => {
     expect(addedLine.getByText("ตู้เตี้ยไม้สักสั่งทำ")).toBeTruthy();
     expect(screen.getByText("3 รายการ / 4 ชิ้น")).toBeTruthy();
     expect(screen.getByText("1 รายการยังไม่ครบ")).toBeTruthy();
-    expect(screen.getAllByText(/ยังไป Review ไม่ได้/).length).toBeGreaterThan(
-      0,
-    );
+    expect(
+      screen.getAllByText(/ยังตรวจสอบก่อนสร้างไม่ได้/).length,
+    ).toBeGreaterThan(0);
     expect(
       screen
         .getAllByRole("button", { name: "ตรวจสอบก่อนสร้างออเดอร์" })
@@ -562,7 +562,7 @@ describe("Order read/create foundation", () => {
     expect(screen.getByText("สร้าง JOB-O")).toBeTruthy();
     expect(
       screen
-        .getByRole("link", { name: /เปิด Order Detail/ })
+        .getByRole("link", { name: /เปิดรายละเอียดออเดอร์/ })
         .getAttribute("href"),
     ).toBe("/modules/orders/ORD-240606-010?user=admin-sales");
   });

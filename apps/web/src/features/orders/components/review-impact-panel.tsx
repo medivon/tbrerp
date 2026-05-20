@@ -73,8 +73,8 @@ export function ReviewImpactPanel({
               </p>
               <p className="mt-1 break-words text-sm font-semibold leading-6 [overflow-wrap:anywhere]">
                 {stockWarningAcknowledged
-                  ? "รับทราบแล้วใน Review"
-                  : "ต้องติ๊ก acknowledgement ในคำเตือนก่อนกดยืนยัน"}
+                  ? "รับทราบแล้วในหน้าตรวจสอบก่อนสร้างออเดอร์"
+                  : "ต้องรับทราบคำเตือนก่อนกดยืนยัน"}
               </p>
             </div>
           </div>
@@ -92,7 +92,7 @@ export function ReviewImpactPanel({
         </Button>
         <p className="break-words text-xs font-semibold leading-5 text-shell-muted [overflow-wrap:anywhere]">
           {canConfirm
-            ? "Review นี้เป็นจุดยืนยันสุดท้าย ไม่มี modal ยืนยันซ้ำ"
+            ? "หน้านี้เป็นขั้นตอนยืนยันสุดท้าย"
             : confirmDisabledReason}
         </p>
       </div>

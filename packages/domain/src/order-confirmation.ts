@@ -227,7 +227,7 @@ export type OrderConfirmationResult =
 
 const confirmationRoleIds = new Set(["owner", "manager", "admin-sales"]);
 
-const fixtureOnlyNotice = "สร้างออเดอร์แล้วจากหน้า Review";
+const fixtureOnlyNotice = "สร้างออเดอร์แล้วจากหน้าตรวจสอบก่อนสร้างออเดอร์";
 
 export function canConfirmOrder(roleId: OrderConfirmationRoleId): boolean {
   return confirmationRoleIds.has(roleId);
@@ -523,7 +523,7 @@ function createActivityEvents(
   const events: ConfirmationActivityEvent[] = [
     {
       title: "สร้างออเดอร์",
-      detail: `${input.confirmedBy.displayName} ยืนยันสร้างออเดอร์จาก Review`,
+      detail: `${input.confirmedBy.displayName} ยืนยันสร้างออเดอร์จากหน้าตรวจสอบก่อนสร้างออเดอร์`,
     },
   ];
 

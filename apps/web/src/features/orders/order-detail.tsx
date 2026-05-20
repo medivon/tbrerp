@@ -395,7 +395,7 @@ function ManageOrderMenu({
             แก้ไขงานสั่งทำ
           </MenuLink>
         )}
-        <MenuDisabled>จัดการรอบจัดส่ง: อยู่ในส่วนด้านล่าง</MenuDisabled>
+        <MenuLink href="#shipment-management">จัดการรอบจัดส่ง</MenuLink>
         <MenuDisabled>
           ยกเลิกออเดอร์: มีงานต่อเนื่องที่ต้องจัดการก่อน
         </MenuDisabled>
