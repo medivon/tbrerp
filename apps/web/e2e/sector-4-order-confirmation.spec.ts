@@ -82,8 +82,29 @@ async function expectNoVisibleTextBleeding(page: Page) {
   expect(offenders).toEqual([]);
 }
 
+async function expectNoPageHorizontalOverflow(page: Page) {
+  const overflow = await page.evaluate(() => {
+    const viewportWidth = document.documentElement.clientWidth;
+    const documentWidth = document.documentElement.scrollWidth;
+    const bodyWidth = document.body.scrollWidth;
+    const widestWidth = Math.max(documentWidth, bodyWidth);
+
+    return widestWidth > viewportWidth + 2
+      ? {
+          bodyWidth,
+          documentWidth,
+          viewportWidth,
+          widestWidth,
+        }
+      : null;
+  });
+
+  expect(overflow).toBeNull();
+}
+
 async function expectCleanResponsiveText(page: Page) {
   await expectNoInternalProductCopy(page);
+  await expectNoPageHorizontalOverflow(page);
   await expectNoVisibleTextBleeding(page);
 }
 
@@ -109,27 +130,34 @@ for (const viewport of viewports) {
         .setChecked(true, { force: true });
       await page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }).click();
 
-      await expect(page.getByText("ORD-240606-010")).toBeVisible();
+      await expect(page).toHaveURL(
+        /\/modules\/orders\/ORD-240606-010\?user=admin-sales/,
+      );
+      await expect(
+        page.getByRole("heading", {
+          name: "รายละเอียดออเดอร์ ORD-240606-010",
+        }),
+      ).toBeVisible();
+      await expect(page.getByText("สร้างออเดอร์สำเร็จ")).toBeVisible();
+      await expect(page.getByText("ORD-240606-010").first()).toBeVisible();
       await expect(
         page.getByText("JOB-O-0271", { exact: true }).first(),
       ).toBeVisible();
       await expect(
         page.getByText("คาดขายได้หลังจอง -1 ชิ้น").first(),
       ).toBeVisible();
-      await expect(page.getByText("ประวัติการสร้างออเดอร์")).toBeVisible();
+      await expect(page.getByText("ประวัติการสร้างออเดอร์")).toHaveCount(0);
+      await expect(
+        page.getByRole("button", { name: "แก้ไขรายการออเดอร์" }),
+      ).toBeDisabled();
+      await expect(
+        page.getByRole("button", {
+          name: "สร้างรอบจัดส่งจากรายการที่เลือก",
+        }),
+      ).toBeDisabled();
+      await expect(page.getByRole("link", { name: "เปิด Job" })).toHaveCount(0);
       await expect(page.getByRole("dialog")).toHaveCount(0);
       await expectCleanResponsiveText(page);
-
-      await page.getByRole("link", { name: /เปิดรายละเอียดออเดอร์/ }).click();
-
-      await expect(
-        page.getByRole("heading", {
-          name: "รายละเอียดออเดอร์ ORD-240606-010",
-        }),
-      ).toBeVisible();
-      await expect(
-        page.getByText("JOB-O-0271", { exact: true }).first(),
-      ).toBeVisible();
       await expect(page.getByText("มีรายการรับเงิน").first()).toBeVisible();
       await expect(page.getByText(/ต้นทุน|กำไร|payout/i)).toHaveCount(0);
       await expectCleanResponsiveText(page);
@@ -154,10 +182,108 @@ for (const viewport of viewports) {
       await expectCleanResponsiveText(page);
     });
 
+    test("blocks missing Order lines with a visible reason", async ({
+      page,
+    }) => {
+      await page.goto(
+        "/modules/orders/review?user=admin-sales&case=missing-order-lines",
+      );
+
+      await expect(
+        page.getByText("ต้องมีรายการในออเดอร์อย่างน้อย 1 รายการ").first(),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeDisabled();
+      await expect(page.getByText("ไม่มี JOB-O ที่ต้องสร้าง")).toBeVisible();
+      await expectCleanResponsiveText(page);
+    });
+
+    test("blocks incomplete custom-work detail before JOB-O creation", async ({
+      page,
+    }) => {
+      await page.goto(
+        "/modules/orders/review?user=admin-sales&case=incomplete-custom-detail",
+      );
+
+      await expect(
+        page.getByText(/รายละเอียดงานสั่งทำยังไม่ครบ/).first(),
+      ).toBeVisible();
+      await page
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeDisabled();
+      await expect(page.getByText("JOB-O-0271")).toHaveCount(0);
+      await expectCleanResponsiveText(page);
+    });
+
+    test("uses one acknowledgement for multiple stock warnings", async ({
+      page,
+    }) => {
+      await page.goto(
+        "/modules/orders/review?user=admin-sales&case=multi-stock-warning",
+      );
+
+      await expect(
+        page.getByText(/ชุดเก้าอี้รับแขกไม้สัก/).first(),
+      ).toBeVisible();
+      await expect(
+        page.getByText(/ตู้เตี้ยลงรักสมุกพร้อมส่ง/).first(),
+      ).toBeVisible();
+      await expect(page.getByLabel(/เหตุผล/)).toHaveCount(0);
+      await expect(page.getByText(/อนุมัติ/)).toHaveCount(0);
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeDisabled();
+
+      await page
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeEnabled();
+      await page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }).click();
+
+      await expect(page).toHaveURL(
+        /\/modules\/orders\/ORD-240606-010\?user=admin-sales/,
+      );
+      await expect(page.getByText("สร้างออเดอร์สำเร็จ")).toBeVisible();
+      await expect(page.getByText("TBR-CHR-SET-NAT").first()).toBeVisible();
+      await expect(page.getByText("TBR-CAB-RAK-RED").first()).toBeVisible();
+      await expect(
+        page.getByText("รับทราบสต๊อกไม่พอแล้ว").first(),
+      ).toBeVisible();
+      await expectCleanResponsiveText(page);
+    });
+
+    test("blocks stale Review input", async ({ page }) => {
+      await page.goto(
+        "/modules/orders/review?user=admin-sales&case=stale-review",
+      );
+
+      await expect(
+        page.getByText("ข้อมูลมีการเปลี่ยนแปลง กรุณาตรวจสอบอีกครั้ง").first(),
+      ).toBeVisible();
+      await page
+        .getByRole("checkbox", { name: /รับทราบว่าสินค้าขายได้ไม่พอ/ })
+        .setChecked(true, { force: true });
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toBeDisabled();
+      await expectCleanResponsiveText(page);
+    });
+
     test("routes base role away from confirmation surface", async ({
       page,
     }) => {
       await page.goto("/modules/orders/review?user=staff-base");
+
+      await expect(page.getByText("ไม่มีสิทธิ์เข้าถึงหน้านี้")).toBeVisible();
+      await expectCleanResponsiveText(page);
+
+      await page.goto("/modules/orders/review?user=outsource-base");
 
       await expect(page.getByText("ไม่มีสิทธิ์เข้าถึงหน้านี้")).toBeVisible();
       await expectCleanResponsiveText(page);

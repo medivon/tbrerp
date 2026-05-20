@@ -78,7 +78,6 @@ export type OrderFixture = {
   customerName: string;
   customerPhone: string;
   customerTier: string;
-  fixtureOnlyNotice?: string;
   hasCustomWork: boolean;
   id: string;
   lines: OrderLineFixture[];
@@ -653,7 +652,9 @@ export const orderReviewScenarioIds = [
   "missing-customer",
   "missing-address",
   "missing-payment-term",
+  "missing-order-lines",
   "incomplete-custom-detail",
+  "multi-stock-warning",
   "stale-review",
 ] as const;
 
@@ -707,11 +708,14 @@ export function getOrderConfirmationInput({
   const customWorkLines = orderEntryFixture.customLines.map((line) => ({
     customWorkDetail: {
       colorDetail: "สีโอ๊คเข้ม",
+      coloringDetail: "ทำสีโอ๊คเข้ม เคลือบด้าน เน้นให้เห็นลายไม้",
       deliveryDate: line.deliveryDate,
       materialDetail: "ไม้สัก",
       productionDetail: "ลายแกะดอกพิกุล มีไฟในตู้",
+      rakSamukDetail: "ไม่มีงานรักสมุกในรายการนี้",
       referenceImageCount: 1,
       sizeDetail: "160 x 45 x 210 ซม.",
+      woodworkDetail: "โครงตู้โชว์ไม้สัก หน้าบานแกะดอกพิกุล และติดไฟในตู้",
       workName: line.title,
     },
     deliveryDate: line.deliveryDate,
@@ -787,6 +791,16 @@ export function getOrderConfirmationInput({
     };
   }
 
+  if (scenarioId === "missing-order-lines") {
+    return {
+      ...input,
+      customWorkLines: [],
+      readyStockLines: [],
+      shipmentIntent: undefined,
+      warnings: [],
+    };
+  }
+
   if (scenarioId === "incomplete-custom-detail") {
     return {
       ...input,
@@ -798,6 +812,36 @@ export function getOrderConfirmationInput({
           sizeDetail: "",
         },
       })),
+    };
+  }
+
+  if (scenarioId === "multi-stock-warning") {
+    const extraReadyStockLine = {
+      color: "แดงชาด / ทอง",
+      dimensions: "100 x 42 x 86 ซม.",
+      id: "entry-ready-rak-cabinet",
+      imageAlt: "ตู้เตี้ยลงรักสมุกสีแดงชาด",
+      imageSrc: imageSources.cabinet,
+      lineTotalBaht: 38500,
+      quantity: 1,
+      sellableStockBefore: 0,
+      skuCode: "TBR-CAB-RAK-RED",
+      skuName: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+      title: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+    };
+
+    return {
+      ...input,
+      readyStockLines: [...input.readyStockLines, extraReadyStockLine],
+      warnings: [
+        ...input.warnings,
+        {
+          id: "stock-warning-rak-cabinet",
+          lineId: extraReadyStockLine.id,
+          message: "ตู้เตี้ยลงรักสมุกพร้อมส่ง จำนวนเกินที่ขายได้",
+          type: "stock-insufficient",
+        },
+      ],
     };
   }
 
@@ -836,7 +880,6 @@ function toOrderFixture(
     customerName: result.confirmedOrder.customerName,
     customerPhone: result.confirmedOrder.customerPhone,
     customerTier: result.confirmedOrder.customerTier,
-    fixtureOnlyNotice: result.confirmedOrder.fixtureOnlyNotice,
     hasCustomWork: result.confirmedOrder.hasCustomWork,
     id: result.confirmedOrder.id,
     lines: result.confirmedOrder.lines.map((line) => {

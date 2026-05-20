@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DraftOrderQueue } from "@/features/orders/draft-order-queue";
 import { OrderDetail } from "@/features/orders/order-detail";
@@ -24,6 +24,14 @@ import {
   markOrderEntryInMemory,
 } from "@/features/orders/order-entry-state";
 import { getFixtureUser } from "@/shared/fixtures/users";
+
+const routerPushMock = vi.hoisted(() => vi.fn());
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: routerPushMock,
+  }),
+}));
 
 const currentUser = getFixtureUser("admin-sales");
 
@@ -92,6 +100,8 @@ function fillCustomWorkDialog(dialog: HTMLElement) {
 
 describe("Order read/create foundation", () => {
   beforeEach(() => {
+    routerPushMock.mockReset();
+    window.sessionStorage.clear();
     resetOrderEntryMemoryState();
   });
 
@@ -585,12 +595,12 @@ describe("Order read/create foundation", () => {
     expectNoForbiddenProductCopy();
   });
 
-  it("enables Review confirmation only after required acknowledgement and shows result", () => {
+  it("enables Review confirmation only after required acknowledgement and opens generated detail", () => {
     setOrderEntryMemoryState(
       markOrderEntryInMemory(createInitialOrderEntryState()),
     );
 
-    render(<OrderReview currentUser={currentUser} />);
+    const view = render(<OrderReview currentUser={currentUser} />);
 
     const confirmButton = screen.getByRole("button", {
       name: "ยืนยันสร้างออเดอร์",
@@ -615,18 +625,25 @@ describe("Order read/create foundation", () => {
 
     fireEvent.click(confirmButton);
 
-    expect(screen.getByText("ORD-240606-010")).toBeTruthy();
-    expect(screen.getByText("JOB-O-0271")).toBeTruthy();
+    expect(routerPushMock).toHaveBeenCalledWith(
+      "/modules/orders/ORD-240606-010?user=admin-sales",
+    );
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByText("ประวัติการสร้างออเดอร์")).toBeNull();
+
+    view.unmount();
+    render(<OrderDetail currentUser={currentUser} orderId="ORD-240606-010" />);
+
+    expect(screen.getByText("สร้างออเดอร์สำเร็จ")).toBeTruthy();
+    expect(screen.getAllByText("ORD-240606-010").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("JOB-O-0271").length).toBeGreaterThan(0);
     expect(
       screen.getAllByText(/คาดขายได้หลังจอง -1 ชิ้น/).length,
     ).toBeGreaterThan(0);
-    expect(screen.getByText("ประวัติการสร้างออเดอร์")).toBeTruthy();
-    expect(screen.getByText("สร้าง JOB-O")).toBeTruthy();
-    expect(
-      screen
-        .getByRole("link", { name: /เปิดรายละเอียดออเดอร์/ })
-        .getAttribute("href"),
-    ).toBe("/modules/orders/ORD-240606-010?user=admin-sales");
+    expect(screen.getAllByText("ยังไม่สร้างรอบจัดส่ง").length).toBeGreaterThan(
+      0,
+    );
+    expectNoForbiddenProductCopy();
   });
 
   it("keeps Order Review as the final confirmation surface with no second modal", () => {
@@ -648,7 +665,9 @@ describe("Order read/create foundation", () => {
     );
 
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(screen.getByText("สร้างออเดอร์สำเร็จ")).toBeTruthy();
+    expect(routerPushMock).toHaveBeenCalledWith(
+      "/modules/orders/ORD-240606-010?user=admin-sales",
+    );
   });
 
   it("shows blocked Review reasons inline", () => {
@@ -678,6 +697,97 @@ describe("Order read/create foundation", () => {
     ).toBe(true);
   });
 
+  it("blocks Review confirmation when there are no Order lines", () => {
+    render(
+      <OrderReview
+        currentUser={currentUser}
+        scenarioId="missing-order-lines"
+      />,
+    );
+
+    expect(
+      screen.getAllByText("ต้องมีรายการในออเดอร์อย่างน้อย 1 รายการ").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getByText("ไม่มีสินค้าพร้อมส่งให้จอง")).toBeTruthy();
+    expect(screen.getByText("ไม่มี JOB-O ที่ต้องสร้าง")).toBeTruthy();
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "ยืนยันสร้างออเดอร์",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+  });
+
+  it("uses one stock warning acknowledgement for multiple warnings", () => {
+    const view = render(
+      <OrderReview
+        currentUser={currentUser}
+        scenarioId="multi-stock-warning"
+      />,
+    );
+
+    expect(
+      screen.getAllByText(/ชุดเก้าอี้รับแขกไม้สัก/).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/ตู้เตี้ยลงรักสมุกพร้อมส่ง/).length,
+    ).toBeGreaterThan(0);
+
+    const confirmButton = screen.getByRole("button", {
+      name: "ยืนยันสร้างออเดอร์",
+    }) as HTMLButtonElement;
+
+    expect(confirmButton.disabled).toBe(true);
+    expect(screen.queryByLabelText(/เหตุผล/)).toBeNull();
+    expect(screen.queryByText(/อนุมัติ/)).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
+      }),
+    );
+
+    expect(confirmButton.disabled).toBe(false);
+
+    fireEvent.click(confirmButton);
+
+    expect(routerPushMock).toHaveBeenCalledWith(
+      "/modules/orders/ORD-240606-010?user=admin-sales",
+    );
+
+    view.unmount();
+    render(<OrderDetail currentUser={currentUser} orderId="ORD-240606-010" />);
+
+    expect(screen.getByText("ผลจองสินค้าพร้อมส่ง")).toBeTruthy();
+    expect(screen.getByText("2 รายการ")).toBeTruthy();
+    expect(screen.getByText("TBR-CHR-SET-NAT")).toBeTruthy();
+    expect(screen.getByText("TBR-CAB-RAK-RED")).toBeTruthy();
+  });
+
+  it("blocks stale Review input without overwriting the generated detail", () => {
+    render(<OrderReview currentUser={currentUser} scenarioId="stale-review" />);
+
+    expect(
+      screen.getByText("ข้อมูลมีการเปลี่ยนแปลง กรุณาตรวจสอบอีกครั้ง"),
+    ).toBeTruthy();
+
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: /รับทราบว่าสินค้าขายได้ไม่พอ/,
+      }),
+    );
+
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "ยืนยันสร้างออเดอร์",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(routerPushMock).not.toHaveBeenCalled();
+  });
+
   it("shows no generated JOB-O section when Review has only ready-stock lines", () => {
     const readyStockOnlyState = {
       ...createInitialOrderEntryState(),
@@ -701,9 +811,10 @@ describe("Order read/create foundation", () => {
       }),
     );
 
-    expect(screen.getByText("ไม่มีงานสั่งทำ")).toBeTruthy();
-    expect(screen.getByText("ไม่มีงานสั่งทำที่ต้องสร้าง JOB-O")).toBeTruthy();
-    expect(screen.getAllByText(/คาดขายได้หลังจอง/).length).toBeGreaterThan(0);
+    expect(routerPushMock).toHaveBeenCalledWith(
+      "/modules/orders/ORD-240606-010?user=admin-sales",
+    );
+    expect(screen.queryByText("ไม่มีงานสั่งทำที่ต้องสร้าง JOB-O")).toBeNull();
   });
 
   it("renders incomplete custom-work Review data as incomplete", () => {
@@ -756,6 +867,43 @@ describe("Order read/create foundation", () => {
     expect(
       within(orderStatusBlock as HTMLElement).queryByText("รอยืนยันการจัดส่ง"),
     ).toBeNull();
+  });
+
+  it("keeps the generated Order Detail read-first with safe JOB-O output", () => {
+    render(<OrderDetail currentUser={currentUser} orderId="ORD-240606-010" />);
+
+    const banner = screen.getByTestId("confirmation-detail-banner");
+
+    expect(within(banner).getByText("สร้างออเดอร์สำเร็จ")).toBeTruthy();
+    expect(within(banner).getByText("JOB-O-0271")).toBeTruthy();
+    expect(within(banner).getByText(/ช่างไม้:/)).toBeTruthy();
+    expect(within(banner).getByText(/ฝ่ายสี\/ตกแต่ง:/)).toBeTruthy();
+    expect(within(banner).getByText(/รักสมุก:/)).toBeTruthy();
+    expect(within(banner).getByText(/รูปอ้างอิง 1 รายการ/)).toBeTruthy();
+    expect(within(banner).getByText(/ที่มา: ออเดอร์/)).toBeTruthy();
+    expect(collectRenderedCopy(banner)).not.toMatch(
+      /ต้นทุน|กำไร|payout|payment evidence|Management Log|Audit Log|หมายเหตุภายใน/i,
+    );
+    expect(screen.queryByRole("link", { name: "เปิด Job" })).toBeNull();
+
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "แก้ไขรายการออเดอร์",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(
+      (
+        screen.getByRole("button", {
+          name: "สร้างรอบจัดส่งจากรายการที่เลือก",
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(
+      screen.queryByRole("button", { name: /COD|ชำระ|รับเงิน/ }),
+    ).toBeNull();
+    expectNoForbiddenProductCopy();
   });
 
   it("updates Order Detail shipment selection locally before opening builder", () => {

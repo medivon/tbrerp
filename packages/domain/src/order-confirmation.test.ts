@@ -25,11 +25,14 @@ const validInput: OrderConfirmationInput = {
     {
       customWorkDetail: {
         colorDetail: "สีโอ๊คเข้ม",
+        coloringDetail: "ทำสีโอ๊คเข้ม เคลือบด้าน เน้นให้เห็นลายไม้",
         deliveryDate: "20 มิ.ย. 67",
         materialDetail: "ไม้สัก",
         productionDetail: "ลายแกะดอกพิกุล มีไฟในตู้",
+        rakSamukDetail: "ไม่มีงานรักสมุกในรายการนี้",
         referenceImageCount: 1,
         sizeDetail: "160 x 45 x 210 ซม.",
+        woodworkDetail: "โครงตู้โชว์ไม้สักแกะลายและติดไฟในตู้",
         workName: "ตู้โชว์ไม้สักแกะลายสั่งทำ",
       },
       deliveryDate: "20 มิ.ย. 67",
@@ -115,14 +118,22 @@ describe("Order confirmation domain logic", () => {
 
     expect(result.generatedJobs).toHaveLength(1);
     expect(result.generatedJobs[0]).toMatchObject({
+      colorDetail: "สีโอ๊คเข้ม",
+      coloringDetail: "ทำสีโอ๊คเข้ม เคลือบด้าน เน้นให้เห็นลายไม้",
       currentDepartment: "ช่างไม้",
       id: "JOB-O-0271",
+      materialDetail: "ไม้สัก",
+      rakSamukDetail: "ไม่มีงานรักสมุกในรายการนี้",
+      referenceImageCount: 1,
       safeProductionContextOnly: true,
+      sizeDetail: "160 x 45 x 210 ซม.",
       sourceLineId: "entry-custom-cabinet",
       sourceType: "Order",
       status: "รอรับงาน",
+      woodworkDetail: "โครงตู้โชว์ไม้สักแกะลายและติดไฟในตู้",
       workName: "ตู้โชว์ไม้สักแกะลายสั่งทำ",
     });
+    expect("productionDetail" in result.generatedJobs[0]).toBe(false);
   });
 
   it("blocks incomplete custom-work detail", () => {
@@ -194,6 +205,57 @@ describe("Order confirmation domain logic", () => {
           title: "รับทราบสต๊อกไม่พอ",
         }),
       ]),
+    );
+  });
+
+  it("uses one acknowledgement for multiple stock warnings", () => {
+    const result = confirmOrderFromReview({
+      ...validInput,
+      readyStockLines: [
+        ...validInput.readyStockLines,
+        {
+          color: "แดงชาด / ทอง",
+          dimensions: "100 x 42 x 86 ซม.",
+          id: "entry-ready-rak-cabinet",
+          imageAlt: "ตู้เตี้ยลงรักสมุกสีแดงชาด",
+          imageSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
+          lineTotalBaht: 38500,
+          quantity: 1,
+          sellableStockBefore: 0,
+          skuCode: "TBR-CAB-RAK-RED",
+          skuName: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+          title: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+        },
+      ],
+      warnings: [
+        ...validInput.warnings,
+        {
+          id: "stock-entry-ready-rak-cabinet",
+          lineId: "entry-ready-rak-cabinet",
+          message: "ตู้เตี้ยลงรักสมุกพร้อมส่ง จำนวนเกินที่ขายได้",
+          type: "stock-insufficient",
+        },
+      ],
+    });
+
+    expect(result.status).toBe("confirmed");
+
+    if (result.status !== "confirmed") {
+      throw new Error("expected confirmation to succeed");
+    }
+
+    expect(result.acknowledgedWarnings).toHaveLength(2);
+    expect(result.readyStockReservationOutcomes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          lineId: "entry-ready-rak-cabinet",
+          outcome: "shortage-acknowledged",
+          projectedSellableAfter: -1,
+        }),
+      ]),
+    );
+    expect(JSON.stringify(result.acknowledgedWarnings)).not.toMatch(
+      /manager|approval|reason/i,
     );
   });
 
@@ -293,6 +355,29 @@ describe("Order confirmation domain logic", () => {
     );
   });
 
+  it("blocks missing Order Lines", () => {
+    const result = confirmOrderFromReview({
+      ...validInput,
+      customWorkLines: [],
+      readyStockLines: [],
+      warnings: [],
+    });
+
+    expect(result.status).toBe("blocked");
+
+    if (result.status !== "blocked") {
+      throw new Error("expected confirmation to block");
+    }
+
+    expect(result.blockingReasons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: "missing-order-lines",
+        }),
+      ]),
+    );
+  });
+
   it("blocks missing customer, recipient, and stale review input", () => {
     const result = confirmOrderFromReview({
       ...validInput,
@@ -361,6 +446,7 @@ describe("Order confirmation domain logic", () => {
     expect("shipmentRounds" in result.confirmedOrder).toBe(false);
     expect(JSON.stringify(result)).not.toMatch(/Prisma|migration|database/i);
     expect(JSON.stringify(result)).not.toMatch(/PaymentEvidence|StockMovement/);
+    expect(JSON.stringify(result)).not.toMatch(/fixtureOnlyNotice/);
   });
 
   it("keeps sensitive cost/profit/payout/payment evidence and restricted logs out", () => {
@@ -369,6 +455,62 @@ describe("Order confirmation domain logic", () => {
 
     expect(serialized).not.toMatch(
       /ต้นทุน|กำไร|ราคาทุน|profit|cost|payout|หลักฐานรับเงิน|payment evidence|Management Log|Audit Log/i,
+    );
+  });
+
+  it("keeps internal admin notes out of generated JOB-O production context", () => {
+    const result = confirmOrderFromReview({
+      ...validInput,
+      customWorkLines: [
+        {
+          ...validInput.customWorkLines[0],
+          customWorkDetail: {
+            ...validInput.customWorkLines[0].customWorkDetail,
+            productionDetail:
+              "ช่างไม้: ทำโครงตู้ / หมายเหตุภายใน: โทรย้ำลูกค้าก่อนผลิต",
+            woodworkDetail: "ทำโครงตู้",
+          },
+        },
+      ],
+    });
+
+    expect(result.status).toBe("confirmed");
+
+    if (result.status !== "confirmed") {
+      throw new Error("expected confirmation to succeed");
+    }
+
+    expect(JSON.stringify(result.generatedJobs)).not.toMatch(/หมายเหตุภายใน/);
+  });
+
+  it("does not fall back to unstructured production detail for generated JOB-O output", () => {
+    const result = confirmOrderFromReview({
+      ...validInput,
+      customWorkLines: [
+        {
+          ...validInput.customWorkLines[0],
+          customWorkDetail: {
+            ...validInput.customWorkLines[0].customWorkDetail,
+            productionDetail:
+              "ช่างไม้: ทำโครงตู้ / หมายเหตุภายใน: โทรย้ำลูกค้าก่อนผลิต",
+            woodworkDetail: undefined,
+          },
+        },
+      ],
+    });
+
+    expect(result.status).toBe("confirmed");
+
+    if (result.status !== "confirmed") {
+      throw new Error("expected confirmation to succeed");
+    }
+
+    expect(result.generatedJobs[0]?.woodworkDetail).toBe("");
+    expect(JSON.stringify(result.generatedJobs)).not.toMatch(
+      /โทรย้ำลูกค้า|หมายเหตุภายใน/,
+    );
+    expect(result.confirmedOrder.lines[1]?.customDetail).not.toMatch(
+      /โทรย้ำลูกค้า|หมายเหตุภายใน/,
     );
   });
 });

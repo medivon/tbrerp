@@ -314,7 +314,16 @@ for (const viewport of viewports) {
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
       ).toBeEnabled();
       await page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }).click();
-      await expect(page.getByText("ORD-240606-010")).toBeVisible();
+      await expect(page).toHaveURL(
+        /\/modules\/orders\/ORD-240606-010\?user=admin-sales/,
+      );
+      await expect(
+        page.getByRole("heading", {
+          name: "รายละเอียดออเดอร์ ORD-240606-010",
+        }),
+      ).toBeVisible();
+      await expect(page.getByText("สร้างออเดอร์สำเร็จ")).toBeVisible();
+      await expect(page.getByText("ORD-240606-010").first()).toBeVisible();
       await expect(
         page.getByText("JOB-O-0271", { exact: true }).first(),
       ).toBeVisible();
@@ -322,12 +331,19 @@ for (const viewport of viewports) {
         page.getByText("คาดขายได้หลังจอง -1 ชิ้น").first(),
       ).toBeVisible();
       await expect(page.getByRole("dialog")).toHaveCount(0);
-      await expect(page.getByText(/จะจองสต๊อก 1 รายการ/).first()).toBeVisible();
       await expect(
-        page.getByText(/จะสร้าง JOB-O 1 รายการ/).first(),
+        page
+          .getByTestId("confirmation-detail-banner")
+          .getByText("ยังไม่สร้างรอบจัดส่ง"),
       ).toBeVisible();
+      await expect(page.getByRole("link", { name: "เปิด Job" })).toHaveCount(0);
       await expect(
-        page.getByText("ยังไม่สร้างรอบจัดส่ง").first(),
+        page.getByRole("button", {
+          name: "สร้างรอบจัดส่งจากรายการที่เลือก",
+        }),
+      ).toBeDisabled();
+      await expect(
+        page.getByRole("button", { name: "แก้ไขรายการออเดอร์" }),
       ).toBeVisible();
       await expectNoInternalProductCopy(page);
       await expectCleanResponsiveText(page);

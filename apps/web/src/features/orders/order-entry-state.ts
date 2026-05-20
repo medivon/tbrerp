@@ -779,7 +779,6 @@ export function buildCustomWorkProductionDetail(
     line.woodworkDetail ? `ช่างไม้: ${line.woodworkDetail}` : undefined,
     line.coloringDetail ? `ฝ่ายสี/ตกแต่ง: ${line.coloringDetail}` : undefined,
     line.rakSamukDetail ? `รักสมุก: ${line.rakSamukDetail}` : undefined,
-    line.internalNote ? `หมายเหตุภายใน: ${line.internalNote}` : undefined,
   ]
     .filter(Boolean)
     .join(" / ");
@@ -820,13 +819,16 @@ export function createOrderConfirmationInputFromEntryState({
       return {
         customWorkDetail: {
           colorDetail: line.colorDetail,
+          coloringDetail: line.coloringDetail,
           deliveryDate: line.deliveryDate,
           materialDetail: line.materialDetail,
           productionDetail: isComplete
             ? buildCustomWorkProductionDetail(line)
             : "",
+          rakSamukDetail: line.rakSamukDetail,
           referenceImageCount: isBlank(line.referenceImageNote) ? 0 : 1,
           sizeDetail: line.sizeDetail,
+          woodworkDetail: line.woodworkDetail,
           workName: line.workName,
         },
         deliveryDate: line.deliveryDate,
@@ -907,6 +909,16 @@ export function createOrderConfirmationInputFromEntryState({
     };
   }
 
+  if (scenarioId === "missing-order-lines") {
+    return {
+      ...input,
+      customWorkLines: [],
+      readyStockLines: [],
+      shipmentIntent: undefined,
+      warnings: [],
+    };
+  }
+
   if (scenarioId === "incomplete-custom-detail") {
     return {
       ...input,
@@ -918,6 +930,36 @@ export function createOrderConfirmationInputFromEntryState({
           sizeDetail: "",
         },
       })),
+    };
+  }
+
+  if (scenarioId === "multi-stock-warning") {
+    const extraReadyStockLine = {
+      color: "แดงชาด / ทอง",
+      dimensions: "100 x 42 x 86 ซม.",
+      id: "entry-ready-rak-cabinet",
+      imageAlt: "ตู้เตี้ยลงรักสมุกสีแดงชาด",
+      imageSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
+      lineTotalBaht: 38500,
+      quantity: 1,
+      sellableStockBefore: 0,
+      skuCode: "TBR-CAB-RAK-RED",
+      skuName: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+      title: "ตู้เตี้ยลงรักสมุกพร้อมส่ง",
+    };
+
+    return {
+      ...input,
+      readyStockLines: [...input.readyStockLines, extraReadyStockLine],
+      warnings: [
+        ...input.warnings,
+        {
+          id: "stock-warning-rak-cabinet",
+          lineId: extraReadyStockLine.id,
+          message: "ตู้เตี้ยลงรักสมุกพร้อมส่ง จำนวนเกินที่ขายได้",
+          type: "stock-insufficient",
+        },
+      ],
     };
   }
 

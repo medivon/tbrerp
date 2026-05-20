@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, Truck } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  PackageCheck,
+  Truck,
+  Wrench,
+} from "lucide-react";
 import {
   Button,
   EmptyState,
@@ -12,13 +18,17 @@ import {
 } from "@thaiboran/ui";
 
 import { OrderLineCard } from "@/features/orders/components/order-line-card";
-import { jobRoutes } from "@/features/jobs/routes";
+import {
+  getOrderConfirmationResult,
+  type StoredOrderConfirmationResult,
+} from "@/features/orders/order-confirmation-result-store";
 import {
   OrderStatusChip,
   ShipmentStatusChip,
 } from "@/features/orders/components/order-status-chip";
 import { ReadFirstSection } from "@/features/orders/components/read-first-section";
 import {
+  confirmedOrderFixtureResult,
   formatBaht,
   getOrderById,
   type OrderFixture,
@@ -36,20 +46,41 @@ export function OrderDetail({
   orderId: string;
 }) {
   const order = getOrderById(orderId);
+  const generatedConfirmationBlocked = Boolean(order?.sourceDraftNo);
   const initialSelectedShipmentLineIds = useMemo(
     () =>
-      order?.lines
-        .filter((line) => !line.cancelledReason && line.readyForShipment)
-        .map((line) => line.id) ?? [],
-    [order],
+      generatedConfirmationBlocked
+        ? []
+        : (order?.lines
+            .filter((line) => !line.cancelledReason && line.readyForShipment)
+            .map((line) => line.id) ?? []),
+    [generatedConfirmationBlocked, order],
   );
   const [selectedShipmentLineIds, setSelectedShipmentLineIds] = useState(
     initialSelectedShipmentLineIds,
   );
+  const [confirmationResult, setConfirmationResult] =
+    useState<StoredOrderConfirmationResult | null>(null);
 
   useEffect(() => {
     setSelectedShipmentLineIds(initialSelectedShipmentLineIds);
   }, [initialSelectedShipmentLineIds]);
+
+  useEffect(() => {
+    const storedResult = getOrderConfirmationResult(orderId);
+
+    if (storedResult) {
+      setConfirmationResult(storedResult);
+      return;
+    }
+
+    setConfirmationResult(
+      confirmedOrderFixtureResult.status === "confirmed" &&
+        confirmedOrderFixtureResult.confirmedOrder.id === orderId
+        ? confirmedOrderFixtureResult
+        : null,
+    );
+  }, [orderId]);
 
   if (!order) {
     return (
@@ -74,6 +105,13 @@ export function OrderDetail({
   const selectedShipmentLineCount = selectedShipmentLineIds.length;
   const isCompleted = order.orderStatus === "จัดส่งครบแล้ว";
   const isCancelled = order.orderStatus === "ยกเลิก";
+  const generatedDetailReason =
+    "สร้างออเดอร์แล้ว แต่ยังไม่สร้างรอบจัดส่งจากหน้านี้";
+  const managementDisabledReason = isCompleted
+    ? "ออเดอร์จัดส่งครบแล้ว"
+    : generatedConfirmationBlocked
+      ? generatedDetailReason
+      : undefined;
 
   function updateShipmentLineSelection(lineId: string, selected: boolean) {
     setSelectedShipmentLineIds((current) => {
@@ -94,7 +132,7 @@ export function OrderDetail({
           ) : (
             <ManageOrderMenu
               currentUser={currentUser}
-              disabled={isCompleted}
+              disabledReason={managementDisabledReason}
               order={order}
             />
           )
@@ -121,6 +159,10 @@ export function OrderDetail({
         }
         title={`รายละเอียดออเดอร์ ${order.id}`}
       />
+
+      {confirmationResult ? (
+        <ConfirmationDetailBanner result={confirmationResult} />
+      ) : null}
 
       {isCompleted ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
@@ -173,6 +215,20 @@ export function OrderDetail({
                   : "ออเดอร์ยกเลิกแล้ว จึงไม่เปิดการแก้รายการ"}
               </p>
             </div>
+          ) : generatedConfirmationBlocked ? (
+            <div className="grid justify-items-start gap-1 sm:justify-items-end">
+              <Button
+                disabled
+                size="sm"
+                title={generatedDetailReason}
+                variant="outline"
+              >
+                แก้ไขรายการออเดอร์
+              </Button>
+              <p className="max-w-64 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere] sm:text-right">
+                {generatedDetailReason}
+              </p>
+            </div>
           ) : (
             <Button asChild size="sm" variant="outline">
               <Link
@@ -187,25 +243,13 @@ export function OrderDetail({
         titleId="order-lines"
       >
         {readyStockLines.length > 0 ? (
-          <LineGroup
-            currentUser={currentUser}
-            lines={readyStockLines}
-            title="สินค้าพร้อมส่ง"
-          />
+          <LineGroup lines={readyStockLines} title="สินค้าพร้อมส่ง" />
         ) : null}
         {customLines.length > 0 ? (
-          <LineGroup
-            currentUser={currentUser}
-            lines={customLines}
-            title="งานสั่งทำ"
-          />
+          <LineGroup lines={customLines} title="งานสั่งทำ" />
         ) : null}
         {cancelledLines.length > 0 ? (
-          <LineGroup
-            currentUser={currentUser}
-            lines={cancelledLines}
-            title="รายการที่ยกเลิกแล้ว"
-          />
+          <LineGroup lines={cancelledLines} title="รายการที่ยกเลิกแล้ว" />
         ) : null}
       </ReadFirstSection>
 
@@ -217,6 +261,9 @@ export function OrderDetail({
         <div className="grid">
           {activeLines.map((line) => (
             <ShipmentSelectionRow
+              disabledReasonOverride={
+                generatedConfirmationBlocked ? generatedDetailReason : undefined
+              }
               key={line.id}
               line={line}
               onSelectedChange={(selected) =>
@@ -227,7 +274,12 @@ export function OrderDetail({
           ))}
         </div>
         <div className="border-t border-border p-4">
-          {hasReadyShipmentLines && selectedShipmentLineCount > 0 ? (
+          {generatedConfirmationBlocked ? (
+            <Button disabled title={generatedDetailReason}>
+              <Truck aria-hidden className="mr-2 h-4 w-4" />
+              สร้างรอบจัดส่งจากรายการที่เลือก
+            </Button>
+          ) : hasReadyShipmentLines && selectedShipmentLineCount > 0 ? (
             <Button asChild>
               <Link
                 href={shipmentHref(
@@ -253,9 +305,11 @@ export function OrderDetail({
             </Button>
           )}
           <p className="mt-2 break-words text-sm font-semibold text-muted-foreground [overflow-wrap:anywhere]">
-            {hasReadyShipmentLines
-              ? `เลือก ${selectedShipmentLineCount} รายการพร้อมส่งเพื่อสร้างรอบจัดส่ง`
-              : "ไม่มีรายการพร้อมส่งที่เลือกได้ในออเดอร์นี้"}
+            {generatedConfirmationBlocked
+              ? generatedDetailReason
+              : hasReadyShipmentLines
+                ? `เลือก ${selectedShipmentLineCount} รายการพร้อมส่งเพื่อสร้างรอบจัดส่ง`
+                : "ไม่มีรายการพร้อมส่งที่เลือกได้ในออเดอร์นี้"}
           </p>
         </div>
       </ReadFirstSection>
@@ -361,15 +415,183 @@ export function OrderDetail({
   );
 }
 
+function ConfirmationDetailBanner({
+  result,
+}: {
+  result: StoredOrderConfirmationResult;
+}) {
+  return (
+    <SurfaceCard
+      className="border-[#BFE5C9] bg-[#E6F4EA]"
+      data-testid="confirmation-detail-banner"
+      padding="md"
+    >
+      <div className="grid min-w-0 gap-4">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start gap-3 text-[#166534]">
+            <CheckCircle2 aria-hidden className="mt-0.5 h-5 w-5 shrink-0" />
+            <div className="min-w-0">
+              <p className="break-words text-base font-extrabold [overflow-wrap:anywhere]">
+                สร้างออเดอร์สำเร็จ
+              </p>
+              <p className="mt-1 break-words text-sm font-semibold leading-6 [overflow-wrap:anywhere]">
+                ผลหลังยืนยันถูกสรุปไว้ที่รายละเอียดออเดอร์นี้
+              </p>
+            </div>
+          </div>
+          <StatusChip variant="neutral">ยังไม่สร้างรอบจัดส่ง</StatusChip>
+        </div>
+
+        <div className="grid min-w-0 gap-3 md:grid-cols-3">
+          <ConfirmationMetric
+            label="เลขออเดอร์"
+            value={result.confirmedOrder.id}
+          />
+          <ConfirmationMetric
+            label="JOB-O ที่สร้าง"
+            value={
+              result.generatedJobs.length > 0
+                ? result.generatedJobs.map((job) => job.id).join(", ")
+                : "ไม่มีงานสั่งทำ"
+            }
+          />
+          <ConfirmationMetric
+            label="ผลจองสินค้าพร้อมส่ง"
+            value={
+              result.readyStockReservationOutcomes.length > 0
+                ? `${result.readyStockReservationOutcomes.length} รายการ`
+                : "ไม่มีสินค้าพร้อมส่ง"
+            }
+          />
+        </div>
+
+        {result.generatedJobs.length > 0 ? (
+          <div className="grid min-w-0 gap-3 lg:grid-cols-2">
+            {result.generatedJobs.map((job) => (
+              <div
+                className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
+                key={job.id}
+              >
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <Wrench aria-hidden className="h-4 w-4 text-[#166534]" />
+                  <StatusChip variant="revision">
+                    {job.id} / งานลูกค้า
+                  </StatusChip>
+                  <StatusChip variant="neutral">{job.status}</StatusChip>
+                </div>
+                <p className="mt-2 break-words text-sm font-extrabold text-foreground [overflow-wrap:anywhere]">
+                  {job.workName} • {job.quantity} ชิ้น
+                </p>
+                <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
+                  {[
+                    job.sizeDetail ? `ขนาด ${job.sizeDetail}` : undefined,
+                    job.materialDetail
+                      ? `วัสดุ ${job.materialDetail}`
+                      : undefined,
+                    job.colorDetail ? `สี ${job.colorDetail}` : undefined,
+                    job.currentDepartment,
+                  ]
+                    .filter(Boolean)
+                    .join(" / ")}
+                </p>
+                <p className="mt-1 break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
+                  {[
+                    job.woodworkDetail
+                      ? `ช่างไม้: ${job.woodworkDetail}`
+                      : undefined,
+                    job.coloringDetail
+                      ? `ฝ่ายสี/ตกแต่ง: ${job.coloringDetail}`
+                      : undefined,
+                    job.rakSamukDetail
+                      ? `รักสมุก: ${job.rakSamukDetail}`
+                      : undefined,
+                    job.deliveryDate
+                      ? `กำหนดส่ง ${job.deliveryDate}`
+                      : undefined,
+                    job.referenceImageCount > 0
+                      ? `รูปอ้างอิง ${job.referenceImageCount} รายการ`
+                      : undefined,
+                    "ที่มา: ออเดอร์",
+                  ]
+                    .filter(Boolean)
+                    .join(" / ")}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {result.readyStockReservationOutcomes.length > 0 ? (
+          <div className="grid min-w-0 gap-3 lg:grid-cols-2">
+            {result.readyStockReservationOutcomes.map((outcome) => (
+              <div
+                className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
+                key={outcome.lineId}
+              >
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <PackageCheck
+                    aria-hidden
+                    className="h-4 w-4 text-[#166534]"
+                  />
+                  <p className="break-words text-sm font-extrabold text-foreground [overflow-wrap:anywhere]">
+                    {outcome.skuCode}
+                  </p>
+                  <StatusChip
+                    variant={
+                      outcome.outcome === "shortage-acknowledged"
+                        ? "warning"
+                        : "success"
+                    }
+                  >
+                    {outcome.outcome === "shortage-acknowledged"
+                      ? "รับทราบสต๊อกไม่พอแล้ว"
+                      : "พร้อมจอง"}
+                  </StatusChip>
+                </div>
+                <p className="mt-2 break-words text-sm font-semibold leading-6 text-muted-foreground [overflow-wrap:anywhere]">
+                  จอง {outcome.quantity} ชิ้น จากขายได้ก่อนยืนยัน{" "}
+                  {outcome.sellableStockBefore} ชิ้น / คาดขายได้หลังจอง{" "}
+                  {outcome.projectedSellableAfter} ชิ้น
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </SurfaceCard>
+  );
+}
+
+function ConfirmationMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3">
+      <p className="break-words text-xs font-bold text-muted-foreground [overflow-wrap:anywhere]">
+        {label}
+      </p>
+      <p className="mt-1 break-words text-sm font-extrabold leading-6 text-foreground [overflow-wrap:anywhere]">
+        {value}
+      </p>
+    </div>
+  );
+}
+
 function ManageOrderMenu({
   currentUser,
-  disabled,
+  disabledReason,
   order,
 }: {
   currentUser: FixtureUser;
-  disabled: boolean;
+  disabledReason?: string;
   order: OrderFixture;
 }) {
+  const disabled = Boolean(disabledReason);
+
   return (
     <details className="relative min-w-0">
       <summary className="inline-flex min-h-10 min-w-0 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
@@ -378,7 +600,7 @@ function ManageOrderMenu({
       </summary>
       <div className="absolute left-0 z-20 mt-2 grid w-[min(18rem,calc(100vw-2rem))] gap-1 rounded-lg border border-border bg-surface p-2 shadow-lifted sm:left-auto sm:right-0">
         {disabled ? (
-          <MenuDisabled>แก้ไขรายการสินค้า: ออเดอร์จัดส่งครบแล้ว</MenuDisabled>
+          <MenuDisabled>แก้ไขรายการสินค้า: {disabledReason}</MenuDisabled>
         ) : (
           <MenuLink
             href={orderHref(orderRoutes.lineEdit(order.id), currentUser)}
@@ -387,7 +609,7 @@ function ManageOrderMenu({
           </MenuLink>
         )}
         {disabled ? (
-          <MenuDisabled>แก้ไขงานสั่งทำ: ออเดอร์จัดส่งครบแล้ว</MenuDisabled>
+          <MenuDisabled>แก้ไขงานสั่งทำ: {disabledReason}</MenuDisabled>
         ) : (
           <MenuLink
             href={orderHref(orderRoutes.lineEdit(order.id), currentUser)}
@@ -396,7 +618,7 @@ function ManageOrderMenu({
           </MenuLink>
         )}
         {disabled ? (
-          <MenuDisabled>จัดการรอบจัดส่ง: ออเดอร์จัดส่งครบแล้ว</MenuDisabled>
+          <MenuDisabled>จัดการรอบจัดส่ง: {disabledReason}</MenuDisabled>
         ) : (
           <MenuLink href="#shipment-management">จัดการรอบจัดส่ง</MenuLink>
         )}
@@ -441,11 +663,9 @@ function Fact({ label, value }: { label: string; value: string }) {
 }
 
 function LineGroup({
-  currentUser,
   lines,
   title,
 }: {
-  currentUser: FixtureUser;
   lines: OrderLineFixture[];
   title: string;
 }) {
@@ -457,44 +677,41 @@ function LineGroup({
         </p>
       </div>
       {lines.map((line) => (
-        <OrderLineCard
-          actionHref={
-            line.job
-              ? orderHref(jobRoutes.detail(line.job.id), currentUser)
-              : undefined
-          }
-          key={line.id}
-          line={line}
-        />
+        <OrderLineCard key={line.id} line={line} />
       ))}
     </div>
   );
 }
 
 function ShipmentSelectionRow({
+  disabledReasonOverride,
   line,
   onSelectedChange,
   selected,
 }: {
+  disabledReasonOverride?: string;
   line: OrderLineFixture;
   onSelectedChange: (selected: boolean) => void;
   selected: boolean;
 }) {
-  const disabledReason = line.readyForShipment
-    ? undefined
-    : (line.shipmentBlockedReason ?? "ยังเลือกสร้างรอบจัดส่งไม่ได้");
+  const disabledReason =
+    disabledReasonOverride ??
+    (line.readyForShipment
+      ? undefined
+      : (line.shipmentBlockedReason ?? "ยังเลือกสร้างรอบจัดส่งไม่ได้"));
+  const selectable = line.readyForShipment && !disabledReason;
 
   return (
     <div className="grid gap-3 border-b border-border p-4 last:border-b-0 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
       <label
         className={`flex min-w-0 items-start gap-3 ${
-          line.readyForShipment ? "cursor-pointer" : "cursor-not-allowed"
+          selectable ? "cursor-pointer" : "cursor-not-allowed"
         }`}
       >
         <input
           checked={selected}
           className="mt-1 h-4 w-4 rounded border-border"
-          disabled={!line.readyForShipment}
+          disabled={!selectable}
           onChange={(event) => onSelectedChange(event.target.checked)}
           type="checkbox"
         />

@@ -39,7 +39,7 @@ export function ReviewImpactPanel({
           icon={<PackageCheck aria-hidden className="h-4 w-4" />}
           label={
             readyStockCount > 0
-              ? `จะจองสต๊อก ${readyStockCount} รายการ`
+              ? `จะสรุปผลจองสินค้าพร้อมส่ง ${readyStockCount} รายการ`
               : "ไม่มีสินค้าพร้อมส่งให้จอง"
           }
           previewLabel={readyStockCount > 0 ? "จะเกิดขึ้น" : "ไม่เกี่ยวข้อง"}

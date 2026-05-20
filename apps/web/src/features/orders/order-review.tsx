@@ -1,15 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  CheckCircle2,
-  ExternalLink,
-  PackageCheck,
-  Wrench,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import {
   confirmOrderFromReview,
   type CustomWorkReviewLine,
@@ -26,13 +20,16 @@ import {
 import { OrderLineCard } from "@/features/orders/components/order-line-card";
 import { ReadFirstSection } from "@/features/orders/components/read-first-section";
 import { ReviewImpactPanel } from "@/features/orders/components/review-impact-panel";
+import { saveOrderConfirmationResult } from "@/features/orders/order-confirmation-result-store";
 import {
   formatBaht,
-  type OrderConfirmationFixtureResult,
   type OrderLineFixture,
   type OrderReviewScenarioId,
 } from "@/features/orders/fixtures/orders";
-import { useOrderEntryMemoryState } from "@/features/orders/order-entry-memory-store";
+import {
+  saveOrderEntryDraft,
+  useOrderEntryMemoryState,
+} from "@/features/orders/order-entry-memory-store";
 import { createOrderConfirmationInputFromEntryState } from "@/features/orders/order-entry-state";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
@@ -46,9 +43,9 @@ export function OrderReview({
   currentUser: FixtureUser;
   scenarioId?: OrderReviewScenarioId;
 }) {
+  const router = useRouter();
+  const [confirming, setConfirming] = useState(false);
   const [stockShortageAccepted, setStockShortageAccepted] = useState(false);
-  const [confirmationResult, setConfirmationResult] =
-    useState<OrderConfirmationFixtureResult | null>(null);
   const entryState = useOrderEntryMemoryState();
   const hasActiveEntryState = entryState.source === "in-memory";
   const confirmationInput = useMemo(
@@ -93,22 +90,35 @@ export function OrderReview({
     confirmationPreview.status === "blocked"
       ? confirmationPreview.blockingReasons
       : [];
-  const canConfirm =
-    confirmationPreview.status === "confirmed" && !confirmationResult;
-  const confirmDisabledReason = confirmationResult
-    ? "ยืนยันออเดอร์แล้ว"
+  const canConfirm = confirmationPreview.status === "confirmed" && !confirming;
+  const confirmDisabledReason = confirming
+    ? "กำลังเปิดรายละเอียดออเดอร์"
     : blockingReasons.length > 0
       ? blockingReasons.map((reason) => reason.message).join(" / ")
       : "ตรวจสอบข้อมูลก่อนยืนยัน";
 
   function updateStockShortageAccepted(accepted: boolean) {
     setStockShortageAccepted(accepted);
-    setConfirmationResult(null);
+    setConfirming(false);
+  }
+
+  function saveDraftFromReview() {
+    saveOrderEntryDraft({
+      entryState,
+      ownerName: currentUser.displayName,
+    });
   }
 
   function confirmFixtureOrder() {
     if (confirmationPreview.status === "confirmed") {
-      setConfirmationResult(confirmationPreview);
+      setConfirming(true);
+      saveOrderConfirmationResult(confirmationPreview);
+      router.push(
+        orderHref(
+          orderRoutes.detail(confirmationPreview.confirmedOrder.id),
+          currentUser,
+        ),
+      );
     }
   }
 
@@ -138,12 +148,22 @@ export function OrderReview({
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
         actions={
-          <Button asChild variant="outline">
-            <Link href={orderHref(orderRoutes.create, currentUser)}>
-              <ArrowLeft aria-hidden className="mr-2 h-4 w-4" />
-              กลับ
-            </Link>
-          </Button>
+          <div className="flex min-w-0 flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link href={orderHref(orderRoutes.create, currentUser)}>
+                <ArrowLeft aria-hidden className="mr-2 h-4 w-4" />
+                กลับ
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link
+                href={orderHref(orderRoutes.drafts, currentUser)}
+                onClick={saveDraftFromReview}
+              >
+                บันทึกร่าง
+              </Link>
+            </Button>
+          </div>
         }
         description="ตรวจสอบลูกค้า ผู้รับสินค้า รายการสินค้า และเงื่อนไขชำระเงินก่อนสร้างออเดอร์"
         meta={
@@ -166,13 +186,6 @@ export function OrderReview({
         }
         title="ตรวจสอบก่อนสร้างออเดอร์"
       />
-
-      {confirmationResult?.status === "confirmed" ? (
-        <ConfirmationResultPanel
-          currentUser={currentUser}
-          result={confirmationResult}
-        />
-      ) : null}
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-5">
@@ -436,206 +449,6 @@ function BlockingReasonsPanel({ reasons }: { reasons: string[] }) {
         ))}
       </ul>
     </SurfaceCard>
-  );
-}
-
-function ConfirmationResultPanel({
-  currentUser,
-  result,
-}: {
-  currentUser: FixtureUser;
-  result: Extract<OrderConfirmationFixtureResult, { status: "confirmed" }>;
-}) {
-  return (
-    <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <CheckCircle2 aria-hidden className="h-5 w-5 text-[#166534]" />
-            <p className="min-w-0 break-words [overflow-wrap:anywhere] text-base font-extrabold text-[#166534]">
-              สร้างออเดอร์สำเร็จ
-            </p>
-          </div>
-        </div>
-        <Button asChild variant="outline">
-          <Link
-            href={orderHref(
-              orderRoutes.detail(result.confirmedOrder.id),
-              currentUser,
-            )}
-          >
-            เปิดรายละเอียดออเดอร์
-            <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </div>
-
-      <div className="mt-4 grid min-w-0 gap-3 lg:grid-cols-3">
-        <ResultMetric label="เลขออเดอร์" value={result.confirmedOrder.id} />
-        <ResultMetric
-          label="JOB-O ที่สร้าง"
-          value={
-            result.generatedJobs.length > 0
-              ? result.generatedJobs.map((job) => job.id).join(", ")
-              : "ไม่มีงานสั่งทำ"
-          }
-        />
-        <ResultMetric label="ปลายทางถัดไป" value="ไปหน้ารายละเอียดออเดอร์" />
-      </div>
-
-      {result.convertedDraft ? (
-        <p className="mt-4 break-words [overflow-wrap:anywhere] rounded-md border border-[#BFE5C9] bg-white/70 px-3 py-2 text-sm font-bold leading-6 text-[#166534]">
-          {result.convertedDraft.draftNo} {result.convertedDraft.status}{" "}
-          และย้ายออกจากร่างที่กำลังทำอยู่
-        </p>
-      ) : null}
-
-      <div className="mt-4 grid min-w-0 gap-4 lg:grid-cols-2">
-        <ResultSection
-          icon={<Wrench aria-hidden className="h-4 w-4" />}
-          title="JOB-O ที่สร้าง"
-        >
-          {result.generatedJobs.length > 0 ? (
-            result.generatedJobs.map((job) => (
-              <div
-                className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
-                key={job.id}
-              >
-                <p className="break-words [overflow-wrap:anywhere] text-sm font-extrabold text-foreground">
-                  {job.id} / งานลูกค้า
-                </p>
-                <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-muted-foreground">
-                  {job.workName} • {job.quantity} ชิ้น • {job.currentDepartment}{" "}
-                  • {job.status}
-                </p>
-                <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm leading-6 text-foreground">
-                  {job.productionDetail} / {job.materialDetail} /{" "}
-                  {job.colorDetail}
-                </p>
-              </div>
-            ))
-          ) : (
-            <ResultEmpty>ไม่มีงานสั่งทำที่ต้องสร้าง JOB-O</ResultEmpty>
-          )}
-        </ResultSection>
-
-        <ResultSection
-          icon={<PackageCheck aria-hidden className="h-4 w-4" />}
-          title="ผลจองสินค้าพร้อมส่ง"
-        >
-          {result.readyStockReservationOutcomes.length > 0 ? (
-            result.readyStockReservationOutcomes.map((outcome) => (
-              <div
-                className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
-                key={outcome.lineId}
-              >
-                <p className="break-words [overflow-wrap:anywhere] text-sm font-extrabold text-foreground">
-                  {outcome.skuCode}
-                </p>
-                <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-muted-foreground">
-                  จอง {outcome.quantity} ชิ้น จากขายได้ก่อนยืนยัน{" "}
-                  {outcome.sellableStockBefore} ชิ้น
-                </p>
-                <StatusChip
-                  variant={
-                    outcome.outcome === "shortage-acknowledged"
-                      ? "warning"
-                      : "success"
-                  }
-                >
-                  คาดขายได้หลังจอง {outcome.projectedSellableAfter} ชิ้น
-                </StatusChip>
-              </div>
-            ))
-          ) : (
-            <ResultEmpty>ไม่มีสินค้าพร้อมส่งที่ต้องจอง</ResultEmpty>
-          )}
-        </ResultSection>
-      </div>
-
-      <ResultSection
-        className="mt-4"
-        icon={<CheckCircle2 aria-hidden className="h-4 w-4" />}
-        title="ประวัติการสร้างออเดอร์"
-      >
-        <ol className="grid gap-2">
-          {result.activityEvents.map((event, index) => (
-            <li
-              className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3"
-              key={`${event.title}-${index}`}
-            >
-              <p className="break-words [overflow-wrap:anywhere] text-sm font-extrabold text-foreground">
-                {event.title}
-              </p>
-              <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-semibold leading-6 text-muted-foreground">
-                {event.detail}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </ResultSection>
-
-      {result.acknowledgedWarnings.length > 0 ? (
-        <div className="mt-4 min-w-0 rounded-md border border-[#FAD980] bg-[#FEF3C7] p-3 text-[#92400E]">
-          <p className="text-sm font-extrabold">คำเตือนที่รับทราบแล้ว</p>
-          <ul className="mt-2 grid gap-1 text-sm font-semibold leading-6">
-            {result.acknowledgedWarnings.map((warning) => (
-              <li
-                className="break-words [overflow-wrap:anywhere]"
-                key={warning.id}
-              >
-                {warning.message}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </SurfaceCard>
-  );
-}
-
-function ResultSection({
-  children,
-  className,
-  icon,
-  title,
-}: {
-  children: ReactNode;
-  className?: string;
-  icon: ReactNode;
-  title: string;
-}) {
-  return (
-    <section className={`grid min-w-0 gap-3 ${className ?? ""}`}>
-      <div className="flex min-w-0 items-center gap-2 text-sm font-extrabold text-[#166534]">
-        <span className="shrink-0">{icon}</span>
-        <span className="min-w-0 break-words [overflow-wrap:anywhere]">
-          {title}
-        </span>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function ResultMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/80 p-3">
-      <p className="break-words [overflow-wrap:anywhere] text-xs font-bold text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-1 break-words [overflow-wrap:anywhere] text-sm font-extrabold leading-6 text-foreground">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function ResultEmpty({ children }: { children: ReactNode }) {
-  return (
-    <div className="min-w-0 rounded-md border border-[#BFE5C9] bg-white/70 p-3 text-sm font-semibold leading-6 text-muted-foreground">
-      {children}
-    </div>
   );
 }
 

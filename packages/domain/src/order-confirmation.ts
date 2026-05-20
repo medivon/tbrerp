@@ -44,12 +44,15 @@ export type ReadyStockReviewLine = {
 
 export type CustomWorkDetailInput = {
   colorDetail: string;
+  coloringDetail?: string;
   deliveryDate?: string;
   deliveryDateRequired?: boolean;
   materialDetail: string;
   productionDetail: string;
+  rakSamukDetail?: string;
   referenceImageCount?: number;
   sizeDetail: string;
+  woodworkDetail?: string;
   workName: string;
 };
 
@@ -115,18 +118,22 @@ export type ConfirmationBlock = {
 
 export type GeneratedJobReadModel = {
   colorDetail: string;
+  coloringDetail: string;
   currentDepartment: string;
   deliveryDate?: string;
   id: string;
   imageAlt: string;
   imageSrc: string;
   materialDetail: string;
-  productionDetail: string;
   quantity: number;
+  rakSamukDetail: string;
+  referenceImageCount: number;
   safeProductionContextOnly: true;
+  sizeDetail: string;
   sourceLineId: string;
   sourceType: "Order";
   status: string;
+  woodworkDetail: string;
   workName: string;
 };
 
@@ -171,7 +178,6 @@ export type ConfirmedOrderReadModel = {
   customerName: string;
   customerPhone: string;
   customerTier: string;
-  fixtureOnlyNotice: string;
   hasCustomWork: boolean;
   id: string;
   lines: ConfirmedOrderLineReadModel[];
@@ -227,8 +233,6 @@ export type OrderConfirmationResult =
 
 const confirmationRoleIds = new Set(["owner", "manager", "admin-sales"]);
 
-const fixtureOnlyNotice = "สร้างออเดอร์แล้วจากหน้าตรวจสอบก่อนสร้างออเดอร์";
-
 export function canConfirmOrder(roleId: OrderConfirmationRoleId): boolean {
   return confirmationRoleIds.has(roleId);
 }
@@ -269,7 +273,6 @@ export function confirmOrderFromReview(
     customerName: input.customer?.name ?? "",
     customerPhone: input.customer?.primaryPhone ?? "",
     customerTier: input.customer?.tier ?? "ลูกค้าปกติ",
-    fixtureOnlyNotice,
     hasCustomWork: input.customWorkLines.length > 0,
     id: input.fixtureIdSeed.orderId,
     lines: [
@@ -424,21 +427,27 @@ function createGeneratedJob(
   jobIdPrefix: string,
   jobNumber: number,
 ): GeneratedJobReadModel {
+  const detail = line.customWorkDetail;
+
   return {
-    colorDetail: line.customWorkDetail.colorDetail,
+    colorDetail: detail.colorDetail,
+    coloringDetail: detail.coloringDetail ?? "",
     currentDepartment: "ช่างไม้",
-    deliveryDate: line.deliveryDate ?? line.customWorkDetail.deliveryDate,
+    deliveryDate: line.deliveryDate ?? detail.deliveryDate,
     id: `${jobIdPrefix}${String(jobNumber).padStart(4, "0")}`,
     imageAlt: line.imageAlt,
     imageSrc: line.imageSrc,
-    materialDetail: line.customWorkDetail.materialDetail,
-    productionDetail: line.customWorkDetail.productionDetail,
+    materialDetail: detail.materialDetail,
     quantity: line.quantity,
+    rakSamukDetail: detail.rakSamukDetail ?? "",
+    referenceImageCount: detail.referenceImageCount ?? 0,
     safeProductionContextOnly: true,
+    sizeDetail: detail.sizeDetail,
     sourceLineId: line.id,
     sourceType: "Order",
     status: "รอรับงาน",
-    workName: line.customWorkDetail.workName,
+    woodworkDetail: detail.woodworkDetail ?? "",
+    workName: detail.workName,
   };
 }
 
@@ -491,12 +500,7 @@ function createConfirmedCustomWorkLine(
   job: GeneratedJobReadModel,
 ): ConfirmedOrderLineReadModel {
   return {
-    customDetail: [
-      line.customWorkDetail.productionDetail,
-      line.customWorkDetail.sizeDetail,
-      line.customWorkDetail.materialDetail,
-      line.customWorkDetail.colorDetail,
-    ].join(" / "),
+    customDetail: buildSafeCustomWorkDetail(job),
     id: line.id,
     imageAlt: line.imageAlt,
     imageSrc: line.imageSrc,
@@ -513,6 +517,22 @@ function createConfirmedCustomWorkLine(
     title: line.title,
     type: "custom-work",
   };
+}
+
+function buildSafeCustomWorkDetail(job: GeneratedJobReadModel): string {
+  return [
+    job.woodworkDetail ? `ช่างไม้: ${job.woodworkDetail}` : undefined,
+    job.coloringDetail ? `ฝ่ายสี/ตกแต่ง: ${job.coloringDetail}` : undefined,
+    job.rakSamukDetail ? `รักสมุก: ${job.rakSamukDetail}` : undefined,
+    job.sizeDetail ? `ขนาด ${job.sizeDetail}` : undefined,
+    job.materialDetail ? `วัสดุ ${job.materialDetail}` : undefined,
+    job.colorDetail ? `สี ${job.colorDetail}` : undefined,
+    job.referenceImageCount > 0
+      ? `รูปอ้างอิง ${job.referenceImageCount} รายการ`
+      : undefined,
+  ]
+    .filter(Boolean)
+    .join(" / ");
 }
 
 function createActivityEvents(
