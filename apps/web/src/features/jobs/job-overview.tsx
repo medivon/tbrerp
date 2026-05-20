@@ -1,9 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Clock, Filter, Hammer, Search } from "lucide-react";
 import {
   Button,
+  EmptyState,
   MetricCard,
   PageHeader,
   StatusChip,
@@ -22,24 +25,85 @@ import {
 import { jobHref, jobRoutes } from "@/features/jobs/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
+type SourceFilter = "ทั้งหมด" | "งานลูกค้า (JOB-O)" | "ผลิตเข้าสต๊อก (JOB-P)";
+type DepartmentFilter =
+  | "ทุกแผนก"
+  | "ช่างไม้"
+  | "ฝ่ายสี"
+  | "รักสมุก"
+  | "รอวัตถุดิบ"
+  | "งานด่วน";
+
 export function JobOverview({ currentUser }: { currentUser: FixtureUser }) {
-  const jobs = getActiveJobs();
-  const urgentCount = jobs.filter((job) => job.urgent).length;
-  const waitingMaterialCount = jobs.filter((job) => job.waitingMaterial).length;
-  const woodworkCount = jobs.filter(
+  const allJobs = getActiveJobs();
+  const [departmentFilter, setDepartmentFilter] =
+    useState<DepartmentFilter>("ทุกแผนก");
+  const [query, setQuery] = useState("");
+  const [selectedJobId, setSelectedJobId] = useState(allJobs[0]?.id ?? "");
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>("ทั้งหมด");
+  const urgentCount = allJobs.filter((job) => job.urgent).length;
+  const waitingMaterialCount = allJobs.filter(
+    (job) => job.waitingMaterial,
+  ).length;
+  const woodworkCount = allJobs.filter(
     (job) => job.currentDepartment === "ช่างไม้",
   ).length;
-  const coloringCount = jobs.filter(
+  const coloringCount = allJobs.filter(
     (job) =>
       job.currentDepartment === "ฝ่ายสี" ||
       job.currentDepartment === "รอรับเข้าโรงงานสี",
   ).length;
+  const jobs = useMemo(
+    () =>
+      allJobs.filter((job) => {
+        const normalizedQuery = query.trim().toLowerCase();
+        const sourceMatches =
+          sourceFilter === "ทั้งหมด" ||
+          (sourceFilter === "งานลูกค้า (JOB-O)"
+            ? job.sourceCode === "JOB-O"
+            : job.sourceCode === "JOB-P");
+        const departmentMatches =
+          departmentFilter === "ทุกแผนก" ||
+          (departmentFilter === "รอวัตถุดิบ"
+            ? job.waitingMaterial
+            : departmentFilter === "งานด่วน"
+              ? job.urgent
+              : job.currentDepartment === departmentFilter);
+        const queryText = [
+          job.id,
+          job.adminContext?.orderId,
+          job.adminContext?.customerName,
+          job.adminContext?.productionLot,
+          job.workName,
+          job.currentDepartment,
+          job.status,
+          job.sourceCode,
+          job.sourceLabel,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        return (
+          sourceMatches &&
+          departmentMatches &&
+          (normalizedQuery.length === 0 || queryText.includes(normalizedQuery))
+        );
+      }),
+    [allJobs, departmentFilter, query, sourceFilter],
+  );
+  const selectedJob =
+    jobs.find((job) => job.id === selectedJobId) ?? jobs[0] ?? allJobs[0];
 
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        description="ภาพรวมงานสั่งทำและงานผลิตที่ยัง active แสดงตำแหน่งงาน แผนก อายุงาน และเปิด Job ต่อได้"
-        meta={<StatusChip variant="neutral">{jobs.length} Job</StatusChip>}
+        description="ภาพรวมงานสั่งทำและงานผลิตที่ยังอยู่ระหว่างดำเนินการ แสดงตำแหน่งงาน แผนก อายุงาน และเปิด Job ต่อได้"
+        meta={
+          <StatusChip variant="neutral">
+            แสดง {jobs.length} จาก {allJobs.length} Job
+          </StatusChip>
+        }
         title="งานกำลังผลิต"
       />
 
@@ -52,9 +116,9 @@ export function JobOverview({ currentUser }: { currentUser: FixtureUser }) {
         <MetricCard
           description="JOB-O และ JOB-P ที่ยังไม่จบงาน"
           icon={<Hammer aria-hidden className="h-5 w-5" />}
-          title="งาน active"
+          title="งานเปิดอยู่"
           unit="Job"
-          value={jobs.length}
+          value={allJobs.length}
         />
         <MetricCard
           description="งานที่ทีมต้องเร่งดู"
@@ -93,76 +157,112 @@ export function JobOverview({ currentUser }: { currentUser: FixtureUser }) {
         <input
           className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[20rem]"
           id="job-search"
+          onChange={(event) => {
+            setQuery(event.target.value);
+          }}
           placeholder="ค้นหา Job ID, Order ID, ลูกค้า, ชื่องาน หรือแผนก"
           type="search"
+          value={query}
         />
         <FilterGroup label="ประเภทงาน">
-          {["ทั้งหมด", "งานลูกค้า (JOB-O)", "ผลิตเข้าสต๊อก (JOB-P)"].map(
-            (filter) => (
-              <FilterChip key={filter}>{filter}</FilterChip>
-            ),
-          )}
+          {(
+            ["ทั้งหมด", "งานลูกค้า (JOB-O)", "ผลิตเข้าสต๊อก (JOB-P)"] as const
+          ).map((filter) => (
+            <FilterChip
+              active={sourceFilter === filter}
+              key={filter}
+              onClick={() => setSourceFilter(filter)}
+            >
+              {filter}
+            </FilterChip>
+          ))}
         </FilterGroup>
         <FilterGroup label="แผนก / สถานะ">
-          {[
-            "ทุกแผนก",
-            "ช่างไม้",
-            "ฝ่ายสี",
-            "รักสมุก",
-            "รอวัตถุดิบ",
-            "งานด่วน",
-          ].map((filter) => (
-            <FilterChip key={filter}>{filter}</FilterChip>
+          {(
+            [
+              "ทุกแผนก",
+              "ช่างไม้",
+              "ฝ่ายสี",
+              "รักสมุก",
+              "รอวัตถุดิบ",
+              "งานด่วน",
+            ] as const
+          ).map((filter) => (
+            <FilterChip
+              active={departmentFilter === filter}
+              key={filter}
+              onClick={() => setDepartmentFilter(filter)}
+            >
+              {filter}
+            </FilterChip>
           ))}
         </FilterGroup>
       </ToolbarShell>
 
-      <SurfaceCard className="overflow-hidden" padding="none">
-        <div className="hidden overflow-x-auto xl:block">
-          <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
-            <thead className="bg-subtle text-xs font-bold text-muted-foreground">
-              <tr>
-                <th className="px-3 py-3" scope="col">
-                  Job
-                </th>
-                <th className="px-3 py-3" scope="col">
-                  งาน
-                </th>
-                <th className="px-3 py-3" scope="col">
-                  ต้นทาง
-                </th>
-                <th className="px-3 py-3" scope="col">
-                  แผนก
-                </th>
-                <th className="px-3 py-3" scope="col">
-                  สถานะ
-                </th>
-                <th className="px-3 py-3" scope="col">
-                  อายุ / วัน
-                </th>
-                <th className="px-3 py-3 text-right" scope="col">
-                  การทำงาน
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+      {jobs.length > 0 ? (
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <SurfaceCard className="overflow-hidden" padding="none">
+            <div className="hidden overflow-x-auto xl:block">
+              <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+                <thead className="bg-subtle text-xs font-bold text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-3" scope="col">
+                      Job
+                    </th>
+                    <th className="px-3 py-3" scope="col">
+                      งาน
+                    </th>
+                    <th className="px-3 py-3" scope="col">
+                      ต้นทาง
+                    </th>
+                    <th className="px-3 py-3" scope="col">
+                      แผนก
+                    </th>
+                    <th className="px-3 py-3" scope="col">
+                      สถานะ
+                    </th>
+                    <th className="px-3 py-3" scope="col">
+                      อายุ / วัน
+                    </th>
+                    <th className="px-3 py-3 text-right" scope="col">
+                      การทำงาน
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {jobs.map((job) => (
+                    <JobOverviewRow
+                      currentUser={currentUser}
+                      job={job}
+                      key={job.id}
+                      onPreview={() => setSelectedJobId(job.id)}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid xl:hidden">
               {jobs.map((job) => (
-                <JobOverviewRow
+                <JobOverviewCard
                   currentUser={currentUser}
                   job={job}
                   key={job.id}
+                  onPreview={() => setSelectedJobId(job.id)}
                 />
               ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="grid xl:hidden">
-          {jobs.map((job) => (
-            <JobOverviewCard currentUser={currentUser} job={job} key={job.id} />
-          ))}
-        </div>
-      </SurfaceCard>
+            </div>
+          </SurfaceCard>
+          {selectedJob ? (
+            <JobPreviewPanel currentUser={currentUser} job={selectedJob} />
+          ) : null}
+        </section>
+      ) : (
+        <EmptyState
+          description="ลองเปลี่ยนคำค้นหา ประเภทงาน หรือแผนก"
+          title="ไม่พบงานที่ตรงกับเงื่อนไข"
+        />
+      )}
     </div>
   );
 }
@@ -170,9 +270,11 @@ export function JobOverview({ currentUser }: { currentUser: FixtureUser }) {
 function JobOverviewRow({
   currentUser,
   job,
+  onPreview,
 }: {
   currentUser: FixtureUser;
   job: JobFixture;
+  onPreview: () => void;
 }) {
   return (
     <tr className="border-t border-border bg-surface align-top transition-colors hover:bg-subtle/50">
@@ -236,11 +338,16 @@ function JobOverviewRow({
         </div>
       </td>
       <td className="px-3 py-4 text-right">
-        <Button asChild size="sm" variant="outline">
-          <Link href={jobHref(jobRoutes.detail(job.id), currentUser)}>
-            เปิด Job
-          </Link>
-        </Button>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button onClick={onPreview} size="sm" type="button" variant="outline">
+            ดูสรุป
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link href={jobHref(jobRoutes.detail(job.id), currentUser)}>
+              เปิด Job
+            </Link>
+          </Button>
+        </div>
       </td>
     </tr>
   );
@@ -249,9 +356,11 @@ function JobOverviewRow({
 function JobOverviewCard({
   currentUser,
   job,
+  onPreview,
 }: {
   currentUser: FixtureUser;
   job: JobFixture;
+  onPreview: () => void;
 }) {
   return (
     <article className="grid gap-3 border-b border-border p-4 last:border-b-0 md:grid-cols-[140px_minmax(0,1fr)_auto]">
@@ -296,7 +405,10 @@ function JobOverviewCard({
           ) : null}
         </div>
       </div>
-      <div className="flex items-start md:justify-end">
+      <div className="flex flex-wrap items-start gap-2 md:justify-end">
+        <Button onClick={onPreview} size="sm" type="button" variant="outline">
+          ดูสรุป
+        </Button>
         <Button asChild size="sm" variant="outline">
           <Link href={jobHref(jobRoutes.detail(job.id), currentUser)}>
             เปิด Job
@@ -304,6 +416,60 @@ function JobOverviewCard({
         </Button>
       </div>
     </article>
+  );
+}
+
+function JobPreviewPanel({
+  currentUser,
+  job,
+}: {
+  currentUser: FixtureUser;
+  job: JobFixture;
+}) {
+  return (
+    <SurfaceCard className="xl:sticky xl:top-24" padding="md">
+      <div className="grid gap-4">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-md border border-border bg-subtle">
+          <Image
+            alt={job.imageAlt}
+            className="object-cover"
+            fill
+            sizes="360px"
+            src={job.imageSrc}
+          />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <StatusChip>{job.id}</StatusChip>
+          <StatusChip variant={getSourceChipVariant(job)}>
+            {job.sourceCode} / {job.sourceLabel}
+          </StatusChip>
+          <StatusChip variant={getDepartmentChipVariant(job.currentDepartment)}>
+            {job.currentDepartment}
+          </StatusChip>
+        </div>
+        <div>
+          <h2 className="text-lg font-extrabold leading-7 text-foreground">
+            {job.workName}
+          </h2>
+          <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
+            จำนวน {job.quantity} ชิ้น • {job.status}
+          </p>
+        </div>
+        <div className="grid gap-2 rounded-md border border-border bg-subtle p-3">
+          <p className="text-sm font-bold text-foreground">
+            รายละเอียดที่ต้องดูต่อ
+          </p>
+          <p className="text-sm font-semibold leading-6 text-muted-foreground">
+            {job.instructions.woodwork}
+          </p>
+        </div>
+        <Button asChild>
+          <Link href={jobHref(jobRoutes.detail(job.id), currentUser)}>
+            เปิด Job
+          </Link>
+        </Button>
+      </div>
+    </SurfaceCard>
   );
 }
 
@@ -325,10 +491,24 @@ function FilterGroup({
   );
 }
 
-function FilterChip({ children }: { children: ReactNode }) {
+function FilterChip({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: ReactNode;
+  onClick: () => void;
+}) {
   return (
     <button
-      className="min-h-9 cursor-pointer rounded-full border border-border bg-surface px-3 text-sm font-semibold text-muted-foreground transition hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      aria-pressed={active}
+      className={`min-h-9 cursor-pointer rounded-full border px-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
+        active
+          ? "border-primary bg-primary-soft text-primary"
+          : "border-border bg-surface text-muted-foreground hover:border-primary/40 hover:text-foreground"
+      }`}
+      onClick={onClick}
       type="button"
     >
       {children}

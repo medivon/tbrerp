@@ -22,8 +22,8 @@ const woodworkUser = getFixtureUser("woodwork");
 const coloringUser = getFixtureUser("coloring");
 const rakWorkerUser = getFixtureUser("rak-samuk-worker");
 
-describe("Job / Worker / Rak Samuk foundation", () => {
-  it("renders an image-led active Job overview without finance-sensitive fields", () => {
+describe("Job / Worker / Rak Samuk repair", () => {
+  it("renders an image-led Job overview without finance-sensitive fields", () => {
     render(<JobOverview currentUser={adminUser} />);
 
     expect(screen.getByRole("heading", { name: "งานกำลังผลิต" })).toBeTruthy();
@@ -35,6 +35,34 @@ describe("Job / Worker / Rak Samuk foundation", () => {
       screen.getAllByRole("link", { name: "เปิด Job" }).length,
     ).toBeGreaterThan(0);
     expect(screen.queryByText(/ต้นทุน|กำไร|payout|profit|cost/i)).toBeNull();
+    expect(screen.queryByText(/ตัวอย่าง|SAMPLE/)).toBeNull();
+  });
+
+  it("filters the Job overview by search, source, and department state", () => {
+    render(<JobOverview currentUser={adminUser} />);
+
+    fireEvent.change(screen.getByLabelText("ค้นหา Job"), {
+      target: { value: "JOB-P-0107" },
+    });
+
+    expect(screen.getAllByText("JOB-P-0107").length).toBeGreaterThan(0);
+    expect(screen.queryByText("JOB-O-0241")).toBeNull();
+
+    fireEvent.change(screen.getByLabelText("ค้นหา Job"), {
+      target: { value: "" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: "ผลิตเข้าสต๊อก (JOB-P)" }),
+    );
+
+    expect(screen.getAllByText("JOB-P-0107").length).toBeGreaterThan(0);
+    expect(screen.queryByText("JOB-O-0241")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "ทั้งหมด" }));
+    fireEvent.click(screen.getByRole("button", { name: "รอวัตถุดิบ" }));
+
+    expect(screen.getAllByText("JOB-O-0250").length).toBeGreaterThan(0);
+    expect(screen.queryByText("JOB-P-0107")).toBeNull();
   });
 
   it("keeps Woodwork worker visibility free of customer, Order, finance, payout, and restricted log data", () => {
@@ -42,9 +70,7 @@ describe("Job / Worker / Rak Samuk foundation", () => {
 
     expect(screen.getByRole("heading", { name: "งานที่ต้องทำ" })).toBeTruthy();
     expect(screen.getByText("JOB-O-0250")).toBeTruthy();
-    expect(
-      screen.queryByText(/ลูกค้าตัวอย่าง|ORD-SAMPLE|Payment|ชำระเงิน/),
-    ).toBeNull();
+    expect(screen.queryByText(/คุณมาลี|ORD-2569|Payment|ชำระเงิน/)).toBeNull();
     expect(
       screen.queryByText(
         /ต้นทุน|กำไร|payout|ราคาจ่าย|Management Log|Audit Log/i,
@@ -52,19 +78,30 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     ).toBeNull();
   });
 
-  it("keeps worker action surfaces in-memory only", () => {
+  it("keeps worker action surfaces business-facing", () => {
     render(<WoodworkQueue currentUser={woodworkUser} />);
 
     fireEvent.click(screen.getAllByRole("button", { name: "รับงาน" })[0]);
 
-    expect(
-      screen.getByText("รับงาน แสดงผลเฉพาะในหน้านี้ ยังไม่บันทึกลงฐานข้อมูล"),
-    ).toBeTruthy();
+    expect(screen.getByText("รับงานแล้ว")).toBeTruthy();
     expect(screen.getAllByText("รอวัตถุดิบ").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/fixture|ฐานข้อมูล|in-memory/i)).toBeNull();
   });
 
   it("requires a note before using the waiting-material worker action", () => {
     render(<WoodworkQueue currentUser={woodworkUser} />);
+
+    expect(
+      (
+        screen.getAllByRole("button", {
+          name: "ส่งไปรักสมุก",
+        })[0] as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(screen.getAllByText("งานนี้รอวัตถุดิบ").length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /ส่งไปรักสมุก/ }).length).toBe(
+      1,
+    );
 
     fireEvent.click(screen.getAllByRole("button", { name: "รอวัตถุดิบ" })[1]);
 
@@ -76,17 +113,14 @@ describe("Job / Worker / Rak Samuk foundation", () => {
         }) as HTMLButtonElement
       ).disabled,
     ).toBe(true);
-    expect(
-      screen.queryByText(
-        "รอวัตถุดิบ แสดงผลเฉพาะในหน้านี้ ยังไม่บันทึกลงฐานข้อมูล",
-      ),
-    ).toBeNull();
+    expect(screen.queryByText("บันทึกรอวัตถุดิบแล้ว")).toBeNull();
 
     fireEvent.change(screen.getByLabelText("หมายเหตุรอวัตถุดิบ *"), {
       target: { value: "รอไม้บัว" },
     });
     fireEvent.click(screen.getByRole("button", { name: "บันทึกรอวัตถุดิบ" }));
 
+    expect(screen.getByText(/บันทึกรอวัตถุดิบแล้ว/)).toBeTruthy();
     expect(screen.getByText(/หมายเหตุ: รอไม้บัว/)).toBeTruthy();
   });
 
@@ -94,8 +128,11 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     render(<ColoringWorkQueue currentUser={coloringUser} />);
 
     fireEvent.click(screen.getByRole("button", { name: "งานเสร็จ/พร้อมส่ง" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "ยืนยันงานเสร็จ/พร้อมส่ง" }),
+    );
 
-    expect(screen.getByText(/รอสร้างรอบจัดส่ง/)).toBeTruthy();
+    expect(screen.getAllByText(/รอสร้างรอบจัดส่ง/).length).toBeGreaterThan(0);
     expect(screen.queryByText("Delivery Team")).toBeNull();
   });
 
@@ -156,13 +193,20 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     render(<JobDetail currentUser={woodworkUser} jobId="JOB-O-0250" />);
 
     expect(screen.getByRole("link", { name: /เปิดคิวช่างไม้/ })).toBeTruthy();
-    expect(screen.getByRole("link", { name: /ส่งไปรักสมุก/ })).toBeTruthy();
+    expect(
+      (
+        screen.getByRole("button", {
+          name: /ส่งไปรักสมุก/,
+        }) as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+    expect(screen.getByText("งานนี้รอวัตถุดิบ")).toBeTruthy();
     expect(
       screen.queryByRole("link", { name: /เปิดรอรับเข้าโรงงานสี/ }),
     ).toBeNull();
   });
 
-  it("does not render workflow-moving controls for Rak Samuk Worker", () => {
+  it("does not render status-moving controls for Rak Samuk Worker", () => {
     render(
       <RakSamukWorkerWorkList
         currentUser={rakWorkerUser}
@@ -170,7 +214,9 @@ describe("Job / Worker / Rak Samuk foundation", () => {
       />,
     );
 
-    expect(screen.getByText(/ไม่ย้ายสถานะ workflow/)).toBeTruthy();
+    expect(
+      screen.getByText(/ดูรายละเอียดงานและราคาของตัวเองได้เท่านั้น/),
+    ).toBeTruthy();
     expect(screen.queryByRole("button", { name: "ส่งไปสี" })).toBeNull();
     expect(
       screen.queryByRole("button", { name: "งานเสร็จ/พร้อมส่ง" }),
@@ -186,6 +232,13 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     expect(screen.getAllByText(/ราคาต่อชิ้น/).length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("button", { name: "ส่งราคา" }));
+    expect(screen.getByText("กรุณากรอกราคา")).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText("กรอกราคาต่อชิ้น"), {
+      target: { value: "500" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "ส่งราคา" }));
+    fireEvent.click(screen.getByRole("button", { name: "ยืนยันส่งราคา" }));
 
     expect(
       screen.getAllByText("ส่งราคาแล้ว / รออนุมัติ").length,
@@ -200,7 +253,16 @@ describe("Job / Worker / Rak Samuk foundation", () => {
     expect(screen.getByText("1,000 บาท")).toBeTruthy();
     expect(canApproveRakSamukPrice(ownerUser)).toBe(true);
     expect(canApproveRakSamukPrice(financeUser)).toBe(false);
-    expect(screen.getByText(/Finance ไม่ใช่ผู้อนุมัติราคา/)).toBeTruthy();
+    expect(screen.queryByText(/Finance ไม่ใช่ผู้อนุมัติราคา/)).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "อนุมัติราคา" }));
+    expect(
+      screen.getByText("กรุณาเลือกว่าจะอัปเดตราคามาตรฐานหรือไม่"),
+    ).toBeTruthy();
+    fireEvent.click(screen.getByLabelText("ไม่อัปเดตราคามาตรฐาน"));
+    fireEvent.click(screen.getByRole("button", { name: "อนุมัติราคา" }));
+    fireEvent.click(screen.getByRole("button", { name: "ยืนยันอนุมัติราคา" }));
+    expect(screen.getByText("อนุมัติราคาแล้ว")).toBeTruthy();
   });
 
   it("keeps receive-back destination fixed to coloring intake", () => {

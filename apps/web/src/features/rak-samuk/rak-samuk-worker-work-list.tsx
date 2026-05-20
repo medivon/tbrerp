@@ -25,7 +25,7 @@ export function RakSamukWorkerWorkList({
   if (workId && !selectedWork) {
     return (
       <EmptyState
-        description="งานนี้ไม่ได้ถูกมอบหมายให้บัญชีนี้ หรือไม่มีอยู่ใน fixture"
+        description="เปิดได้เฉพาะงานที่มอบหมายให้บัญชีนี้"
         title="ไม่พบงานที่ดูได้"
       />
     );
@@ -54,10 +54,10 @@ export function RakSamukWorkerWorkList({
           <div>
             <p className="text-sm font-bold text-foreground">ประวัติการทำงาน</p>
             <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-              foundation สำหรับประวัติงานของช่างรักสมุก แสดงเฉพาะงานของตัวเอง
+              แสดงเฉพาะรายการของบัญชีนี้
             </p>
           </div>
-          <StatusChip variant="neutral">ยังไม่เปิดรายละเอียดจริง</StatusChip>
+          <StatusChip variant="neutral">ประวัติของฉัน</StatusChip>
         </div>
       </SurfaceCard>
     </div>
@@ -136,8 +136,7 @@ function WorkerDetail({
               การทำงาน
             </h2>
             <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
-              ช่างรักสมุกดูงานและราคาของตัวเองได้ แต่ไม่ย้ายสถานะ workflow
-              และไม่กดจบงานในรอบงานนี้
+              บัญชีนี้ดูรายละเอียดงานและราคาของตัวเองได้เท่านั้น
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

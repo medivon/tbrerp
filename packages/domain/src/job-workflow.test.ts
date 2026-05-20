@@ -124,12 +124,14 @@ describe("Job / worker / Rak Samuk domain helpers", () => {
   it("marks production action simulation as memory-only", () => {
     expect(simulateProductionAction("รับงาน")).toEqual({
       action: "รับงาน",
-      message: "รับงาน แสดงผลเฉพาะในหน้านี้ ยังไม่บันทึกลงฐานข้อมูล",
+      message: "รับงานแล้ว",
       persisted: false,
-      resultingLabel: "รับงาน",
+      removesFromCurrentQueue: false,
+      resultingLabel: "กำลังทำ",
     });
     expect(simulateProductionAction("งานเสร็จ/พร้อมส่ง")).toMatchObject({
       persisted: false,
+      removesFromCurrentQueue: true,
       resultingLabel: "รอสร้างรอบจัดส่ง",
     });
   });

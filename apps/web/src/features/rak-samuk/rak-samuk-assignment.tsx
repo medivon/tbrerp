@@ -33,15 +33,6 @@ export function RakSamukAssignment({
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        actions={
-          canReceiveRakSamukBack(currentUser) ? (
-            <Button asChild variant="outline">
-              <Link href={jobHref(jobRoutes.rakSamukReceiveBack, currentUser)}>
-                รับงานรักสมุกกลับ
-              </Link>
-            </Button>
-          ) : null
-        }
         description="ส่งงานให้ช่างรักสมุกต้องเลือกช่างทันที ถ้าไม่รู้ช่าง งานจะยังไม่ถูกส่ง"
         meta={<StatusChip variant="revision">เลือกช่างรักสมุก</StatusChip>}
         title="รักสมุก"
@@ -51,9 +42,20 @@ export function RakSamukAssignment({
 
       {sentMessage ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-          <p className="text-sm font-bold leading-6 text-[#166534]">
-            {sentMessage}
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-bold leading-6 text-[#166534]">
+              {sentMessage}
+            </p>
+            {canReceiveRakSamukBack(currentUser) ? (
+              <Button asChild size="sm" variant="outline">
+                <Link
+                  href={jobHref(jobRoutes.rakSamukReceiveBack, currentUser)}
+                >
+                  รับงานรักสมุกกลับ
+                </Link>
+              </Button>
+            ) : null}
+          </div>
         </SurfaceCard>
       ) : null}
 
@@ -138,13 +140,19 @@ export function RakSamukAssignment({
 
           <div className="mt-4 grid gap-2">
             <Button
-              disabled={!selectedWorker}
+              disabled={!selectedWorker || Boolean(sentMessage)}
               onClick={() => setConfirming(true)}
-              title={!selectedWorker ? "ต้องเลือกช่างรักสมุกก่อน" : undefined}
+              title={
+                !selectedWorker
+                  ? "ต้องเลือกช่างรักสมุกก่อน"
+                  : sentMessage
+                    ? "ส่งงานให้ช่างแล้ว"
+                    : undefined
+              }
               type="button"
             >
               <Send aria-hidden className="mr-2 h-4 w-4" />
-              ส่งงานให้ช่าง
+              {sentMessage ? "ส่งงานให้ช่างแล้ว" : "ส่งงานให้ช่าง"}
             </Button>
             {!selectedWorker ? (
               <p className="text-xs font-semibold leading-5 text-[#92400E]">
@@ -163,14 +171,13 @@ export function RakSamukAssignment({
                 ยืนยันส่งงานให้ช่าง
               </h3>
               <p className="text-sm font-semibold leading-6 text-[#5B21B6]">
-                ส่ง {work.id} ให้ {selectedWorker.displayName} ใน fixture
-                เท่านั้น ไม่มี persistence จริง
+                ส่ง {work.id} ให้ {selectedWorker.displayName}
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
                   onClick={() => {
                     setSentMessage(
-                      `ส่งงานให้ ${selectedWorker.displayName} แล้วในหน้านี้เท่านั้น ยังไม่บันทึก workflow จริง`,
+                      `ส่งงานให้ ${selectedWorker.displayName} แล้ว`,
                     );
                     setConfirming(false);
                   }}

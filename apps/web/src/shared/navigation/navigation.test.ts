@@ -29,7 +29,7 @@ describe("navigation visibility", () => {
     expect(labels).toEqual(["รอบจัดส่ง"]);
   });
 
-  it("keeps Owner-level settings visible only for the highest-authority fixture user", () => {
+  it("hides future-sector navigation items until their work surfaces exist", () => {
     const ownerLabels = getVisibleNavigation(getFixtureUser("owner")).map(
       (item) => item.label,
     );
@@ -37,7 +37,10 @@ describe("navigation visibility", () => {
       (item) => item.label,
     );
 
-    expect(ownerLabels).toContain("ตั้งค่า");
+    expect(ownerLabels).not.toContain("สินค้า / สต๊อก");
+    expect(ownerLabels).not.toContain("ลูกค้า / CRM");
+    expect(ownerLabels).not.toContain("รายจ่าย");
+    expect(ownerLabels).not.toContain("ตั้งค่า");
     expect(managerLabels).not.toContain("ตั้งค่า");
   });
 });

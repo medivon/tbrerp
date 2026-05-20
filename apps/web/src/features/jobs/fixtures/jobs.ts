@@ -118,8 +118,8 @@ export const jobFixtures: JobFixture[] = [
       },
     ],
     adminContext: {
-      customerName: "ลูกค้าตัวอย่าง A",
-      orderId: "ORD-SAMPLE-240522-018",
+      customerName: "คุณศิริพร",
+      orderId: "ORD-2569-0522-018",
     },
     ageLabel: "ค้าง 18 วัน",
     currentDepartment: "ฝ่ายสี",
@@ -152,8 +152,8 @@ export const jobFixtures: JobFixture[] = [
       },
     ],
     adminContext: {
-      customerName: "ลูกค้าตัวอย่าง B",
-      orderId: "ORD-SAMPLE-240531-006",
+      customerName: "คุณมาลี",
+      orderId: "ORD-2569-0531-006",
     },
     ageLabel: "ค้าง 12 วัน",
     currentDepartment: "ช่างไม้",
@@ -186,7 +186,7 @@ export const jobFixtures: JobFixture[] = [
       },
     ],
     adminContext: {
-      productionLot: "LOT-SAMPLE-006",
+      productionLot: "LOT-2569-006",
     },
     ageLabel: "ค้าง 5 วัน",
     currentDepartment: "ช่างไม้",
@@ -217,8 +217,8 @@ export const jobFixtures: JobFixture[] = [
       },
     ],
     adminContext: {
-      customerName: "ลูกค้าตัวอย่าง C",
-      orderId: "ORD-SAMPLE-240602-021",
+      customerName: "คุณกานต์",
+      orderId: "ORD-2569-0602-021",
     },
     ageLabel: "ค้าง 9 วัน",
     currentDepartment: "รักสมุก",
@@ -249,8 +249,8 @@ export const jobFixtures: JobFixture[] = [
       },
     ],
     adminContext: {
-      customerName: "ลูกค้าตัวอย่าง D",
-      orderId: "ORD-SAMPLE-240604-010",
+      customerName: "คุณอร",
+      orderId: "ORD-2569-0604-010",
     },
     ageLabel: "ค้าง 7 วัน",
     currentDepartment: "รอรับเข้าโรงงานสี",
@@ -455,6 +455,7 @@ function toWorkerQueueJob(
     deliveryDate: job.deliveryDate,
     disabledReasons: job.waitingMaterial
       ? {
+          กำลังส่งไปแกะสลัก: "งานนี้รอวัตถุดิบ",
           ส่งไปสี: "งานนี้รอวัตถุดิบ",
           ส่งไปรักสมุก: "งานนี้รอวัตถุดิบ",
           "งานเสร็จ/พร้อมส่ง": "งานนี้รอวัตถุดิบ",

@@ -16,13 +16,15 @@ export function RakSamukPriceApproval({
 }) {
   const approval = rakSamukPriceApprovalFixtures[0];
   const [approved, setApproved] = useState(false);
-  const [updateStandardRate, setUpdateStandardRate] = useState("ask-later");
+  const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [updateStandardRate, setUpdateStandardRate] = useState("");
   const total = approval.proposedPerPieceBaht * approval.quantity;
 
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        description="Owner/Manager อนุมัติราคาต่อชิ้นของงานรักสมุก Finance จ่ายจากราคาที่อนุมัติภายหลัง"
+        description="Owner/Manager อนุมัติราคาต่อชิ้นของงานรักสมุก"
         meta={<StatusChip variant="warning">รออนุมัติราคา</StatusChip>}
         title="อนุมัติราคา"
       />
@@ -32,8 +34,7 @@ export function RakSamukPriceApproval({
       {approved ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
           <p className="text-sm font-bold leading-6 text-[#166534]">
-            อนุมัติราคาแล้วใน fixture เท่านั้น ยังไม่มี Management Log
-            จริงและยังไม่สร้าง PV
+            อนุมัติราคาแล้ว
           </p>
         </SurfaceCard>
       ) : null}
@@ -92,8 +93,7 @@ export function RakSamukPriceApproval({
         <SurfaceCard padding="md">
           <h2 className="text-lg font-extrabold text-foreground">การอนุมัติ</h2>
           <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
-            Finance ไม่ใช่ผู้อนุมัติราคาในขั้นตอนนี้ และ PV ยังไม่ถูกสร้างใน
-            sector นี้
+            อนุมัติราคางานต่อชิ้นก่อนนำไปใช้ในขั้นตอนจ่ายเงินตามสิทธิ์
           </p>
 
           {approval.productModelLinked ? (
@@ -107,7 +107,6 @@ export function RakSamukPriceApproval({
               {[
                 ["update", "อัปเดตราคามาตรฐานสำหรับงานอนาคต"],
                 ["keep", "ไม่อัปเดตราคามาตรฐาน"],
-                ["ask-later", "ยังไม่ตัดสินใจใน foundation นี้"],
               ].map(([value, label]) => (
                 <label
                   className="flex cursor-pointer items-start gap-2 text-sm font-semibold leading-6 text-foreground"
@@ -137,12 +136,57 @@ export function RakSamukPriceApproval({
           <Button
             className="mt-4 w-full"
             disabled={approved}
-            onClick={() => setApproved(true)}
+            onClick={() => {
+              if (approval.productModelLinked && !updateStandardRate) {
+                setError("กรุณาเลือกว่าจะอัปเดตราคามาตรฐานหรือไม่");
+                return;
+              }
+
+              setError(null);
+              setConfirming(true);
+            }}
+            title={approved ? "รายการนี้อนุมัติแล้ว" : undefined}
             type="button"
           >
             <CheckCircle2 aria-hidden className="mr-2 h-4 w-4" />
             อนุมัติราคา
           </Button>
+          {error ? (
+            <p className="mt-3 text-sm font-bold text-[#B42318]">{error}</p>
+          ) : null}
+          {confirming ? (
+            <div
+              aria-label="ยืนยันอนุมัติราคา"
+              className="mt-4 grid gap-3 rounded-lg border border-[#D9D3FD] bg-[#ECE9FE] p-3"
+              role="dialog"
+            >
+              <h3 className="text-base font-extrabold text-[#5B21B6]">
+                ยืนยันอนุมัติราคา
+              </h3>
+              <p className="text-sm font-semibold leading-6 text-[#5B21B6]">
+                อนุมัติ {approval.proposedPerPieceBaht.toLocaleString("th-TH")}{" "}
+                บาท/ชิ้น สำหรับ {approval.workerName}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    setApproved(true);
+                    setConfirming(false);
+                  }}
+                  type="button"
+                >
+                  ยืนยันอนุมัติราคา
+                </Button>
+                <Button
+                  onClick={() => setConfirming(false)}
+                  type="button"
+                  variant="outline"
+                >
+                  ยกเลิก
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </SurfaceCard>
       </section>
     </div>

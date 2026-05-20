@@ -19,7 +19,9 @@ export function ColoringIntakeQueue({
 }: {
   currentUser: FixtureUser;
 }) {
-  const jobs = getColoringIntakeJobs();
+  const [jobs, setJobs] = useState<ColoringIntakeJob[]>(() =>
+    getColoringIntakeJobs(),
+  );
   const [result, setResult] = useState<string | null>(null);
   const groups = ["ด่วน / ใกล้ส่ง", "วันนี้", "ก่อนหน้า"] as const;
 
@@ -29,13 +31,13 @@ export function ColoringIntakeQueue({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm font-extrabold text-[#92400E]">
-              คิว staging ก่อนเข้าฝ่ายสี
+              คิวรอรับเข้าฝ่ายสี
             </p>
             <h2 className="text-2xl font-extrabold text-[#17231F]">
               รอรับเข้าโรงงานสี
             </h2>
             <p className="mt-1 text-sm font-semibold leading-6 text-[#92400E]">
-              รายการนี้ยังไม่ใช่งาน active ฝ่ายสี ต้องกดรับเข้าโรงงานสีก่อน
+              รายการนี้ยังรอรับเข้าโรงงานสี ก่อนเริ่มงานในคิวฝ่ายสี
             </p>
           </div>
           <Button asChild variant="outline">
@@ -75,6 +77,11 @@ export function ColoringIntakeQueue({
                       onReceive={() => {
                         const actionResult =
                           simulateProductionAction("รับเข้าโรงงานสี");
+                        setJobs((currentJobs) =>
+                          currentJobs.filter(
+                            (currentJob) => currentJob.id !== job.id,
+                          ),
+                        );
                         setResult(actionResult.message);
                       }}
                     />
@@ -109,6 +116,8 @@ function IntakeCard({
   job: ColoringIntakeJob;
   onReceive: () => void;
 }) {
+  const [confirming, setConfirming] = useState(false);
+
   return (
     <SurfaceCard className="overflow-hidden p-0" padding="none">
       <article className="grid gap-0 md:grid-cols-[220px_minmax(0,1fr)]">
@@ -146,7 +155,7 @@ function IntakeCard({
             {job.instructionPreview}
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
-            <Button onClick={onReceive} size="lg" type="button">
+            <Button onClick={() => setConfirming(true)} size="lg" type="button">
               รับเข้าโรงงานสี
             </Button>
             <Button asChild size="lg" variant="outline">
@@ -155,6 +164,38 @@ function IntakeCard({
               </Link>
             </Button>
           </div>
+          {confirming ? (
+            <div
+              aria-label="ยืนยันรับเข้าโรงงานสี"
+              className="grid gap-3 rounded-lg border border-[#FAD980] bg-[#FEF3C7] p-3"
+              role="dialog"
+            >
+              <h3 className="text-base font-extrabold text-[#92400E]">
+                ยืนยันรับเข้าโรงงานสี
+              </h3>
+              <p className="text-sm font-semibold leading-6 text-[#92400E]">
+                งาน {job.id} จะย้ายเข้าสู่งานที่ต้องทำของฝ่ายสี
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    onReceive();
+                    setConfirming(false);
+                  }}
+                  type="button"
+                >
+                  ยืนยันรับเข้าโรงงานสี
+                </Button>
+                <Button
+                  onClick={() => setConfirming(false)}
+                  type="button"
+                  variant="outline"
+                >
+                  ยกเลิก
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </article>
     </SurfaceCard>

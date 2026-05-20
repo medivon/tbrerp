@@ -20,10 +20,15 @@ export function RakSamukMissingPrice({
   currentUser: FixtureUser;
   workId?: string;
 }) {
-  const selectedWorkId = workId ?? "RS-WORK-001";
-  const visibleWork = getRakSamukWorkerWork(selectedWorkId, currentUser.id);
-  const workInput = getRakSamukWorkInput(selectedWorkId);
-  const [perPiecePrice, setPerPiecePrice] = useState("500");
+  const selectedWorkId = workId;
+  const visibleWork = selectedWorkId
+    ? getRakSamukWorkerWork(selectedWorkId, currentUser.id)
+    : undefined;
+  const workInput = selectedWorkId
+    ? getRakSamukWorkInput(selectedWorkId)
+    : undefined;
+  const [confirming, setConfirming] = useState(false);
+  const [perPiecePrice, setPerPiecePrice] = useState("");
   const [note, setNote] = useState("");
   const [submittedLabel, setSubmittedLabel] = useState<string | null>(
     visibleWork?.ownPriceState.kind === "submitted"
@@ -48,6 +53,9 @@ export function RakSamukMissingPrice({
   }
 
   const alreadyPriced = visibleWork.ownPriceState.kind === "approved";
+  const priceUnavailableReason = alreadyPriced
+    ? "รายการนี้มีราคาแล้ว"
+    : undefined;
 
   return (
     <div className="grid gap-5">
@@ -65,7 +73,9 @@ export function RakSamukMissingPrice({
           </div>
           <div className="grid gap-4 p-5">
             <div className="flex flex-wrap gap-2">
-              <StatusChip variant="warning">ไม่มีราคา / ให้แจ้งราคา</StatusChip>
+              <StatusChip variant={alreadyPriced ? "success" : "warning"}>
+                {alreadyPriced ? "มีราคาแล้ว" : "ไม่มีราคา / ให้แจ้งราคา"}
+              </StatusChip>
               {visibleWork.urgent ? (
                 <StatusChip variant="danger">งานด่วน</StatusChip>
               ) : null}
@@ -85,12 +95,21 @@ export function RakSamukMissingPrice({
         </div>
       </SurfaceCard>
 
-      {submittedLabel ? (
+      {submittedLabel || alreadyPriced ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
-          <StatusChip variant="success">{submittedLabel}</StatusChip>
+          <StatusChip variant="success">
+            {submittedLabel ?? priceUnavailableReason}
+          </StatusChip>
           <p className="mt-2 text-sm font-bold leading-6 text-[#166534]">
-            ราคาเสนอถูกส่งในสถานะ fixture แล้ว รอ Owner/Manager อนุมัติ
+            {submittedLabel
+              ? "ส่งราคาแล้ว / รออนุมัติ"
+              : "งานนี้มีราคาต่อชิ้นแล้ว"}
           </p>
+          <Button asChild className="mt-4" variant="outline">
+            <Link href={jobHref(jobRoutes.rakSamukWorker, currentUser)}>
+              กลับ
+            </Link>
+          </Button>
         </SurfaceCard>
       ) : (
         <SurfaceCard padding="md">
@@ -120,23 +139,18 @@ export function RakSamukMissingPrice({
           ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
-              disabled={alreadyPriced}
               onClick={() => {
-                const result = submitRakSamukProposedPrice({
-                  perPieceBaht: Number(perPiecePrice),
-                  submittedByWorkerId: currentUser.id,
-                  work: workInput,
-                });
-
-                if (result.status === "blocked") {
-                  setError(result.reason);
+                if (
+                  !Number.isFinite(Number(perPiecePrice)) ||
+                  Number(perPiecePrice) <= 0
+                ) {
+                  setError("กรุณากรอกราคา");
                   return;
                 }
 
                 setError(null);
-                setSubmittedLabel(result.label);
+                setConfirming(true);
               }}
-              title={alreadyPriced ? "รายการนี้มีราคาแล้ว" : undefined}
               type="button"
             >
               ส่งราคา
@@ -147,6 +161,52 @@ export function RakSamukMissingPrice({
               </Link>
             </Button>
           </div>
+          {confirming ? (
+            <div
+              aria-label="ยืนยันส่งราคา"
+              className="mt-4 grid gap-3 rounded-lg border border-[#D9D3FD] bg-[#ECE9FE] p-3"
+              role="dialog"
+            >
+              <h3 className="text-base font-extrabold text-[#5B21B6]">
+                ยืนยันส่งราคา
+              </h3>
+              <p className="text-sm font-semibold leading-6 text-[#5B21B6]">
+                ราคาที่ส่งคือ {Number(perPiecePrice).toLocaleString("th-TH")}{" "}
+                บาท/ชิ้น
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    const result = submitRakSamukProposedPrice({
+                      perPieceBaht: Number(perPiecePrice),
+                      submittedByWorkerId: currentUser.id,
+                      work: workInput,
+                    });
+
+                    if (result.status === "blocked") {
+                      setError(result.reason);
+                      setConfirming(false);
+                      return;
+                    }
+
+                    setError(null);
+                    setSubmittedLabel(result.label);
+                    setConfirming(false);
+                  }}
+                  type="button"
+                >
+                  ยืนยันส่งราคา
+                </Button>
+                <Button
+                  onClick={() => setConfirming(false)}
+                  type="button"
+                  variant="outline"
+                >
+                  ยกเลิก
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </SurfaceCard>
       )}
     </div>

@@ -1,27 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Palette } from "lucide-react";
-import { simulateProductionAction } from "@thaiboran/domain";
+import {
+  simulateProductionAction,
+  type ProductionAction,
+} from "@thaiboran/domain";
 import { Button, EmptyState, StatusChip, SurfaceCard } from "@thaiboran/ui";
 
 import {
   getColoringIntakeJobs,
   getColoringQueueJobs,
+  type WorkerQueueJob,
 } from "@/features/jobs/fixtures/jobs";
 import { jobHref, jobRoutes } from "@/features/jobs/routes";
 import { WorkerJobCard } from "@/features/worker/components/worker-job-card";
 import type { FixtureUser } from "@/shared/fixtures/users";
+
+type WorkerFilter = "ทั้งหมด" | "งานด่วน" | "รอวัตถุดิบ";
 
 export function ColoringWorkQueue({
   currentUser,
 }: {
   currentUser: FixtureUser;
 }) {
-  const jobs = getColoringQueueJobs();
+  const [filter, setFilter] = useState<WorkerFilter>("ทั้งหมด");
+  const [jobs, setJobs] = useState<WorkerQueueJob[]>(() =>
+    getColoringQueueJobs(),
+  );
   const intakeCount = getColoringIntakeJobs().length;
   const [result, setResult] = useState<string | null>(null);
+  const visibleJobs = useMemo(
+    () =>
+      jobs.filter((job) =>
+        filter === "ทั้งหมด"
+          ? true
+          : filter === "งานด่วน"
+            ? job.urgent
+            : job.waitingMaterial,
+      ),
+    [filter, jobs],
+  );
 
   return (
     <div className="grid gap-5">
@@ -42,13 +62,19 @@ export function ColoringWorkQueue({
           </Button>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          {["ทั้งหมด", "งานด่วน", "รอวัตถุดิบ"].map((filter) => (
+          {(["ทั้งหมด", "งานด่วน", "รอวัตถุดิบ"] as const).map((filterName) => (
             <button
-              className="min-h-10 cursor-pointer rounded-full border border-shell-border bg-shell-surface px-4 text-sm font-bold text-shell-muted transition hover:border-accent/70 hover:text-shell-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-              key={filter}
+              aria-pressed={filter === filterName}
+              className={`min-h-10 cursor-pointer rounded-full border px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+                filter === filterName
+                  ? "border-accent bg-accent/15 text-shell-foreground"
+                  : "border-shell-border bg-shell-surface text-shell-muted hover:border-accent/70 hover:text-shell-foreground"
+              }`}
+              key={filterName}
+              onClick={() => setFilter(filterName)}
               type="button"
             >
-              {filter}
+              {filterName}
             </button>
           ))}
           <StatusChip variant="warning">รอรับเข้า {intakeCount} งาน</StatusChip>
@@ -58,7 +84,7 @@ export function ColoringWorkQueue({
       {result ? (
         <SurfaceCard className="border-[#B9D1FF] bg-[#E0ECFF]" padding="md">
           <p className="text-sm font-bold leading-6 text-[#1D4ED8]">{result}</p>
-          {result.includes("งานเสร็จ/พร้อมส่ง") ? (
+          {result.includes("รอสร้างรอบจัดส่ง") ? (
             <p className="mt-1 text-sm font-semibold leading-6 text-[#1D4ED8]">
               JOB-O ที่เสร็จแล้วไปที่แอดมิน รอสร้างรอบจัดส่ง
               ไม่ส่งตรงให้ฝ่ายจัดส่ง
@@ -67,9 +93,9 @@ export function ColoringWorkQueue({
         </SurfaceCard>
       ) : null}
 
-      {jobs.length > 0 ? (
+      {visibleJobs.length > 0 ? (
         <section aria-label="รายการงานฝ่ายสี" className="grid gap-4">
-          {jobs.map((job) => (
+          {visibleJobs.map((job) => (
             <WorkerJobCard
               actions={[
                 {
@@ -86,13 +112,8 @@ export function ColoringWorkQueue({
               ]}
               job={job}
               key={job.id}
-              onAction={(action, _jobId, note) => {
-                const actionResult = simulateProductionAction(action);
-                setResult(
-                  note
-                    ? `${actionResult.message} • หมายเหตุ: ${note}`
-                    : actionResult.message,
-                );
+              onAction={(action, jobId, note) => {
+                handleLocalAction(action, jobId, note);
               }}
             />
           ))}
@@ -109,14 +130,56 @@ export function ColoringWorkQueue({
           title="ไม่มีงานที่ต้องทำในฝ่ายสีตอนนี้"
         />
       )}
-
-      <SurfaceCard padding="md">
-        <p className="text-sm font-bold text-foreground">ประวัติงานของฉัน</p>
-        <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-          พื้นที่ประวัติงานฝ่ายสีเป็น foundation เท่านั้น
-          ยังไม่เปิดรายละเอียดจริง
-        </p>
-      </SurfaceCard>
     </div>
   );
+
+  function handleLocalAction(
+    action: ProductionAction,
+    jobId: string,
+    note?: string,
+  ) {
+    const actionResult = simulateProductionAction(action);
+
+    setJobs((currentJobs) =>
+      actionResult.removesFromCurrentQueue
+        ? currentJobs.filter((job) => job.id !== jobId)
+        : currentJobs.map((job) =>
+            job.id === jobId
+              ? applyColoringActionToJob(
+                  job,
+                  action,
+                  actionResult.resultingLabel,
+                )
+              : job,
+          ),
+    );
+    setResult(
+      note
+        ? `${actionResult.message} • หมายเหตุ: ${note}`
+        : actionResult.message,
+    );
+  }
+}
+
+function applyColoringActionToJob(
+  job: WorkerQueueJob,
+  action: ProductionAction,
+  resultingLabel: string,
+): WorkerQueueJob {
+  if (action === "รอวัตถุดิบ") {
+    return {
+      ...job,
+      currentStatus: resultingLabel,
+      disabledReasons: {
+        "งานเสร็จ/พร้อมส่ง": "งานนี้รอวัตถุดิบ",
+        ส่งไปรักสมุก: "งานนี้รอวัตถุดิบ",
+      },
+      waitingMaterial: true,
+    };
+  }
+
+  return {
+    ...job,
+    currentStatus: resultingLabel,
+  };
 }

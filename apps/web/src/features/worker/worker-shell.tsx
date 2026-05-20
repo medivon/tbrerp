@@ -44,7 +44,7 @@ export function WorkerShell({
               </h1>
               {typeof activeCount === "number" ? (
                 <p className="mt-1 text-sm font-semibold text-shell-muted">
-                  งาน active {activeCount} รายการ
+                  งานเปิดอยู่ {activeCount} รายการ
                 </p>
               ) : null}
             </div>

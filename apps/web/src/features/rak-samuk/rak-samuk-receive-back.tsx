@@ -21,12 +21,13 @@ export function RakSamukReceiveBack({
 }) {
   const work = rakSamukWorkInputs[0];
   const receiveBack = getReceiveBackPreview();
+  const [confirming, setConfirming] = useState(false);
   const [received, setReceived] = useState(false);
 
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
-        description="รับงานรักสมุกกลับจะส่ง Job ไป `รอรับเข้าโรงงานสี` เสมอ ไม่มีตัวเลือกปลายทางใน starting workflow"
+        description="รับงานรักสมุกกลับแล้วส่งต่อไปที่รอรับเข้าโรงงานสีเสมอ"
         meta={<StatusChip variant="warning">รับงานรักสมุกกลับ</StatusChip>}
         title="รับงานรักสมุกกลับ"
       />
@@ -36,8 +37,7 @@ export function RakSamukReceiveBack({
       {received ? (
         <SurfaceCard className="border-[#BFE5C9] bg-[#E6F4EA]" padding="md">
           <p className="text-sm font-bold leading-6 text-[#166534]">
-            รับงานกลับแล้วใน fixture เท่านั้น ปลายทางถัดไปคือ
-            `รอรับเข้าโรงงานสี`
+            รับงานกลับแล้ว ปลายทางถัดไปคือรอรับเข้าโรงงานสี
           </p>
         </SurfaceCard>
       ) : null}
@@ -76,10 +76,7 @@ export function RakSamukReceiveBack({
                   label="เส้นทางหลังรับกลับ"
                   value={receiveBack.nextStatus}
                 />
-                <FoundationFact
-                  label="รายการรอจ่าย"
-                  value={receiveBack.payableItem.status}
-                />
+                <FoundationFact label="หลักฐาน" value="ไม่บังคับ" />
               </div>
             </div>
           </div>
@@ -90,8 +87,7 @@ export function RakSamukReceiveBack({
             ยืนยันรับกลับ
           </h2>
           <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
-            ไม่มี destination picker และไม่ต้องแนบหลักฐาน
-            รูป/หมายเหตุด้านล่างเป็น placeholder เท่านั้น
+            ไม่มีตัวเลือกปลายทาง และไม่ต้องแนบหลักฐาน
           </p>
           <label className="mt-4 grid gap-2 text-sm font-bold text-foreground">
             หมายเหตุ (ไม่บังคับ)
@@ -101,17 +97,58 @@ export function RakSamukReceiveBack({
             />
           </label>
           <div className="mt-4 rounded-lg border border-dashed border-border bg-subtle p-4 text-sm font-semibold leading-6 text-muted-foreground">
-            รูปงานกลับ (ไม่บังคับ / visual placeholder)
+            <label className="grid cursor-pointer gap-2">
+              รูปงานกลับ (ไม่บังคับ)
+              <input
+                accept="image/*"
+                aria-label="รูปงานกลับ"
+                className="text-sm"
+                type="file"
+              />
+            </label>
           </div>
           <Button
             className="mt-4 w-full"
             disabled={received}
-            onClick={() => setReceived(true)}
+            onClick={() => setConfirming(true)}
+            title={received ? "รับงานกลับแล้ว" : undefined}
             type="button"
           >
             <PackageCheck aria-hidden className="mr-2 h-4 w-4" />
-            รับงานรักสมุกกลับ
+            {received ? "รับงานกลับแล้ว" : "รับงานรักสมุกกลับ"}
           </Button>
+          {confirming ? (
+            <div
+              aria-label="ยืนยันรับงานรักสมุกกลับ"
+              className="mt-4 grid gap-3 rounded-lg border border-[#D9D3FD] bg-[#ECE9FE] p-3"
+              role="dialog"
+            >
+              <h3 className="text-base font-extrabold text-[#5B21B6]">
+                ยืนยันรับงานรักสมุกกลับ
+              </h3>
+              <p className="text-sm font-semibold leading-6 text-[#5B21B6]">
+                งานจะเข้าสู่รอรับเข้าโรงงานสี
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    setReceived(true);
+                    setConfirming(false);
+                  }}
+                  type="button"
+                >
+                  ยืนยันรับกลับ
+                </Button>
+                <Button
+                  onClick={() => setConfirming(false)}
+                  type="button"
+                  variant="outline"
+                >
+                  ยกเลิก
+                </Button>
+              </div>
+            </div>
+          ) : null}
           <Button asChild className="mt-2 w-full" variant="outline">
             <Link href={jobHref(jobRoutes.coloringIntake, currentUser)}>
               เปิดรอรับเข้าโรงงานสี

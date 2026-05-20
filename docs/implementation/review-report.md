@@ -1,35 +1,39 @@
 # Review Report
 
 Status: approved after fixes
-Scope: Sector 4 Function Detail Repair - Order Confirm + JOB-O Creation Foundation
+Scope: Sector 5 Function Detail Repair - Job / Worker / Rak Samuk
 Reviewer: Codex
 Date reviewed: 2026-05-20
 
 ## Findings
 
-- Major, fixed: generated `JOB-O` output could fall back to unstructured `productionDetail` when explicit `woodworkDetail` was absent. It now emits only explicit safe production-context fields, with a regression test covering internal-note-like text.
-- Minor, fixed: `AGENTS.md` did not pass the repo Prettier check. It was formatted with the existing Prettier rules only.
-- Note, fixed: Sector 4 e2e responsive checks now include explicit page-level horizontal overflow assertions at 375, 768, 1024, and 1440 px.
+- Major, fixed: Worker action rendering ignored disabled business reasons when an action also had an `href`, so waiting-material work could expose an active `ส่งไปรักสมุก` link. Disabled link-style actions now render as disabled buttons with the Thai reason, covered by unit and E2E checks.
+- Minor, fixed: Job fixture/UI data exposed sample wording such as `ลูกค้าตัวอย่าง`, `ORD-SAMPLE`, and `LOT-SAMPLE`. Staff-facing fixtures now use safe realistic business values, and tests reject sample/internal copy on Sector 5 surfaces.
+- Minor, fixed: Rak Samuk price approval used negative Finance-role explanatory copy. It now uses business-facing per-piece approval copy while route tests continue to verify Finance is not an approver.
+- Minor, fixed: The new E2E assertion for the waiting-material reason assumed a single visible copy. It now allows the same business reason to appear for multiple blocked actions.
 
 ## Scope Review
 
-- The implementation follows the Sector 4 page/state plan: Order Review remains the final confirmation surface, confirmation navigates directly to generated read-first Order Detail, and no second confirmation modal appears.
-- No database schema, Prisma schema, migration, API contract, server action, real persistence, real stock movement, Shipment creation, Payment/COD action, full Job module, worker queue, or sensitive finance surface was added.
-- Ready-stock reservation remains a directional result summary only; generated Order Detail keeps Shipment/Payment/COD actions hidden or disabled with Thai business reasons.
+- The implementation follows the page-by-page plan in `current-task.md`: Job overview/detail, Woodwork, Coloring Intake, Coloring Work, Rak Samuk assignment, Rak Samuk Worker work, missing-price proposal, price approval, and receive-back were reviewed against the source docs.
+- The work follows business/domain docs, not only visual docs: Rak Samuk assignment requires an immediate worker, Rak Samuk Worker sees only assigned work and own price state, proposed price is per-piece, Owner/Manager approve price, and receive-back always routes to `รอรับเข้าโรงงานสี`.
+- No database schema, Prisma schema, migration, API contract, server action, real persistence, Payment/PV finalization, Stock movement, Shipment creation, Customer/CRM, Settings, or new business module slipped in.
 
 ## Domain And UX Review
 
-- Confirmation blocks missing customer/recipient, missing Payment Term, missing Order Lines, incomplete custom-work detail, stale Review data, base roles, and unacknowledged stock warnings.
-- One stock acknowledgement covers multiple stock warnings without manager approval or reason capture.
-- Generated `JOB-O` output shows safe production context only and omits internal notes, cost/profit/payout, payment evidence, Management Log, and Audit Log content.
-- Staff-facing Order UI avoids sector/internal implementation copy, keeps Order status separate from Shipment status, and preserves read-first Order Detail behavior.
-- Responsive checks passed for Thai text clipping, bleeding, overlap, chip/button collision, and page-level horizontal overflow at 375, 768, 1024, and 1440 px.
+- Missing-permission navigation/actions are hidden; state-blocked actions are disabled with Thai business reasons.
+- `รอวัตถุดิบ` requires a note before local action and shows local feedback after submit.
+- `ขอเสนอราคา` uses a per-piece price input, validates positive price, and shows `ส่งราคาแล้ว / รออนุมัติ`.
+- Rak Samuk Worker lacks workflow-status move/complete controls and does not see other workers' assigned work or other workers' prices.
+- Search/filter controls are functional for Job overview and relevant queues.
+- Future-sector actions are hidden or disabled for business-state reasons, not implementation status.
+- Staff-facing UI is free of sector/internal implementation text, sample/mock wording, placeholder status, and developer instructions.
+- Responsive E2E coverage passed at 375, 768, 1024, and 1440 px with horizontal-overflow checks for Sector 5 routes.
 
 ## Checks Run
 
 - `pnpm lint` - passed
 - `pnpm typecheck` - passed
-- `pnpm test` - passed, including 33 domain tests and 77 web tests
+- `pnpm test` - passed
 - `pnpm format:check` - passed
 - `pnpm build` - passed
-- `CI=1 pnpm test:e2e apps/web/e2e/sector-4-order-confirmation.spec.ts --project=chromium --workers=1` - passed, 28 tests
+- `pnpm test:e2e` - passed, 224 tests

@@ -105,12 +105,12 @@ export function getVisibleNavigation(user: FixtureUser): NavigationItem[] {
   }
 
   return mainNavigation.filter((item) => {
-    if (user.id === "delivery-team") {
-      return item.id === "shipments";
+    if (!item.implemented) {
+      return false;
     }
 
-    if (item.id === "settings") {
-      return user.id === "owner";
+    if (user.id === "delivery-team") {
+      return item.id === "shipments";
     }
 
     return true;

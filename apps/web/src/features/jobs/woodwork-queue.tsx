@@ -1,19 +1,40 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
-import { simulateProductionAction } from "@thaiboran/domain";
-import { Button, EmptyState, StatusChip, SurfaceCard } from "@thaiboran/ui";
+import {
+  simulateProductionAction,
+  type ProductionAction,
+} from "@thaiboran/domain";
+import { EmptyState, StatusChip, SurfaceCard } from "@thaiboran/ui";
 
-import { getWoodworkQueueJobs } from "@/features/jobs/fixtures/jobs";
+import {
+  getWoodworkQueueJobs,
+  type WorkerQueueJob,
+} from "@/features/jobs/fixtures/jobs";
 import { jobHref, jobRoutes } from "@/features/jobs/routes";
 import { WorkerJobCard } from "@/features/worker/components/worker-job-card";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
+type WorkerFilter = "ทั้งหมด" | "งานด่วน" | "รอวัตถุดิบ";
+
 export function WoodworkQueue({ currentUser }: { currentUser: FixtureUser }) {
-  const jobs = getWoodworkQueueJobs();
+  const [filter, setFilter] = useState<WorkerFilter>("ทั้งหมด");
+  const [jobs, setJobs] = useState<WorkerQueueJob[]>(() =>
+    getWoodworkQueueJobs(),
+  );
   const [result, setResult] = useState<string | null>(null);
+  const visibleJobs = useMemo(
+    () =>
+      jobs.filter((job) =>
+        filter === "ทั้งหมด"
+          ? true
+          : filter === "งานด่วน"
+            ? job.urgent
+            : job.waitingMaterial,
+      ),
+    [filter, jobs],
+  );
 
   return (
     <div className="grid gap-5">
@@ -37,18 +58,24 @@ export function WoodworkQueue({ currentUser }: { currentUser: FixtureUser }) {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          {["ทั้งหมด", "งานด่วน", "รอวัตถุดิบ"].map((filter) => (
+          {(["ทั้งหมด", "งานด่วน", "รอวัตถุดิบ"] as const).map((filterName) => (
             <button
-              className="min-h-10 cursor-pointer rounded-full border border-shell-border bg-shell-surface px-4 text-sm font-bold text-shell-muted transition hover:border-accent/70 hover:text-shell-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-              key={filter}
+              aria-pressed={filter === filterName}
+              className={`min-h-10 cursor-pointer rounded-full border px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
+                filter === filterName
+                  ? "border-accent bg-accent/15 text-shell-foreground"
+                  : "border-shell-border bg-shell-surface text-shell-muted hover:border-accent/70 hover:text-shell-foreground"
+              }`}
+              key={filterName}
+              onClick={() => setFilter(filterName)}
               type="button"
             >
-              {filter}
+              {filterName}
             </button>
           ))}
           <span className="inline-flex min-h-10 items-center gap-2 rounded-full border border-shell-border bg-shell-surface px-4 text-sm font-bold text-shell-muted">
             <RefreshCw aria-hidden className="h-4 w-4" />
-            fixture ล่าสุด
+            ข้อมูลล่าสุด
           </span>
         </div>
       </SurfaceCard>
@@ -59,9 +86,9 @@ export function WoodworkQueue({ currentUser }: { currentUser: FixtureUser }) {
         </SurfaceCard>
       ) : null}
 
-      {jobs.length > 0 ? (
+      {visibleJobs.length > 0 ? (
         <section aria-label="รายการงานช่างไม้" className="grid gap-4">
-          {jobs.map((job) => (
+          {visibleJobs.map((job) => (
             <WorkerJobCard
               actions={[
                 {
@@ -79,37 +106,62 @@ export function WoodworkQueue({ currentUser }: { currentUser: FixtureUser }) {
               ]}
               job={job}
               key={job.id}
-              onAction={(action, _jobId, note) => {
-                const actionResult = simulateProductionAction(action);
-                setResult(
-                  note
-                    ? `${actionResult.message} • หมายเหตุ: ${note}`
-                    : actionResult.message,
-                );
+              onAction={(action, jobId, note) => {
+                handleLocalAction(action, jobId, note);
               }}
             />
           ))}
         </section>
       ) : (
-        <EmptyState
-          action={
-            <Button asChild size="sm" variant="outline">
-              <Link href={jobHref(jobRoutes.overview, currentUser)}>
-                ดูภาพรวมงาน
-              </Link>
-            </Button>
-          }
-          title="ไม่มีงานที่ต้องทำตอนนี้"
-        />
+        <EmptyState title="ไม่มีงานที่ต้องทำตอนนี้" />
       )}
-
-      <SurfaceCard padding="md">
-        <p className="text-sm font-bold text-foreground">ประวัติงานของฉัน</p>
-        <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-          พื้นที่ประวัติงานช่างไม้เป็น foundation เท่านั้น
-          ยังไม่เปิดรายละเอียดจริง
-        </p>
-      </SurfaceCard>
     </div>
   );
+
+  function handleLocalAction(
+    action: ProductionAction,
+    jobId: string,
+    note?: string,
+  ) {
+    const actionResult = simulateProductionAction(action);
+
+    setJobs((currentJobs) =>
+      actionResult.removesFromCurrentQueue
+        ? currentJobs.filter((job) => job.id !== jobId)
+        : currentJobs.map((job) =>
+            job.id === jobId
+              ? applyWorkerActionToJob(job, action, actionResult.resultingLabel)
+              : job,
+          ),
+    );
+    setResult(
+      note
+        ? `${actionResult.message} • หมายเหตุ: ${note}`
+        : actionResult.message,
+    );
+  }
+}
+
+function applyWorkerActionToJob(
+  job: WorkerQueueJob,
+  action: ProductionAction,
+  resultingLabel: string,
+): WorkerQueueJob {
+  if (action === "รอวัตถุดิบ") {
+    return {
+      ...job,
+      currentStatus: resultingLabel,
+      disabledReasons: {
+        กำลังส่งไปแกะสลัก: "งานนี้รอวัตถุดิบ",
+        ส่งไปสี: "งานนี้รอวัตถุดิบ",
+        ส่งไปรักสมุก: "งานนี้รอวัตถุดิบ",
+      },
+      waitingMaterial: true,
+    };
+  }
+
+  return {
+    ...job,
+    currentStatus: resultingLabel,
+  };
 }

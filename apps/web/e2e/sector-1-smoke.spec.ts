@@ -63,15 +63,13 @@ for (const viewport of viewports) {
       await expect(page.getByRole("combobox")).toHaveCount(0);
     });
 
-    test("renders approved future modules as non-business placeholders", async ({
+    test("blocks future modules until their work surfaces exist", async ({
       page,
     }) => {
       await page.goto("/modules/stock?user=admin-sales");
 
-      await expect(
-        page.getByRole("heading", { name: "สินค้า / สต๊อก" }).first(),
-      ).toBeVisible();
-      await expect(page.getByText(/ยังไม่มีรายการงาน/)).toBeVisible();
+      await expect(page).toHaveURL(/\/no-access\?user=admin-sales/);
+      await expect(page.getByText("ไม่มีสิทธิ์เข้าถึงหน้านี้")).toBeVisible();
     });
   });
 }

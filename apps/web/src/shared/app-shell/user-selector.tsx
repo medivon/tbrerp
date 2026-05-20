@@ -35,7 +35,7 @@ export function UserSelector({
         tone === "dark" ? "text-shell-muted" : "text-muted-foreground",
       )}
     >
-      ผู้ใช้งานทดสอบ
+      ผู้ใช้งาน
       <select
         className={cn(
           "h-10 cursor-pointer rounded-md border px-3 text-sm font-semibold shadow-soft outline-none transition duration-200 focus:ring-2",

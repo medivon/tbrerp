@@ -49,11 +49,20 @@ export function JobDetail({
     );
   }
 
+  if (!canSeeJobRecord(currentUser, job)) {
+    return (
+      <EmptyState
+        description="เปิดงานจากคิวของแผนกที่รับผิดชอบ"
+        title="ไม่มีสิทธิ์ดูรายละเอียดนี้"
+      />
+    );
+  }
+
   return (
     <div className="mx-auto grid w-full max-w-[1480px] gap-5">
       <PageHeader
         actions={<JobActionPanel currentUser={currentUser} />}
-        description="หน้าอ่านรายละเอียดงานก่อนดำเนินการ แสดงเฉพาะบริบทผลิตและประวัติการทำงานที่ role นี้ดูได้"
+        description="หน้าอ่านรายละเอียดงานก่อนดำเนินการ แสดงเฉพาะบริบทผลิตและประวัติการทำงานที่สิทธิ์นี้ดูได้"
         meta={
           <div className="flex flex-wrap gap-2">
             <JobSourceChip job={job} />
@@ -152,44 +161,135 @@ export function JobDetail({
                 <h2 className="text-lg font-extrabold text-foreground">
                   การดำเนินงาน
                 </h2>
-                <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
-                  คำสั่งในรอบนี้เป็น fixture/in-memory เท่านั้น ไม่มีการเขียน
-                  workflow จริง
-                </p>
               </div>
             </div>
 
-            <div className="mt-4 grid gap-2">
-              {canAccessWoodworkQueue(currentUser) ? (
-                <Button asChild variant="outline">
-                  <Link href={jobHref(jobRoutes.woodwork, currentUser)}>
-                    เปิดคิวช่างไม้
-                    <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              ) : null}
-              {canAccessColoringQueue(currentUser) ? (
-                <Button asChild variant="outline">
-                  <Link href={jobHref(jobRoutes.coloringIntake, currentUser)}>
-                    เปิดรอรับเข้าโรงงานสี
-                    <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              ) : null}
-              {canAccessRakSamukAssignment(currentUser) ? (
-                <Button asChild variant="outline">
-                  <Link href={jobHref(jobRoutes.rakSamuk, currentUser)}>
-                    ส่งไปรักสมุก
-                    <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              ) : null}
-            </div>
+            <p className="mt-1 text-sm font-semibold leading-6 text-muted-foreground">
+              เลือกคิวหรือขั้นตอนที่สอดคล้องกับสถานะงานปัจจุบัน
+            </p>
+
+            <JobOperationLinks currentUser={currentUser} job={job} />
           </SurfaceCard>
         </aside>
       </section>
     </div>
   );
+}
+
+function JobOperationLinks({
+  currentUser,
+  job,
+}: {
+  currentUser: FixtureUser;
+  job: JobFixture;
+}) {
+  const canSendRakSamuk =
+    job.currentDepartment === "ช่างไม้" || job.currentDepartment === "ฝ่ายสี";
+
+  return (
+    <div className="mt-4 grid gap-2">
+      {canAccessWoodworkQueue(currentUser) ? (
+        <ActionLink
+          currentUser={currentUser}
+          disabledReason={
+            job.currentDepartment === "ช่างไม้"
+              ? undefined
+              : "งานนี้ไม่ได้อยู่คิวช่างไม้"
+          }
+          href={jobRoutes.woodwork}
+          label="เปิดคิวช่างไม้"
+        />
+      ) : null}
+      {canAccessColoringQueue(currentUser) ? (
+        <ActionLink
+          currentUser={currentUser}
+          disabledReason={
+            job.currentDepartment === "รอรับเข้าโรงงานสี" ||
+            job.currentDepartment === "ฝ่ายสี"
+              ? undefined
+              : "งานนี้ยังไม่อยู่ขั้นตอนฝ่ายสี"
+          }
+          href={
+            job.currentDepartment === "รอรับเข้าโรงงานสี"
+              ? jobRoutes.coloringIntake
+              : jobRoutes.coloring
+          }
+          label={
+            job.currentDepartment === "รอรับเข้าโรงงานสี"
+              ? "เปิดรอรับเข้าโรงงานสี"
+              : "เปิดคิวฝ่ายสี"
+          }
+        />
+      ) : null}
+      {canAccessRakSamukAssignment(currentUser) ? (
+        <ActionLink
+          currentUser={currentUser}
+          disabledReason={
+            job.waitingMaterial
+              ? "งานนี้รอวัตถุดิบ"
+              : canSendRakSamuk
+                ? undefined
+                : "งานนี้ยังไม่อยู่ขั้นตอนส่งรักสมุก"
+          }
+          href={jobRoutes.rakSamuk}
+          label="ส่งไปรักสมุก"
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function ActionLink({
+  currentUser,
+  disabledReason,
+  href,
+  label,
+}: {
+  currentUser: FixtureUser;
+  disabledReason?: string;
+  href: string;
+  label: string;
+}) {
+  if (disabledReason) {
+    return (
+      <div className="grid gap-1">
+        <Button disabled type="button" variant="outline">
+          {label}
+        </Button>
+        <p className="text-xs font-semibold leading-5 text-[#92400E]">
+          {disabledReason}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <Button asChild variant="outline">
+      <Link href={jobHref(href, currentUser)}>
+        {label}
+        <ExternalLink aria-hidden className="ml-2 h-4 w-4" />
+      </Link>
+    </Button>
+  );
+}
+
+function canSeeJobRecord(currentUser: FixtureUser, job: JobFixture): boolean {
+  if (canAccessJobOverview(currentUser)) {
+    return true;
+  }
+
+  if (canAccessWoodworkQueue(currentUser)) {
+    return job.currentDepartment === "ช่างไม้";
+  }
+
+  if (canAccessColoringQueue(currentUser)) {
+    return (
+      job.currentDepartment === "ฝ่ายสี" ||
+      job.currentDepartment === "รอรับเข้าโรงงานสี"
+    );
+  }
+
+  return false;
 }
 
 function JobActionPanel({ currentUser }: { currentUser: FixtureUser }) {

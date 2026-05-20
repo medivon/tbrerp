@@ -68,6 +68,11 @@ for (const viewport of viewports) {
         await expect(
           page.getByText(/ต้นทุน|กำไร|payout|profit|cost/i),
         ).toHaveCount(0);
+        await expect(
+          page.getByText(
+            /fixture|mock|placeholder|in-memory|database|not implemented|future implementation|agent workflow|foundation|sector|ตัวอย่าง|SAMPLE/i,
+          ),
+        ).toHaveCount(0);
 
         const hasHorizontalOverflow = await page.evaluate(
           () => document.documentElement.scrollWidth > window.innerWidth,
@@ -81,7 +86,7 @@ for (const viewport of viewports) {
     }) => {
       await page.goto("/modules/jobs/woodwork?user=woodwork");
 
-      await expect(page.getByText(/ลูกค้าตัวอย่าง|ORD-SAMPLE/)).toHaveCount(0);
+      await expect(page.getByText(/คุณมาลี|ORD-2569/)).toHaveCount(0);
       await expect(
         page.getByText(/Payment|ชำระเงิน|Management Log|Audit Log/i),
       ).toHaveCount(0);
@@ -125,6 +130,14 @@ for (const viewport of viewports) {
       page,
     }) => {
       await page.goto("/modules/jobs/woodwork?user=woodwork");
+
+      await expect(
+        page.getByRole("button", { name: "ส่งไปรักสมุก" }).first(),
+      ).toBeDisabled();
+      await expect(page.getByText("งานนี้รอวัตถุดิบ").first()).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: /ส่งไปรักสมุก/ }),
+      ).toHaveCount(1);
 
       await page.getByRole("button", { name: "รอวัตถุดิบ" }).nth(1).click();
 

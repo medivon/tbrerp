@@ -24,6 +24,9 @@ export function WorkerJobCard({
   job: WorkerQueueJob;
   onAction: (action: ProductionAction, jobId: string, note?: string) => void;
 }) {
+  const [pendingAction, setPendingAction] = useState<ProductionAction | null>(
+    null,
+  );
   const [waitingMaterialNote, setWaitingMaterialNote] = useState("");
   const [showWaitingMaterialNote, setShowWaitingMaterialNote] = useState(false);
 
@@ -81,6 +84,24 @@ export function WorkerJobCard({
                   : undefined;
               const key = `${job.id}-${action.label}`;
 
+              if (disabledReason) {
+                return (
+                  <div className="grid gap-1" key={key}>
+                    <Button
+                      disabled
+                      size="lg"
+                      title={disabledReason}
+                      type="button"
+                    >
+                      {action.label}
+                    </Button>
+                    <p className="text-xs font-semibold leading-5 text-[#92400E]">
+                      {disabledReason}
+                    </p>
+                  </div>
+                );
+              }
+
               if (action.href) {
                 return (
                   <Button asChild key={key} size="lg" variant="outline">
@@ -95,27 +116,28 @@ export function WorkerJobCard({
               return (
                 <div className="grid gap-1" key={key}>
                   <Button
-                    disabled={Boolean(disabledReason)}
                     onClick={() => {
                       if (action.label === "รอวัตถุดิบ") {
                         setShowWaitingMaterialNote(true);
+                        setPendingAction(null);
                         return;
                       }
 
-                      onAction(action.label as ProductionAction, job.id);
+                      const productionAction = action.label as ProductionAction;
+
+                      if (requiresConfirmation(productionAction)) {
+                        setPendingAction(productionAction);
+                        return;
+                      }
+
+                      onAction(productionAction, job.id);
                     }}
                     size="lg"
-                    title={disabledReason}
                     type="button"
                     variant={action.label === "เปิดงาน" ? "outline" : "default"}
                   >
                     {action.label}
                   </Button>
-                  {disabledReason ? (
-                    <p className="text-xs font-semibold leading-5 text-[#92400E]">
-                      {disabledReason}
-                    </p>
-                  ) : null}
                 </div>
               );
             })}
@@ -164,8 +186,47 @@ export function WorkerJobCard({
               </div>
             </div>
           ) : null}
+
+          {pendingAction ? (
+            <div
+              aria-label={`ยืนยัน${pendingAction}`}
+              className="grid gap-3 rounded-lg border border-[#D9D3FD] bg-[#ECE9FE] p-3"
+              role="dialog"
+            >
+              <div>
+                <h3 className="text-base font-extrabold text-[#5B21B6]">
+                  ยืนยัน{pendingAction}
+                </h3>
+                <p className="mt-1 text-sm font-semibold leading-6 text-[#5B21B6]">
+                  ตรวจสอบงาน {job.id} ก่อนยืนยันการดำเนินงาน
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={() => {
+                    onAction(pendingAction, job.id);
+                    setPendingAction(null);
+                  }}
+                  type="button"
+                >
+                  ยืนยัน{pendingAction}
+                </Button>
+                <Button
+                  onClick={() => setPendingAction(null)}
+                  type="button"
+                  variant="outline"
+                >
+                  ยกเลิก
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </article>
     </SurfaceCard>
   );
+}
+
+function requiresConfirmation(action: ProductionAction | "เปิดงาน"): boolean {
+  return action !== "เปิดงาน" && action !== "รับงาน";
 }

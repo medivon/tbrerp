@@ -21,6 +21,7 @@ export type ProductionAction =
 
 export type FixtureActionResult = {
   action: ProductionAction;
+  removesFromCurrentQueue: boolean;
   message: string;
   persisted: false;
   resultingLabel: string;
@@ -259,18 +260,35 @@ export function receiveRakSamukWorkBack(
 export function simulateProductionAction(
   action: ProductionAction,
 ): FixtureActionResult {
-  const resultingLabel =
-    action === "งานเสร็จ/พร้อมส่ง"
-      ? "รอสร้างรอบจัดส่ง"
-      : action === "ส่งไปสี" || action === "รับเข้าโรงงานสี"
-        ? "รอรับเข้าโรงงานสี"
-        : action;
+  const actionMessages: Record<ProductionAction, string> = {
+    รับงาน: "รับงานแล้ว",
+    รอวัตถุดิบ: "บันทึกรอวัตถุดิบแล้ว",
+    ส่งไปสี: "ส่งงานไปฝ่ายสีแล้ว",
+    ส่งไปรักสมุก: "เปิดขั้นตอนเลือกช่างรักสมุก",
+    กำลังส่งไปแกะสลัก: "บันทึกสถานะกำลังส่งไปแกะสลักแล้ว",
+    รับเข้าโรงงานสี: "รับเข้าโรงงานสีแล้ว",
+    "งานเสร็จ/พร้อมส่ง": "งานเสร็จแล้ว รอสร้างรอบจัดส่ง",
+  };
+
+  const resultingLabels: Record<ProductionAction, string> = {
+    รับงาน: "กำลังทำ",
+    รอวัตถุดิบ: "รอวัตถุดิบ",
+    ส่งไปสี: "รอรับเข้าโรงงานสี",
+    ส่งไปรักสมุก: "รักสมุก",
+    กำลังส่งไปแกะสลัก: "กำลังส่งไปแกะสลัก",
+    รับเข้าโรงงานสี: "งานที่ต้องทำ",
+    "งานเสร็จ/พร้อมส่ง": "รอสร้างรอบจัดส่ง",
+  };
 
   return {
     action,
-    message: `${action} แสดงผลเฉพาะในหน้านี้ ยังไม่บันทึกลงฐานข้อมูล`,
+    message: actionMessages[action],
     persisted: false,
-    resultingLabel,
+    removesFromCurrentQueue:
+      action === "ส่งไปสี" ||
+      action === "รับเข้าโรงงานสี" ||
+      action === "งานเสร็จ/พร้อมส่ง",
+    resultingLabel: resultingLabels[action],
   };
 }
 
