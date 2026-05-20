@@ -94,7 +94,7 @@ for (const viewport of viewports) {
     test("confirms a valid Review and shows generated result", async ({
       page,
     }) => {
-      await page.goto("/modules/orders/review?user=admin-sales");
+      await page.goto("/modules/orders/review?user=admin-sales&case=valid");
 
       await expect(
         page.getByRole("heading", { name: "ตรวจสอบก่อนสร้างออเดอร์" }).first(),

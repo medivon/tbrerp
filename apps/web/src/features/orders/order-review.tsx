@@ -15,7 +15,13 @@ import {
   type CustomWorkReviewLine,
   type ReadyStockReviewLine,
 } from "@thaiboran/domain";
-import { Button, PageHeader, StatusChip, SurfaceCard } from "@thaiboran/ui";
+import {
+  Button,
+  EmptyState,
+  PageHeader,
+  StatusChip,
+  SurfaceCard,
+} from "@thaiboran/ui";
 
 import { OrderLineCard } from "@/features/orders/components/order-line-card";
 import { ReadFirstSection } from "@/features/orders/components/read-first-section";
@@ -34,7 +40,9 @@ import type { FixtureUser } from "@/shared/fixtures/users";
 export function OrderReview({
   currentUser,
   scenarioId = "valid",
+  allowSeedScenario = scenarioId !== "valid",
 }: {
+  allowSeedScenario?: boolean;
   currentUser: FixtureUser;
   scenarioId?: OrderReviewScenarioId;
 }) {
@@ -42,6 +50,7 @@ export function OrderReview({
   const [confirmationResult, setConfirmationResult] =
     useState<OrderConfirmationFixtureResult | null>(null);
   const entryState = useOrderEntryMemoryState();
+  const hasActiveEntryState = entryState.source === "in-memory";
   const confirmationInput = useMemo(
     () =>
       createOrderConfirmationInputFromEntryState({
@@ -101,6 +110,28 @@ export function OrderReview({
     if (confirmationPreview.status === "confirmed") {
       setConfirmationResult(confirmationPreview);
     }
+  }
+
+  if (!hasActiveEntryState && !allowSeedScenario) {
+    return (
+      <div className="mx-auto grid w-full max-w-[960px] gap-5">
+        <PageHeader
+          actions={
+            <Button asChild>
+              <Link href={orderHref(orderRoutes.create, currentUser)}>
+                กลับไปสร้างออเดอร์
+              </Link>
+            </Button>
+          }
+          description="เลือกหรือบันทึกข้อมูลออเดอร์ก่อนเข้าหน้าตรวจสอบ"
+          title="ตรวจสอบก่อนสร้างออเดอร์"
+        />
+        <EmptyState
+          description="เริ่มจากหน้าสร้างออเดอร์ หรือเปิดร่างออเดอร์ที่บันทึกไว้"
+          title="ยังไม่มีข้อมูลออเดอร์ให้ตรวจสอบ"
+        />
+      </div>
+    );
   }
 
   return (

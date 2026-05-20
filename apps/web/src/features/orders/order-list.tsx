@@ -76,6 +76,7 @@ export function OrderList({
 }) {
   const copy = modeCopy[mode];
   const [query, setQuery] = useState("");
+  const [createdDate, setCreatedDate] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
   const [shipmentStatus, setShipmentStatus] =
     useState<OrderListFilters["shipmentStatus"]>(null);
@@ -89,11 +90,12 @@ export function OrderList({
         : orderFixtures;
   const filters = useMemo<OrderListFilters>(
     () => ({
+      createdDate,
       orderStatus,
       query,
       shipmentStatus,
     }),
-    [orderStatus, query, shipmentStatus],
+    [createdDate, orderStatus, query, shipmentStatus],
   );
   const filteredOrders = useMemo(
     () => filterOrders(orders, filters),
@@ -107,7 +109,22 @@ export function OrderList({
 
   useEffect(() => {
     setPage(1);
-  }, [mode, orderStatus, pageSize, query, shipmentStatus]);
+  }, [createdDate, mode, orderStatus, pageSize, query, shipmentStatus]);
+
+  const availableOrderStatuses = useMemo(
+    () =>
+      orderStatusLabels.filter((status) =>
+        orders.some((order) => order.orderStatus === status),
+      ),
+    [orders],
+  );
+  const availableCreatedDates = useMemo(
+    () => Array.from(new Set(orders.map((order) => order.createdDateShort))),
+    [orders],
+  );
+  const hasWaitingShipmentFilter = orders.some(
+    (order) => order.shipmentSummary.kind === "waiting-confirmation",
+  );
 
   const producingCount = filteredOrders.filter(
     (order) => order.orderStatus === "กำลังผลิต",
@@ -115,9 +132,16 @@ export function OrderList({
   const waitingShipmentConfirmationCount = filteredOrders.filter(
     (order) => order.shipmentSummary.kind === "waiting-confirmation",
   ).length;
+  const completedCount = filteredOrders.filter(
+    (order) => order.orderStatus === "จัดส่งครบแล้ว",
+  ).length;
+  const cancelledCount = filteredOrders.filter(
+    (order) => order.orderStatus === "ยกเลิก",
+  ).length;
 
   function clearFilters() {
     setQuery("");
+    setCreatedDate(null);
     setOrderStatus(null);
     setShipmentStatus(null);
     setPage(1);
@@ -157,24 +181,49 @@ export function OrderList({
           unit="Order"
           value={filteredOrders.length}
         />
-        <MetricCard
-          description="แสดงเป็นสถานะออเดอร์ ไม่ปนกับสถานะจัดส่ง"
-          icon={<PackageCheck aria-hidden className="h-5 w-5" />}
-          statusLabel="กำลังผลิต"
-          statusVariant="revision"
-          title="กำลังผลิต"
-          unit="Order"
-          value={producingCount}
-        />
-        <MetricCard
-          description="รอยืนยันการจัดส่งเป็นสถานะจัดส่งเท่านั้น"
-          icon={<Truck aria-hidden className="h-5 w-5" />}
-          statusLabel="สถานะจัดส่ง"
-          statusVariant="warning"
-          title="รอยืนยันการจัดส่ง"
-          unit="Order"
-          value={waitingShipmentConfirmationCount}
-        />
+        {mode === "closed" ? (
+          <>
+            <MetricCard
+              description="ออเดอร์ที่จัดส่งครบแล้วและอ่านอย่างเดียว"
+              icon={<PackageCheck aria-hidden className="h-5 w-5" />}
+              statusLabel="จัดส่งครบแล้ว"
+              statusVariant="success"
+              title="ปิดครบแล้ว"
+              unit="Order"
+              value={completedCount}
+            />
+            <MetricCard
+              description="ออเดอร์ที่ยกเลิกและไม่เปิดงานต่อ"
+              icon={<Truck aria-hidden className="h-5 w-5" />}
+              statusLabel="ยกเลิก"
+              statusVariant="danger"
+              title="ยกเลิก"
+              unit="Order"
+              value={cancelledCount}
+            />
+          </>
+        ) : (
+          <>
+            <MetricCard
+              description="แสดงเป็นสถานะออเดอร์ ไม่ปนกับสถานะจัดส่ง"
+              icon={<PackageCheck aria-hidden className="h-5 w-5" />}
+              statusLabel="กำลังผลิต"
+              statusVariant="revision"
+              title="กำลังผลิต"
+              unit="Order"
+              value={producingCount}
+            />
+            <MetricCard
+              description="รอยืนยันการจัดส่งเป็นสถานะจัดส่งเท่านั้น"
+              icon={<Truck aria-hidden className="h-5 w-5" />}
+              statusLabel="สถานะจัดส่ง"
+              statusVariant="warning"
+              title="รอยืนยันการจัดส่ง"
+              unit="Order"
+              value={waitingShipmentConfirmationCount}
+            />
+          </>
+        )}
       </section>
 
       <ToolbarShell
@@ -201,17 +250,36 @@ export function OrderList({
           className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[22rem]"
           id="order-search"
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="ค้นหาเลขออเดอร์ ลูกค้า เบอร์ ผู้รับ ที่อยู่ Job ID หรือสินค้า"
+          placeholder="ค้นหาเลขออเดอร์ ลูกค้า เบอร์ ที่อยู่ Job ID สินค้า Tracking หรือสถานะ"
           type="search"
           value={query}
         />
+        <label className="flex min-w-0 items-center gap-2 text-xs font-extrabold text-muted-foreground">
+          วันที่สร้าง
+          <select
+            className="min-h-9 min-w-0 rounded-md border border-border bg-surface px-2 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            onChange={(event) =>
+              setCreatedDate(
+                event.target.value === "" ? null : event.target.value,
+              )
+            }
+            value={createdDate ?? ""}
+          >
+            <option value="">ทั้งหมด</option>
+            {availableCreatedDates.map((date) => (
+              <option key={date} value={date}>
+                {date}
+              </option>
+            ))}
+          </select>
+        </label>
         <FilterGroup label="สถานะออเดอร์">
           <FilterButton
             active={orderStatus === null}
             label="ทั้งหมด"
             onClick={() => setOrderStatus(null)}
           />
-          {orderStatusLabels.map((filter) => (
+          {availableOrderStatuses.map((filter) => (
             <FilterButton
               active={orderStatus === filter}
               key={filter}
@@ -224,19 +292,21 @@ export function OrderList({
             />
           ))}
         </FilterGroup>
-        <FilterGroup label="สถานะจัดส่ง">
-          <FilterButton
-            active={shipmentStatus === "waiting-confirmation"}
-            label="รอยืนยันการจัดส่ง"
-            onClick={() =>
-              setShipmentStatus((current) =>
-                current === "waiting-confirmation"
-                  ? null
-                  : "waiting-confirmation",
-              )
-            }
-          />
-        </FilterGroup>
+        {hasWaitingShipmentFilter ? (
+          <FilterGroup label="สถานะจัดส่ง">
+            <FilterButton
+              active={shipmentStatus === "waiting-confirmation"}
+              label="รอยืนยันการจัดส่ง"
+              onClick={() =>
+                setShipmentStatus((current) =>
+                  current === "waiting-confirmation"
+                    ? null
+                    : "waiting-confirmation",
+                )
+              }
+            />
+          </FilterGroup>
+        ) : null}
       </ToolbarShell>
 
       {filteredOrders.length > 0 ? (

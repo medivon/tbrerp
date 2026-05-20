@@ -122,6 +122,21 @@ describe("Order read/create foundation", () => {
     expect(screen.getByText("6 จาก 6 รายการ")).toBeTruthy();
   });
 
+  it("filters the Order list by created date within the active dataset", () => {
+    render(<OrderList currentUser={currentUser} mode="all" />);
+
+    fireEvent.change(screen.getByLabelText("วันที่สร้าง"), {
+      target: { value: "02 มิ.ย. 67" },
+    });
+
+    expect(screen.getAllByText("ORD-240602-009").length).toBeGreaterThan(0);
+    expect(screen.queryByText("ORD-240522-018")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "ล้างตัวกรอง" }));
+
+    expect(screen.getAllByText("ORD-240522-018").length).toBeGreaterThan(0);
+  });
+
   it("keeps shipment status filters separate from Order status filters", () => {
     render(<OrderList currentUser={currentUser} mode="all" />);
 
@@ -203,6 +218,41 @@ describe("Order read/create foundation", () => {
     expect(screen.queryByText(/ORD-\d/)).toBeNull();
   });
 
+  it("continues a Draft Order into Order Create without showing an Order ID", () => {
+    render(<OrderCreate currentUser={currentUser} draftNo="DRAFT-00035" />);
+
+    expect(screen.getAllByText("เลขร่าง DRAFT-00035").length).toBeGreaterThan(
+      0,
+    );
+    expect(
+      screen.getAllByDisplayValue("คุณปริญญา ศรีนคร").length,
+    ).toBeGreaterThan(0);
+    expect(screen.queryByText(/ORD-\d/)).toBeNull();
+  });
+
+  it("saves the current entry as a local Draft No. only", () => {
+    const view = render(<OrderCreate currentUser={currentUser} />);
+
+    const saveDraftLink = screen.getByRole("link", { name: "บันทึกร่าง" });
+
+    expect(saveDraftLink.getAttribute("href")).toBe(
+      "/modules/orders/drafts?user=admin-sales",
+    );
+
+    saveDraftLink.addEventListener("click", (event) => event.preventDefault(), {
+      once: true,
+    });
+    fireEvent.click(saveDraftLink);
+
+    expect(screen.getByText(/บันทึกไว้ที่ DRAFT-/)).toBeTruthy();
+
+    view.unmount();
+    render(<DraftOrderQueue currentUser={currentUser} />);
+
+    expect(screen.getAllByText(/DRAFT-00901/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/ORD-\d/)).toBeNull();
+  });
+
   it("opens customer selection modal and updates Order Create state", () => {
     render(<OrderCreate currentUser={currentUser} />);
 
@@ -244,7 +294,12 @@ describe("Order read/create foundation", () => {
     });
     expect(within(dialog).getByLabelText("ค้นหาสินค้าพร้อมส่ง")).toBeTruthy();
     expect(within(dialog).getByText("ขายได้ 2 ชิ้น")).toBeTruthy();
-    expect(within(dialog).getByText("หมด")).toBeTruthy();
+    expect(within(dialog).queryByText("หมด")).toBeNull();
+    expect(
+      within(dialog).getByRole("button", {
+        name: "เลือกสินค้าที่ไม่มีสต๊อก",
+      }),
+    ).toBeTruthy();
     expect(
       within(dialog).queryByText(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง/),
     ).toBeNull();
@@ -276,12 +331,12 @@ describe("Order read/create foundation", () => {
       screen.getAllByText(/จำนวนเกินที่ขายได้: ขายได้ 2 ชิ้น/).length,
     ).toBeGreaterThan(0);
 
-    fireEvent.change(screen.getByLabelText("Payment Term"), {
+    fireEvent.change(screen.getByLabelText("เงื่อนไขการชำระเงิน"), {
       target: { value: "" },
     });
     expect(screen.getAllByText("ยังไม่มี").length).toBeGreaterThan(0);
 
-    fireEvent.change(screen.getByLabelText("Payment Term"), {
+    fireEvent.change(screen.getByLabelText("เงื่อนไขการชำระเงิน"), {
       target: { value: "ชำระเต็มจำนวนก่อนจัดส่ง" },
     });
     expect(screen.getAllByText("ครบ").length).toBeGreaterThan(0);
@@ -307,14 +362,18 @@ describe("Order read/create foundation", () => {
       name: "เลือกสินค้าพร้อมส่ง",
     });
 
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: "เลือกสินค้าที่ไม่มีสต๊อก",
+      }),
+    );
+
     fireEvent.change(within(dialog).getByLabelText("ค้นหาสินค้าพร้อมส่ง"), {
       target: { value: "แดงชาด" },
     });
 
     expect(within(dialog).getByText("หมด")).toBeTruthy();
-    expect(
-      within(dialog).getByText(/สินค้านี้หมด แต่ยังเพิ่มเป็นรายการได้/),
-    ).toBeTruthy();
+    expect(within(dialog).getByText(/SKU นี้ไม่มีสต๊อกขายได้/)).toBeTruthy();
 
     const addSoldOutButton = within(dialog).getByRole("button", {
       name: /เพิ่มรายการ ตู้เตี้ยลงรักสมุกพร้อมส่ง TBR-CAB-RAK-RED/,
@@ -516,18 +575,21 @@ describe("Order read/create foundation", () => {
     ).toBeGreaterThan(0);
   });
 
-  it("opens direct Review data without implementation source labels", () => {
+  it("guards direct Review when there is no active Order entry state", () => {
     render(<OrderReview currentUser={currentUser} />);
 
+    expect(screen.getByText("ยังไม่มีข้อมูลออเดอร์ให้ตรวจสอบ")).toBeTruthy();
     expect(
-      screen.getByText(
-        "ตรวจสอบลูกค้า ผู้รับสินค้า รายการสินค้า และเงื่อนไขชำระเงินก่อนสร้างออเดอร์",
-      ),
-    ).toBeTruthy();
+      screen.queryByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+    ).toBeNull();
     expectNoForbiddenProductCopy();
   });
 
   it("enables Review confirmation only after required acknowledgement and shows result", () => {
+    setOrderEntryMemoryState(
+      markOrderEntryInMemory(createInitialOrderEntryState()),
+    );
+
     render(<OrderReview currentUser={currentUser} />);
 
     const confirmButton = screen.getByRole("button", {
@@ -568,6 +630,10 @@ describe("Order read/create foundation", () => {
   });
 
   it("keeps Order Review as the final confirmation surface with no second modal", () => {
+    setOrderEntryMemoryState(
+      markOrderEntryInMemory(createInitialOrderEntryState()),
+    );
+
     render(<OrderReview currentUser={currentUser} />);
 
     fireEvent.click(
@@ -724,8 +790,61 @@ describe("Order read/create foundation", () => {
       screen.getAllByText("ยังไม่มีการเปลี่ยนแปลงให้ตรวจสอบ").length,
     ).toBeTruthy();
     expect(
-      screen.getByText("ยังไม่มีการเปลี่ยนแปลงที่พร้อมบันทึก"),
+      screen.getByText(
+        "ต้องตรวจผลกระทบการเงิน งานต่อเนื่อง และรอบจัดส่งให้ครบก่อนบันทึก",
+      ),
     ).toBeTruthy();
+  });
+
+  it("updates Order Line Edit local preview before save", () => {
+    render(
+      <OrderLineEdit currentUser={currentUser} orderId="ORD-240522-018" />,
+    );
+
+    fireEvent.change(screen.getByLabelText("จำนวน"), {
+      target: { value: "2" },
+    });
+
+    fireEvent.click(
+      screen.getAllByRole("button", { name: "ตรวจสอบการแก้ไข" })[0],
+    );
+
+    expect(
+      screen.getByText(/ผลการตรวจสอบการแก้ไข ORD-240522-018/),
+    ).toBeTruthy();
+    expect(screen.getAllByText("1 รายการ").length).toBeGreaterThan(0);
+    expect(
+      (
+        screen.getAllByRole("button", {
+          name: "บันทึกการแก้ไข",
+        })[0] as HTMLButtonElement
+      ).disabled,
+    ).toBe(true);
+  });
+
+  it("keeps added ready-stock line edits pending review before save", () => {
+    render(
+      <OrderLineEdit currentUser={currentUser} orderId="ORD-240522-018" />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "เพิ่มสินค้าพร้อมส่ง" }),
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: "เลือกสินค้าพร้อมส่ง",
+    });
+
+    fireEvent.click(
+      within(dialog).getByRole("button", {
+        name: /เพิ่มรายการ โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/,
+      }),
+    );
+
+    const addedLine = within(screen.getByTestId("line-edit-ready-added-1"));
+
+    expect(addedLine.getByText(/รอตรวจสอบการแก้ไข/)).toBeTruthy();
+    expect(addedLine.queryByText("พร้อมสร้างรอบจัดส่ง")).toBeNull();
   });
 
   it("keeps implemented Order UI free of internal implementation copy", () => {

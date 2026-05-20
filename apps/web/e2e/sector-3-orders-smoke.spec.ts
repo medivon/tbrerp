@@ -192,9 +192,7 @@ for (const viewport of viewports) {
         .getByLabel(/จำนวน โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/)
         .fill("3");
       await productDialog
-        .getByRole("button", {
-          name: /เพิ่มรายการ โต๊ะข้างไม้สักพร้อมส่ง TBR-SID-DRK/,
-        })
+        .getByTestId("add-ready-stock-ready-side-table-dark")
         .click();
       await expect(page.getByTestId("entry-ready-added-1")).toBeVisible();
       await expect(page.getByText("3 รายการ / 6 ชิ้น")).toBeVisible();
@@ -272,10 +270,39 @@ for (const viewport of viewports) {
       await expectCleanResponsiveText(page);
     });
 
+    test("saves a Draft and returns to the Draft queue", async ({ page }) => {
+      await page.goto("/modules/orders/create?user=admin-sales");
+
+      await page.getByRole("link", { name: "บันทึกร่าง" }).click();
+
+      await expect(page).toHaveURL(
+        /\/modules\/orders\/drafts\?user=admin-sales/,
+      );
+      await expect(visibleText(page, "DRAFT-00901").first()).toBeVisible();
+      await expect(page.getByText(/ORD-\d/)).toHaveCount(0);
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
+    });
+
+    test("does not seed Review from an unknown scenario query", async ({
+      page,
+    }) => {
+      await page.goto("/modules/orders/review?user=admin-sales&case=unknown");
+
+      await expect(
+        page.getByText("ยังไม่มีข้อมูลออเดอร์ให้ตรวจสอบ"),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),
+      ).toHaveCount(0);
+      await expectNoInternalProductCopy(page);
+      await expectCleanResponsiveText(page);
+    });
+
     test("can confirm valid Review without a second modal", async ({
       page,
     }) => {
-      await page.goto("/modules/orders/review?user=admin-sales");
+      await page.goto("/modules/orders/review?user=admin-sales&case=valid");
 
       await expect(
         page.getByRole("button", { name: "ยืนยันสร้างออเดอร์" }),

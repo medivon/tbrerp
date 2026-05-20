@@ -395,7 +395,11 @@ function ManageOrderMenu({
             แก้ไขงานสั่งทำ
           </MenuLink>
         )}
-        <MenuLink href="#shipment-management">จัดการรอบจัดส่ง</MenuLink>
+        {disabled ? (
+          <MenuDisabled>จัดการรอบจัดส่ง: ออเดอร์จัดส่งครบแล้ว</MenuDisabled>
+        ) : (
+          <MenuLink href="#shipment-management">จัดการรอบจัดส่ง</MenuLink>
+        )}
         <MenuDisabled>
           ยกเลิกออเดอร์: มีงานต่อเนื่องที่ต้องจัดการก่อน
         </MenuDisabled>

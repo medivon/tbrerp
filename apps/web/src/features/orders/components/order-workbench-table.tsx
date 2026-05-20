@@ -187,7 +187,7 @@ function OrderItemsDetails({ lines }: { lines: OrderLineFixture[] }) {
   const customLines = lines.filter((line) => line.type === "custom-work");
 
   return (
-    <details className="group relative max-w-[260px]">
+    <details className="group relative min-w-0 max-w-[260px]">
       <summary className="cursor-pointer list-none rounded-md text-sm font-semibold leading-6 text-foreground transition hover:text-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden">
         {firstLine?.title ?? "ไม่มีรายการ"}
         {additionalCount > 0 ? (
@@ -197,7 +197,7 @@ function OrderItemsDetails({ lines }: { lines: OrderLineFixture[] }) {
           </span>
         ) : null}
       </summary>
-      <div className="mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-border bg-surface p-3 shadow-soft">
+      <div className="mt-2 w-[min(22rem,calc(100vw-2rem))] min-w-0 rounded-lg border border-border bg-surface p-3 shadow-soft">
         <div className="grid gap-3">
           {readyLines.length > 0 ? (
             <LineGroup
@@ -244,12 +244,16 @@ function LineGroup({
             />
           </div>
           <div className="min-w-0 text-sm leading-6">
-            <p className="font-semibold text-foreground">{line.title}</p>
-            <p className="text-muted-foreground">
+            <p className="break-words font-semibold text-foreground [overflow-wrap:anywhere]">
+              {line.title}
+            </p>
+            <p className="break-words text-muted-foreground [overflow-wrap:anywhere]">
               {line.quantity} ชิ้น • {formatBaht(line.lineTotalBaht)}
             </p>
             {line.customDetail ? (
-              <p className="text-muted-foreground">{line.customDetail}</p>
+              <p className="break-words text-muted-foreground [overflow-wrap:anywhere]">
+                {line.customDetail}
+              </p>
             ) : null}
           </div>
         </div>
@@ -267,7 +271,7 @@ function ShipmentSummary({ order }: { order: OrderFixture }) {
         : "text-foreground";
 
   return (
-    <details className="relative max-w-[240px]">
+    <details className="relative min-w-0 max-w-[240px]">
       <summary
         className={cn(
           "cursor-pointer list-none rounded-md text-sm font-semibold leading-6 transition hover:text-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 [&::-webkit-details-marker]:hidden",
@@ -276,8 +280,8 @@ function ShipmentSummary({ order }: { order: OrderFixture }) {
       >
         {order.shipmentSummary.label}
       </summary>
-      <div className="mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-border bg-surface p-3 text-sm leading-6 shadow-soft">
-        <p className="font-semibold text-foreground">
+      <div className="mt-2 w-[min(22rem,calc(100vw-2rem))] min-w-0 rounded-lg border border-border bg-surface p-3 text-sm leading-6 shadow-soft">
+        <p className="break-words font-semibold text-foreground [overflow-wrap:anywhere]">
           {order.shipmentSummary.detail}
         </p>
         {order.shipmentRounds.length > 0 ? (
@@ -287,10 +291,10 @@ function ShipmentSummary({ order }: { order: OrderFixture }) {
                 className="rounded-md border border-border bg-subtle px-3 py-2"
                 key={round.shipmentNo}
               >
-                <p className="font-semibold text-foreground">
+                <p className="break-words font-semibold text-foreground [overflow-wrap:anywhere]">
                   {round.shipmentNo} • {round.status}
                 </p>
-                <p className="text-muted-foreground">
+                <p className="break-words text-muted-foreground [overflow-wrap:anywhere]">
                   {round.carrier}
                   {round.tracking ? ` : ${round.tracking}` : ""}
                 </p>

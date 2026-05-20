@@ -97,6 +97,7 @@ export type OrderEntryState = {
   customerPhone: string;
   customerTier: string;
   customLines: OrderEntryCustomWorkLine[];
+  draftNo?: string;
   optionalPaymentRecord?: {
     amountBaht: number;
     method: string;
@@ -109,6 +110,11 @@ export type OrderEntryState = {
   shipmentIntent?: string;
   socialContact?: string;
   source: OrderEntrySource;
+};
+
+export type DraftEntrySeed = {
+  draftNo: string;
+  entryState: OrderEntryState;
 };
 
 export type OrderEntrySummary = {
@@ -227,6 +233,135 @@ export function createInitialOrderEntryState(): OrderEntryState {
     socialContact: orderEntryFixture.socialContact,
     source: "fixture",
   };
+}
+
+const draftOrderEntrySeeds: DraftEntrySeed[] = [
+  {
+    draftNo: "DRAFT-00034",
+    entryState: createDraftEntryState({
+      customerId: "customer-malee",
+      customDrafts: [
+        {
+          ...createBlankCustomWorkLineDraft(),
+          colorDetail: "โอ๊คเข้ม เคลือบด้าน",
+          deliveryDate: "25 มิ.ย. 67",
+          materialDetail: "ไม้สัก",
+          quantity: 1,
+          referenceImageNote: "เลือก รูปหลัก เป็นภาพอ้างอิง",
+          sizeDetail: "150 x 42 x 180 ซม.",
+          unitPriceBaht: 39000,
+          woodworkDetail: "โครงตู้โชว์ บานเปิด และชั้นวางสองระดับ",
+          workName: "ตู้โชว์ไม้สักสั่งทำ",
+        },
+      ],
+      draftNo: "DRAFT-00034",
+      paymentTerm: "",
+      readySelections: [{ optionId: "ready-chair-natural", quantity: 1 }],
+    }),
+  },
+  {
+    draftNo: "DRAFT-00035",
+    entryState: createDraftEntryState({
+      customerId: "customer-prinya",
+      draftNo: "DRAFT-00035",
+      paymentTerm: "ชำระเต็มจำนวนก่อนจัดส่ง",
+      readySelections: [{ optionId: "ready-chair-natural", quantity: 1 }],
+    }),
+  },
+  {
+    draftNo: "DRAFT-00036",
+    entryState: createDraftEntryState({
+      customerId: "customer-nicha",
+      customDrafts: [
+        {
+          ...createBlankCustomWorkLineDraft(),
+          colorDetail: "โอ๊คเข้ม",
+          deliveryDate: "05 ก.ค. 67",
+          materialDetail: "ไม้สัก",
+          quantity: 1,
+          sizeDetail: "120 x 38 x 80 ซม.",
+          unitPriceBaht: 32000,
+          workName: "โต๊ะคอนโซลแกะลายสั่งทำ",
+        },
+      ],
+      draftNo: "DRAFT-00036",
+      paymentTerm: "มัดจำ 50% ก่อนเริ่มงาน",
+    }),
+  },
+];
+
+export function createOrderEntryStateForDraft(
+  draftNo: string,
+): OrderEntryState | undefined {
+  return draftOrderEntrySeeds.find((seed) => seed.draftNo === draftNo)
+    ?.entryState;
+}
+
+export function createOrderEntryStateWithDraftNo(
+  state: OrderEntryState,
+  draftNo: string,
+): OrderEntryState {
+  return markOrderEntryInMemory({
+    ...state,
+    draftNo,
+  });
+}
+
+function createDraftEntryState({
+  customerId,
+  customDrafts = [],
+  draftNo,
+  paymentTerm,
+  readySelections = [],
+}: {
+  customerId: string;
+  customDrafts?: CustomWorkLineDraft[];
+  draftNo: string;
+  paymentTerm: string;
+  readySelections?: Array<{ optionId: string; quantity: number }>;
+}): OrderEntryState {
+  const baseCustomer = orderEntryCustomerOptions.find(
+    (customer) => customer.id === customerId,
+  );
+  const baseState: OrderEntryState = {
+    address: baseCustomer?.address ?? "",
+    customerId: baseCustomer?.id,
+    customerName: baseCustomer?.name ?? "",
+    customerPhone: baseCustomer?.primaryPhone ?? "",
+    customerTier: baseCustomer?.tier ?? "ลูกค้าปกติ",
+    customLines: customDrafts.map((draft, index) =>
+      normalizeCustomWorkLine({
+        ...draft,
+        id: `draft-${draftNo.toLowerCase()}-custom-${index + 1}`,
+        imageAlt: "งานสั่งทำไม้สัก",
+        imageSrc: "/sector-1-thumbnails/teak-display-cabinet.png",
+        title:
+          draft.workName.trim().length > 0
+            ? draft.workName.trim()
+            : `งานสั่งทำ ${index + 1}`,
+        type: "custom-work",
+      }),
+    ),
+    draftNo,
+    paymentTerm,
+    readyStockLines: readySelections.map((selection, index) =>
+      createReadyStockLine({
+        id: `draft-${draftNo.toLowerCase()}-ready-${index + 1}`,
+        optionId: selection.optionId,
+        quantity: selection.quantity,
+      }),
+    ),
+    recipientName: baseCustomer?.recipientName ?? "",
+    recipientPhone: baseCustomer?.recipientPhone ?? "",
+    shipmentIntent:
+      readySelections.length > 0 && customDrafts.length > 0
+        ? "ส่งพร้อมกัน"
+        : undefined,
+    socialContact: baseCustomer?.socialContact,
+    source: "in-memory",
+  };
+
+  return baseState;
 }
 
 export function markOrderEntryInMemory(
@@ -529,7 +664,7 @@ export function calculateOrderEntrySummary(
   }
 
   if (!paymentTermComplete) {
-    reviewBlockReasons.push("ต้องระบุ Payment Term");
+    reviewBlockReasons.push("ต้องระบุเงื่อนไขการชำระเงิน");
   }
 
   if (incompleteCustomLines.length > 0) {
@@ -732,6 +867,7 @@ export function createOrderConfirmationInputFromEntryState({
       entryState.source === "in-memory"
         ? "order-review-entry"
         : "order-review-default",
+    sourceDraftNo: entryState.draftNo,
     shipmentIntent:
       entryState.readyStockLines.length > 0 && entryState.customLines.length > 0
         ? entryState.shipmentIntent

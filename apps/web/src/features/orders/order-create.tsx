@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import {
   Button,
+  EmptyState,
   PageHeader,
   SectionHeader,
   StatusChip,
@@ -24,6 +25,8 @@ import { ProductSelectModal } from "@/features/orders/components/product-select-
 import { formatBaht } from "@/features/orders/fixtures/orders";
 import {
   getOrderEntryMemoryState,
+  loadOrderEntryDraft,
+  saveOrderEntryDraft,
   setOrderEntryMemoryState,
 } from "@/features/orders/order-entry-memory-store";
 import {
@@ -61,10 +64,26 @@ export function OrderCreate({
   currentUser: FixtureUser;
   draftNo?: string;
 }) {
-  const [entryState, setEntryState] = useState(() =>
-    getOrderEntryMemoryState(),
-  );
+  const [initialLoad] = useState(() => {
+    if (!draftNo) {
+      return {
+        entryState: getOrderEntryMemoryState(),
+        missingDraft: false,
+      };
+    }
+
+    const draftState = loadOrderEntryDraft(draftNo);
+
+    return {
+      entryState: draftState ?? getOrderEntryMemoryState(),
+      missingDraft: draftState === null,
+    };
+  });
+  const [entryState, setEntryState] = useState(initialLoad.entryState);
   const [activeModal, setActiveModal] = useState<ActiveEntryModal>(null);
+  const [savedDraftNo, setSavedDraftNo] = useState<string | undefined>(
+    initialLoad.entryState.draftNo,
+  );
   const summary = useMemo(
     () => calculateOrderEntrySummary(entryState),
     [entryState],
@@ -96,7 +115,17 @@ export function OrderCreate({
   }
 
   function rememberEntryForReview() {
-    setOrderEntryMemoryState(entryState);
+    setOrderEntryMemoryState(markOrderEntryInMemory(entryState));
+  }
+
+  function saveDraft() {
+    const savedDraft = saveOrderEntryDraft({
+      entryState,
+      ownerName: currentUser.displayName,
+    });
+
+    setEntryState(savedDraft.entryState);
+    setSavedDraftNo(savedDraft.draft.draftNo);
   }
 
   function closeModal() {
@@ -117,24 +146,53 @@ export function OrderCreate({
     closeModal();
   }
 
+  if (initialLoad.missingDraft) {
+    return (
+      <div className="mx-auto grid w-full max-w-[960px] gap-5">
+        <PageHeader
+          actions={
+            <Button asChild variant="outline">
+              <Link href={orderHref(orderRoutes.drafts, currentUser)}>
+                กลับไปร่างออเดอร์
+              </Link>
+            </Button>
+          }
+          description="ตรวจสอบเลขร่างหรือเลือกร่างออเดอร์จากคิวร่างอีกครั้ง"
+          title="ไม่พบร่างออเดอร์นี้"
+        />
+        <EmptyState title="ไม่พบร่างออเดอร์ที่เลือก" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="mx-auto grid w-full max-w-[1480px] gap-5">
         <PageHeader
           actions={
-            <ReviewAction
-              currentUser={currentUser}
-              onReview={rememberEntryForReview}
-              showReason
-              summary={summary}
-            />
+            <>
+              <SaveDraftAction
+                currentUser={currentUser}
+                onSaveDraft={saveDraft}
+                savedDraftNo={savedDraftNo}
+                summary={summary}
+              />
+              <ReviewAction
+                currentUser={currentUser}
+                onReview={rememberEntryForReview}
+                showReason
+                summary={summary}
+              />
+            </>
           }
           description="กรอกข้อมูลออเดอร์ ลูกค้าต้องมาก่อนที่อยู่และรายการสินค้า"
           meta={
             <div className="flex flex-wrap gap-2">
               <StatusChip variant="warning">กำลังกรอก</StatusChip>
-              {draftNo ? (
-                <StatusChip variant="neutral">เลขร่าง {draftNo}</StatusChip>
+              {entryState.draftNo ? (
+                <StatusChip variant="neutral">
+                  เลขร่าง {entryState.draftNo}
+                </StatusChip>
               ) : (
                 <StatusChip variant="neutral">ยังไม่ได้บันทึกร่าง</StatusChip>
               )}
@@ -274,7 +332,7 @@ export function OrderCreate({
                   htmlFor="order-entry-payment-term"
                 >
                   <span className="break-words [overflow-wrap:anywhere]">
-                    Payment Term
+                    เงื่อนไขการชำระเงิน
                   </span>
                   <textarea
                     className="min-h-24 min-w-0 rounded-md border border-border bg-surface px-3 py-2 text-sm font-normal leading-6 text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -331,7 +389,7 @@ export function OrderCreate({
                 value={`${summary.lineCount} รายการ / ${summary.totalQuantity} ชิ้น`}
               />
               <SummaryRow
-                label="Payment Term"
+                label="เงื่อนไขชำระเงิน"
                 value={summary.paymentTermStatus}
               />
               <SummaryRow
@@ -492,6 +550,47 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
       <span className="break-words font-extrabold text-shell-foreground [overflow-wrap:anywhere]">
         {value}
       </span>
+    </div>
+  );
+}
+
+function SaveDraftAction({
+  currentUser,
+  onSaveDraft,
+  savedDraftNo,
+  summary,
+}: {
+  currentUser: FixtureUser;
+  onSaveDraft: () => void;
+  savedDraftNo?: string;
+  summary: OrderEntrySummary;
+}) {
+  const canSaveDraft = summary.customerStatus !== "ยังไม่ได้เลือก";
+  const reason = "ต้องเลือกลูกค้าก่อนบันทึกร่าง";
+  const draftsHref = orderHref(orderRoutes.drafts, currentUser);
+
+  return (
+    <div className="grid min-w-0 gap-1">
+      {canSaveDraft ? (
+        <Button asChild variant="outline">
+          <Link href={draftsHref} onClick={onSaveDraft}>
+            บันทึกร่าง
+          </Link>
+        </Button>
+      ) : (
+        <Button disabled title={reason} type="button" variant="outline">
+          บันทึกร่าง
+        </Button>
+      )}
+      {savedDraftNo ? (
+        <p className="max-w-64 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
+          บันทึกไว้ที่ {savedDraftNo}
+        </p>
+      ) : !canSaveDraft ? (
+        <p className="max-w-64 break-words text-xs font-semibold leading-5 text-muted-foreground [overflow-wrap:anywhere]">
+          {reason}
+        </p>
+      ) : null}
     </div>
   );
 }

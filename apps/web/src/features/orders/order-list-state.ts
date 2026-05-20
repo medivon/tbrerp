@@ -9,6 +9,7 @@ export const orderPageSizeOptions = [25, 50, 100] as const;
 export type OrderPageSize = (typeof orderPageSizeOptions)[number];
 
 export type OrderListFilters = {
+  createdDate: string | null;
   orderStatus: OrderStatus | null;
   query: string;
   shipmentStatus: "waiting-confirmation" | null;
@@ -26,6 +27,10 @@ export function filterOrders(
   const query = normalizeQuery(filters.query);
 
   return orders.filter((order) => {
+    if (filters.createdDate && order.createdDateShort !== filters.createdDate) {
+      return false;
+    }
+
     if (filters.orderStatus && order.orderStatus !== filters.orderStatus) {
       return false;
     }
@@ -74,6 +79,7 @@ export function filterDraftOrders(
 export function hasOrderListFilters(filters: OrderListFilters): boolean {
   return (
     filters.query.trim().length > 0 ||
+    filters.createdDate !== null ||
     filters.orderStatus !== null ||
     filters.shipmentStatus !== null
   );

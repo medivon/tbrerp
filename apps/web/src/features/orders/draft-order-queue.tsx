@@ -14,16 +14,17 @@ import {
 
 import { DraftStatusChip } from "@/features/orders/components/order-status-chip";
 import { OrderTabs } from "@/features/orders/components/order-tabs";
-import { draftOrderFixtures } from "@/features/orders/fixtures/orders";
+import { getDraftOrderFixturesWithSaved } from "@/features/orders/order-entry-memory-store";
 import { filterDraftOrders } from "@/features/orders/order-list-state";
 import { orderHref, orderRoutes } from "@/features/orders/routes";
 import type { FixtureUser } from "@/shared/fixtures/users";
 
 export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
   const [query, setQuery] = useState("");
+  const drafts = getDraftOrderFixturesWithSaved();
   const filteredDrafts = useMemo(
-    () => filterDraftOrders(draftOrderFixtures, query),
-    [query],
+    () => filterDraftOrders(drafts, query),
+    [drafts, query],
   );
   const hasQuery = query.trim().length > 0;
 
@@ -45,7 +46,7 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
         meta={
           <div className="flex flex-wrap gap-2">
             <StatusChip variant="neutral">
-              {filteredDrafts.length} จาก {draftOrderFixtures.length} ร่าง
+              {filteredDrafts.length} จาก {drafts.length} ร่าง
             </StatusChip>
             {hasQuery ? (
               <StatusChip variant="action">กำลังค้นหา</StatusChip>
@@ -81,7 +82,7 @@ export function DraftOrderQueue({ currentUser }: { currentUser: FixtureUser }) {
           className="min-h-10 min-w-0 flex-1 basis-full rounded-md border border-border bg-surface px-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 sm:basis-auto sm:min-w-[22rem]"
           id="draft-search"
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="ค้นหาเลขร่าง ลูกค้า เบอร์ ผู้รับ หรือผู้รับผิดชอบ"
+          placeholder="ค้นหาเลขร่าง ลูกค้า เบอร์ ผู้รับ รายการ สถานะ หรือข้อมูลที่ยังไม่ครบ"
           type="search"
           value={query}
         />

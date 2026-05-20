@@ -2,7 +2,11 @@ import { redirect } from "next/navigation";
 
 import { OrderReview } from "@/features/orders/order-review";
 import { OrderShell } from "@/features/orders/order-shell";
-import { getOrderReviewScenarioId } from "@/features/orders/fixtures/orders";
+import {
+  getOrderReviewScenarioId,
+  orderReviewScenarioIds,
+  type OrderReviewScenarioId,
+} from "@/features/orders/fixtures/orders";
 import { getFixtureUser } from "@/shared/fixtures/users";
 import { canConfirmOrders, withUserParam } from "@/shared/permissions/access";
 
@@ -15,7 +19,15 @@ export default async function OrderReviewPage({
 }: OrderReviewPageProps) {
   const params = await searchParams;
   const currentUser = getFixtureUser(params.user);
-  const scenarioId = getOrderReviewScenarioId(params.case);
+  const requestedScenario = Array.isArray(params.case)
+    ? params.case[0]
+    : params.case;
+  const hasExplicitScenario =
+    typeof requestedScenario === "string" &&
+    orderReviewScenarioIds.includes(requestedScenario as OrderReviewScenarioId);
+  const scenarioId = getOrderReviewScenarioId(
+    hasExplicitScenario ? requestedScenario : undefined,
+  );
 
   if (!canConfirmOrders(currentUser)) {
     redirect(withUserParam("/no-access", currentUser.id));
@@ -23,7 +35,11 @@ export default async function OrderReviewPage({
 
   return (
     <OrderShell currentUser={currentUser} title="ตรวจสอบก่อนสร้างออเดอร์">
-      <OrderReview currentUser={currentUser} scenarioId={scenarioId} />
+      <OrderReview
+        allowSeedScenario={hasExplicitScenario}
+        currentUser={currentUser}
+        scenarioId={scenarioId}
+      />
     </OrderShell>
   );
 }
